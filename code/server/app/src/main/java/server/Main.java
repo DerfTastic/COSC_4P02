@@ -2,7 +2,6 @@ package server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import okhttp3.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
@@ -19,8 +18,11 @@ public class Main {
         server.createContext("/", exchange -> {
             String requestedPath = exchange.getRequestURI().getPath();
             File file = new File(STATIC_DIR + requestedPath);
+            System.out.println(requestedPath);
 
-            if (!file.exists() || file.isDirectory()) {
+            if (!file.exists()
+                    || file.isDirectory()
+                    || requestedPath.contains("..")) {
                 sendResponse(exchange, 404, "Not Found");
                 return;
             }

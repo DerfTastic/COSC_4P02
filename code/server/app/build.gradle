@@ -19,9 +19,6 @@ repositories {
 dependencies {
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
-    
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'
 
     implementation 'org.xerial:sqlite-jdbc:3.30.1'
 
