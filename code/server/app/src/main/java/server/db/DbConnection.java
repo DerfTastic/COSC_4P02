@@ -13,6 +13,10 @@ public class DbConnection implements AutoCloseable {
         this.db = db;
     }
 
+    public NamedPreparedStatement namedPreparedStatement(String sql) throws SQLException{
+        return new NamedPreparedStatement(conn, sql);
+    }
+
     public Transaction transaction() throws SQLException {
         return new Transaction(this);
     }
