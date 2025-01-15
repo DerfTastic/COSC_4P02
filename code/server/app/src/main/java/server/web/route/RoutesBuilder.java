@@ -32,7 +32,6 @@ public abstract class RoutesBuilder {
     }
 
     protected void addRoute(HttpServer server, RouteImpl route){
-        System.out.println(route.path);
         server.createContext(route.path, route.handler);
     }
 
