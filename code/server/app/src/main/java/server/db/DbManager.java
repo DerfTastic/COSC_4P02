@@ -25,10 +25,10 @@ public class DbManager implements AutoCloseable{
     private final int max_connections;
 
     public DbManager() throws SQLException{
-        this(false);
+        this(false, true);
     }
 
-    public DbManager(boolean inMemory) throws SQLException {
+    public DbManager(boolean inMemory, boolean alwaysInitialize) throws SQLException {
 
         var initialized = new File("db/database.db").exists();
         if(!new File("db").exists()){
@@ -58,7 +58,7 @@ public class DbManager implements AutoCloseable{
         }
 
 
-        if(!initialized){
+        if(!initialized || alwaysInitialize){
             try(var conn = conn()){
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
