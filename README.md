@@ -1,9 +1,9 @@
 # COSC_4P02_PROJECT
 
 ## Group Members
-- Benjamin Williams (6953954)
+- Sinatra Almeida (7060049)
 - Jacob Applebaum (7215031)
-- Parker TenBroeck (7376726)
+- Joycelyn Chan (7239486)
 - Taylor Chapman (7178577)
-- Joycelym Chan (7239486)
-- Sintra Almeida (7060049)
+- Parker TenBroeck (7376726)
+- Benjamin Williams (6953954)
