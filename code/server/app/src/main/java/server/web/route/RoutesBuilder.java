@@ -1,6 +1,7 @@
 package server.web.route;
 
 import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import server.web.annotations.Body;
 import server.web.annotations.FromRequest;
@@ -83,6 +84,8 @@ public abstract class RoutesBuilder {
                 };
             }
         }
+        if(param.getType().equals(HttpExchange.class)) return request -> request.exchange;
+        if(param.getType().equals(RouteImpl.Request.class)) return request -> request;
         throw new RuntimeException("No parameter handler for " + param);
     }
 
