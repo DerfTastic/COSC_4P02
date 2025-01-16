@@ -67,6 +67,9 @@ public class DbManager implements AutoCloseable{
                     for(var sql : sql("creation").split(";")){
                         stmt.addBatch(sql);
                     }
+                    for(var sql : sql("testing_data").split(";")){
+                        stmt.addBatch(sql);
+                    }
                     stmt.executeBatch();
                 }catch (SQLException e){
                     Logger.getGlobal().log(Level.FINE, "Failed to initialize DB", e);
