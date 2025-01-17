@@ -2,7 +2,7 @@ package server.web.route;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
+import server.web.WebServer;
 import server.web.annotations.Body;
 import server.web.annotations.FromRequest;
 import server.web.annotations.Json;
@@ -23,7 +23,7 @@ public class RoutesBuilder {
         this.routeClasses = routeClasses;
     }
 
-    public void attachRoutes(HttpServer server, String parentPath) {
+    public void attachRoutes(WebServer server, String parentPath) {
         for(var method : (Iterable<Method>)Arrays.stream(routeClasses).flatMap(aClass -> Arrays.stream(aClass.getDeclaredMethods()))::iterator){
             if(method.getAnnotation(server.web.annotations.Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, this);
@@ -85,6 +85,7 @@ public class RoutesBuilder {
         }
         if(param.getType().equals(HttpExchange.class)) return request -> request.exchange;
         if(param.getType().equals(RouteImpl.Request.class)) return request -> request;
+//        return request -> request.exchange.
         throw new RuntimeException("No parameter handler for " + param);
     }
 

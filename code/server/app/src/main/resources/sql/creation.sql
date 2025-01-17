@@ -13,6 +13,7 @@ create table users(
     pass TEXT not null,
     bio TEXT not null default "",
     organizer_id INTEGER default NULL,
+    picture INTEGER,
 
      FOREIGN KEY (organizer_id)
            REFERENCES organizers (id)
@@ -22,18 +23,27 @@ create table users(
 
 create table organizers(
     id INTEGER primary key not null,
-    has_analytics BOOLEAN not null
+    has_analytics BOOLEAN not null,
+    max_events INTEGER not null
 );
 
 create table events(
     id INTEGER primary key not null,
+    organizer_id INTEGER not null,
     name TEXT not null,
     description TEXT not null,
     picture INTEGER,
 
+    available_total_tickets INTEGER,
+
     location_name TEXT,
     location_lat REAL,
-    location_long REAL
+    location_long REAL,
+
+     FOREIGN KEY (organizer_id)
+           REFERENCES organizers (id)
+              ON DELETE CASCADE
+              ON UPDATE NO ACTION
 );
 
 create table tickets(

@@ -7,6 +7,7 @@ import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import server.web.WebServer;
 import server.web.annotations.http.Delete;
 import server.web.annotations.http.Get;
 import server.web.annotations.http.Post;
@@ -185,8 +186,8 @@ public class RouteImpl {
         sendResponse(request, code, new Gson().toJson(message));
     }
 
-    public void addRoute(HttpServer server) {
-        var context = server.createContext(path, handler);
+    public void addRoute(WebServer server) {
+        var context = server.server.createContext(path, handler);
         if(method!=null)
             context.getFilters().add(new Filter() {
                 @Override
@@ -200,6 +201,7 @@ public class RouteImpl {
                     return "Method Filter";
                 }
             });
+        context.getAttributes().put(WebServer.class.getName(), server);
     }
 
     public class Request{
@@ -269,6 +271,10 @@ public class RouteImpl {
                     pathParts[0] = URLDecoder.decode(pathParts[0], StandardCharsets.UTF_8);
             }
             return pathParts.length;
+        }
+
+        public WebServer getServer(){
+            return (WebServer) exchange.getHttpContext().getAttributes().get(WebServer.class.getName());
         }
 
         public String getPathPart(int index){
