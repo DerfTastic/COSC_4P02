@@ -1,3 +1,2 @@
-
-insert into person values(null, 'leo');
-insert into person values(null, 'yui');
+insert into users values(null, 'leo', 'leo@gmail.com', '', '', null);
+insert into users values(null, 'yui', 'yui@gmail.com', '', '', null);

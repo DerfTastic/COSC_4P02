@@ -3,8 +3,10 @@ package server.web.route;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import server.web.annotations.http.Delete;
 import server.web.annotations.http.Get;
 import server.web.annotations.http.Post;
@@ -181,6 +183,23 @@ public class RouteImpl {
 
     public <T> void sendResponse(Request request, int code, T message) throws IOException{
         sendResponse(request, code, new Gson().toJson(message));
+    }
+
+    public void addRoute(HttpServer server) {
+        var context = server.createContext(path, handler);
+        if(method!=null)
+            context.getFilters().add(new Filter() {
+                @Override
+                public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
+                    if(method.equalsIgnoreCase(exchange.getRequestMethod()))
+                        chain.doFilter(exchange);
+                }
+
+                @Override
+                public String description() {
+                    return "Method Filter";
+                }
+            });
     }
 
     public class Request{

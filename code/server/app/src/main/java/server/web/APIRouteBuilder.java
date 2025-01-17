@@ -1,6 +1,5 @@
 package server.web;
 
-import com.sun.net.httpserver.HttpExchange;
 import server.db.DbConnection;
 import server.db.DbManager;
 import server.db.Transaction;
@@ -17,7 +16,7 @@ public class APIRouteBuilder extends RoutesBuilder {
     private final HashMap<Class<?>, RouteParameter<?>> parameterHandlerMap = new HashMap<>();
 
     public APIRouteBuilder(DbManager db){
-        super(API.class);
+        super(DbAPI.class);
         this.db = db;
         initializeParameterHandlers();
     }

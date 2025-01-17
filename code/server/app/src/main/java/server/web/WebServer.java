@@ -30,8 +30,9 @@ public class WebServer {
 
         server.createContext("/", new StaticContentHandler());
         new APIRouteBuilder(database).attachRoutes(server, "/api");
+        new RoutesBuilder(MediaAPI.class).attachRoutes(server, "/media");
 
-        server.setExecutor(Executors.newFixedThreadPool(10));
+        server.setExecutor(Executors.newFixedThreadPool(256));
         server.start();
 
         Logger.getGlobal().log(Level.INFO, "Server started on http://" + address.getAddress().getHostAddress() + ":" + address.getPort());

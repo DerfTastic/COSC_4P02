@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Console</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        #console {
+            width: 90%;
+            max-width: 80%;
+            height: 100%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 10px;
+            overflow-y: auto;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+
+        textarea {
+            width: 90%;
+            max-width: 80%;
+            height: 100px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>SQL Console</h1>
+    <textarea id="sqlInput" placeholder="Enter your SQL query here..."></textarea>
+    <!-- <button onclick="executeSQL()">Run Query</button> -->
+    <div id="console"></div>
+
+    <script>
+        const sqlInput = document.getElementById('sqlInput');
+
+        sqlInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                executeSQL();
+            }
+        });
+
+        async function executeSQL() {
+            const sqlQuery = sqlInput.value;
+            const consoleDiv = document.getElementById('console');
+
+            if (!sqlQuery.trim()) {
+                consoleDiv.innerText += '\n[Error] SQL query cannot be empty.';
+                return;
+            }
+
+            try {
+                consoleDiv.innerText += `\n[SQL] ${sqlQuery}\n`;
+
+                const response = await fetch('/api/sql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: sqlQuery
+                });
+
+                
+
+                const result = await response.text();
+                if (response.ok) {
+                    consoleDiv.innerText += `\n[Success]\n${result}`;
+                }else{
+                    consoleDiv.innerText += `\n[Error]\n${result}`;
+                }
+            } catch (error) {
+                consoleDiv.innerText += `\n[Error]\n${error.message}`;
+            }
+
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>

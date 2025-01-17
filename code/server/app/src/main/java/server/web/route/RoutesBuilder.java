@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
-public abstract class RoutesBuilder {
+public class RoutesBuilder {
     private final Class<?>[] routeClasses;
 
     public RoutesBuilder(Class<?>... routeClasses){
@@ -27,13 +27,10 @@ public abstract class RoutesBuilder {
         for(var method : (Iterable<Method>)Arrays.stream(routeClasses).flatMap(aClass -> Arrays.stream(aClass.getDeclaredMethods()))::iterator){
             if(method.getAnnotation(server.web.annotations.Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, this);
-            addRoute(server, route);
+            route.addRoute(server);
         }
     }
 
-    protected void addRoute(HttpServer server, RouteImpl route){
-        server.createContext(route.path, route.handler);
-    }
 
     protected RouteParameter<?> getParameterHandler(RouteImpl route, Parameter param) throws Throwable{
         if(param.getAnnotation(FromRequest.class) != null){
@@ -50,6 +47,9 @@ public abstract class RoutesBuilder {
                 throw new RuntimeException("Unsupported type for @QueryValue on parameter " + param + " on method " + route.sourceMethod);
         }else{
             if(param.getAnnotation(Body.class) != null){
+                if(param.getType().equals(byte[].class)){
+                    return request -> request.exchange.getRequestBody().readAllBytes();
+                }
                 StringsAdapter<?> stringsAdapter = getParameterStringAdapter(param);
                 return request -> {
                     try {
