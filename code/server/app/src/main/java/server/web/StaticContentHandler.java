@@ -25,8 +25,12 @@ class StaticContentHandler implements HttpHandler {
             Util.sendResponse(exchange, 405, "Invalid Method Specified");
             return;
         }
+
         if (requestedPath.endsWith("/")) {
             requestedPath += "index.html";
+        }
+        if(!requestedPath.contains(".")){
+            requestedPath += ".html";
         }
         File file = new File(STATIC_DIR + requestedPath);
 

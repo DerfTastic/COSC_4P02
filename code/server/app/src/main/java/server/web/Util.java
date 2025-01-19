@@ -6,8 +6,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Util {
+
+    public static String escapeHTML(String str) {
+        return str.chars().mapToObj(c -> c > 127 || "\"'<>&".indexOf(c) != -1 ?
+                "&#" + c + ";" : String.valueOf((char) c)).collect(Collectors.joining());
+    }
 
     public static void sendResponse(HttpExchange exchange, int statusCode, String message) throws IOException {
         byte[] response = message.getBytes();

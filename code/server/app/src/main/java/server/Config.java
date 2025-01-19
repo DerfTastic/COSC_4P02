@@ -18,6 +18,7 @@ public class Config implements Serializable {
 
     public final String db_path = initialize("db/database.db");
     public final String media_path = initialize("media/");
+    public final String secrets_path = initialize("secrets");
 
     static{
         try {
