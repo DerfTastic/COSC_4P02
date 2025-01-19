@@ -188,19 +188,6 @@ public class RouteImpl {
 
     public void addRoute(WebServer server) {
         var context = server.server.createContext(path, handler);
-        if(method!=null)
-            context.getFilters().add(new Filter() {
-                @Override
-                public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
-                    if(method.equalsIgnoreCase(exchange.getRequestMethod()))
-                        chain.doFilter(exchange);
-                }
-
-                @Override
-                public String description() {
-                    return "Method Filter";
-                }
-            });
         context.getAttributes().put(WebServer.class.getName(), server);
     }
 
@@ -218,7 +205,7 @@ public class RouteImpl {
         }
 
         public void begin() throws ClientError.MethodNotAllowed {
-            if(method != null && method.equalsIgnoreCase(exchange.getRequestMethod()))
+            if(method != null && !method.equalsIgnoreCase(exchange.getRequestMethod()))
                 throw new ClientError.MethodNotAllowed();
         }
 

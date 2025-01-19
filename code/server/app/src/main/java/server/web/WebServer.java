@@ -1,6 +1,7 @@
 package server.web;
 
 import com.sun.net.httpserver.HttpServer;
+import server.Config;
 import server.db.DbManager;
 import server.web.route.RoutesBuilder;
 
@@ -20,7 +21,7 @@ public class WebServer {
     public WebServer() throws IOException, SQLException {
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
-        var address = new InetSocketAddress(PORT);
+        var address = new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port);
         server = HttpServer.create(address, 0);
         addManagedResource(server);
         try{
@@ -34,7 +35,7 @@ public class WebServer {
         new APIRouteBuilder(this).attachRoutes(this, "/api");
         new RoutesBuilder(MediaAPI.class).attachRoutes(this, "/media");
 
-        server.setExecutor(Executors.newFixedThreadPool(256));
+        server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
         server.start();
 
         Logger.getGlobal().log(Level.INFO, "Server started on http://" + address.getAddress().getHostAddress() + ":" + address.getPort());

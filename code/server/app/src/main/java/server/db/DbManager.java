@@ -3,6 +3,7 @@ package server.db;
 
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
+import server.Config;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class DbManager implements AutoCloseable{
     private final int max_connections;
 
     public DbManager() throws SQLException{
-        this(false, true);
+        this(false, Config.CONFIG.wipe_db_on_start);
     }
 
     public DbManager(boolean inMemory, boolean alwaysInitialize) throws SQLException {
@@ -46,7 +47,7 @@ public class DbManager implements AutoCloseable{
             url = "jdbc:sqlite:file:memdb1?mode=memory&cache=shared";
         }else {
             max_connections = 0;
-            url = "jdbc:sqlite:db/database.db";
+            url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
         }
 
         try(var conn = conn()){
@@ -72,14 +73,15 @@ public class DbManager implements AutoCloseable{
                             throw e;
                         }
                     }
-                    for(var sql : sql("testing_data").split(";")){
-                        try{
-                            stmt.execute(sql);
-                        }catch (SQLException e){
-                            Logger.getGlobal().log(Level.WARNING, sql);
-                            throw e;
+                    if(Config.CONFIG.initialize_db_with_data)
+                        for(var sql : sql("testing_data").split(";")){
+                            try{
+                                stmt.execute(sql);
+                            }catch (SQLException e){
+                                Logger.getGlobal().log(Level.WARNING, sql);
+                                throw e;
+                            }
                         }
-                    }
                 }catch (SQLException e){
                     Logger.getGlobal().log(Level.FINE, "Failed to initialize DB", e);
                     throw e;

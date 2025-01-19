@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+
+    <!-- Image file input -->
+    <input type="file" id="imageInput" accept="image/*" onchange="uploadImage()" />
+
+    <div id="status"></div>
+
+    <img id="image" src="/media/get/1">
+
+    <script>
+        const imageTag = document.getElementById("image");
+        // Function to handle the image upload using JavaScript (fetch)
+        async function uploadImage() {
+            const fileInput = document.getElementById("imageInput");
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                document.getElementById("status").innerText = "No file selected.";
+                return;
+            }
+
+            // const formData = new FormData();
+            // formData.append("image", file);
+
+            // Show status while uploading
+            document.getElementById("status").innerText = "Uploading...";
+
+            try {
+                const response = await fetch("/media/upload", {
+                    method: "POST",
+                    body: file
+                });
+
+                if (response.ok) {
+                    document.getElementById("status").innerText = "Image successfully uploaded!";
+                } else {
+                    document.getElementById("status").innerText = "Upload failed.";
+                }
+                var id = await response.text();
+                imageTag.src = "/media/get/" + id;
+                console.log(id);
+            } catch (error) {
+                document.getElementById("status").innerText = "Error uploading image.";
+                console.error("Upload error:", error);
+            }
+        }
+    </script>
+</body>
+</html>
