@@ -12,7 +12,7 @@ create table users(
     name TEXT not null,
     email TEXT not null unique,
     pass TEXT not null,
-    bio TEXT not null default "",
+    bio TEXT,
     organizer_id INTEGER default NULL,
     picture INTEGER,
 
@@ -100,6 +100,7 @@ create table sessions(
     id INTEGER primary key not null,
     token TEXT unique,
     user_id INTEGER not null,
+    expiration DATE not null,
 
 
     FOREIGN KEY (user_id)

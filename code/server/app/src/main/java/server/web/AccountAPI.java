@@ -7,87 +7,33 @@ import server.web.annotations.Body;
 import server.web.annotations.FromRequest;
 import server.web.annotations.Json;
 import server.web.annotations.Route;
-import server.web.annotations.url.Path;
 import server.web.route.ClientError;
 import server.web.route.RouteImpl;
 import server.web.route.RouteParameter;
-import util.SqlSerde;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Date;
 
 @SuppressWarnings("unused")
-public class DbAPI {
+public class AccountAPI {
 
-    public static final class Person {
-        public int id;
-        public String name;
-    }
-
-    /*
-            var content = """
-                        <html>
-            <body>
-                <p>Greetings!</p>
-                <div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:8080"></div>
-                <div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Meow"></div>
-                <div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Nya"></div>
-                <p>Salutations</p>
-            </body>
-        </html>
-        """;
-     */
-
-    public static class Mail{
-        String subject;
-        String content;
-        String[] to;
+    public static class Register{
+        String name;
+        String email;
+        String password;
     }
 
     @Route
-    public static void mail(MailServer server, @Body @Json Mail mail) throws MessagingException {
-        server.sendMail(message -> {
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    server.fromStrings(mail.to)
-            );
-            message.setSubject(mail.subject);
-            message.setContent(mail.content, "text/html");
-        });
-    }
-
-    @Route("/person/<id>")
-    public static @Json Person person(Transaction trans, @Path int id) throws SQLException {
-        try (var stmt = trans.conn.namedPreparedStatement("select * from person where id=:id")){
-            stmt.setInt(":id",id);
-            return SqlSerde.sqlSingle(stmt.executeQuery(), Person.class);
+    public static void register(Transaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
+        try(var stmt = trans.conn.namedPreparedStatement("insert into users values(null, :name, :email, :pass, null, null, null)")){
+            stmt.setString(":name", register.name);
+            stmt.setString(":email", register.email);
+            stmt.setString(":pass", register.password);
+            stmt.execute();
         }
     }
-
-    @Route
-    public static String sql(DbConnection connection, @Body String sql) throws SQLException {
-        try(var stmt = connection.conn.createStatement()){
-            if(!stmt.execute(sql))return "";
-            String list = "";
-            var rs = stmt.getResultSet();
-            while(rs.next()){
-                list += "(";
-                for(int i = 1; ; i++){
-                    try{
-                        var res = rs.getString(i);
-                        if(i!=1) list += ", ";
-                        list += res;
-                    }catch (SQLException ignore){break;}
-                }
-                list += ")\n";
-            }
-            return list;
-        }
-    }
-
 
     public static class Login{
         String email;
@@ -109,8 +55,9 @@ public class DbAPI {
         }
 
         int session_id;
-        try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id) returning id")){
+        try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp) returning id")){
             stmt.setInt(":user_id", user_id);
+            stmt.setLong(":exp", new Date().getTime() + 2628000000L);
             session_id = stmt.executeQuery().getInt(1);
         }
 
@@ -135,14 +82,17 @@ public class DbAPI {
     }
 
     @Route
-    public static @Json UserAuth test(@FromRequest(UserAuthFromRequest.class) UserAuth auth){
-        return auth;
+    public static void invalidate_session(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn, @Body String session_token) throws SQLException {
+        try(var stmt = conn.namedPreparedStatement("delete from sessions where token=:token AND user_id=:id")){
+            stmt.setString(":token", session_token);
+            stmt.setInt(":id", auth.id);
+            stmt.execute();
+        }
     }
 
     public static class UserAuth{
         public int id;
         public String email;
-        public String pass;
 
         public int organizer_id;
         public int max_events;
@@ -153,11 +103,14 @@ public class DbAPI {
 
         @Override
         public UserAuth construct(RouteImpl.Request request) throws Exception {
-
             var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
             if(token==null)throw new ClientError.Unauthorized("No valid session");
             try(var conn = request.getServer().getManagedResource(DbManager.class).conn()){
-                try(var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token ")){
+                try(var stmt = conn.namedPreparedStatement("delete from sessions where expiration<:now")){
+                    stmt.setLong(":now", new Date().getTime());
+                    stmt.execute();
+                }
+                try(var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")){
                     stmt.setString(":token", token);
                     System.out.println(token);
                     var result = stmt.executeQuery();
@@ -166,7 +119,6 @@ public class DbAPI {
                     var auth = new UserAuth();
                     auth.id = result.getInt("id");
                     auth.email = result.getString("email");
-                    auth.pass = result.getString("pass");
 
                     auth.organizer_id = result.getInt("organizer_id");
                     auth.max_events = result.getInt("max_events");

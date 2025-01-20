@@ -1,4 +1,4 @@
-insert into users values(null, 'leo', 'leo@gmail.com', 'pass', '', null, null);
+insert into users values(null, 'leo', 'leo@gmail.com', 'pass', null, null, null);
 insert into users values(null, 'yui', 'yui@gmail.com', 'pass', '', null, null);
 
 insert into organizers values(null, false, 1);

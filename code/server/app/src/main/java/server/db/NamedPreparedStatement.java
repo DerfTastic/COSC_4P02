@@ -52,6 +52,10 @@ public class NamedPreparedStatement implements AutoCloseable {
         stmt.setInt(getIndex(name), value);
     }
 
+    public void setLong(String name, long value) throws SQLException {
+        stmt.setLong(getIndex(name), value);
+    }
+
     public void setString(String name, String value) throws SQLException {
         stmt.setString(getIndex(name), value);
     }
