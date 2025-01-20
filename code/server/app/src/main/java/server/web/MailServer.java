@@ -3,17 +3,19 @@ package server.web;
 import server.Secrets;
 
 import javax.mail.*;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 public class MailServer {
 
-    private final static Session session;
+    private final Session session;
 
-    private final static String username = Secrets.get("email_account");
-    private final static String password = Secrets.get("email_password");
-    static{
+    private final String username;
+    public MailServer(String username, String password){
+        this.username = username;
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -30,32 +32,22 @@ public class MailServer {
                     });
     }
 
-    public static void sendEmail(String subject, String content, InternetAddress[] to) throws MessagingException {
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(username));
-        message.setRecipients(
-                Message.RecipientType.TO,
-                to
-        );
-        message.setSubject(subject);
-        message.setContent(content, "text/html");
-
-        Transport.send(message);
+    public interface MessageConfigurator{
+        void config(Message message) throws MessagingException;
     }
 
-    public static void main(String[] args) throws Exception {
-        var content = """
-        <html>
-            <body>
-                <p>Greetings!</p>
-                <div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:8080"></div>
-                <div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Meow"></div>
-                <div><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Nya"></div>
-                <p>Salutations</p>
-            </body>
-        </html>
-        """;
-        sendEmail("Purchased Tickets", content, InternetAddress.parse("pt21zs@brocku.ca"));
+    public InternetAddress[] fromStrings(String... in) throws AddressException {
+        var adds = new InternetAddress[in.length];
+        for(int i = 0; i < adds.length; i ++){
+            adds[i] = new InternetAddress(in[i]);
+        }
+        return adds;
+    }
 
+    public void sendMail(MessageConfigurator configurator) throws MessagingException {
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(username));
+        configurator.config(message);
+        Transport.send(message);
     }
 }

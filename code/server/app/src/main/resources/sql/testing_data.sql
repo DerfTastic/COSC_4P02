@@ -1,11 +1,11 @@
-insert into users values(null, 'leo', 'leo@gmail.com', '', '', null, null);
-insert into users values(null, 'yui', 'yui@gmail.com', '', '', null, null);
+insert into users values(null, 'leo', 'leo@gmail.com', 'pass', '', null, null);
+insert into users values(null, 'yui', 'yui@gmail.com', 'pass', '', null, null);
 
 insert into organizers values(null, false, 1);
 insert into organizers values(null, true, 500);
 
-insert into users values(null, 'little', 'guy@yahoo.com', '', '', 1, null);
-insert into users values(null, 'big', 'guy@gmail.com', '', '', 2, null);
+insert into users values(null, 'little', 'guy@yahoo.com', 'pass', '', 1, null);
+insert into users values(null, 'big', 'guy@gmail.com', 'pass', '', 2, null);
 
 insert into events values(null, 1, "Taylor Swift Concert", "", null, null, "Somewhere", null, null);
 insert into events values(null, 1, "Taylor Swift Concert2", "", null, null, "Somewhere else", null, null);

@@ -2,6 +2,7 @@ package server.web;
 
 import com.sun.net.httpserver.HttpServer;
 import server.Config;
+import server.Secrets;
 import server.db.DbManager;
 import server.web.route.RoutesBuilder;
 
@@ -14,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WebServer {
-    private static final int PORT = 8080;
     public final HttpServer server;
     private final HashMap<Class<?>, Object> managedResources = new HashMap<>();
 
@@ -30,6 +30,7 @@ public class WebServer {
             this.close();
             throw e;
         }
+        addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
         server.createContext("/", new StaticContentHandler());
         new APIRouteBuilder(this).attachRoutes(this, "/api");
@@ -45,6 +46,7 @@ public class WebServer {
         managedResources.put(resource.getClass(), resource);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getManagedResource(Class<T> clazz){
         return (T) managedResources.get(clazz);
     }

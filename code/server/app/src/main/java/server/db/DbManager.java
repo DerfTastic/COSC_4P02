@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -20,8 +21,8 @@ import java.util.logging.Logger;
 
 public class DbManager implements AutoCloseable{
     private final static HashMap<String, String> resources = new HashMap<>();
-    private final LinkedList<DbConnection> connections = new LinkedList<>();
-    private final HashSet<DbConnection> outGoing = new HashSet<>();
+    private final LinkedList<Connection> connections = new LinkedList<>();
+    private final HashSet<Connection> outGoing = new HashSet<>();
     private final String url;
     private final int max_connections;
 
@@ -124,13 +125,13 @@ public class DbManager implements AutoCloseable{
         }
     }
 
-    protected synchronized void reAddConnection(DbConnection conn){
+    protected synchronized void reAddConnection(Connection conn){
         outGoing.remove(conn);
         connections.addLast(conn);
         notify();
     }
 
-    private DbConnection initialize() throws SQLException{
+    private SQLiteConnection initialize() throws SQLException{
         var config = new SQLiteConfig();
         config.setSharedCache(true);
         config.enableRecursiveTriggers(true);
@@ -140,7 +141,7 @@ public class DbManager implements AutoCloseable{
         connection.createStatement().execute("PRAGMA read_uncommitted=true;");
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
-        return new DbConnection(connection, this);
+        return connection;
     }
 
     public synchronized DbConnection conn() throws SQLException {
@@ -153,11 +154,11 @@ public class DbManager implements AutoCloseable{
             }
         }
         if(connections.isEmpty()){
-            conn = initialize();
+            conn = new DbConnection(initialize(), this);
         }else{
-            conn = connections.pollFirst();
+            conn = new DbConnection(connections.pollFirst(), this);
         }
-        outGoing.add(conn);
+        outGoing.add(conn.conn);
         return conn;
     }
 }

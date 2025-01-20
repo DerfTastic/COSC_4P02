@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Mail API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Send an Email</h1>
+        <form id="mailForm">
+            <div>
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" placeholder="Enter subject" required>
+            </div>
+            <div>
+                <label for="content">Content:</label>
+                <textarea id="content" name="content" rows="5" placeholder="Enter email content" required></textarea>
+            </div>
+            <div>
+                <label for="to">Recipients (comma-separated):</label>
+                <input type="text" id="to" name="to" placeholder="Enter recipient emails" required>
+            </div>
+            <button type="button" onclick="sendMail()">Send Email</button>
+        </form>
+    </div>
+
+    <script>
+        async function sendMail() {
+            const subject = document.getElementById('subject').value;
+            const content = document.getElementById('content').value;
+            const to = document.getElementById('to').value.split(',').map(email => email.trim());
+
+            const mail = {
+                subject: subject,
+                content: content,
+                to: to
+            };
+
+            try {
+                const response = await fetch('/api/mail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(mail)
+                });
+
+                if (response.ok) {
+                    alert('Email sent successfully!');
+                } else {
+                    alert('Failed to send email.');
+                }
+            } catch (error) {
+                console.error('Error sending mail:', error);
+                alert('An error occurred while sending the email.');
+            }
+        }
+    </script>
+</body>
+</html>

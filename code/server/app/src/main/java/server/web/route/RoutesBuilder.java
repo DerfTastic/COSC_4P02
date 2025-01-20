@@ -85,8 +85,7 @@ public class RoutesBuilder {
         }
         if(param.getType().equals(HttpExchange.class)) return request -> request.exchange;
         if(param.getType().equals(RouteImpl.Request.class)) return request -> request;
-//        return request -> request.exchange.
-        throw new RuntimeException("No parameter handler for " + param);
+        return request -> request.getServer().getManagedResource(param.getType());
     }
 
     private StringsAdapter<?> getParameterStringAdapter(Class<?> type, boolean nullable) {

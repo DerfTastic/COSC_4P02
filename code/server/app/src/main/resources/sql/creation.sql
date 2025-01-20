@@ -4,6 +4,7 @@ drop table if exists events;
 drop table if exists tickets;
 drop table if exists purchased_tickets;
 drop table if exists payments;
+drop table if exists sessions;
 
 
 create table users(
@@ -92,5 +93,17 @@ create table payments(
     FOREIGN KEY (user_id)
         REFERENCES users (id)
             ON DELETE SET NULL
+            ON UPDATE NO ACTION
+);
+
+create table sessions(
+    id INTEGER primary key not null,
+    token TEXT unique,
+    user_id INTEGER not null,
+
+
+    FOREIGN KEY (user_id)
+        REFERENCES users (id)
+            ON DELETE CASCADE
             ON UPDATE NO ACTION
 );

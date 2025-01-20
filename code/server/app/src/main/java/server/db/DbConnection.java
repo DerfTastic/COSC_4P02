@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 
 public class DbConnection implements AutoCloseable {
-    public final Connection conn;
+    public Connection conn;
     private final DbManager db;
 
     public DbConnection(Connection conn, DbManager db) {
@@ -22,7 +22,8 @@ public class DbConnection implements AutoCloseable {
     }
 
     @Override
-    public void close() throws SQLException {
-        if(!conn.isClosed()) db.reAddConnection(this);
+    public synchronized void close() throws SQLException {
+        if(!conn.isClosed()) db.reAddConnection(conn);
+        conn = null;
     }
 }
