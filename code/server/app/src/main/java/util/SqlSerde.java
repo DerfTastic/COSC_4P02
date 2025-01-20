@@ -41,22 +41,23 @@ public class SqlSerde {
             while(rs.next()){
                 var instance = constructor.newInstance();
                 for(var field : fields){
+                    var name = field.getName();
                     if(field.getType().equals(int.class)){
-                        field.setInt(instance, rs.getInt(field.getName()));
+                        field.setInt(instance, rs.getInt(name));
                     }else if(field.getType().equals(float.class)){
-                        field.setFloat(instance, rs.getFloat(field.getName()));
+                        field.setFloat(instance, rs.getFloat(name));
                     }else if(field.getType().equals(boolean.class)){
-                        field.setBoolean(instance, rs.getBoolean(field.getName()));
+                        field.setBoolean(instance, rs.getBoolean(name));
                     }else if(field.getType().equals(short.class)){
-                        field.setShort(instance, rs.getShort(field.getName()));
+                        field.setShort(instance, rs.getShort(name));
                     }else if(field.getType().equals(long.class)){
-                        field.setLong(instance, rs.getLong(field.getName()));
+                        field.setLong(instance, rs.getLong(name));
                     }else if(field.getType().equals(byte.class)){
-                        field.setByte(instance, rs.getByte(field.getName()));
+                        field.setByte(instance, rs.getByte(name));
                     }else if(field.getType().equals(double.class)){
-                        field.setDouble(instance, rs.getDouble(field.getName()));
+                        field.setDouble(instance, rs.getDouble(name));
                     }else if(field.getType().equals(String.class)){
-                        field.set(instance, rs.getString(field.getName()));
+                        field.set(instance, rs.getString(name));
                     }else throw new RuntimeException("Invalid field type: " + field);
                 }
                 list.add(instance);

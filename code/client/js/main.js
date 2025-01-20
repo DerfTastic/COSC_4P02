@@ -61,3 +61,36 @@ async function test(){
         console.error('Login failed:', error);
     }
 }
+
+async function register(name, email, password) {
+    const response = await fetch(`${apiRoot}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+    });
+
+    alert(response.ok ? 'Registration successful!' : 'Registration failed!');
+}
+
+async function list_sessions() {
+    const response = await fetch(`${apiRoot}/list_sessions`, {
+        method: 'GET',
+        headers: { 'X-UserAPIToken': session }
+    });
+
+    if (response.ok) {
+        const sessions = await response.json();
+        return sessions;
+    } else {
+        alert('Failed to fetch sessions!');
+    }
+}
+
+async function invalidate_session(sessionId) {
+    const response = await fetch(`${apiRoot}/invalidate_session/${sessionId}`, {
+        method: 'DELETE',
+        headers: { 'X-UserAPIToken': session }
+    });
+
+    alert(response.ok ? 'Session invalidated!' : 'Failed to invalidate session!');
+}

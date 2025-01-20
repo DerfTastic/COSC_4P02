@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <script src="/js/main.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, button, textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Management System</h1>
+
+        <section id="register-section">
+            <h2>Register</h2>
+            <form id="register-form">
+                <label for="reg-name">Name:</label>
+                <input type="text" id="reg-name" required>
+
+                <label for="reg-email">Email:</label>
+                <input type="email" id="reg-email" required>
+
+                <label for="reg-password">Password:</label>
+                <input type="password" id="reg-password" required>
+
+                <button type="button" onclick="registerUser()">Register</button>
+            </form>
+        </section>
+
+        <section id="login-section">
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" required>
+
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" required>
+
+                <button type="button" onclick="loginUser()">Login</button>
+            </form>
+        </section>
+
+        <section id="sessions-section">
+            <h2>Sessions</h2>
+            <button type="button" onclick="listSessions()">List Sessions</button>
+            <div id="sessions-output"></div>
+        </section>
+
+        <section id="invalidate-session-section">
+            <h2>Invalidate Session</h2>
+            <form id="invalidate-form">
+                <label for="session-id">Session ID:</label>
+                <input type="number" id="session-id" required>
+
+                <button type="button" onclick="invalidateSession()">Invalidate</button>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        const apiRoot = '/api';
+
+        async function registerUser() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            await register(name, email, password);
+        }
+
+        async function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            login(email, password);
+        }
+
+        async function listSessions() {
+            document.getElementById('sessions-output').textContent = JSON.stringify(await list_sessions(), null, 2);
+        }
+
+        async function invalidateSession() {
+            const sessionId = document.getElementById('session-id').value;
+            await invalidate_session(sessionId);
+        }
+    </script>
+</body>
+</html>

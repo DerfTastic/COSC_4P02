@@ -101,6 +101,8 @@ create table sessions(
     token TEXT unique,
     user_id INTEGER not null,
     expiration DATE not null,
+    agent TEXT,
+    ip TEXT,
 
 
     FOREIGN KEY (user_id)

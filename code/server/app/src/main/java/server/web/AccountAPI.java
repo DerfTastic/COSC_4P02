@@ -7,14 +7,17 @@ import server.web.annotations.Body;
 import server.web.annotations.FromRequest;
 import server.web.annotations.Json;
 import server.web.annotations.Route;
+import server.web.annotations.url.Path;
 import server.web.route.ClientError;
 import server.web.route.RouteImpl;
 import server.web.route.RouteParameter;
+import util.SqlSerde;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class AccountAPI {
@@ -41,7 +44,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
+    public static String login(RouteImpl.Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
         int user_id;
         try(var stmt = trans.conn.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
@@ -55,9 +58,11 @@ public class AccountAPI {
         }
 
         int session_id;
-        try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp) returning id")){
+        try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
             stmt.setInt(":user_id", user_id);
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
+            stmt.setString(":agent", request.exchange.getRequestHeaders().getFirst("User-Agent"));
+            stmt.setString(":ip", request.exchange.getRemoteAddress().toString());
             session_id = stmt.executeQuery().getInt(1);
         }
 
@@ -81,17 +86,33 @@ public class AccountAPI {
         return token;
     }
 
+    public static class Session{
+        public int id;
+        public long expiration;
+        public String agent;
+        public String ip;
+    }
+
     @Route
-    public static void invalidate_session(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn, @Body String session_token) throws SQLException {
-        try(var stmt = conn.namedPreparedStatement("delete from sessions where token=:token AND user_id=:id")){
-            stmt.setString(":token", session_token);
-            stmt.setInt(":id", auth.id);
+    public static @Json List<Session> list_sessions(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn) throws SQLException {
+        try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
+            stmt.setInt(":id", auth.user_id);
+            return SqlSerde.sqlList(stmt.executeQuery(), Session.class);
+        }
+    }
+
+    @Route("/invalidate_session/<session_id>")
+    public static void invalidate_session(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn, @Path int session_id) throws SQLException {
+        try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
+            stmt.setInt(":session_id", session_id);
+            stmt.setInt(":user_id", auth.user_id);
             stmt.execute();
         }
     }
 
     public static class UserAuth{
-        public int id;
+        public int user_id;
+        public int session_id;
         public String email;
 
         public int organizer_id;
@@ -117,7 +138,8 @@ public class AccountAPI {
                     if(result==null||!result.next())throw new ClientError.Unauthorized("No valid session");
 
                     var auth = new UserAuth();
-                    auth.id = result.getInt("id");
+                    auth.session_id = result.getInt("id");
+                    auth.user_id = result.getInt("user_id");
                     auth.email = result.getString("email");
 
                     auth.organizer_id = result.getInt("organizer_id");
