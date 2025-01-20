@@ -1,5 +1,6 @@
 package server.web;
 
+import org.sqlite.SQLiteException;
 import server.db.DbConnection;
 import server.db.DbManager;
 import server.db.Transaction;
@@ -13,7 +14,6 @@ import server.web.route.RouteImpl;
 import server.web.route.RouteParameter;
 import util.SqlSerde;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -22,19 +22,49 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class AccountAPI {
 
+    public static class ChangePassword{
+        public String email;
+        public String old_password;
+        public String new_password;
+    }
+
+    @Route
+    public static void change_password(@FromRequest(UserAuthFromRequest.class) UserAuth auth, Transaction trans, @Body @Json ChangePassword cp) throws SQLException {
+        cp.old_password = Util.hashy((cp.old_password+"\0\0\0\0"+cp.email).getBytes());
+        cp.new_password = Util.hashy((cp.new_password+"\0\0\0\0"+cp.email).getBytes());
+        try(var stmt = trans.conn.namedPreparedStatement("update users set password=:new_password where email=:email AND password=:old_password AND id=:id")){
+            stmt.setString(":email", cp.email);
+            stmt.setInt(":id", auth.user_id);
+            stmt.setString(":old_password", cp.old_password);
+            stmt.setString(":new_password", cp.new_password);
+            stmt.execute();
+        }
+
+        try(var stmt = trans.conn.namedPreparedStatement("delete from sessions where user_id=:id")){
+            stmt.setInt(":id", auth.user_id);
+            stmt.execute();
+        }
+    }
+
     public static class Register{
-        String name;
-        String email;
-        String password;
+        public String name;
+        public String email;
+        public String password;
     }
 
     @Route
     public static void register(Transaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
+        register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
         try(var stmt = trans.conn.namedPreparedStatement("insert into users values(null, :name, :email, :pass, null, null, null)")){
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);
             stmt.execute();
+        }catch (SQLiteException e){
+            if(e.getResultCode().code==2067){//UNIQUE CONSTRAINTS FAILED
+                throw new ClientError.BadRequest("Account with that email already exists");
+            }
+            throw e;
         }
     }
 
@@ -46,6 +76,7 @@ public class AccountAPI {
     @Route
     public static String login(RouteImpl.Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
         int user_id;
+        login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.conn.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
             stmt.setString(":pass", login.password);
@@ -66,16 +97,8 @@ public class AccountAPI {
             session_id = stmt.executeQuery().getInt(1);
         }
 
-        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        final byte[] hash = digest.digest((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id).getBytes());
-        final StringBuilder hexString = new StringBuilder();
-        for (int i = 0; i < hash.length; i++) {
-            final String hex = Integer.toHexString(0xff & hash[i]);
-            if(hex.length() == 1)
-                hexString.append('0');
-            hexString.append(hex);
-        }
-        var token = String.format("%s%08X", hexString, session_id);
+        var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id).getBytes());
+        var token = String.format("%s%08X", hash, session_id);
 
         try(var stmt = trans.conn.namedPreparedStatement("update sessions set token=:token where id=:id")){
             stmt.setString(":token", token);
@@ -133,7 +156,6 @@ public class AccountAPI {
                 }
                 try(var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")){
                     stmt.setString(":token", token);
-                    System.out.println(token);
                     var result = stmt.executeQuery();
                     if(result==null||!result.next())throw new ClientError.Unauthorized("No valid session");
 
