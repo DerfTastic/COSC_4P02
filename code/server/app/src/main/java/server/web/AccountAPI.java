@@ -136,11 +136,11 @@ public class AccountAPI {
             stmt.execute();
         }
 
-        Util.LocationQuery res = null;
-        try{
-            res = Util.queryLocation(request.exchange.getRemoteAddress().getAddress());
-        }catch (Exception ignore){}
         mail.sendMail(message -> {
+            Util.LocationQuery res = null;
+            try{
+                res = Util.queryLocation(request.exchange.getRemoteAddress().getAddress());
+            }catch (Exception ignore){}
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(login.email));
             message.setSubject("Warning");
 

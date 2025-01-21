@@ -55,7 +55,7 @@ async function api_call(route, data, error){
 
     if(response.ok){
         return response;
-    }else if(response.status%100==400){
+    }else if(response.status>=400&&response.status<500){
         throw await response.text();
     }else{
         throw error;
