@@ -14,6 +14,7 @@ import server.web.route.RouteImpl;
 import server.web.route.RouteParameter;
 import util.SqlSerde;
 
+import javax.mail.Message;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -53,7 +54,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void register(Transaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
+    public static void register(MailServer mail, Transaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
         try(var stmt = trans.conn.namedPreparedStatement("insert into users values(null, :name, :email, :pass, null, null, null)")){
             stmt.setString(":name", register.name);
@@ -66,6 +67,12 @@ public class AccountAPI {
             }
             throw e;
         }
+
+        mail.sendMail(message -> {
+            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
+            message.setSubject("Welcome!");
+            message.setContent("Thank you for registering for an account " + register.name, "text/html");
+        });
     }
 
     public static class Login{
@@ -74,13 +81,15 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(RouteImpl.Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
+    public static String login(MailServer mail, RouteImpl.Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
         int user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.conn.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
             stmt.setString(":pass", login.password);
             var res = stmt.executeQuery();
+            if(!res.next())
+                throw new ClientError.Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
             try{
                 user_id = res.getInt(1);
             }catch (SQLException ignore){
@@ -88,12 +97,15 @@ public class AccountAPI {
             }
         }
 
+        var agent = request.exchange.getRequestHeaders().getFirst("User-Agent");
+        var ip = request.exchange.getRemoteAddress().toString();
+
         int session_id;
         try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
             stmt.setInt(":user_id", user_id);
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
-            stmt.setString(":agent", request.exchange.getRequestHeaders().getFirst("User-Agent"));
-            stmt.setString(":ip", request.exchange.getRemoteAddress().toString());
+            stmt.setString(":agent", agent);
+            stmt.setString(":ip", ip);
             session_id = stmt.executeQuery().getInt(1);
         }
 
@@ -105,6 +117,17 @@ public class AccountAPI {
             stmt.setInt(":id", session_id);
             stmt.execute();
         }
+
+        Util.LocationQuery res = null;
+        try{
+            res = Util.queryLocation(request.exchange.getRemoteAddress().getAddress());
+        }catch (Exception ignore){}
+        mail.sendMail(message -> {
+            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(login.email));
+            message.setSubject("Warning");
+
+            message.setContent("Someone logged into your account <br/>IP: " + ip + "<br/>User Agent: " + agent, "text/html");
+        });
 
         return token;
     }

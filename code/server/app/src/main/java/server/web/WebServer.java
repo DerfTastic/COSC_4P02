@@ -6,9 +6,9 @@ import server.Secrets;
 import server.db.DbManager;
 import server.web.route.RoutesBuilder;
 
+import javax.mail.NoSuchProviderException;
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -18,7 +18,7 @@ public class WebServer {
     public final HttpServer server;
     private final HashMap<Class<?>, Object> managedResources = new HashMap<>();
 
-    public WebServer() throws IOException, SQLException {
+    public WebServer() throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
         var address = new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port);
@@ -30,7 +30,12 @@ public class WebServer {
             this.close();
             throw e;
         }
-        addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
+        try {
+            addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
+        } catch (NoSuchProviderException e) {
+            this.close();
+            throw e;
+        }
 
         server.createContext("/", new StaticContentHandler());
         new APIRouteBuilder(this).attachRoutes(this, "/api");

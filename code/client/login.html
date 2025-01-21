@@ -98,28 +98,49 @@
     </div>
 
     <script>
-        const apiRoot = '/api';
 
         async function registerUser() {
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
-            await register(name, email, password);
+            try{
+                await register(name, email, password);
+                alert("Registered User!");
+            }catch(e){
+                alert(e);
+            }
         }
 
         async function loginUser() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            login(email, password);
+            try{
+                await login(email, password);
+                alert("Logged in!");
+            }catch(e){
+                alert(e);
+            }
         }
 
         async function listSessions() {
-            document.getElementById('sessions-output').textContent = JSON.stringify(await list_sessions(), null, 2);
+            var content;
+            try{
+                content = JSON.stringify(await list_sessions(), null, 2);
+            }catch(e){
+                content = "";
+                alert(e);
+            }
+            document.getElementById('sessions-output').textContent = content;
         }
 
         async function invalidateSession() {
             const sessionId = document.getElementById('session-id').value;
-            await invalidate_session(sessionId);
+            try{
+                await invalidate_session(sessionId);
+                alert("Invalidated session");
+            }catch(e){
+                alert(e);
+            }
         }
     </script>
 </body>
