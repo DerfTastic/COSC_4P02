@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Config implements Serializable {
     public static final Config CONFIG;
@@ -25,7 +27,9 @@ public class Config implements Serializable {
             var properties = new Properties();
             try{
                 properties.load(new FileInputStream("server.properties"));
-            }catch (IOException ignore){}
+            }catch (IOException e){
+                Logger.getGlobal().log(Level.WARNING, "Error while loading properties", e);
+            }
 
             var config = new Config();
             for(var field : Config.class.getFields()){
