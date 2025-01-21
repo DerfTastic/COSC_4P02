@@ -30,12 +30,8 @@ public class WebServer {
             this.close();
             throw e;
         }
-        try {
-            addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
-        } catch (NoSuchProviderException e) {
-            this.close();
-            throw e;
-        }
+
+        addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
         server.createContext("/", new StaticContentHandler());
         new APIRouteBuilder(this).attachRoutes(this, "/api");

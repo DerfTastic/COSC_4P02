@@ -89,6 +89,8 @@ public class Util {
     public static LocationQuery queryLocation(InetAddress ip) throws Exception {
         URL yahoo = new URL("http://ip-api.com/json/" + ip.getHostAddress());
         URLConnection yc = yahoo.openConnection();
+        yc.setReadTimeout(500);
+        yc.setConnectTimeout(500);
         try(
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(

@@ -5,23 +5,24 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.Closeable;
-import java.util.LinkedList;
 import java.util.Properties;
-import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MailServer implements Closeable {
 
     private final Session session;
-    private final Transport transport;
 
     private final String username;
 
-    private final Queue<Message> queue = new LinkedList<>();
-    private volatile boolean open = true;
+    private final ExecutorService executor;
 
-    public MailServer(String username, String password) throws MessagingException {
+    private final ThreadLocal<Transport> transport;
+
+
+    public MailServer(String username, String password) {
         this.username = username;
 
         Properties prop = new Properties();
@@ -38,49 +39,31 @@ public class MailServer implements Closeable {
                         }
                     });
 
-        transport = session.getTransport("smtp");
-        transport.connect();
-
-        new Thread(() -> {
-            try {
-                run();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
-        Logger.getGlobal().log(Level.FINE, "Started Mail Service for '"+username+"'");
-    }
-
-    private void run() throws InterruptedException {
-        while(open) {
-            Message message;
-            synchronized (queue) {
-                while (queue.isEmpty()) {
-                    queue.wait();
-                    if (!open) return;
+        transport = ThreadLocal.withInitial(() -> {
+            while(true){
+                try{
+                    var transport = session.getTransport("smtp");
+                    transport.connect();
+                    Logger.getGlobal().log(Level.FINE, "Initialized mail transport");
+                    return transport;
+                }catch (Exception e) {
+                    Logger.getGlobal().log(Level.FINE, "Failed to initialize email transport", e);
                 }
-                message = queue.poll();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            try{
-                if(!transport.isConnected())transport.connect();
-                transport.sendMessage(message, message.getAllRecipients());
-            }catch (Exception e){
-                Logger.getGlobal().log(Level.WARNING, "Failed to send email message", e);
-            }
-        }
+        });
+
+        executor = Executors.newFixedThreadPool(32);
+        Logger.getGlobal().log(Level.FINE, "Started Mail Service for '"+username+"'");
     }
 
     @Override
     public void close() {
-        open = false;
-        synchronized (queue){
-            queue.notifyAll();
-        }
-        try {
-            transport.close();
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        executor.shutdown();
     }
 
     public interface MessageConfigurator{
@@ -96,16 +79,15 @@ public class MailServer implements Closeable {
     }
 
     public synchronized void sendMail(MessageConfigurator configurator) {
-        try{
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
-            configurator.config(message);
-            synchronized (queue){
-                queue.add(message);
-                queue.notify();
-            }
-        }catch (MessagingException e){
-            throw new RuntimeException(e);
-        }
+            executor.submit(() -> {
+                try{
+                    Message message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress(username));
+                    configurator.config(message);
+                    transport.get().sendMessage(message, message.getAllRecipients());
+                }catch (MessagingException e){
+                    Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
+                }
+            });
     }
 }

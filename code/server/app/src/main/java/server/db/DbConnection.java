@@ -23,7 +23,10 @@ public class DbConnection implements AutoCloseable {
 
     @Override
     public synchronized void close() throws SQLException {
-        if(!conn.isClosed()) db.reAddConnection(conn);
+        if(!conn.isClosed())
+            db.reAddConnection(conn);
+        else
+            db.removeConnection(conn);
         conn = null;
     }
 }

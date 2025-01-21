@@ -131,6 +131,10 @@ public class DbManager implements AutoCloseable{
         notify();
     }
 
+    protected synchronized void removeConnection(Connection conn) {
+        outGoing.remove(conn);
+    }
+
     private SQLiteConnection initialize() throws SQLException{
         var config = new SQLiteConfig();
         config.setSharedCache(true);
