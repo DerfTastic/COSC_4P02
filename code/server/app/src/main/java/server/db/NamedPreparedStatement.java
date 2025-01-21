@@ -93,4 +93,8 @@ public class NamedPreparedStatement implements AutoCloseable {
     public boolean execute() throws SQLException {
         return stmt.execute();
     }
+
+    public int executeUpdate() throws SQLException{
+        return stmt.executeUpdate();
+    }
 }

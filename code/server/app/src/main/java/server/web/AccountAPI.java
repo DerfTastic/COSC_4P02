@@ -23,11 +23,21 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class AccountAPI {
 
+    public static class DeleteAccount{
+        public String email;
+        public String password;
+    }
+
     @Route
-    public static void delete_account(@FromRequest(UserAuthFromRequest.class) UserAuth auth, Transaction trans) throws SQLException{
-        try(var stmt = trans.conn.namedPreparedStatement("delete from users where email=:email")){
+    public static void delete_account(@FromRequest(UserAuthFromRequest.class) UserAuth auth, Transaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
+        if(!account.email.equals(auth.email))
+            throw new ClientError.Unauthorized("Incorrect email");
+        account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
+        try(var stmt = trans.conn.namedPreparedStatement("delete from users where email=:email AND pass=:pass")){
             stmt.setString(":email", auth.email);
-            stmt.execute();
+            stmt.setString(":pass", account.password);
+            if(stmt.executeUpdate() != 1)
+                throw new ClientError.Unauthorized("Incorrect password");
         }
     }
 

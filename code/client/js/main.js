@@ -1,5 +1,6 @@
 console.log("Hello, World! From Javascript");
 
+//---------- TESTING/DEBUG ------------------- START
 
 async function execute_sql(sql){
     const response = await fetch("/api/sql", {
@@ -9,8 +10,40 @@ async function execute_sql(sql){
     return await response.text();  
 }
 
-var session = "";
+
+async function test(){
+    return await (await api_call(
+        `/test`,
+        {
+            method: 'GET',
+            headers: { 'X-UserAPIToken': getSession() }
+        },
+        "An error occured while testing sessions"
+    )).json();
+}
+
+//---------- TESTING/DEBUG ------------------- END
+
+
 const apiRoot = "/api";
+
+
+//---------- SESSION MANAGEMENT ------------------- START
+
+var currentSession = "";
+//TODO make this cookie based?
+function setSession(session){
+    currentSession = session;
+}
+
+//TODO make this cookie based?
+function getSession(){
+    return currentSession;
+}
+
+//---------- SESSION MANAGEMENT ------------------- END
+
+
 
 async function api_call(route, data, error){
     var response;
@@ -29,9 +62,12 @@ async function api_call(route, data, error){
     }
 }
 
+
+//---------- USER API ------------------- START
+
 async function login(email, password) {
-    session = "";
-    session = await (await api_call(
+    setSession("");
+    setSession(await (await api_call(
         `/login`,
         {
             method: 'POST',
@@ -44,18 +80,7 @@ async function login(email, password) {
             })
         },
         "An error occured while loggin in"
-    )).text();
-}
-
-async function test(){
-    return await (await api_call(
-        `/test`,
-        {
-            method: 'GET',
-            headers: { 'X-UserAPIToken': session }
-        },
-        "An error occured while testing sessions"
-    )).json();
+    )).text());
 }
 
 async function register(name, email, password) {
@@ -75,7 +100,7 @@ async function list_sessions() {
         `/list_sessions`,
         {
             method: 'GET',
-            headers: { 'X-UserAPIToken': session }
+            headers: { 'X-UserAPIToken': getSession() }
         },
         "An error occured while fetching sessions"
     )).json();
@@ -86,8 +111,22 @@ async function invalidate_session(sessionId) {
         `/invalidate_session/${sessionId}`,
         {
             method: 'DELETE',
-            headers: { 'X-UserAPIToken': session }
+            headers: { 'X-UserAPIToken': getSession() }
         },
         "An error occured while invalidating session"
     );
 }
+
+async function delete_account(email, password) {
+    await api_call(
+        `/delete_account/${sessionId}`,
+        {
+            method: 'DELETE',
+            headers: { 'X-UserAPIToken': getSession() },
+            body: JSON.stringify({ email, password })
+        },
+        "An error occured while invalidating session"
+    );
+}
+
+//---------- USER API ------------------- END
