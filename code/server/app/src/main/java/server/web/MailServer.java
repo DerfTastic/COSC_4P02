@@ -5,7 +5,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;

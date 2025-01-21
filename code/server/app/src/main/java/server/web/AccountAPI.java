@@ -23,6 +23,14 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class AccountAPI {
 
+    @Route
+    public static void delete_account(@FromRequest(UserAuthFromRequest.class) UserAuth auth, Transaction trans) throws SQLException{
+        try(var stmt = trans.conn.namedPreparedStatement("delete from users where email=:email")){
+            stmt.setString(":email", auth.email);
+            stmt.execute();
+        }
+    }
+
     public static class ChangePassword{
         public String email;
         public String old_password;
@@ -98,7 +106,7 @@ public class AccountAPI {
         }
 
         var agent = request.exchange.getRequestHeaders().getFirst("User-Agent");
-        var ip = request.exchange.getRemoteAddress().toString();
+        var ip = request.exchange.getRemoteAddress().getAddress().getHostAddress();
 
         int session_id;
         try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){

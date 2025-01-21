@@ -10,7 +10,6 @@ import server.web.annotations.url.Path;
 import util.SqlSerde;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import java.sql.SQLException;
 
 
@@ -49,11 +48,11 @@ public class TestAPI {
     }
 
     @Route
-    public static void mail(MailServer server, @Body @Json Mail mail) throws MessagingException {
+    public static void mail(MailServer server, @Body @Json Mail mail) {
         server.sendMail(message -> {
             message.setRecipients(
                     Message.RecipientType.TO,
-                    server.fromStrings(mail.to)
+                    MailServer.fromStrings(mail.to)
             );
             message.setSubject(mail.subject);
             message.setContent(mail.content, "text/html");
