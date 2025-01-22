@@ -15,8 +15,8 @@ public class APIRouteBuilder extends RoutesBuilder {
     private final DbManager db;
     private final HashMap<Class<?>, RouteParameter<?>> parameterHandlerMap = new HashMap<>();
 
-    public APIRouteBuilder(WebServer server){
-        super(AccountAPI.class, TestAPI.class);
+    public APIRouteBuilder(WebServer server, Class<?>... clazzs){
+        super(clazzs);
         this.db = server.getManagedResource(DbManager.class);
         initializeParameterHandlers();
     }

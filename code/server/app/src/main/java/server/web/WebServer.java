@@ -34,8 +34,10 @@ public class WebServer {
         addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
         server.createContext("/", new StaticContentHandler());
-        new APIRouteBuilder(this).attachRoutes(this, "/api");
-        new RoutesBuilder(MediaAPI.class).attachRoutes(this, "/media");
+        new APIRouteBuilder(this, AccountAPI.class, TestAPI.class)
+                .attachRoutes(this, "/api");
+        new RoutesBuilder(MediaAPI.class)
+                .attachRoutes(this, "/media");
 
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
         server.start();

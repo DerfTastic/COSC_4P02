@@ -22,11 +22,6 @@ public class TestAPI {
         return auth;
     }
 
-    public static final class Person {
-        public int id;
-        public String name;
-    }
-
     /*
             var content = """
                         <html>
@@ -57,14 +52,6 @@ public class TestAPI {
             message.setSubject(mail.subject);
             message.setContent(mail.content, "text/html");
         });
-    }
-
-    @Route("/person/<id>")
-    public static @Json Person person(Transaction trans, @Path int id) throws SQLException {
-        try (var stmt = trans.conn.namedPreparedStatement("select * from person where id=:id")){
-            stmt.setInt(":id",id);
-            return SqlSerde.sqlSingle(stmt.executeQuery(), Person.class);
-        }
     }
 
     @Route

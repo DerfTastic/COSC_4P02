@@ -140,9 +140,10 @@ public class DbManager implements AutoCloseable{
         config.setSharedCache(true);
         config.enableRecursiveTriggers(true);
         var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
-        connection.setBusyTimeout(999999999);
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
-        connection.createStatement().execute("PRAGMA read_uncommitted=true;");
+        connection.createStatement().execute("PRAGMA read_uncommitted=true");
+        connection.createStatement().execute("PRAGMA foreign_keys=true");
+        connection.createStatement().execute("PRAGMA recursive_triggers=true");
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
         return connection;
