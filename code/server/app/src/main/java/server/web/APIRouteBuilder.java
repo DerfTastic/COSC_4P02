@@ -3,6 +3,7 @@ package server.web;
 import server.db.DbConnection;
 import server.db.DbManager;
 import server.db.Transaction;
+import server.web.route.Request;
 import server.web.route.RouteImpl;
 import server.web.route.RouteParameter;
 import server.web.route.RoutesBuilder;
@@ -24,28 +25,28 @@ public class APIRouteBuilder extends RoutesBuilder {
     private void initializeParameterHandlers() {
         this.addParameterHandler(Transaction.class, new RouteParameter<>() {
             @Override
-            public Transaction construct(RouteImpl.Request request) throws SQLException {
+            public Transaction construct(Request request) throws SQLException {
                 return db.transaction();
             }
 
             @Override
-            public void destructError(RouteImpl.Request request, Transaction type) throws Exception {
+            public void destructError(Request request, Transaction type) throws Exception {
                 type.close();
             }
 
             @Override
-            public void destruct(RouteImpl.Request request, Transaction type) throws SQLException {
+            public void destruct(Request request, Transaction type) throws SQLException {
                 type.tryCommit();
             }
         });
         addParameterHandler(DbConnection.class, new RouteParameter<>() {
             @Override
-            public DbConnection construct(RouteImpl.Request request) throws Exception {
+            public DbConnection construct(Request request) throws Exception {
                 return db.conn();
             }
 
             @Override
-            public void destruct(RouteImpl.Request request, DbConnection type) throws Exception {
+            public void destruct(Request request, DbConnection type) throws Exception {
                 type.close();
             }
         });

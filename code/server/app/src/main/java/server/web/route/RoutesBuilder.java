@@ -84,7 +84,7 @@ public class RoutesBuilder {
             }
         }
         if(param.getType().equals(HttpExchange.class)) return request -> request.exchange;
-        if(param.getType().equals(RouteImpl.Request.class)) return request -> request;
+        if(param.getType().equals(Request.class)) return request -> request;
         return request -> request.getServer().getManagedResource(param.getType());
     }
 
@@ -220,15 +220,15 @@ public class RoutesBuilder {
 
     protected RouteReturn<?> getReturnHandler(RouteImpl route, Method method) throws Throwable{
         if(method.getReturnType().equals(void.class)){
-            return (request, data) -> request.route().sendResponse(request, "");
+            return (request, data) -> request.sendResponse(request, "");
         }else if(method.getAnnotation(Json.class) != null){
-            return (request, data) -> request.route().sendResponse(request, data);
+            return (request, data) -> request.sendResponse(request, data);
         }else if(method.getReturnType().equals(byte[].class)){
-            return (request, data) -> request.route().sendResponse(request, (byte[])data);
+            return (request, data) -> request.sendResponse(request, (byte[])data);
         }else if(method.getReturnType().equals(String.class)){
-            return (request, data) -> request.route().sendResponse(request, (String)data);
+            return (request, data) -> request.sendResponse(request, (String)data);
         }else{
-            return (request, data) -> request.route().sendResponse(request, data.toString());
+            return (request, data) -> request.sendResponse(request, data.toString());
         }
     }
 }

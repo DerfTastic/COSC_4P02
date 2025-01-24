@@ -27,20 +27,13 @@ public class DbManager implements AutoCloseable{
     private final int max_connections;
 
     public DbManager() throws SQLException{
-        this(false, Config.CONFIG.wipe_db_on_start);
+        this(false, Config.CONFIG.wipe_db_on_start, Config.CONFIG.initialize_db_with_data);
     }
 
-    public DbManager(boolean inMemory, boolean alwaysInitialize) throws SQLException {
+    public DbManager(boolean inMemory, boolean alwaysInitialize, boolean insert_data) throws SQLException {
 
-        var initialized = new File("db/database.db").exists();
-        if(!new File("db").exists()){
-            try {
-                Files.createDirectory(Path.of("db"));
-            } catch (IOException e) {
-                Logger.getGlobal().log(Level.SEVERE, "Cannot create database folder", e);
-                throw new RuntimeException(e);
-            }
-        }
+        boolean initialized;
+
 
         if(inMemory) {
             initialized = false;
@@ -49,6 +42,16 @@ public class DbManager implements AutoCloseable{
         }else {
             max_connections = 0;
             url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
+            initialized = new File("Config.CONFIG.db_path").exists();
+
+            if(!new File("db").exists()){
+                try {
+                    Files.createDirectory(Path.of("db"));
+                } catch (IOException e) {
+                    Logger.getGlobal().log(Level.SEVERE, "Cannot create database folder", e);
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         try(var conn = conn()){
@@ -58,7 +61,6 @@ public class DbManager implements AutoCloseable{
             var v = conn.conn.getMetaData().getDatabaseProductVersion();
             Logger.getGlobal().log(Level.FINE, "Connected to DB " + major + "." + minor + " " + name + "("+v+")");
         }
-
 
         if(!initialized || alwaysInitialize){
             try(var conn = conn()){
@@ -74,7 +76,7 @@ public class DbManager implements AutoCloseable{
                             throw e;
                         }
                     }
-                    if(Config.CONFIG.initialize_db_with_data)
+                    if(insert_data)
                         for(var sql : sql("testing_data").split(";")){
                             try{
                                 stmt.execute(sql);

@@ -10,7 +10,7 @@ import server.web.annotations.Json;
 import server.web.annotations.Route;
 import server.web.annotations.url.Path;
 import server.web.route.ClientError;
-import server.web.route.RouteImpl;
+import server.web.route.Request;
 import server.web.route.RouteParameter;
 import util.SqlSerde;
 
@@ -99,7 +99,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, RouteImpl.Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
+    public static String login(MailServer mail, Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
         int user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.conn.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
@@ -187,7 +187,7 @@ public class AccountAPI {
     public static class UserAuthFromRequest implements RouteParameter<UserAuth>{
 
         @Override
-        public UserAuth construct(RouteImpl.Request request) throws Exception {
+        public UserAuth construct(Request request) throws Exception {
             var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
             if(token==null)throw new ClientError.Unauthorized("No valid session");
             try(var conn = request.getServer().getManagedResource(DbManager.class).conn()){

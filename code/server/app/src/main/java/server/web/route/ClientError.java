@@ -27,9 +27,9 @@ public class ClientError extends Exception {
         this.code = code;
     }
 
-    public void respond(RouteImpl.Request request) throws IOException {
-        request.route().sendResponse(request, code, getMessage());
-        Logger.getGlobal().log(Level.WARNING, "Route " + request.route().path + " Faield to complete", this);
+    public void respond(Request request) throws IOException {
+        request.sendResponse(request, code, getMessage());
+        Logger.getGlobal().log(Level.WARNING, "Route " + request.path() + " Faield to complete", this);
     }
 
     public static class BadRequest extends ClientError{

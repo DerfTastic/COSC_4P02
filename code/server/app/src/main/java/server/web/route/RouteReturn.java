@@ -1,5 +1,5 @@
 package server.web.route;
 
 public interface RouteReturn<T> {
-    void send(RouteImpl.Request request, T data) throws Exception;
+    void send(Request request, T data) throws Exception;
 }

@@ -3,9 +3,43 @@
  */
 package server;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import server.db.DbManager;
+import server.web.AccountAPI;
+import server.web.MailServer;
+import server.web.route.ClientError;
+
+import java.sql.SQLException;
 
 public class AppTest {
-    @Test public void appHasAGreeting() {
+
+    DbManager db;
+    MailServer mail;
+
+    @Before
+    public void setup() {
+        try{
+            db = new DbManager(true, true, false);
+            mail = new MailServer("", "");
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void appHasAGreeting() throws ClientError.BadRequest, SQLException {
+        var account = new AccountAPI.Register();
+        account.name = "Parker";
+        account.email = "yui@gmail.com";
+        account.password = "password";
+        AccountAPI.register(mail, db.transaction(), account);
+    }
+
+    @After
+    public void close() {
+        db.close();
+        mail.close();
     }
 }
