@@ -15,8 +15,8 @@ import java.sql.SQLException;
 
 public class AppTest {
 
-    DbManager db;
-    MailServer mail;
+    private DbManager db;
+    private MailServer mail;
 
     @Before
     public void setup() {
@@ -29,12 +29,14 @@ public class AppTest {
     }
 
     @Test
-    public void appHasAGreeting() throws ClientError.BadRequest, SQLException {
+    public void testAccountRegistration() throws ClientError.BadRequest, SQLException {
         var account = new AccountAPI.Register();
         account.name = "Parker";
         account.email = "yui@gmail.com";
         account.password = "password";
-        AccountAPI.register(mail, db.transaction(), account);
+        try(var trans = db.transaction()){
+            AccountAPI.register(mail, trans, account);
+        }
     }
 
     @After
