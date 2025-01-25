@@ -232,28 +232,14 @@ public class RouteImpl {
             super(exchange);
         }
 
-        public void sendResponse(Request request, byte[] content) throws IOException{
-            RouteImpl.this.sendResponse(request, content);
-        }
-
-        public void sendResponse(Request request, String content) throws IOException{
-            RouteImpl.this.sendResponse(request, content);
-        }
-
-        public <T> void sendResponse(Request request, T content) throws IOException{
-            RouteImpl.this.sendResponse(request, content);
-        }
-
-        public void sendResponse(Request request, int code, byte[] content) throws IOException {
+        @Override
+        public void sendResponse(Request request, int code, byte[] content) throws IOException{
             RouteImpl.this.sendResponse(request, code, content);
         }
 
-        public void sendResponse(Request request, int code, String content) throws IOException{
-            RouteImpl.this.sendResponse(request, code, content);
-        }
-
-        public <T> void sendResponse(Request request, int code, T content) throws IOException{
-            RouteImpl.this.sendResponse(request, code, content);
+        @Override
+        public int code() {
+            return RouteImpl.this.code;
         }
 
         @Override

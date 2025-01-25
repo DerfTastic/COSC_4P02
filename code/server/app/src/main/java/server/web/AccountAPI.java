@@ -94,8 +94,8 @@ public class AccountAPI {
     }
 
     public static class Login{
-        String email;
-        String password;
+        public String email;
+        public String password;
     }
 
     @Route

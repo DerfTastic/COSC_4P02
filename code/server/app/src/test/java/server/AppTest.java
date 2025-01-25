@@ -10,7 +10,9 @@ import server.db.DbManager;
 import server.web.AccountAPI;
 import server.web.MailServer;
 import server.web.route.ClientError;
+import server.web.route.Request;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class AppTest {
@@ -25,6 +27,16 @@ public class AppTest {
             mail = new MailServer("", "");
         }catch (Exception e){
             throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testAccountLogin() throws SQLException {
+        var account = new AccountAPI.Login();
+        account.email = "yui@gmail.com";
+        account.password = "password";
+        try(var trans = db.transaction()){
+            AccountAPI.login(mail, null, trans, account);
         }
     }
 

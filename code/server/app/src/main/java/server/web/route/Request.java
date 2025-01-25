@@ -28,12 +28,31 @@ public abstract class Request {
 
     public abstract void begin() throws ClientError.MethodNotAllowed;
 
-    public abstract void sendResponse(Request request, byte[] content) throws IOException;
-    public abstract void sendResponse(Request request, String content) throws IOException;
-    public abstract <T> void sendResponse(Request request, T content) throws IOException;
+    public int code(){
+        return 200;
+    }
     public abstract void sendResponse(Request request, int code, byte[] content) throws IOException;
-    public abstract void sendResponse(Request request, int code, String content) throws IOException;
-    public abstract <T> void sendResponse(Request request, int code, T message) throws IOException;
+
+    public void sendResponse(Request request, byte[] content) throws IOException{
+        sendResponse(request, code(), content);
+    }
+
+    public void sendResponse(Request request, String content) throws IOException{
+        sendResponse(request, code(), content);
+    }
+
+    public <T> void sendResponse(Request request, T content) throws IOException{
+        sendResponse(request, code(), content);
+    }
+
+    public void sendResponse(Request request, int code, String content) throws IOException{
+        sendResponse(request, code, content.getBytes());
+    }
+
+    public <T> void sendResponse(Request request, int code, T message) throws IOException{
+        sendResponse(request, code, new Gson().toJson(message));
+    }
+
 
     public List<String> getQueryParam(String param) {
         return getQueryMap().get(param);
