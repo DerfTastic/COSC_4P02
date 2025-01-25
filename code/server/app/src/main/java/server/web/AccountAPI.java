@@ -74,7 +74,7 @@ public class AccountAPI {
     @Route
     public static void register(MailServer mail, Transaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
-        try(var stmt = trans.conn.namedPreparedStatement("insert into users values(null, :name, :email, :pass, null, null, null)")){
+        try(var stmt = trans.conn.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, null, null, null)")){
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);
@@ -182,6 +182,8 @@ public class AccountAPI {
         public int organizer_id;
         public int max_events;
         public boolean has_analytics;
+
+        public boolean admin;
     }
 
     public static class UserAuthFromRequest implements RouteParameter<UserAuth>{
@@ -204,6 +206,7 @@ public class AccountAPI {
                     auth.session_id = result.getInt("id");
                     auth.user_id = result.getInt("user_id");
                     auth.email = result.getString("email");
+                    auth.admin = result.getBoolean("admin");
 
                     auth.organizer_id = result.getInt("organizer_id");
                     auth.max_events = result.getInt("max_events");

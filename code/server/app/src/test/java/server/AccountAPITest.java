@@ -10,12 +10,11 @@ import server.db.DbManager;
 import server.web.AccountAPI;
 import server.web.MailServer;
 import server.web.route.ClientError;
-import server.web.route.Request;
 
-import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-public class AppTest {
+public class AccountAPITest {
 
     private DbManager db;
     private MailServer mail;
@@ -31,7 +30,7 @@ public class AppTest {
     }
 
     @Test
-    public void testAccountLogin() throws SQLException {
+    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";

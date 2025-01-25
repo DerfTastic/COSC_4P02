@@ -12,6 +12,7 @@ create table users(
     name TEXT not null,
     email TEXT not null unique,
     pass TEXT not null,
+    admin BOOLEAN not null,
     bio TEXT,
     organizer_id INTEGER default NULL,
     picture INTEGER,
