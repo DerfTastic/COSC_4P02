@@ -146,26 +146,22 @@ const cookies = {
 
 const page = {
     load_dynamic_content: async (item) => {
+        item.querySelectorAll("[type='text/x-html-template']").forEach(async e => {
+            const result = await fetch(e.getAttribute("src"));
+            e.innerHTML = await result.text();
+
+            page.initialize_content(e);
+            page.load_dynamic_content(e);
+        });
+        
         item.querySelectorAll("template[type='text/x-handlebars-template']").forEach(async e => {
             const result = await eval(e.getAttribute("src"));
             var template = Handlebars.compile(e.innerHTML);
             var html = template(result);
             e.nextElementSibling.innerHTML = html;
 
-            for(let cn of e.nextElementSibling.children){
-                page.initialize_content(cn);
-                page.load_dynamic_content(cn);
-            }
-        });
-
-        item.querySelectorAll("[type='text/x-html-template']").forEach(async e => {
-            const result = await fetch(e.getAttribute("src"));
-            e.innerHTML = await result.text();
-
-            for(let cn of e.children){
-                page.initialize_content(cn);
-                page.load_dynamic_content(cn);
-            }
+            page.initialize_content(e);
+            page.load_dynamic_content(e);
         });
     },
 
