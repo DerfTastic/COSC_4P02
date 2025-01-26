@@ -145,7 +145,7 @@ const cookies = {
 
 
 const page = {
-    load_dynamic_content: async (item) => {
+    load_dynamic_content: (item) => {
         item.querySelectorAll("[type='text/x-html-template']").forEach(async e => {
             const result = await fetch(e.getAttribute("src"));
             e.innerHTML = await result.text();
@@ -153,7 +153,6 @@ const page = {
             page.initialize_content(e);
             page.load_dynamic_content(e);
         });
-        
         item.querySelectorAll("template[type='text/x-handlebars-template']").forEach(async e => {
             const result = await eval(e.getAttribute("src"));
             var template = Handlebars.compile(e.innerHTML);
@@ -184,3 +183,4 @@ document.addEventListener('DOMContentLoaded', () => {
     page.initialize_content(document);
     page.load_dynamic_content(document);
 });
+

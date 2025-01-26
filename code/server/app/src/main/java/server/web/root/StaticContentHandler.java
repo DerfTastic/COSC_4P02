@@ -58,6 +58,7 @@ public class StaticContentHandler implements HttpHandler {
             content = entry.t2;
         }
         exchange.getResponseHeaders().add("Content-Type", getContentType(file.getName()));
+        exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
         Util.sendResponse(exchange, 200, content);
     }
 
