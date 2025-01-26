@@ -1,13 +1,12 @@
-package server.web;
+package server.web.root.api;
 
 import org.sqlite.SQLiteException;
 import server.db.DbConnection;
 import server.db.DbManager;
 import server.db.Transaction;
-import server.web.annotations.Body;
-import server.web.annotations.FromRequest;
-import server.web.annotations.Json;
-import server.web.annotations.Route;
+import server.web.MailServer;
+import server.web.Util;
+import server.web.annotations.*;
 import server.web.annotations.url.Path;
 import server.web.route.ClientError;
 import server.web.route.Request;
@@ -21,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("unused")
+@Routes
 public class AccountAPI {
 
     public static class DeleteAccount{

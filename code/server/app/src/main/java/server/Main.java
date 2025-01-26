@@ -14,7 +14,7 @@ public class Main {
             handler.setLevel(Level.ALL);
         }
 
-        Logger.getGlobal().log(Level.FINE, "Working Directory: " + Paths.get("").toAbsolutePath().toString());
+        Logger.getGlobal().log(Level.FINE, "Working Directory: " + Paths.get("").toAbsolutePath());
 
         try{
             new WebServer();

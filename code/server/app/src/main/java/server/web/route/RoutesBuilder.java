@@ -2,32 +2,93 @@ package server.web.route;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import server.web.WebServer;
-import server.web.annotations.Body;
-import server.web.annotations.FromRequest;
-import server.web.annotations.Json;
+import server.web.annotations.*;
 import server.web.annotations.url.Nullable;
 import server.web.annotations.url.Path;
 import server.web.annotations.url.QueryFlag;
 import server.web.annotations.url.QueryValue;
 import util.TypeReflect;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RoutesBuilder {
-    private final Class<?>[] routeClasses;
 
-    public RoutesBuilder(Class<?>... routeClasses){
-        this.routeClasses = routeClasses;
+    private static Class<?>[] getClasses(String packageName)
+            throws ClassNotFoundException, IOException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        assert classLoader != null;
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> resources = classLoader.getResources(path);
+        List<File> dirs = new ArrayList<>();
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            dirs.add(new File(resource.getFile()));
+        }
+        ArrayList<Class<?>> classes = new ArrayList<>();
+        for (File directory : dirs) {
+            classes.addAll(findClasses(directory, packageName));
+        }
+        return classes.toArray(new Class[0]);
     }
 
-    public void attachRoutes(WebServer server, String parentPath) {
-        for(var method : (Iterable<Method>)Arrays.stream(routeClasses).flatMap(aClass -> Arrays.stream(aClass.getDeclaredMethods()))::iterator){
+    private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
+        List<Class<?>> classes = new ArrayList<>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
+        for (File file : files==null?new File[0]:files) {
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                classes.add(Class.forName(packageName.replace("/", ".") + '.' + file.getName().substring(0, file.getName().length() - 6)));
+            }
+        }
+        return classes;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void mountRoutes(WebServer server, String parentPath, String classPath){
+        try{
+            for(var clazz : getClasses(classPath.substring(1))){
+                var pack = clazz.getPackage().getName()+"/";
+                var path = parentPath+pack.substring(classPath.length()).replace(".", "/");
+                if(clazz.isAnnotationPresent(Routes.class)){
+                    attachRoutes(server, path, clazz);
+                }else if(clazz.isAnnotationPresent(Handler.class)){
+                    attachHandler(server, path, (Class<? extends HttpHandler>) clazz);
+                }
+            }
+        }catch (Exception e){
+            Logger.getGlobal().log(Level.SEVERE, "Failed to load routes", e);
+        }
+    }
+
+    public void attachHandler(WebServer server, String parentPath, Class<? extends HttpHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        server.server.createContext(parentPath, handlerClass.getConstructor().newInstance());
+        Logger.getGlobal().log(Level.FINE, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
+    }
+
+    public void attachRoutes(WebServer server, String parentPath, Class<?> routeClass) {
+        for(var method : routeClass.getDeclaredMethods()){
             if(method.getAnnotation(server.web.annotations.Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, this);
             route.addRoute(server);
+            Logger.getGlobal().log(Level.FINE, "Route mounted at: '" + route.path + "' -> "+route.sourceMethod);
         }
     }
 

@@ -22,6 +22,8 @@ public class Config implements Serializable {
     public final String media_path = initialize("media/");
     public final String secrets_path = initialize("secrets");
 
+    public final String static_content_path = initialize(null);
+
     static{
         try {
             var properties = new Properties();

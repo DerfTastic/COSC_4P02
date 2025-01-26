@@ -1,7 +1,10 @@
-package server.web;
+package server.web.root;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import server.Config;
+import server.web.Util;
+import server.web.annotations.Handler;
 import util.Tuple;
 
 import java.io.File;
@@ -12,9 +15,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class StaticContentHandler implements HttpHandler {
-
-    private static final String STATIC_DIR = "../client";
+@Handler
+public class StaticContentHandler implements HttpHandler {
 
     private final HashMap<String, Tuple<Long, byte[]>> cache = new HashMap<>();
 
@@ -32,7 +34,7 @@ class StaticContentHandler implements HttpHandler {
         if(!requestedPath.contains(".")){
             requestedPath += ".html";
         }
-        File file = new File(STATIC_DIR + requestedPath);
+        File file = new File(Config.CONFIG.static_content_path + requestedPath);
 
         if (!file.exists()
                 || file.isDirectory()

@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import server.db.DbManager;
-import server.web.AccountAPI;
+import server.web.root.api.AccountAPI;
 import server.web.MailServer;
 import server.web.route.ClientError;
 

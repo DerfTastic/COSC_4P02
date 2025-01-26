@@ -1,8 +1,9 @@
-package server.web;
+package server.web.root.media;
 
 import com.sun.net.httpserver.HttpExchange;
 import server.web.annotations.Body;
 import server.web.annotations.Route;
+import server.web.annotations.Routes;
 import server.web.annotations.http.Get;
 import server.web.annotations.http.Post;
 import server.web.annotations.url.Path;
@@ -12,6 +13,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @SuppressWarnings("unused")
+@Routes
 public class MediaAPI {
 
     private static final HashMap<Integer, byte[]> map = new HashMap<>();

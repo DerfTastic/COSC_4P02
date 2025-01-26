@@ -4,9 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import server.Config;
 import server.Secrets;
 import server.db.DbManager;
-import server.web.route.RoutesBuilder;
 
-import javax.mail.NoSuchProviderException;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -33,11 +31,7 @@ public class WebServer {
 
         addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
-        server.createContext("/", new StaticContentHandler());
-        new APIRouteBuilder(this, AccountAPI.class, TestAPI.class)
-                .attachRoutes(this, "/api");
-        new RoutesBuilder(MediaAPI.class)
-                .attachRoutes(this, "/media");
+        new APIRouteBuilder(this).mountRoutes(this, "/", "/server/web/root");
 
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
         server.start();

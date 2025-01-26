@@ -1,19 +1,15 @@
-package server.web;
+package server.web.root.api;
 
 import server.db.DbConnection;
-import server.db.Transaction;
-import server.web.annotations.Body;
-import server.web.annotations.FromRequest;
-import server.web.annotations.Json;
-import server.web.annotations.Route;
-import server.web.annotations.url.Path;
-import util.SqlSerde;
+import server.web.MailServer;
+import server.web.annotations.*;
 
 import javax.mail.Message;
 import java.sql.SQLException;
 
 
 @SuppressWarnings("unused")
+@Routes
 public class TestAPI {
 
 
