@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="initial-scale=1, width=device-width"> -->
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
+        rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+
+    <title>Ticket Express</title>
+</head>
+
+<body>
+    <div src="header.html" type="text/x-html-template"></div>
+    <template src="api.test.test()" type="text/x-handlebars-template">
+        <article class="entry">
+            <h1>{{email}}</h1>
+            <div class="body">user_id: {{email}}</div>
+            <div class="body">session_id: {{session_id}}</div>
+            <div class="body">organizer_id: {{organizer_id}}</div>
+            <div class="body">max_events: {{max_events}}</div>
+            <div class="body">has_analytics: {{has_analytics}}</div>
+            <div class="body">admin: {{admin}}</div>
+        </article>
+    </template>
+    <div></div>
+
+    <template src="api.user.list_sessions()" type="text/x-handlebars-template">
+        <article class="entry">
+            <h1>Sessions</h1>
+            {{#each @root}}
+            <p>({{@index}}){{id}}: {{ip}} {{expiration}}, {{agent}}</p>
+            {{/each}}
+        </article>
+    </template>
+    <div></div>
+
+
+    <div src="footer.html" type="text/x-html-template"></div>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="/js/script.js" type="text/javascript"></script>
+</body>
+
+</html>
