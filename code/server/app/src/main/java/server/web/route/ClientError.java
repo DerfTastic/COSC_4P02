@@ -29,7 +29,7 @@ public class ClientError extends Exception {
 
     public void respond(Request request) throws IOException {
         request.sendResponse(request, code, getMessage());
-        Logger.getGlobal().log(Level.WARNING, "Route " + request.path() + " Faield to complete", this);
+        Logger.getGlobal().log(Level.WARNING, "Route " + request.path() + " Failed to complete", this);
     }
 
     public static class BadRequest extends ClientError{

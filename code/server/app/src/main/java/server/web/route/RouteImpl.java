@@ -42,7 +42,7 @@ public class RouteImpl {
 
         var route = sourceMethod.getAnnotation(server.web.annotations.Route.class);
         this.code = route.code();
-        var p = route.value().isEmpty()?"/"+sourceMethod.getName():route.value();
+        var p = route.value().isEmpty()?sourceMethod.getName():route.value().substring(1);
         this.pathParts = (parentPath+p).split("/");
 
         var path = "";

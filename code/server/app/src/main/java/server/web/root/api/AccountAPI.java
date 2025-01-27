@@ -166,11 +166,12 @@ public class AccountAPI {
     }
 
     @Route("/invalidate_session/<session_id>")
-    public static void invalidate_session(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn, @Path int session_id) throws SQLException {
+    public static void invalidate_session(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn, @Path int session_id) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setInt(":session_id", session_id);
             stmt.setInt(":user_id", auth.user_id);
-            stmt.execute();
+            if(stmt.executeUpdate() != 1)
+                throw new ClientError.BadRequest("Could not invalidate session, session does not belong to you or does not exist");
         }
     }
 
@@ -193,10 +194,6 @@ public class AccountAPI {
             var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
             if(token==null)throw new ClientError.Unauthorized("No valid session");
             try(var conn = request.getServer().getManagedResource(DbManager.class).conn()){
-                try(var stmt = conn.namedPreparedStatement("delete from sessions where expiration<:now")){
-                    stmt.setLong(":now", new Date().getTime());
-                    stmt.execute();
-                }
                 try(var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")){
                     stmt.setString(":token", token);
                     var result = stmt.executeQuery();

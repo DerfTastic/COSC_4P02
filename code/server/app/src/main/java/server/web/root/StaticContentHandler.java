@@ -32,7 +32,10 @@ public class StaticContentHandler implements HttpHandler {
             requestedPath += "index.html";
         }
         if(!requestedPath.contains(".")){
-            requestedPath += ".html";
+            if(new File(Config.CONFIG.static_content_path +requestedPath+".html").exists())
+                requestedPath += ".html";
+            else if(new File(Config.CONFIG.static_content_path + requestedPath+".hbs").exists())
+                requestedPath += ".hbs";
         }
         File file = new File(Config.CONFIG.static_content_path + requestedPath);
 
@@ -58,12 +61,14 @@ public class StaticContentHandler implements HttpHandler {
             content = entry.t2;
         }
         exchange.getResponseHeaders().add("Content-Type", getContentType(file.getName()));
-        exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
+        if(Config.CONFIG.cache_static_content)
+            exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
         Util.sendResponse(exchange, 200, content);
     }
 
     private static String getContentType(String fileName) {
         if (fileName.endsWith(".html")) return "text/html";
+        if (fileName.endsWith(".hbs")) return "text/html";
         if (fileName.endsWith(".css")) return "text/css";
         if (fileName.endsWith(".js")) return "application/javascript";
         if (fileName.endsWith(".png")) return "image/png";

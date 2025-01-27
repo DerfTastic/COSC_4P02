@@ -7,6 +7,7 @@ import server.db.DbManager;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -22,11 +23,30 @@ public class WebServer {
         var address = new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port);
         server = HttpServer.create(address, 0);
         addManagedResource(server);
+        addManagedResource(new TimedEvents());
         try{
             addManagedResource(new DbManager());
         }catch (Exception e){
             this.close();
             throw e;
+        }
+
+
+        {   // session expiration
+            var db = getManagedResource(DbManager.class);
+            var timer = getManagedResource(TimedEvents.class);
+            timer.addMinutely(() -> {
+                try(var trans = db.transaction()){
+                    try(var stmt = trans.conn.namedPreparedStatement("delete from sessions where expiration<:now")){
+                        stmt.setLong(":now", new Date().getTime());
+                        stmt.execute();
+                    }
+                    trans.commit();
+                    Logger.getGlobal().log(Level.FINE, "Ran session expiration clear");
+                }catch (Exception e){
+                    Logger.getGlobal().log(Level.SEVERE, "Failed to run session expiration clear", e);
+                }
+            });
         }
 
         addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));

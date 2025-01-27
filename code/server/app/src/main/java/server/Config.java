@@ -24,6 +24,8 @@ public class Config implements Serializable {
 
     public final String static_content_path = initialize(null);
 
+    public final Boolean cache_static_content = initialize(false);
+
     static{
         try {
             var properties = new Properties();

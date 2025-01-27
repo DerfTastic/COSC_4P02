@@ -11,25 +11,25 @@ function toggleMenu() {
 const apiRoot = "/api";
 
 const api = {
-    api_call: async function(route, data, error){
+    api_call: async function (route, data, error) {
         var response;
-        try{
+        try {
             response = await fetch(`${apiRoot}${route}`, data);
-        }catch(e){
-            throw error;
+        } catch (e) {
+            throw { error, code: -1 };
         }
-    
-        if(response.ok){
+
+        if (response.ok) {
             return response;
-        }else if(response.status>=400&&response.status<500){
-            throw await response.text();
-        }else{
-            throw error;
+        } else if (response.status >= 400 && response.status < 500) {
+            throw { error: await response.text(), code: response.status };
+        } else {
+            throw { error, code: response.status };
         }
     },
 
     test: {
-        execute_sql: async function(sql){
+        execute_sql: async function (sql) {
             return await (await api.api_call(
                 `/sql`,
                 {
@@ -39,7 +39,7 @@ const api = {
             )).text();
         },
 
-        test: async function(){
+        test: async function () {
             return await (await api.api_call(
                 `/test`,
                 {
@@ -51,10 +51,9 @@ const api = {
         },
     },
 
-    user: {    
-        login: async function(email, password) {
-            cookies.deleteSessionToken();
-            cookies.setSession(await (await api.api_call(
+    user: {
+        login: async function (email, password) {
+            return await (await api.api_call(
                 `/login`,
                 {
                     method: 'POST',
@@ -67,10 +66,10 @@ const api = {
                     })
                 },
                 "An error occured while loggin in"
-            )).text());
+            )).text();
         },
-        
-        register: async function(name, email, password) {
+
+        register: async function (name, email, password) {
             await api.api_call(
                 `/register`,
                 {
@@ -81,35 +80,35 @@ const api = {
                 "An error occured while registering"
             );
         },
-        
-        list_sessions: async function() {
+
+        list_sessions: async function (session) {
             return await (await api.api_call(
                 `/list_sessions`,
                 {
                     method: 'GET',
-                    headers: { 'X-UserAPIToken': cookies.getSession() }
+                    headers: { 'X-UserAPIToken': session }
                 },
                 "An error occured while fetching sessions"
             )).json();
         },
-        
-        invalidate_session: async function(sessionId) {
+
+        invalidate_session: async function (sessionId, session) {
             await api.api_call(
                 `/invalidate_session/${sessionId}`,
                 {
                     method: 'DELETE',
-                    headers: { 'X-UserAPIToken': cookies.getSession() }
+                    headers: { 'X-UserAPIToken': session }
                 },
                 "An error occured while invalidating session"
             );
         },
-        
-        delete_account: async function(email, password) {
+
+        delete_account: async function (email, password, session) {
             await api.api_call(
                 `/delete_account/${sessionId}`,
                 {
                     method: 'DELETE',
-                    headers: { 'X-UserAPIToken': cookies.getSession() },
+                    headers: { 'X-UserAPIToken': session },
                     body: JSON.stringify({ email, password })
                 },
                 "An error occured while invalidating session"
@@ -120,32 +119,134 @@ const api = {
 
 
 const cookies = {
-    setSession: function(token, days = 30) {
+    setSession: function (token, days = 30) {
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
         document.cookie = `sessionToken=${encodeURIComponent(token)};expires=${expires.toUTCString()};path=/;Secure`;
     },
-    
-    getSession: function() {
+
+    getSession: function () {
         const cookies = document.cookie.split('; ');
         for (const cookie of cookies) {
             const [key, value] = cookie.split('=');
             if (key === 'sessionToken') {
-            return decodeURIComponent(value);
+                return decodeURIComponent(value);
             }
         }
         return "";
     },
-    
-    deleteSessionToken: function() {
+
+    deleteSessionToken: function () {
         document.cookie = `sessionToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;Secure`;
     },
 }
 
+const utility = {
+    logout: function () {
+        cookies.deleteSessionToken();
+        window.location.href = '/login';
+    },
+    is_session_id_current: function (id) {
+        if (cookies.getSession() == null || cookies.getSession().length == 0) return false;
+        const curr_id = cookies.getSession().substring(cookies.getSession().length - 8, cookies.getSession().length);
+        return parseInt(curr_id, 16) == id;
+    },
+    require_logged_in: function () {
+        if (cookies.getSession() == null || cookies.getSession().length == 0) {
+            window.location.href = "/login";
+        }
+    }
+
+}
 
 
 const page = {
-    load_dynamic_content: (item) => {
+    login: {
+        login: async function(email, password){
+            try {
+                cookies.deleteSessionToken();
+                cookies.setSession(await api.user.login(email, password));
+                window.location.href = '/account';
+            } catch (e) {
+                alert(e);
+            }
+        },
+    },
+
+    register: {
+        register: async function(name, email, password){
+            try {
+                await api.user.register(name, email, password);
+            } catch (e) {
+                alert(e);
+            }
+        },
+    },
+
+    account: {
+        remove_session: async function (element, id) {
+            try {
+                await api.user.invalidate_session(id);
+                element.parentElement.outerHTML = "";
+                if (utility.is_session_id_current(id)) {
+                    utility.logout();
+                }
+            } catch (e) {
+                alert(e);
+            }
+        },
+
+        list_sessions: async function () {
+            try {
+                return await api.user.list_sessions(cookies.getSession());
+            } catch ({ error, code }) {
+                if (code == 401) {
+                    utility.logout();
+                } else {
+                    alert(error);
+                }
+            }
+        },
+
+        invalidate_session: async function (sessionId) {
+            try {
+                return await api.user.invalidate_session(sessionId, cookies.getSession());
+            } catch ({ error, code }) {
+                if (code == 401) {
+                    utility.logout();
+                } else {
+                    alert(error);
+                }
+            }
+        },
+
+        test: async function(){
+            try {
+                return await api.test.test(cookies.getSession());
+            } catch ({ error, code }) {
+                if (code == 401) {
+                    utility.logout();
+                } else {
+                    alert(error);
+                }
+            }
+        },
+
+        delete_account: async function(email, password) {
+            try {
+                await api.user.delete_account(email, password, cookies.getSession());
+            } catch ({ error, code }) {
+                if (code == 401) {
+                    utility.logout();
+                } else {
+                    alert(error);
+                }
+            }
+        },
+    },
+
+
+    load_dynamic_content: function (item) {
         item.querySelectorAll("[type='text/x-html-template']").forEach(async e => {
             const result = await fetch(e.getAttribute("src"));
             e.innerHTML = await result.text();
@@ -165,13 +266,13 @@ const page = {
     },
 
     initialize_content: (item) => {
-        for(let e of item.querySelectorAll("template[type='text/x-handlebars-template']")){
+        for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
             var template = Handlebars.compile(e.innerHTML);
             var html = template({});
             e.nextElementSibling.innerHTML = html;
         }
 
-        for(let e of item.querySelectorAll("div[onclick]")){
+        for (let e of item.querySelectorAll("div[onclick]")) {
             e.addEventListener("click", ev => {
                 eval(e.getAttribute("onclick"));
             })
