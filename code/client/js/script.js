@@ -38,20 +38,23 @@ const api = {
                 "An error occured while testing sessions"
             )).text();
         },
-
-        test: async function () {
-            return await (await api.api_call(
-                `/test`,
-                {
-                    method: 'GET',
-                    headers: { 'X-UserAPIToken': cookies.getSession() }
-                },
-                "An error occured while testing sessions"
-            )).json();
-        },
     },
 
     user: {
+        all_userinfo: async function(session) {
+            return await (await api.api_call(
+                `/all_userinfo`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while fetching userinfo"
+            )).json();
+        },
+
         login: async function (email, password) {
             return await (await api.api_call(
                 `/login`,
@@ -161,14 +164,15 @@ const utility = {
 
 
 const page = {
+    
     login: {
         login: async function(email, password){
             try {
                 cookies.deleteSessionToken();
                 cookies.setSession(await api.user.login(email, password));
                 window.location.href = '/account';
-            } catch (e) {
-                alert(e);
+            } catch ({error, code}) {
+                alert(error);
             }
         },
     },
@@ -177,13 +181,25 @@ const page = {
         register: async function(name, email, password){
             try {
                 await api.user.register(name, email, password);
-            } catch (e) {
-                alert(e);
+            } catch ({error, code}) {
+                alert(error);
             }
         },
     },
 
     account: {
+        all_userinfo: async function() {
+            try {
+                return await api.user.all_userinfo(cookies.getSession());
+            } catch ({ error, code }) {
+                if (code == 401) {
+                    utility.logout();
+                } else {
+                    alert(error);
+                }
+            }
+        },
+
         remove_session: async function (element, id) {
             try {
                 await api.user.invalidate_session(id, cookies.getSession());

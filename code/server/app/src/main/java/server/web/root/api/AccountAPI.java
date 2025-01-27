@@ -23,6 +23,33 @@ import java.util.List;
 @Routes
 public class AccountAPI {
 
+    public record UserInfo(
+            int id,
+            String name,
+            String email,
+            String bio,
+            boolean admin,
+            boolean has_analytics,
+            int max_events
+    ){}
+
+    @Route
+    public static @Json UserInfo all_userinfo(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn) throws SQLException {
+        try(var stmt = conn.namedPreparedStatement("select name, bio from users where id=:id")){
+            stmt.setInt(":id", auth.user_id);
+            var rs = stmt.executeQuery();
+            return new UserInfo(
+                    auth.user_id,
+                    rs.getString("name"),
+                    auth.email,
+                    rs.getString("bio"),
+                    auth.admin,
+                    auth.has_analytics,
+                    auth.max_events
+            );
+        }
+    }
+
     public static class DeleteAccount{
         public String email;
         public String password;

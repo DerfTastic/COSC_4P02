@@ -24,12 +24,14 @@
 
 <body>
     <div src="header.html" type="text/x-html-template"></div>
-    <template src="page.account.test()" type="text/x-handlebars-template">
+    <template src="page.account.all_userinfo()" type="text/x-handlebars-template">
         <article class="entry">
-            <h1>{{email}}</h1>
+            <h1>{{name}}</h1>
+            <div class="body">name: {{name}}</div>
+            <div class="body">email: {{email}}</div>
+            <div class="body">bio: {{bio}}</div>
             <div class="body">user_id: {{email}}</div>
-            <div class="body">session_id: {{session_id}}</div>
-            <div class="body">organizer_id: {{organizer_id}}</div>
+            <!-- <div class="body">organizer_id: {{organizer_id}}</div> -->
             <div class="body">max_events: {{max_events}}</div>
             <div class="body">has_analytics: {{has_analytics}}</div>
             <div class="body">admin: {{admin}}</div>
