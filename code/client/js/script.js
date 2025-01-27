@@ -186,7 +186,7 @@ const page = {
     account: {
         remove_session: async function (element, id) {
             try {
-                await api.user.invalidate_session(id);
+                await api.user.invalidate_session(id, cookies.getSession());
                 element.parentElement.outerHTML = "";
                 if (utility.is_session_id_current(id)) {
                     utility.logout();
@@ -246,23 +246,52 @@ const page = {
     },
 
 
+    awaiting_handlebar_templates: 0,
+    awaiting_html_templates: 0,
+
+    check_for_handlers: function (){
+        if(this.awaiting_handlebar_templates==0&&this.awaiting_html_templates==0
+            ||this.awaiting_handlebar_templates==0&&this.awaiting_html_templates==-1
+            ||this.awaiting_handlebar_templates==-1&&this.awaiting_html_templates==0
+        ){
+            document.dispatchEvent(new Event("dynamic_content_finished"));
+        }
+        if(this.awaiting_handlebar_templates==0){
+            this.awaiting_handlebar_templates=-1;
+            document.dispatchEvent(new Event("handlebar_templates_finished"))
+        }
+        if(this.awaiting_html_templates==0){
+            this.awaiting_html_templates=-1;
+            document.dispatchEvent(new Event("html_templates_finished"))
+        }
+    },
+
     load_dynamic_content: function (item) {
-        item.querySelectorAll("[type='text/x-html-template']").forEach(async e => {
-            const result = await fetch(e.getAttribute("src"));
-            e.innerHTML = await result.text();
-
-            page.initialize_content(e);
-            page.load_dynamic_content(e);
+        item.querySelectorAll("[type='text/x-html-template']").forEach(e => {
+            this.awaiting_html_templates++;
+            (async _ => {
+                const result = await fetch(e.getAttribute("src"));
+                e.innerHTML = await result.text();
+                this.awaiting_html_templates--;
+    
+                page.initialize_content(e);
+                page.load_dynamic_content(e);
+            })();
         });
-        item.querySelectorAll("template[type='text/x-handlebars-template']").forEach(async e => {
-            const result = await eval(e.getAttribute("src"));
-            var template = Handlebars.compile(e.innerHTML);
-            var html = template(result);
-            e.nextElementSibling.innerHTML = html;
-
-            page.initialize_content(e);
-            page.load_dynamic_content(e);
-        });
+        item.querySelectorAll("template[type='text/x-handlebars-template']").forEach(e => {
+            this.awaiting_handlebar_templates++;
+            (async _ => {
+                const result = await eval(e.getAttribute("src"));
+                var template = Handlebars.compile(e.innerHTML);
+                var html = template(result);
+                e.nextElementSibling.innerHTML = html;
+    
+                this.awaiting_handlebar_templates--;
+                page.initialize_content(e);
+                page.load_dynamic_content(e);
+            })();
+        });   
+        page.check_for_handlers();     
     },
 
     initialize_content: (item) => {
@@ -280,7 +309,21 @@ const page = {
     }
 };
 
+document.addEventListener('handlebar_templates_finished', () => {
+    console.log("Handlebar templates finished loading");
+});
+
+document.addEventListener('html_templates_finished', () => {
+    console.log("HTML templates finished loading");
+});
+
+document.addEventListener('dynamic_content_finished', () => {
+    console.log("Dynamic content finished loading");  
+    document.body.style="";
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+    document.body.style="display:none";
     page.initialize_content(document);
     page.load_dynamic_content(document);
 });
