@@ -12,30 +12,35 @@
                 rel="stylesheet">
                 <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
                 <link rel="icon" href="images/logo.png" sizes="64x64" type="image/x-icon">
-        <title> Login</title>    
+        <title> Register</title>    
     </head>
         <body>
            
 
-            <div class="login-container">
-                <form class="login-form" action="javascript:page.login.login(username.value, password.value)" method="POST">
-                    <h2>Login</h2>
+            <div class="register-container">
+                <form class="register-form" action="javascript:page.register.register(name.value, email.value, password.value)" method="POST">
+                    <h2>Register</h2>
                     <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Enter your username" required />
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required />
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn-login">Login</button>
+                        <button type="submit" class="btn-register">Register</button>
                     </div>
                     <p class="form-footer">
-                        Don't have an account? <a href="register.html">Sign up</a>
+                        Already have an account? <a href="login.html">Login</a>
                     </p>
                 </form>
             </div>
+            
             
 
 
