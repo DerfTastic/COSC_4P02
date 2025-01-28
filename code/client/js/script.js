@@ -283,7 +283,7 @@ const page = {
     },
 
     load_dynamic_content: function (item) {
-        item.querySelectorAll("[type='text/x-html-template']").forEach(e => {
+        for(let e of item.querySelectorAll("[type='text/x-html-template']")){
             this.awaiting_html_templates++;
             (async _ => {
                 const result = await fetch(e.getAttribute("src"));
@@ -293,8 +293,8 @@ const page = {
                 page.initialize_content(e);
                 page.load_dynamic_content(e);
             })();
-        });
-        item.querySelectorAll("template[type='text/x-handlebars-template']").forEach(e => {
+        }
+        for(let e of item.querySelectorAll("template[type='text/x-handlebars-template']")){
             this.awaiting_handlebar_templates++;
             (async _ => {
                 const result = await eval(e.getAttribute("src"));
@@ -306,7 +306,7 @@ const page = {
                 page.initialize_content(e);
                 page.load_dynamic_content(e);
             })();
-        });   
+        }
         page.check_for_handlers();     
     },
 
