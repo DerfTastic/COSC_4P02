@@ -37,7 +37,7 @@ public class RoutesBuilder {
         try{
             for(var clazz : findAllClassesInPackage(classPath).toList()){
                 var pack = clazz.getPackage().getName()+"/";
-                var path = parentPath+pack.substring(classPath.length()).replace(".", "/");
+                var path = parentPath+pack.substring(classPath.length()+1).replace(".", "/");
                 if(clazz.isAnnotationPresent(Routes.class)){
                     attachRoutes(server, path, clazz);
                 }else if(clazz.isAnnotationPresent(Handler.class)){
