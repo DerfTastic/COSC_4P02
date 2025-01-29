@@ -365,7 +365,7 @@ document.addEventListener('dynamic_content_finished', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style="display:none";
-    if(typeof variable !== 'undefined'){
+    if(typeof Handlebars !== 'undefined'){
         Handlebars.registerHelper("raw-helper", function(options) {
             return options.fn();
         });
