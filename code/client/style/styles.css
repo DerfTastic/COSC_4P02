@@ -1,18 +1,24 @@
-html{
-    background-color: #333;
-}
+
 body {
     color: #f4f4f9;
-    background-color: #333;
+    background-color: #28282a;
     font-family: "Times New Roman", Times, serif;
-    margin-top: 70px;
+    margin: 0;
+    margin-top: 80px;
     font-size: 20px;
-   padding: 10px;
+    padding: 10px;
+    grid-template-rows: auto 1fr auto;
+}
+
+.content{
+    min-height: 70vh;
+    margin: auto;
+    justify-content: center;
 }
 
 
 h1 {
-    color: white;
+    color: #eeeef0;
     font-family: "Georgia", serif;
     font-weight: 700;
     font-size: 36px;
@@ -20,38 +26,36 @@ h1 {
 }
 
 footer {
-    position: relative;
-    width: 100%; 
-    padding: 10px 10px 27px 27px;
-    background-color: #556ee0;
-    color: #fff;
+    justify-self: center;
+    width: 100%;
+    padding: 10px;
+    background-color: #415a77;
+    color: #eeeef0;
     text-align: center;
     font-size: 18px;
-    left: -20px;
-    bottom: -20px;
+    margin-bottom: -10px;
 }
 
 
 
 header {
     width: 100%;
-    background-color: #556ee0;
+    background-color: #415a77;
     position:fixed;
     top: 0;
     left: 0;
-    height: 70px;
-    padding-right: 10px;
+    height: 10%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     z-index:2;
     box-sizing: border-box;
-    margin-bottom: 30px;
+    padding: 0 20px;
 }
 
 
 header h1, h2, h3 {
-    color: white;
+    color: #eeeef0;
     margin: 0;
     padding: 10px 0;
 }
@@ -63,12 +67,12 @@ nav  {
     padding: 0;
     margin: 0;
     transition: all 0.3s ease;
+    gap: 10px;
 }
 
 header .logo {
     width: 80px;
-    padding-right: 0;
-    margin: 0;
+    padding-top:10px;
 }
 
  .logo-and-title {
@@ -77,12 +81,12 @@ header .logo {
     gap: 10px;
 }
 
-/* Style the search bar container */
+
  .search-bar {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 200px;
+    min-width: 150px;
     margin: auto;
     padding: 0;
     height: 30px;
@@ -100,88 +104,53 @@ header .logo {
     padding-left: 10px;
     border:none;
     outline: none;
-    background-color: #333;
-    color: white;
+    background-color: #28282a;
+    color: #eeeef0;
     border-radius: 50px;
-    min-height: 40px;
-    min-width: 300px;
+    width: 100%;
+    height: 100%;
+    max-width: 250px;
 }
 
 
-
-/* Style the button */
 .search-bar button {
-    height: 40px;
+    height: 35px;
     width: 40px;
     border: none;
     border-radius: 100%;
-    background-color: #feffff;
+    background-color: #eeeef0;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .search-bar button:hover {
-    background-color: #dce6f5;
+    background-color: #eeeef0;
 }
 
 .search-bar button svg {
     display: block;
     height: 25px;
     margin: auto;
+    color: #415a77;
 }
 
 
 
 nav  a, .cart {
     text-decoration: none;
-    color: #ecf0f1;
+    color: #eeeef0;
     font-size: 20px;
     padding: 15px 25px;
     display: block;
     transition: all 0.3s ease;
-    border: #fff 1px;
+    border: none;
     border-radius: 5px;
+    gap:5px;
 }
 
 nav  a:hover, .cart:hover {
-    background-color: #384a9b;
-    color: #fff;
-}
-
- .hamburger {
-    display: none;
-    flex-direction: column;
-    margin: auto;
-    gap: 5px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
- .hamburger span {
-    display: block;
-    width: 30px;
-    height: 4px;
-    background: white;
-    border-radius: 2px;
-    transition: 0.3s ease;
-    flex-direction: column;
-    align-items: center;
-}
-
- .hamburger.active span:nth-child(1) {
-    transform: rotate(45deg);
-    position: relative;
-    top: 10px;
-}
-
- .hamburger.active span:nth-child(2) {
-    opacity: 0;
-}
-
- .hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg);
-    position: relative;
-    top: -8px;
+    background-color: #778da9;
+    color: #eeeef0;
 }
 
 .cart {
@@ -199,7 +168,7 @@ nav  a:hover, .cart:hover {
 .badge:after {
     content: attr(value);
     font-size: 12px;
-    color: #fff;
+    color: #eeeef0;
     background: red;
     border-radius: 50%;
     padding: 0 5px;
@@ -211,31 +180,36 @@ nav  a:hover, .cart:hover {
 
 .product-container {
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 20px; 
-    justify-content: center; 
     padding: 20px;
     will-change: transform;
-    position: relative;
-    max-width: 100%; 
+    transition: transform 0.3s ease;
     box-sizing: border-box;
     margin: 50px;
+    animation: scroll 20s infinite linear;
+}
+
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 .product-box {
-    background-color: #333;
-    border: 3px solid #ddd;
-    width: calc(33.333% - 20px); 
+    background-color: #28282a;
+    border: 3px solid #eeeef0;
+    width: calc((100% - (20px * 3)) / 4);
     height: 400px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    box-shadow:  0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     position: relative;
     transition: transform 0.3s ease;
+    box-sizing: border-box;
 }
 
 .product-box:hover {
@@ -246,12 +220,12 @@ nav  a:hover, .cart:hover {
     width: 100%;
     height: 300px;
     object-fit: cover;
-    border-bottom: 3px solid #ddd;
+    border-bottom: 3px solid #eeeef0;
 }
 
 .product-box .caption {
     padding: 10px;
-    background-color: #ffeff0;
+    background-color: #eeeef0;
     width: 100%;
     text-align: center;
     flex-grow: 1;
@@ -263,7 +237,7 @@ nav  a:hover, .cart:hover {
 .product-box .caption h3 {
     font-size: 16px;
     margin: 5px 0;
-    color: #333;
+    color: #28282a;
 }
 
 .product-box .caption p {
@@ -278,18 +252,19 @@ nav  a:hover, .cart:hover {
 .carousel {
     position: relative;
     width: 100%;
-    max-width: 800px;
     margin: 0 auto;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
 }
+
 
 .arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    background-color: #415a77;
+    color: #eeeef0;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
@@ -307,47 +282,42 @@ nav  a:hover, .cart:hover {
 }
 
 .arrow:hover {
-    background-color: #556ee0;
+    background-color: #778da9;
 }
 
 .heading {
     position: relative;
-    padding: 15px;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(243, 243, 244, 0.2);
+    border-bottom: #415a77 double 5px;
+    height: auto;
 }
 
 .heading a {
-    color: #fff;
+    color: #eeeef0;
     text-decoration: none;
-    font-size: 22px;
+    font-size: 30px;
 }
 
 .heading a:hover {
-    color: #16a085;
+    color: #778da9;
 }
 
-
-
-
-
-
-
 .login-container,.register-container {
-    justify-self: center;
     display: flex;
+    justify-self: center;
     justify-content: center;
-    margin-top: 50px;
-    margin-bottom: 30px;
+    align-items: center;
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    background-color: #556ee0;
+    background-color: #415a77;
     border-radius: 8px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    color: #fff;
+    color: #eeeef0;
+
 }
 
 .login-form h2, .register-form h2 {
@@ -370,8 +340,8 @@ nav  a:hover, .cart:hover {
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #fff;
-    color: #333;
+    background-color: #eeeef0;
+    color: #28282a;
     font-size: 16px;
     outline: none;
     transition: box-shadow 0.3s ease;
@@ -384,17 +354,159 @@ nav  a:hover, .cart:hover {
 .btn-login, .btn-register {
     width: 100%;
     padding: 10px;
-    background-color: #384a9b;
+    background-color: #415a77;
     border: none;
     border-radius: 5px;
-    color: #fff;
+    color: #eeeef0;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .btn-login:hover, .btn-register:hover {
-    background-color: #2b3770;
+    background-color: #778da9;
 }
 
 
+@media (max-width: 768px) {
+    .content{
+        margin-top:20%;
+    }
+
+    header {
+        display: flex;
+        flex-wrap: wrap; 
+        flex-direction: row; 
+        justify-content: center;
+        align-items: center; 
+        height: auto; 
+        margin: 0;
+        padding: 10px;
+    }
+
+    .logo-and-title {
+        justify-content: center; 
+        flex-wrap: nowrap;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: row; 
+        justify-content: center; 
+        align-items: center; 
+        width: 100%; 
+        padding: 0;
+        margin: 0;
+    }
+
+    nav a, .cart {
+        font-size: 20px; 
+        padding: 5px 10px; 
+        margin: 0;
+    }
+
+    .search-bar {
+        flex-direction: row; 
+        width: 100%; 
+        max-width: 400px; 
+    }
+
+    .search-bar input {
+        font-size: 20px;
+        height: 30px;
+        max-width: 200px; 
+    }
+
+    .search-bar button {
+        height: 30px;
+        width: 30px;
+    }
+
+
+    .product-box {
+        width: calc((100% / 2) ); 
+        height: smaller;
+    }
+
+    .product-container {
+        gap: 10px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .content{
+        margin-top:25%;
+        padding: 20px;
+    }
+    header {
+        flex-wrap: wrap; 
+        flex-direction: row; 
+        justify-content: space-between;
+        height: auto; 
+        margin: 0;
+    }
+
+    .logo-and-title h1 {
+        font-size: 20px;
+        white-space: nowrap; 
+    }
+
+    .logo-and-title img {
+        width: 50px; 
+        height: auto; 
+    }
+    .logo-and-title {
+        width: 100%;
+    }
+
+    nav {
+        flex-direction: row; 
+        align-items: center;
+        padding: 0;
+        margin: 0;
+    }
+
+    .search-bar {
+        gap: 5px; 
+    }
+
+    .search-bar input {
+        font-size: 12px;
+        height: 20px;
+        max-width: 150px;
+    }
+
+    .search-bar button {
+        height: smaller;
+        width: smaller;
+    }
+
+    nav a, .cart {
+        font-size: 14px;
+        padding: 0px 8px;
+    }
+
+   .carousel{
+    width: 100%;
+    margin: 0;
+   }
+
+    .product-box {
+        width: 100%; 
+        height: small;
+    }
+
+    .product-container {
+        gap: 10px; 
+        width: 100%;
+        margin: 0;
+    }
+
+    .arrow {
+        padding: 6px 10px;
+        font-size: 14px;
+        margin: 5px;
+    }
+}
