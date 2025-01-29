@@ -9,3 +9,5 @@ build
 *.db
 
 secrets
+
+logs/
