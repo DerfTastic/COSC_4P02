@@ -28,15 +28,33 @@ const api = {
         }
     },
 
-    test: {
-        execute_sql: async function (sql) {
+    admin: {
+        execute_sql: async function (sql, session) {
             return await (await api.api_call(
                 `/sql`,
                 {
                     method: 'GET',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                    body: sql,
                 },
-                "An error occured while testing sessions"
+                "An error occured while executing sql"
             )).text();
+        },
+
+        get_server_logs: async function (session) {
+            return await (await api.api_call(
+                `/get_server_logs`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while getting the server logs"
+            )).json();
         },
     },
 
@@ -283,38 +301,53 @@ const page = {
     },
 
     load_dynamic_content: function (item) {
+        if(item==null)return;
         for(let e of item.querySelectorAll("[type='text/x-html-template']")){
             this.awaiting_html_templates++;
             (async _ => {
-                const result = await fetch(e.getAttribute("src"));
-                e.innerHTML = await result.text();
-                this.awaiting_html_templates--;
+                try{
+                    const result = await fetch(e.getAttribute("src"));
+                    e.innerHTML = await result.text();
+                }catch(err){
+                    e.innerHTML = JSON.stringify(err);
+                }
     
-                page.initialize_content(e);
-                page.load_dynamic_content(e);
+                page.initialize_content(e.nextElementSibling);
+                page.load_dynamic_content(e.nextElementSibling);
+                this.awaiting_html_templates--;
+                page.check_for_handlers();     
             })();
         }
         for(let e of item.querySelectorAll("template[type='text/x-handlebars-template']")){
             this.awaiting_handlebar_templates++;
             (async _ => {
-                const result = await eval(e.getAttribute("src"));
-                var template = Handlebars.compile(e.innerHTML);
-                var html = template(result);
-                e.nextElementSibling.innerHTML = html;
+                try{
+                    const result = await eval(e.getAttribute("src"));
+                    var template = Handlebars.compile(e.innerHTML);
+                    var html = template(result);
+                    e.nextElementSibling.innerHTML = html;
+                }catch(err){
+                    e.nextElementSibling.innerHTML = JSON.stringify(err);
+                }
     
+                page.initialize_content(e.nextElementSibling);
+                page.load_dynamic_content(e.nextElementSibling);
                 this.awaiting_handlebar_templates--;
-                page.initialize_content(e);
-                page.load_dynamic_content(e);
+                page.check_for_handlers();     
             })();
         }
-        page.check_for_handlers();     
     },
 
     initialize_content: (item) => {
+        if(item==null)return;
         for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
-            var template = Handlebars.compile(e.innerHTML);
-            var html = template({});
-            e.nextElementSibling.innerHTML = html;
+            try{
+                var template = Handlebars.compile(e.innerHTML);
+                var html = template({});
+                e.nextElementSibling.innerHTML = html;
+            }catch(err){
+                e.nextElementSibling.innerHTML = JSON.stringify(err);
+            }
         }
 
         for (let e of item.querySelectorAll("div[onclick]")) {
@@ -324,6 +357,8 @@ const page = {
         }
     }
 };
+
+
 
 document.addEventListener('handlebar_templates_finished', () => {
     console.log("Handlebar templates finished loading");
@@ -340,6 +375,12 @@ document.addEventListener('dynamic_content_finished', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.style="display:none";
+    if(typeof variable !== 'undefined'){
+        Handlebars.registerHelper("raw-helper", function(options) {
+            return options.fn();
+        });
+    }
+    
     page.initialize_content(document);
     page.load_dynamic_content(document);
 });

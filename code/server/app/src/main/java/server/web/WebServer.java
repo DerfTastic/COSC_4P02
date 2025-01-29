@@ -3,6 +3,7 @@ package server.web;
 import com.sun.net.httpserver.HttpServer;
 import server.Config;
 import server.Secrets;
+import server.ServerLogger;
 import server.db.DbManager;
 
 import java.io.*;
@@ -80,5 +81,6 @@ public class WebServer {
             }
         }
         Logger.getGlobal().log(Level.INFO, "Shutdown complete");
+        ServerLogger.close();
     }
 }

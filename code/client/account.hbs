@@ -36,6 +36,25 @@
             <div class="body">has_analytics: {{has_analytics}}</div>
             <div class="body">admin: {{admin}}</div>
         </article>
+
+        {{#if admin}}
+        
+            {{{{raw-helper}}}}
+            <template src="api.admin.get_server_logs(cookies.getSession())" type="text/x-handlebars-template">
+            {{#each @root}}
+            <tr>
+                <td>{{level_s}} ({{level_i}})</td>
+                <td>{{message}}</td>
+                <td>{{timestamp}}</td>
+                <td>{{class}}</td>
+                <td>{{method}}</td>
+                <td>{{#if exception}}<pre>{{exception}}</pre>{{else}}N/A{{/if}}</td>
+            </tr>
+            {{/each}}
+            {{{{/raw-helper}}}}
+        {{/if}}
+        </template>
+        <div></div>
     </template>
     <div></div>
 
