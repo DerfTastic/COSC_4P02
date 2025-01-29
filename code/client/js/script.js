@@ -1,13 +1,3 @@
-//TODO move this somewhere?
-function toggleMenu() {
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('nav ul');
-    if (hamburger && navLinks) {
-        hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
-    }
-}
-
 const apiRoot = "/api";
 
 const api = {
