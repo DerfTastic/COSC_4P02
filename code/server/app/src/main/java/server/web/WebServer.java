@@ -52,7 +52,7 @@ public class WebServer {
 
         addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
-        new APIRouteBuilder(this).mountRoutes(this, "/", "/server/web/root");
+        new APIRouteBuilder(this).mountRoutes(this, "/", "server.web.root");
 
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
         server.start();

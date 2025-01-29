@@ -1,5 +1,6 @@
 package server.web.route;
 
+import com.google.common.reflect.ClassPath;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -11,60 +12,30 @@ import server.web.annotations.url.QueryFlag;
 import server.web.annotations.url.QueryValue;
 import util.TypeReflect;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class RoutesBuilder {
-
-    private static Class<?>[] getClasses(String packageName)
-            throws ClassNotFoundException, IOException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<>();
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
+    @SuppressWarnings("UnstableApiUsage")
+    public static Stream<Class<?>> findAllClassesInPackage(String packageName) {
+        try {
+            return ClassPath.from(RoutesBuilder.class.getClassLoader())
+                    .getTopLevelClassesRecursive(packageName)
+                    .stream().map(ClassPath.ClassInfo::load);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        ArrayList<Class<?>> classes = new ArrayList<>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-        return classes.toArray(new Class[0]);
-    }
-
-    private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
-        File[] files = directory.listFiles();
-        for (File file : files==null?new File[0]:files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                classes.add(Class.forName(packageName.replace("/", ".") + '.' + file.getName().substring(0, file.getName().length() - 6)));
-            }
-        }
-        return classes;
     }
 
     @SuppressWarnings("unchecked")
     public void mountRoutes(WebServer server, String parentPath, String classPath){
         try{
-            for(var clazz : getClasses(classPath.substring(1))){
+            for(var clazz : findAllClassesInPackage(classPath).toList()){
                 var pack = clazz.getPackage().getName()+"/";
                 var path = parentPath+pack.substring(classPath.length()).replace(".", "/");
                 if(clazz.isAnnotationPresent(Routes.class)){
@@ -157,32 +128,32 @@ public class RoutesBuilder {
                 return (StringSingleNullableAdapter<?>)Integer::parseInt;
             else
                 return (StringSingleAdapter<?>)Integer::parseInt;
-        } else if (type.equals(short.class)) {
+        } else if (type.equals(Short.class)) {
             if(nullable)
                 return (StringSingleNullableAdapter<?>)Short::parseShort;
             else
                 return (StringSingleAdapter<?>)Short::parseShort;
-        } else if (type.equals(byte.class)) {
+        } else if (type.equals(Byte.class)) {
             if(nullable)
                 return (StringSingleNullableAdapter<?>)Byte::parseByte;
             else
                 return (StringSingleAdapter<?>)Byte::parseByte;
-        } else if (type.equals(long.class)) {
+        } else if (type.equals(Long.class)) {
             if(nullable)
                 return (StringSingleNullableAdapter<?>)Long::parseLong;
             else
                 return (StringSingleAdapter<?>)Long::parseLong;
-        } else if (type.equals(boolean.class)) {
+        } else if (type.equals(Boolean.class)) {
             if(nullable)
                 return (StringSingleNullableAdapter<?>)Boolean::parseBoolean;
             else
                 return (StringSingleAdapter<?>)Boolean::parseBoolean;
-        } else if (type.equals(float.class)) {
+        } else if (type.equals(Float.class)) {
             if(nullable)
                 return (StringSingleNullableAdapter<?>)Float::parseFloat;
             else
                 return (StringSingleAdapter<?>)Float::parseFloat;
-        } else if (type.equals(double.class)) {
+        } else if (type.equals(Double.class)) {
             if(nullable)
                 return (StringSingleNullableAdapter<?>)Double::parseDouble;
             else
