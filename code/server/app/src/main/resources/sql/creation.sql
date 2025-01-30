@@ -1,6 +1,7 @@
 drop table if exists users;
 drop table if exists organizers;
 drop table if exists events;
+drop table if exists event_tags;
 drop table if exists tickets;
 drop table if exists purchased_tickets;
 drop table if exists payments;
@@ -35,7 +36,7 @@ create table events(
     name TEXT not null,
     description TEXT not null,
     picture INTEGER,
-
+    metadata TEXT,
     available_total_tickets INTEGER,
 
     location_name TEXT,
@@ -46,6 +47,17 @@ create table events(
            REFERENCES organizers (id)
               ON DELETE CASCADE
               ON UPDATE NO ACTION
+);
+
+create table event_tags(
+    tag TEXT not null,
+    category BOOLEAN not null,
+    event_id INTEGER not null,
+    PRIMARY KEY(tag, category, event_id),
+    FOREIGN KEY (event_id)
+       REFERENCES events (id)
+          ON DELETE CASCADE
+          ON UPDATE NO ACTION
 );
 
 create table tickets(
@@ -67,7 +79,6 @@ create table purchased_tickets(
 
     payment_id INTEGER NOT NULL,
 
-    purchase_date NUMERIC NOT NULL,
     purchase_price NUMERIC NOT NULL,
 
     PRIMARY KEY(user_id, ticket_id),
@@ -91,6 +102,7 @@ create table payments(
     user_id INTEGER,
     receipt TEXT NOT NULL,
     amount NUMERIC NOT NULL,
+    payment_date NUMERIC NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users (id)
             ON DELETE SET NULL
@@ -111,3 +123,5 @@ create table sessions(
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 );
+
+insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, null, null, null);

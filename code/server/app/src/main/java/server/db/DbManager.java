@@ -27,10 +27,10 @@ public class DbManager implements AutoCloseable{
     private final int max_connections;
 
     public DbManager() throws SQLException{
-        this(false, Config.CONFIG.wipe_db_on_start, Config.CONFIG.initialize_db_with_data);
+        this(false, Config.CONFIG.wipe_db_on_start);
     }
 
-    public DbManager(boolean inMemory, boolean alwaysInitialize, boolean insert_data) throws SQLException {
+    public DbManager(boolean inMemory, boolean alwaysInitialize) throws SQLException {
 
         boolean initialized;
 
@@ -76,15 +76,6 @@ public class DbManager implements AutoCloseable{
                             throw e;
                         }
                     }
-                    if(insert_data)
-                        for(var sql : sql("testing_data").split(";")){
-                            try{
-                                stmt.execute(sql);
-                            }catch (SQLException e){
-                                Logger.getGlobal().log(Level.WARNING, sql);
-                                throw e;
-                            }
-                        }
                 }catch (SQLException e){
                     Logger.getGlobal().log(Level.FINE, "Failed to initialize DB", e);
                     throw e;

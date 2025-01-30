@@ -13,7 +13,6 @@ public class Config implements Serializable {
 
     public final Integer web_threads = initialize(256);
     public final Boolean wipe_db_on_start = initialize(false);
-    public final Boolean initialize_db_with_data = initialize(false);
 
     public final String hostname = initialize("localhost");
     public final Integer port = initialize(80);

@@ -1,6 +1,62 @@
 const apiRoot = "/api";
 
+class AllUserInfo{
+    /** @type{number} */id
+    /** @type{string} */name
+    /** @type{string} */email
+    /** @type{string} */bio
+    /** @type{boolean} */admin
+    /** @type{boolean} */has_analytics
+    /** @type{max_events} */max_events
+}
+
+class Log{
+    /** @type{string} */level_s
+    /** @type{number} */level_i
+    /** @type{string} */message
+    /** @type{number} */millis
+    /** @type{number} */sequenceNumber
+    /** @type{string} */sourceClassName
+    /** @type{string} */sourceMethodName
+    /** @type{string} */thrown
+}
+
+class EventTag{
+    /** @type{string} */tag
+    /** @type{boolean} */category
+}
+
+class Ticket{
+    /** @type{number} */id
+    /** @type{number} */event_id
+    /** @type{string} */name
+    /** @type{number} */price
+}
+
+class Event{
+    /** @type{number} */id
+    /** @type{number} */organizer_id
+    /** @type{string} */name
+    /** @type{string} */description
+    /** @type{number} */picture
+    /** @type{object} */metadata
+
+    /** @type{string} */location_name
+    /** @type{number} */location_lat
+    /** @type{number} */location_long
+}
+
+// actually just a string but shhhh
+/** @type{string} */
+class Session{}
+
 const api = {
+    /**
+     * @param {string} route 
+     * @param {RequestInit} data 
+     * @param {string} error 
+     * @returns {Promise}
+     */
     api_call: async function (route, data, error) {
         var response;
         try {
@@ -19,6 +75,11 @@ const api = {
     },
 
     admin: {
+        /**
+         * @param {string} sql 
+         * @param {Session} session 
+         * @returns {Promise<string>}
+         */
         execute_sql: async function (sql, session) {
             return await (await api.api_call(
                 `/sql`,
@@ -33,6 +94,10 @@ const api = {
             )).text();
         },
 
+        /**
+         * @param {Session} session 
+         * @returns {Promise<Log[]>}
+         */
         get_server_logs: async function (session) {
             return await (await api.api_call(
                 `/get_server_logs`,
@@ -49,6 +114,10 @@ const api = {
     },
 
     user: {
+        /**
+         * @param {Session} session 
+         * @returns {Promise<AllUserInfo>}
+         */
         all_userinfo: async function(session) {
             return await (await api.api_call(
                 `/all_userinfo`,
@@ -63,6 +132,11 @@ const api = {
             )).json();
         },
 
+        /**
+         * @param {string} email 
+         * @param {string} password 
+         * @returns {Promise<Session>}
+         */
         login: async function (email, password) {
             return await (await api.api_call(
                 `/login`,
@@ -80,6 +154,12 @@ const api = {
             )).text();
         },
 
+        /**
+         * @param {string} name 
+         * @param {string} email 
+         * @param {string} password 
+         * @returns {Promise}
+         */
         register: async function (name, email, password) {
             await api.api_call(
                 `/register`,
@@ -92,6 +172,10 @@ const api = {
             );
         },
 
+        /**
+         * @param {Session} session 
+         * @returns {Promise<Session[]>}
+         */
         list_sessions: async function (session) {
             return await (await api.api_call(
                 `/list_sessions`,
@@ -103,6 +187,11 @@ const api = {
             )).json();
         },
 
+        /**
+         * @param {number|string} sessionId 
+         * @param {Session} session 
+         * @returns {Promise}
+         */
         invalidate_session: async function (sessionId, session) {
             await api.api_call(
                 `/invalidate_session/${sessionId}`,
@@ -114,6 +203,12 @@ const api = {
             );
         },
 
+        /**
+         * @param {string} email 
+         * @param {string} password 
+         * @param {Session} session 
+         * @returns {Promise}
+         */
         delete_account: async function (email, password, session) {
             await api.api_call(
                 `/delete_account/${sessionId}`,
@@ -130,12 +225,20 @@ const api = {
 
 
 const cookies = {
+    /**
+     * 
+     * @param {string} token 
+     * @param {number} days
+     */
     setSession: function (token, days = 30) {
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
         document.cookie = `sessionToken=${encodeURIComponent(token)};expires=${expires.toUTCString()};path=/;Secure`;
     },
 
+    /**
+     * @returns {Session}
+     */
     getSession: function () {
         const cookies = document.cookie.split('; ');
         for (const cookie of cookies) {
@@ -157,6 +260,10 @@ const utility = {
         cookies.deleteSessionToken();
         window.location.href = '/login';
     },
+    /**
+     * @param {number|string} id 
+     * @returns {boolean}
+     */
     is_session_id_current: function (id) {
         if (cookies.getSession() == null || cookies.getSession().length == 0) return false;
         const curr_id = cookies.getSession().substring(cookies.getSession().length - 8, cookies.getSession().length);
@@ -174,6 +281,11 @@ const utility = {
 const page = {
     
     login: {
+        /**
+         * @param {string} email 
+         * @param {string} password 
+         * @returns {Promise}
+         */
         login: async function(email, password){
             try {
                 cookies.deleteSessionToken();
@@ -186,6 +298,12 @@ const page = {
     },
 
     register: {
+        /**
+         * @param {string} name 
+         * @param {string} email 
+         * @param {string} password 
+         * @returns {Promise}
+         */
         register: async function(name, email, password){
             try {
                 await api.user.register(name, email, password);
@@ -196,6 +314,9 @@ const page = {
     },
 
     account: {
+        /**
+         * @returns {Promise<AllUserInfo>}
+         */
         all_userinfo: async function() {
             try {
                 return await api.user.all_userinfo(cookies.getSession());
@@ -208,6 +329,11 @@ const page = {
             }
         },
 
+        /**
+         * @param {Element}
+         * @param {number|string} id 
+         * @returns {Promise}
+         */
         remove_session: async function (element, id) {
             try {
                 await api.user.invalidate_session(id, cookies.getSession());
@@ -220,6 +346,9 @@ const page = {
             }
         },
 
+        /**
+         * @returns {Promise<Session[]>}
+         */
         list_sessions: async function () {
             try {
                 return await api.user.list_sessions(cookies.getSession());
@@ -232,9 +361,13 @@ const page = {
             }
         },
 
+        /**
+         * @param {number|string} sessionId 
+         * @returns {Promise}
+         */
         invalidate_session: async function (sessionId) {
             try {
-                return await api.user.invalidate_session(sessionId, cookies.getSession());
+                await api.user.invalidate_session(sessionId, cookies.getSession());
             } catch ({ error, code }) {
                 if (code == 401) {
                     utility.logout();
@@ -244,18 +377,11 @@ const page = {
             }
         },
 
-        test: async function(){
-            try {
-                return await api.test.test(cookies.getSession());
-            } catch ({ error, code }) {
-                if (code == 401) {
-                    utility.logout();
-                } else {
-                    alert(error);
-                }
-            }
-        },
-
+        /**
+         * @param {string} email 
+         * @param {string} password 
+         * @returns {Promise}
+         */
         delete_account: async function(email, password) {
             try {
                 await api.user.delete_account(email, password, cookies.getSession());
@@ -290,6 +416,9 @@ const page = {
         }
     },
 
+    /**
+     * @param {Element} item 
+     */
     load_dynamic_content: function (item) {
         if(item==null)return;
         for(let e of item.querySelectorAll("[type='text/x-html-template']")){
@@ -326,8 +455,12 @@ const page = {
                 page.check_for_handlers();     
             })();
         }
+        page.check_for_handlers();     
     },
 
+    /**
+     * @param {Element} item 
+     */
     initialize_content: (item) => {
         if(item==null)return;
         for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
@@ -347,7 +480,6 @@ const page = {
         }
     }
 };
-
 
 
 document.addEventListener('handlebar_templates_finished', () => {

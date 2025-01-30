@@ -22,7 +22,7 @@ public class AccountAPITest {
     @Before
     public void setup() {
         try{
-            db = new DbManager(true, true, false);
+            db = new DbManager(true, true);
             mail = new MailServer("", "");
         }catch (Exception e){
             throw new RuntimeException(e);

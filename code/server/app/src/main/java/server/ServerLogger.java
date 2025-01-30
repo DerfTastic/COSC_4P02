@@ -91,7 +91,7 @@ public class ServerLogger {
 
         @Override
         public synchronized void publish(LogRecord record) {
-            records[index++]=record;
+            records[index++%records.length]=record;
         }
 
         @Override

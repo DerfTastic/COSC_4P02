@@ -116,7 +116,7 @@ public class AdminAPI {
         }
     }
 
-    @Route("/give_account_admin/<admin>/<email>")
+    @Route("/set_account_admin/<admin>/<email>")
     public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, DbConnection conn, @Path boolean admin, @Path String email) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("update users set admin=:admin where email=:email")){
             stmt.setString(":email", email);
