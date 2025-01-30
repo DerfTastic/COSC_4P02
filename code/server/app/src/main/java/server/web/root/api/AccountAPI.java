@@ -2,15 +2,15 @@ package server.web.root.api;
 
 import org.sqlite.SQLiteException;
 import server.db.DbConnection;
-import server.db.DbManager;
 import server.db.Transaction;
 import server.web.MailServer;
 import server.web.Util;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
+import server.web.auth.RequireSession;
+import server.web.auth.UserSession;
 import server.web.route.ClientError;
 import server.web.route.Request;
-import server.web.route.RouteParameter;
 import util.SqlSerde;
 
 import javax.mail.Message;
@@ -34,7 +34,7 @@ public class AccountAPI {
     ){}
 
     @Route
-    public static @Json UserInfo all_userinfo(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn) throws SQLException {
+    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, DbConnection conn) throws SQLException {
         try(var stmt = conn.namedPreparedStatement("select name, bio from users where id=:id")){
             stmt.setInt(":id", auth.user_id);
             var rs = stmt.executeQuery();
@@ -56,7 +56,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void delete_account(@FromRequest(UserAuthFromRequest.class) UserAuth auth, Transaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
+    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, Transaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
         if(!account.email.equals(auth.email))
             throw new ClientError.Unauthorized("Incorrect email");
         account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
@@ -75,7 +75,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void change_password(@FromRequest(UserAuthFromRequest.class) UserAuth auth, Transaction trans, @Body @Json ChangePassword cp) throws SQLException {
+    public static void change_password(@FromRequest(RequireSession.class) UserSession auth, Transaction trans, @Body @Json ChangePassword cp) throws SQLException {
         cp.old_password = Util.hashy((cp.old_password+"\0\0\0\0"+cp.email).getBytes());
         cp.new_password = Util.hashy((cp.new_password+"\0\0\0\0"+cp.email).getBytes());
         try(var stmt = trans.conn.namedPreparedStatement("update users set password=:new_password where email=:email AND password=:old_password AND id=:id")){
@@ -185,7 +185,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static @Json List<Session> list_sessions(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn) throws SQLException {
+    public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, DbConnection conn) throws SQLException {
         try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
             stmt.setInt(":id", auth.user_id);
             return SqlSerde.sqlList(stmt.executeQuery(), Session.class);
@@ -193,7 +193,7 @@ public class AccountAPI {
     }
 
     @Route("/invalidate_session/<session_id>")
-    public static void invalidate_session(@FromRequest(UserAuthFromRequest.class) UserAuth auth, DbConnection conn, @Path int session_id) throws SQLException, ClientError.BadRequest {
+    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, DbConnection conn, @Path int session_id) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setInt(":session_id", session_id);
             stmt.setInt(":user_id", auth.user_id);
@@ -202,42 +202,4 @@ public class AccountAPI {
         }
     }
 
-    public static class UserAuth{
-        public int user_id;
-        public int session_id;
-        public String email;
-
-        public int organizer_id;
-        public int max_events;
-        public boolean has_analytics;
-
-        public boolean admin;
-    }
-
-    public static class UserAuthFromRequest implements RouteParameter<UserAuth>{
-
-        @Override
-        public UserAuth construct(Request request) throws Exception {
-            var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
-            if(token==null)throw new ClientError.Unauthorized("No valid session");
-            try(var conn = request.getServer().getManagedResource(DbManager.class).conn()){
-                try(var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")){
-                    stmt.setString(":token", token);
-                    var result = stmt.executeQuery();
-                    if(result==null||!result.next())throw new ClientError.Unauthorized("No valid session");
-
-                    var auth = new UserAuth();
-                    auth.session_id = result.getInt("id");
-                    auth.user_id = result.getInt("user_id");
-                    auth.email = result.getString("email");
-                    auth.admin = result.getBoolean("admin");
-
-                    auth.organizer_id = result.getInt("organizer_id");
-                    auth.max_events = result.getInt("max_events");
-                    auth.has_analytics = result.getBoolean("has_analytics");
-                    return auth;
-                }
-            }
-        }
-    }
 }
