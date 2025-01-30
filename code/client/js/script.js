@@ -21,19 +21,19 @@ class Log{
     /** @type{string} */thrown
 }
 
-class EventTag{
+class OrganizerEventTag{
     /** @type{string} */tag
     /** @type{boolean} */category
 }
 
-class Ticket{
+class EventTicket{
     /** @type{number} */id
     /** @type{number} */event_id
     /** @type{string} */name
     /** @type{number} */price
 }
 
-class Event{
+class OrganizerEvent{
     /** @type{number} */id
     /** @type{number} */organizer_id
     /** @type{string} */name
