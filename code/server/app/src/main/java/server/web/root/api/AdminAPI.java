@@ -1,7 +1,8 @@
 package server.web.root.api;
 
 import server.ServerLogger;
-import server.db.DbConnection;
+import server.db.RoConn;
+import server.db.RwConn;
 import server.web.MailServer;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
@@ -52,8 +53,8 @@ public class AdminAPI {
     }
 
     @Route
-    public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, DbConnection connection, @Body String sql) throws SQLException {
-        try(var stmt = connection.conn.createStatement()){
+    public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, RwConn connection, @Body String sql) throws SQLException {
+        try(var stmt = connection.getConn().createStatement()){
             if(!stmt.execute(sql))return "";
             String list = "";
 
@@ -108,7 +109,7 @@ public class AdminAPI {
     }
 
     @Route("/delete_other_account/<email>")
-    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, DbConnection conn, @Path String email) throws SQLException, ClientError.BadRequest {
+    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RoConn conn, @Path String email) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from users where email=:email")){
             stmt.setString(":email", email);
             if(stmt.executeUpdate() != 1)
@@ -117,7 +118,7 @@ public class AdminAPI {
     }
 
     @Route("/set_account_admin/<admin>/<email>")
-    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, DbConnection conn, @Path boolean admin, @Path String email) throws SQLException, ClientError.BadRequest {
+    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RoConn conn, @Path boolean admin, @Path String email) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("update users set admin=:admin where email=:email")){
             stmt.setString(":email", email);
             stmt.setBoolean(":admin", admin);

@@ -1,8 +1,6 @@
 package server.web;
 
-import server.db.DbConnection;
-import server.db.DbManager;
-import server.db.Transaction;
+import server.db.*;
 import server.web.route.Request;
 import server.web.route.RouteImpl;
 import server.web.route.RouteParameter;
@@ -22,30 +20,57 @@ public class APIRouteBuilder extends RoutesBuilder {
     }
 
     private void initializeParameterHandlers() {
-        this.addParameterHandler(Transaction.class, new RouteParameter<>() {
+        this.addParameterHandler(RoTransaction.class, new RouteParameter<>() {
             @Override
-            public Transaction construct(Request request) throws SQLException {
-                return db.transaction();
+            public RoTransaction construct(Request request) throws SQLException {
+                return db.ro_transaction();
             }
 
             @Override
-            public void destructError(Request request, Transaction type) throws Exception {
+            public void destructError(Request request, RoTransaction type) throws Exception {
                 type.close();
             }
 
             @Override
-            public void destruct(Request request, Transaction type) throws SQLException {
+            public void destruct(Request request, RoTransaction type) throws SQLException {
                 type.tryCommit();
             }
         });
-        addParameterHandler(DbConnection.class, new RouteParameter<>() {
+        this.addParameterHandler(RwTransaction.class, new RouteParameter<>() {
             @Override
-            public DbConnection construct(Request request) throws Exception {
-                return db.conn();
+            public RwTransaction construct(Request request) throws SQLException {
+                return db.rw_transaction();
             }
 
             @Override
-            public void destruct(Request request, DbConnection type) throws Exception {
+            public void destructError(Request request, RwTransaction type) throws Exception {
+                type.close();
+            }
+
+            @Override
+            public void destruct(Request request, RwTransaction type) throws SQLException {
+                type.tryCommit();
+            }
+        });
+        addParameterHandler(RoConn.class, new RouteParameter<>() {
+            @Override
+            public RoConn construct(Request request) throws Exception {
+                return db.ro_conn();
+            }
+
+            @Override
+            public void destruct(Request request, RoConn type) throws Exception {
+                type.close();
+            }
+        });
+        addParameterHandler(RwConn.class, new RouteParameter<>() {
+            @Override
+            public RwConn construct(Request request) throws Exception {
+                return db.rw_conn();
+            }
+
+            @Override
+            public void destruct(Request request, RwConn type) throws Exception {
                 type.close();
             }
         });

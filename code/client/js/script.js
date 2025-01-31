@@ -62,6 +62,7 @@ const api = {
         try {
             response = await fetch(`${apiRoot}${route}`, data);
         } catch (e) {
+            console.log(e);
             throw { error, code: -1 };
         }
 
@@ -82,9 +83,9 @@ const api = {
          */
         execute_sql: async function (sql, session) {
             return await (await api.api_call(
-                `/sql`,
+                `/execute_sql`,
                 {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                         'X-UserAPIToken': session
                     },

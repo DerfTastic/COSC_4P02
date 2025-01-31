@@ -34,7 +34,7 @@ public class AccountAPITest {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.transaction()){
+        try(var trans = db.rw_transaction()){
             AccountAPI.login(mail, null, trans, account);
         }
     }
@@ -45,7 +45,7 @@ public class AccountAPITest {
         account.name = "Parker";
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.transaction()){
+        try(var trans = db.rw_transaction()){
             AccountAPI.register(mail, trans, account);
         }
     }

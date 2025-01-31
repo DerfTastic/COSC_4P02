@@ -37,8 +37,8 @@ public class WebServer {
             var db = getManagedResource(DbManager.class);
             var timer = getManagedResource(TimedEvents.class);
             timer.addMinutely(() -> {
-                try(var trans = db.transaction()){
-                    try(var stmt = trans.conn.namedPreparedStatement("delete from sessions where expiration<:now")){
+                try(var trans = db.rw_transaction()){
+                    try(var stmt = trans.namedPreparedStatement("delete from sessions where expiration<:now")){
                         stmt.setLong(":now", new Date().getTime());
                         stmt.execute();
                     }

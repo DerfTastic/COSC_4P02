@@ -21,10 +21,19 @@ import java.util.logging.Logger;
 
 public class DbManager implements AutoCloseable{
     private final static HashMap<String, String> resources = new HashMap<>();
-    private final LinkedList<Connection> connections = new LinkedList<>();
-    private final HashSet<Connection> outGoing = new HashSet<>();
+
+    private final LinkedList<Connection> writable = new LinkedList<>();
+    private final LinkedList<Connection> readOnly = new LinkedList<>();
+    private final HashSet<Connection> inUse = new HashSet<>();
+    private int inUseReadOnly = 0;
+    private int inUseWritable = 0;
+    private int sequenceBefore = 0;
+    private int sequenceCurr = 0;
+
     private final String url;
-    private final int max_connections;
+    private final int maxReadOnly;
+    private final int maxWritable;
+    private final boolean canWriteAndReadCoexist;
 
     public DbManager() throws SQLException{
         this(false, Config.CONFIG.wipe_db_on_start);
@@ -35,12 +44,13 @@ public class DbManager implements AutoCloseable{
         boolean initialized;
 
 
+        canWriteAndReadCoexist = false;
+        maxReadOnly = 0;
+        maxWritable = 1;
         if(inMemory) {
             initialized = false;
-            max_connections = 1;
             url = "jdbc:sqlite:file:memdb1?mode=memory&cache=shared";
         }else {
-            max_connections = 0;
             url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
             initialized = new File("Config.CONFIG.db_path").exists();
 
@@ -54,20 +64,20 @@ public class DbManager implements AutoCloseable{
             }
         }
 
-        try(var conn = conn()){
-            var major = conn.conn.getMetaData().getDatabaseMajorVersion();
-            var minor = conn.conn.getMetaData().getDatabaseMinorVersion();
-            var name = conn.conn.getMetaData().getDatabaseProductName();
-            var v = conn.conn.getMetaData().getDatabaseProductVersion();
+        try(var conn = ro_conn()){
+            var major = conn.getConn().getMetaData().getDatabaseMajorVersion();
+            var minor = conn.getConn().getMetaData().getDatabaseMinorVersion();
+            var name = conn.getConn().getMetaData().getDatabaseProductName();
+            var v = conn.getConn().getMetaData().getDatabaseProductVersion();
             Logger.getGlobal().log(Level.FINE, "Connected to DB " + major + "." + minor + " " + name + "("+v+")");
         }
 
         if(!initialized || alwaysInitialize){
-            try(var conn = conn()){
+            try(var conn = rw_conn()){
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
-                try(var stmt = conn.conn.createStatement()){
-                    conn.conn.setAutoCommit(true);
+                try(var stmt = conn.getConn().createStatement()){
+                    conn.getConn().setAutoCommit(true);
                     for(var sql : sql("creation").split(";")){
                         try{
                             stmt.execute(sql);
@@ -100,37 +110,55 @@ public class DbManager implements AutoCloseable{
         }
     }
 
-    public Transaction transaction() throws SQLException {
-        return new Transaction(conn());
-    }
-
     @Override
     public synchronized void close() {
-        for(var conn : connections){
+        for(var conn : readOnly){
             try{
                 conn.close();
             }catch (Exception ignore){}
         }
-        for(var conn : outGoing){
+        for(var conn : writable){
+            try{
+                conn.close();
+            }catch (Exception ignore){}
+        }
+        for(var conn : inUse){
             try{
                 conn.close();
             }catch (Exception ignore){}
         }
     }
 
-    protected synchronized void reAddConnection(Connection conn){
-        outGoing.remove(conn);
-        connections.addLast(conn);
-        notify();
+    protected synchronized void rePoolRo(Connection conn){
+        inUse.remove(conn);
+        readOnly.addLast(conn);
+        inUseReadOnly--;
+        notifyAll();
     }
 
-    protected synchronized void removeConnection(Connection conn) {
-        outGoing.remove(conn);
+    protected synchronized void rePoolRw(Connection conn){
+        inUse.remove(conn);
+        writable.addLast(conn);
+        inUseWritable--;
+        notifyAll();
     }
 
-    private SQLiteConnection initialize() throws SQLException{
+    protected synchronized void removeRo(Connection conn) {
+        inUse.remove(conn);
+        inUseReadOnly--;
+        this.notifyAll();
+    }
+
+    protected synchronized void removeRw(Connection conn) {
+        inUse.remove(conn);
+        inUseWritable--;
+        this.notifyAll();
+    }
+
+    private SQLiteConnection initialize(boolean readOnly) throws SQLException{
         var config = new SQLiteConfig();
         config.setSharedCache(true);
+        config.setReadOnly(readOnly);
         config.enableRecursiveTriggers(true);
         var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
@@ -142,21 +170,71 @@ public class DbManager implements AutoCloseable{
         return connection;
     }
 
-    public synchronized DbConnection conn() throws SQLException {
-        DbConnection conn;
-        while(connections.isEmpty()&&outGoing.size()>=max_connections&&max_connections>0){
+    public RwTransaction rw_transaction() throws SQLException {
+        return new RwTransaction(rw_conn_p(), this);
+    }
+
+    public RoTransaction ro_transaction() throws SQLException {
+        return new RoTransaction(ro_conn_p(), this);
+    }
+
+    public synchronized RoConn ro_conn() throws SQLException {
+        var con = ro_conn_p();
+        inUse.add(con);
+        return new RoConn(con, this);
+    }
+
+    public synchronized RwConn rw_conn() throws SQLException{
+        var con = rw_conn_p();
+        inUse.add(con);
+        return new RwConn(con, this);
+    }
+
+    private synchronized Connection rw_conn_p() throws SQLException{
+        var seq = sequenceBefore++;
+        while(
+            seq!=sequenceCurr||
+                (writable.isEmpty()
+                &&inUseWritable>=maxWritable
+                &&maxWritable>0)
+            ||(canWriteAndReadCoexist&&inUseReadOnly>0)
+        ){
             try{
                 wait();
             }catch (Exception e){
                 throw new SQLException(e);
             }
         }
-        if(connections.isEmpty()){
-            conn = new DbConnection(initialize(), this);
+        sequenceCurr++;
+        inUseWritable++;
+        if(writable.isEmpty()){
+            return initialize(false);
         }else{
-            conn = new DbConnection(connections.pollFirst(), this);
+            return writable.pollFirst();
         }
-        outGoing.add(conn.conn);
-        return conn;
+    }
+
+    public synchronized Connection ro_conn_p() throws SQLException {
+        var seq = sequenceBefore++;
+        while(
+            seq!=sequenceCurr||
+                (readOnly.isEmpty()
+                &&inUseReadOnly>=maxReadOnly
+                &&maxReadOnly>0)
+            ||(canWriteAndReadCoexist&&inUseWritable>0)
+        ){
+            try{
+                wait();
+            }catch (Exception e){
+                throw new SQLException(e);
+            }
+        }
+        sequenceCurr++;
+        inUseReadOnly++;
+        if(readOnly.isEmpty()){
+            return initialize(true);
+        }else{
+            return readOnly.pollFirst();
+        }
     }
 }

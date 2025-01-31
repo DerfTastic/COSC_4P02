@@ -1,8 +1,10 @@
 package server.web.root.api;
 
 import org.sqlite.SQLiteException;
-import server.db.DbConnection;
-import server.db.Transaction;
+import server.db.RoConn;
+import server.db.RoTransaction;
+import server.db.RwConn;
+import server.db.RwTransaction;
 import server.web.MailServer;
 import server.web.Util;
 import server.web.annotations.*;
@@ -29,12 +31,12 @@ public class AccountAPI {
             String email,
             String bio,
             boolean admin,
-            boolean has_analytics,
-            int max_events
+            Boolean has_analytics,
+            Integer max_events
     ){}
 
     @Route
-    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, DbConnection conn) throws SQLException {
+    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
         try(var stmt = conn.namedPreparedStatement("select name, bio from users where id=:id")){
             stmt.setInt(":id", auth.user_id);
             var rs = stmt.executeQuery();
@@ -56,11 +58,11 @@ public class AccountAPI {
     }
 
     @Route
-    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, Transaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
+    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
         if(!account.email.equals(auth.email))
             throw new ClientError.Unauthorized("Incorrect email");
         account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
-        try(var stmt = trans.conn.namedPreparedStatement("delete from users where email=:email AND pass=:pass")){
+        try(var stmt = trans.namedPreparedStatement("delete from users where email=:email AND pass=:pass")){
             stmt.setString(":email", auth.email);
             stmt.setString(":pass", account.password);
             if(stmt.executeUpdate() != 1)
@@ -75,10 +77,10 @@ public class AccountAPI {
     }
 
     @Route
-    public static void change_password(@FromRequest(RequireSession.class) UserSession auth, Transaction trans, @Body @Json ChangePassword cp) throws SQLException {
+    public static void change_password(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json ChangePassword cp) throws SQLException {
         cp.old_password = Util.hashy((cp.old_password+"\0\0\0\0"+cp.email).getBytes());
         cp.new_password = Util.hashy((cp.new_password+"\0\0\0\0"+cp.email).getBytes());
-        try(var stmt = trans.conn.namedPreparedStatement("update users set password=:new_password where email=:email AND password=:old_password AND id=:id")){
+        try(var stmt = trans.namedPreparedStatement("update users set password=:new_password where email=:email AND password=:old_password AND id=:id")){
             stmt.setString(":email", cp.email);
             stmt.setInt(":id", auth.user_id);
             stmt.setString(":old_password", cp.old_password);
@@ -86,7 +88,7 @@ public class AccountAPI {
             stmt.execute();
         }
 
-        try(var stmt = trans.conn.namedPreparedStatement("delete from sessions where user_id=:id")){
+        try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:id")){
             stmt.setInt(":id", auth.user_id);
             stmt.execute();
         }
@@ -99,9 +101,9 @@ public class AccountAPI {
     }
 
     @Route
-    public static void register(MailServer mail, Transaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
+    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
-        try(var stmt = trans.conn.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, null, null, null)")){
+        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, null, null, null)")){
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);
@@ -126,10 +128,10 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, Request request, Transaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
+    public static String login(MailServer mail, Request request, RwTransaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
         int user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
-        try(var stmt = trans.conn.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
+        try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
             stmt.setString(":pass", login.password);
             var res = stmt.executeQuery();
@@ -146,7 +148,7 @@ public class AccountAPI {
         var ip = request.exchange.getRemoteAddress().getAddress().getHostAddress();
 
         int session_id;
-        try(var stmt = trans.conn.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
+        try(var stmt = trans.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
             stmt.setInt(":user_id", user_id);
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
             stmt.setString(":agent", agent);
@@ -157,7 +159,7 @@ public class AccountAPI {
         var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id).getBytes());
         var token = String.format("%s%08X", hash, session_id);
 
-        try(var stmt = trans.conn.namedPreparedStatement("update sessions set token=:token where id=:id")){
+        try(var stmt = trans.namedPreparedStatement("update sessions set token=:token where id=:id")){
             stmt.setString(":token", token);
             stmt.setInt(":id", session_id);
             stmt.execute();
@@ -185,7 +187,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, DbConnection conn) throws SQLException {
+    public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
         try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
             stmt.setInt(":id", auth.user_id);
             return SqlSerde.sqlList(stmt.executeQuery(), Session.class);
@@ -193,7 +195,7 @@ public class AccountAPI {
     }
 
     @Route("/invalidate_session/<session_id>")
-    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, DbConnection conn, @Path int session_id) throws SQLException, ClientError.BadRequest {
+    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwConn conn, @Path int session_id) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setInt(":session_id", session_id);
             stmt.setInt(":user_id", auth.user_id);
