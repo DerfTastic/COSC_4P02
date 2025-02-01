@@ -71,13 +71,18 @@ public class EventAPI {
     }
 
     @Route("/get_event/<id>")
-    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) Integer organizer_id, RoTransaction trans, @Path int id) throws SQLException{
+    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) Integer organizer_id, RoTransaction trans, @Path int id) throws SQLException, ClientError.BadRequest {
         Event event;
         try(var stmt = trans.namedPreparedStatement("select * from events where id=:id AND (draft=false OR organizer_id=:organizer_id)")){
             stmt.setInt(":id", id);
             if(organizer_id!=null)
                 stmt.setInt(":organizer_id", organizer_id);
-            event = SqlSerde.sqlSingle(stmt.executeQuery(), Event.class);
+            var result = SqlSerde.sqlList(stmt.executeQuery(), Event.class);
+            if(result.isEmpty())
+                throw new ClientError.BadRequest("Event doesn't exist or you do not have permission to view it");
+            if(result.size()>1)
+                throw new SQLException("Expected single value found multiple");
+            event = result.get(0);
         }
 
         List<EventTag> tags;

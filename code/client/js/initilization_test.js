@@ -8,7 +8,12 @@ async function run_all(){
     test_register_1();
     test_register_2();
     test_default_admin_account();
-    create_example_event();
+
+    (async _ => {
+        const org_account = await create_example_organizer_account();
+        for(let i = 0; i < 100; i ++)
+            create_example_event(org_account);
+    })();
 }
 
 async function test_register_1(){
@@ -41,11 +46,17 @@ async function test_default_admin_account(){
     await api.admin.get_server_logs(admin_session);
 }
 
-async function create_example_event(){
+async function create_example_organizer_account(){
     await api.user.register("Organizer", "organizer@very.important.com", "verysecret");
     const org_session = await api.user.login("organizer@very.important.com", "verysecret");
 
     await api.organizer.convert_to_organizer_account(org_session);
+
+    return org_session;
+}
+
+async function create_example_event(org_session){
+    const picture_promise = (async () => await (await fetch("https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg")).blob())();
 
     const event_id = await api.events.create_event(org_session);
     await api.events.add_event_tag(event_id, "concert", true, org_session);
@@ -63,7 +74,7 @@ async function create_example_event(){
     };
     await api.events.update_event(data, org_session);
 
-    const picture =  await (await fetch("https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg")).blob();
+    const picture =  await picture_promise;
     await api.events.set_picture(event_id, picture, org_session);
 
 
@@ -81,6 +92,7 @@ async function create_example_event(){
 
     await api.events.set_draft(event_id, false, org_session);
 
+    // now that the event isn't a draft its public so anyone (even without an account) can view it
     const result = await api.events.get_event(event_id);
     
     //TODO more testing
