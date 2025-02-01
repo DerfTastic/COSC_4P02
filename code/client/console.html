@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Console</title>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="/js/script.js" type="text/javascript"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -87,21 +89,8 @@
             try {
                 consoleDiv.innerText += `\n[SQL] ${sqlQuery}\n`;
 
-                const response = await fetch('/api/sql', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: sqlQuery
-                });
-                
-
-                const result = await response.text();
-                if (response.ok) {
-                    consoleDiv.innerText += `\n[Success]\n${result}`;
-                }else{
-                    consoleDiv.innerText += `\n[Error]\n${result}`;
-                }
+                const result = await api.admin.execute_sql(sqlQuery, cookies.getSession());
+                consoleDiv.innerText += `\n[Success]\n${result}`;
             } catch (error) {
                 consoleDiv.innerText += `\n[Error]\n${error.message}`;
             }

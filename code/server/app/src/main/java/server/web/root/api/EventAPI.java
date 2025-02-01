@@ -16,6 +16,8 @@ import util.SqlSerde;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 @Routes
@@ -174,8 +176,10 @@ public class EventAPI {
             stmt.setInt(":id", id);
             stmt.setInt(":organizer_id", session.organizer_id);
             var media = stmt.executeQuery().getInt(1);
-            if(media!=0)
+            if(media!=0){
+                Logger.getGlobal().log(Level.WARNING, "Picture deleted " + media);
                 handler.delete(media);
+            }
         }
 
         var media_id = handler.add(data);
