@@ -40,8 +40,12 @@ public class ServerLogger {
 
                 out.close();
             }
-            fh = new FileHandler("./logs/log");
         } catch (IOException e) {
+            Logger.getGlobal().log(Level.SEVERE, "Failed to zip older log file", e);
+        }
+        try{
+            fh = new FileHandler("./logs/log");
+        }catch (Exception e){
             throw new RuntimeException(e);
         }
         mh = new MemHandler();

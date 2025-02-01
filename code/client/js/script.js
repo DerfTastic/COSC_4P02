@@ -41,6 +41,7 @@ class OrganizerEvent {
     /** @type{object} */metadata
     /** @type{boolean} */draft
 
+    /** @type{number} */available_total_tickets
 
     /** @type{string} */location_name
     /** @type{number} */location_lat
@@ -58,7 +59,8 @@ class UpdateOrganizerEvent{
     /** @type{string} */name
     /** @type{string} */description
     /** @type{object} */metadata
-
+    
+    /** @type{number} */available_total_tickets
 
     /** @type{string} */location_name
     /** @type{number} */location_lat

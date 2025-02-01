@@ -128,6 +128,9 @@ async function create_example_event(org_session, iteration){
         name: chance.sentence({ words: 5 }),
         description: chance.paragraph() ,
         metadata: {background: chance.color({format: 'hex'})},
+    
+        available_total_tickets: chance.bool()?undefined:chance.integer({ min: 50, max: 200 }),
+        
         location_name: chance.address(),
         location_long: chance.longitude(),
         location_lat: chance.latitude()
