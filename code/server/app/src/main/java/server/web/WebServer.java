@@ -2,6 +2,7 @@ package server.web;
 
 import com.sun.net.httpserver.HttpServer;
 import server.Config;
+import server.DynamicMediaHandler;
 import server.Secrets;
 import server.ServerLogger;
 import server.db.DbManager;
@@ -31,6 +32,7 @@ public class WebServer {
             this.close();
             throw e;
         }
+        addManagedResource(new DynamicMediaHandler());
 
 
         {   // session expiration

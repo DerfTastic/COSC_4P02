@@ -31,8 +31,7 @@ public class AccountAPI {
             String email,
             String bio,
             boolean admin,
-            Boolean has_analytics,
-            Integer max_events
+            Boolean has_analytics
     ){}
 
     @Route
@@ -46,8 +45,7 @@ public class AccountAPI {
                     auth.email,
                     rs.getString("bio"),
                     auth.admin,
-                    auth.has_analytics,
-                    auth.max_events
+                    auth.has_analytics
             );
         }
     }

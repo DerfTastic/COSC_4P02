@@ -64,6 +64,10 @@ public class NamedPreparedStatement implements AutoCloseable {
         stmt.setBoolean(getIndex(name), value);
     }
 
+    public void setDouble(String name, double value) throws SQLException {
+        stmt.setDouble(getIndex(name), value);
+    }
+
     private NamedPreparedStatement(Connection conn, Tuple<String, HashMap<String, Integer>> sql) throws SQLException {
         this.stmt = conn.prepareStatement(sql.t1);
         fieldMap = sql.t2;

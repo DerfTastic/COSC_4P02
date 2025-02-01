@@ -6,7 +6,6 @@ public class UserSession {
     public String email;
 
     public Integer organizer_id;
-    public Integer max_events;
     public Boolean has_analytics;
 
     public boolean admin;

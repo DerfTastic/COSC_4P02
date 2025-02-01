@@ -25,7 +25,6 @@ public class RequireSession implements RouteParameter<UserSession> {
                 auth.admin = result.getBoolean("admin");
 
                 auth.organizer_id = result.getString("organizer_id")==null?null:result.getInt("organizer_id");
-                auth.max_events = result.getString("max_events")==null?null:result.getInt("max_events");
                 auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
                 return auth;
             }

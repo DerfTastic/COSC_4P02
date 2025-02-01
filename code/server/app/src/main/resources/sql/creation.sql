@@ -26,8 +26,7 @@ create table users(
 
 create table organizers(
     id INTEGER primary key not null,
-    has_analytics BOOLEAN not null,
-    max_events INTEGER not null
+    has_analytics BOOLEAN not null
 );
 
 create table events(
@@ -38,6 +37,7 @@ create table events(
     picture INTEGER,
     metadata TEXT,
     available_total_tickets INTEGER,
+    draft BOOLEAN not null,
 
     location_name TEXT,
     location_lat REAL,

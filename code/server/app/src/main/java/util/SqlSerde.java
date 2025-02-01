@@ -1,5 +1,9 @@
 package util;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -29,7 +33,10 @@ public class SqlSerde {
 
     public static <T> T sqlSingle(ResultSet rs, Class<T> clazz) throws SQLException{
         var res = sqlList(rs, clazz);
-        if(res.size() != 1) throw new SQLException("Expected single result");
+        if(res.isEmpty())
+            throw new SQLException("Expected a single result got none");
+        if(res.size() > 1)
+            throw new SQLException("Expected single result got more");
         return res.get(0);
     }
 
@@ -56,8 +63,12 @@ public class SqlSerde {
                         field.setByte(instance, rs.getByte(name));
                     }else if(field.getType().equals(double.class)){
                         field.setDouble(instance, rs.getDouble(name));
-                    }else if(field.getType().equals(String.class)){
+                    }else if(field.getType().equals(String.class)) {
                         field.set(instance, rs.getString(name));
+                    }else if(field.getType().equals(JsonObject.class)){
+                        field.set(instance, JsonParser.parseString(rs.getString(name)).getAsJsonObject());
+                    }else if(field.getType().equals(JsonArray.class)){
+                        field.set(instance, JsonParser.parseString(rs.getString(name)).getAsJsonArray());
                     }else throw new RuntimeException("Invalid field type: " + field);
                 }
                 list.add(instance);

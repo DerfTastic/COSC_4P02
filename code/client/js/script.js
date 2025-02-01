@@ -1,16 +1,15 @@
 const apiRoot = "/api";
 
-class AllUserInfo{
+class AllUserInfo {
     /** @type{number} */id
     /** @type{string} */name
     /** @type{string} */email
     /** @type{string} */bio
     /** @type{boolean} */admin
     /** @type{boolean} */has_analytics
-    /** @type{max_events} */max_events
 }
 
-class Log{
+class Log {
     /** @type{string} */level_s
     /** @type{number} */level_i
     /** @type{string} */message
@@ -21,25 +20,45 @@ class Log{
     /** @type{string} */thrown
 }
 
-class OrganizerEventTag{
+class OrganizerEventTag {
     /** @type{string} */tag
     /** @type{boolean} */category
 }
 
-class EventTicket{
+class EventTicket {
     /** @type{number} */id
     /** @type{number} */event_id
     /** @type{string} */name
     /** @type{number} */price
 }
 
-class OrganizerEvent{
+class OrganizerEvent {
     /** @type{number} */id
     /** @type{number} */organizer_id
     /** @type{string} */name
     /** @type{string} */description
     /** @type{number} */picture
     /** @type{object} */metadata
+    /** @type{boolean} */draft
+
+
+    /** @type{string} */location_name
+    /** @type{number} */location_lat
+    /** @type{number} */location_long
+}
+
+class AllOrganizerEvent{
+    /** @type{OrganizerEvent} */ event
+    /** @type{OrganizerEventTag[]} */ tags
+    
+}
+
+class UpdateOrganizerEvent{
+    /** @type{number} */id
+    /** @type{string} */name
+    /** @type{string} */description
+    /** @type{object} */metadata
+
 
     /** @type{string} */location_name
     /** @type{number} */location_lat
@@ -48,7 +67,7 @@ class OrganizerEvent{
 
 // actually just a string but shhhh
 /** @type{string} */
-class Session{}
+class Session { }
 
 const api = {
     /**
@@ -114,12 +133,194 @@ const api = {
         },
     },
 
+    events: {
+        /**
+         * @param {Session} session 
+         * @returns {Promise<number>}
+         */
+        create_event: async function (session) {
+            return await (await api.api_call(
+                '/create_event',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while creating event"
+            )).json();
+        },
+
+        /**
+         * @param {number|string} id 
+         * @param {Session?} session 
+         * @returns {Promise<AllOrganizerEvent>}
+         */
+        get_event: async function(id, session){
+            return await (await api.api_call(
+                `/get_event/${encodeURI(id)}`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while getting event"
+            )).json();
+        },
+
+        /**
+         * @param {UpdateOrganizerEvent} update 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        update_event: async function(update, session){
+            console.log(update);
+            await api.api_call(
+                '/update_event',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(update),
+                },
+                "An error occured while updating event"
+            );
+        },
+
+        /**
+         * @param {number|string} id 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        delete_event: async function(id, session){
+            await api.api_call(
+                `/delete_event/${encodeURI(id)}`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while deleting event"
+            );
+        },
+
+        /**
+         * @param {number|string} id 
+         * @param {string} tag 
+         * @param {boolean} category 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        add_event_tag: async function(id, tag, category, session){
+            await api.api_call(
+                `/add_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while adding event tag"
+            );
+        },
+
+        /**
+         * @param {number|string} id 
+         * @param {string} tag 
+         * @param {boolean} category 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        delete_event_tag: async function(id, tag, category, session){
+            await api.api_call(
+                `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while deleting event tag"
+            );
+        },
+
+        /**
+         * @param {number|string} id 
+         * @param {boolean} draft 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        set_draft: async function(id, draft, session){
+            await api.api_call(
+                `/set_draft/${encodeURI(id)}/${encodeURI(draft)}`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while setting event draft"
+            );
+        },
+
+        /**
+         * @param {number|string} id 
+         * @param {Blob} data 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        set_picture: async function(id, data, session){
+            await api.api_call(
+                `/set_picture/${encodeURI(id)}/`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: data,
+                },
+                "An error occured while setting event picture"
+            );
+        }
+    },
+
+    organizer: {
+        /**
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        convert_to_organizer_account: async function (session) {
+            await api.api_call(
+                '/convert_to_organizer_account',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while converting account to organizer"
+            );
+        }
+    },
+
     user: {
         /**
          * @param {Session} session 
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function(session) {
+        all_userinfo: async function (session) {
             return await (await api.api_call(
                 `/all_userinfo`,
                 {
@@ -280,19 +481,19 @@ const utility = {
 
 
 const page = {
-    
+
     login: {
         /**
          * @param {string} email 
          * @param {string} password 
          * @returns {Promise}
          */
-        login: async function(email, password){
+        login: async function (email, password) {
             try {
                 cookies.deleteSessionToken();
                 cookies.setSession(await api.user.login(email, password));
                 window.location.href = '/account';
-            } catch ({error, code}) {
+            } catch ({ error, code }) {
                 alert(error);
             }
         },
@@ -305,10 +506,10 @@ const page = {
          * @param {string} password 
          * @returns {Promise}
          */
-        register: async function(name, email, password){
+        register: async function (name, email, password) {
             try {
                 await api.user.register(name, email, password);
-            } catch ({error, code}) {
+            } catch ({ error, code }) {
                 alert(error);
             }
         },
@@ -318,7 +519,7 @@ const page = {
         /**
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function() {
+        all_userinfo: async function () {
             try {
                 return await api.user.all_userinfo(cookies.getSession());
             } catch ({ error, code }) {
@@ -383,7 +584,7 @@ const page = {
          * @param {string} password 
          * @returns {Promise}
          */
-        delete_account: async function(email, password) {
+        delete_account: async function (email, password) {
             try {
                 await api.user.delete_account(email, password, cookies.getSession());
             } catch ({ error, code }) {
@@ -400,19 +601,19 @@ const page = {
     awaiting_handlebar_templates: 0,
     awaiting_html_templates: 0,
 
-    check_for_handlers: function (){
-        if(this.awaiting_handlebar_templates==0&&this.awaiting_html_templates==0
-            ||this.awaiting_handlebar_templates==0&&this.awaiting_html_templates==-1
-            ||this.awaiting_handlebar_templates==-1&&this.awaiting_html_templates==0
-        ){
+    check_for_handlers: function () {
+        if (this.awaiting_handlebar_templates == 0 && this.awaiting_html_templates == 0
+            || this.awaiting_handlebar_templates == 0 && this.awaiting_html_templates == -1
+            || this.awaiting_handlebar_templates == -1 && this.awaiting_html_templates == 0
+        ) {
             document.dispatchEvent(new Event("dynamic_content_finished"));
         }
-        if(this.awaiting_handlebar_templates==0){
-            this.awaiting_handlebar_templates=-1;
+        if (this.awaiting_handlebar_templates == 0) {
+            this.awaiting_handlebar_templates = -1;
             document.dispatchEvent(new Event("handlebar_templates_finished"))
         }
-        if(this.awaiting_html_templates==0){
-            this.awaiting_html_templates=-1;
+        if (this.awaiting_html_templates == 0) {
+            this.awaiting_html_templates = -1;
             document.dispatchEvent(new Event("html_templates_finished"))
         }
     },
@@ -421,55 +622,55 @@ const page = {
      * @param {Element} item 
      */
     load_dynamic_content: function (item) {
-        if(item==null)return;
-        for(let e of item.querySelectorAll("[type='text/x-html-template']")){
+        if (item == null) return;
+        for (let e of item.querySelectorAll("[type='text/x-html-template']")) {
             this.awaiting_html_templates++;
             (async _ => {
-                try{
+                try {
                     const result = await fetch(e.getAttribute("src"));
                     e.innerHTML = await result.text();
-                }catch(err){
+                } catch (err) {
                     e.innerHTML = JSON.stringify(err);
                 }
-    
+
                 page.initialize_content(e.nextElementSibling);
                 page.load_dynamic_content(e.nextElementSibling);
                 this.awaiting_html_templates--;
-                page.check_for_handlers();     
+                page.check_for_handlers();
             })();
         }
-        for(let e of item.querySelectorAll("template[type='text/x-handlebars-template']")){
+        for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
             this.awaiting_handlebar_templates++;
             (async _ => {
-                try{
+                try {
                     const result = await eval(e.getAttribute("src"));
                     var template = Handlebars.compile(e.innerHTML);
                     var html = template(result);
                     e.nextElementSibling.innerHTML = html;
-                }catch(err){
+                } catch (err) {
                     e.nextElementSibling.innerHTML = JSON.stringify(err);
                 }
-    
+
                 page.initialize_content(e.nextElementSibling);
                 page.load_dynamic_content(e.nextElementSibling);
                 this.awaiting_handlebar_templates--;
-                page.check_for_handlers();     
+                page.check_for_handlers();
             })();
         }
-        page.check_for_handlers();     
+        page.check_for_handlers();
     },
 
     /**
      * @param {Element} item 
      */
     initialize_content: (item) => {
-        if(item==null)return;
+        if (item == null) return;
         for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
-            try{
+            try {
                 var template = Handlebars.compile(e.innerHTML);
                 var html = template({});
                 e.nextElementSibling.innerHTML = html;
-            }catch(err){
+            } catch (err) {
                 e.nextElementSibling.innerHTML = JSON.stringify(err);
             }
         }
@@ -492,18 +693,18 @@ document.addEventListener('html_templates_finished', () => {
 });
 
 document.addEventListener('dynamic_content_finished', () => {
-    console.log("Dynamic content finished loading");  
-    document.body.style="";
+    console.log("Dynamic content finished loading");
+    document.body.style = "";
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.body.style="display:none";
-    if(typeof Handlebars !== 'undefined'){
-        Handlebars.registerHelper("raw-helper", function(options) {
+    document.body.style = "display:none";
+    if (typeof Handlebars !== 'undefined') {
+        Handlebars.registerHelper("raw-helper", function (options) {
             return options.fn();
         });
     }
-    
+
     page.initialize_content(document);
     page.load_dynamic_content(document);
 });
