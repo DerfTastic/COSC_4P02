@@ -21,7 +21,7 @@ public class RwConn implements AutoCloseable {
     public synchronized void close() throws SQLException {
         if(conn!=null&&!getConn().isClosed())
             db.rePoolRw(getConn());
-        else
+        else if(conn!=null)
             db.removeRw(getConn());
         conn = null;
     }

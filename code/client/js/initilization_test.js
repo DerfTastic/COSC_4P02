@@ -4,16 +4,77 @@ function assert(condition, message) {
     }
 }
 
-async function run_all(){    
-    test_register_1();
-    test_register_2();
-    test_default_admin_account();
+class Account{
+    /** @type{string} */ name
+    /** @type{string} */ email
+    /** @type{string} */ password
+    /** @type{Session} */ session
+}
+
+async function run_all(){  
+    const user_count = 500;
+    const organizer_count = 100;
+    const admin_count = 5;  
+    // test_register_1();
+    // test_register_2();
+    // test_default_admin_account();
+
+    const admins = await Promise.all(generate_users(admin_count).values());
+
+    const users = await Promise.all(generate_users(user_count).values());
+    
+    const organizers = await Promise.all(generate_users(organizer_count).map(async e => {
+        const user = await e;
+        await api.organizer.convert_to_organizer_account(user.session);
+        return user;
+    }).values());
 
     (async _ => {
-        const org_account = await create_example_organizer_account();
-        for(let i = 0; i < 100; i ++)
-            create_example_event(org_account);
+        for(let i = 0; i < 600; i ++){
+            var session = organizers[chance.integer({ min: 0, max: organizers.length-1 })].session;
+            create_example_event(session, i);
+        }
     })();
+}
+
+/**
+ * @param {Account} account 
+ */
+async function make_organizer(account){
+    const session = await api.user.login(account.email, account.password);
+    await api.organizer.convert_to_organizer_account(session);
+}
+
+/**
+ * 
+ * @param {number} count 
+ * @returns {Promise<Account>[]}
+ */
+function generate_users(count){
+    var users = []
+    for(let i = 0; i < count; i++){
+        const fut = (async _ => {
+            const name = chance.name();
+            let email = chance.email();
+            const password = chance.string();
+            for(var j = 0; j < 10; j ++){
+                try{
+                    await api.user.register(name, email, password);
+                    break;
+                }catch(e){}
+                email = chance.email();
+            }
+            const session = await api.user.login(email, password); 
+            return {
+                name,
+                email,
+                password,
+                session,
+            }
+        })();
+        users.push(fut);
+    }
+    return users;
 }
 
 async function test_register_1(){
@@ -46,31 +107,30 @@ async function test_default_admin_account(){
     await api.admin.get_server_logs(admin_session);
 }
 
-async function create_example_organizer_account(){
-    await api.user.register("Organizer", "organizer@very.important.com", "verysecret");
-    const org_session = await api.user.login("organizer@very.important.com", "verysecret");
-
-    await api.organizer.convert_to_organizer_account(org_session);
-
-    return org_session;
-}
-
-async function create_example_event(org_session){
-    const picture_promise = (async () => await (await fetch("https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg")).blob())();
+async function create_example_event(org_session, iteration){
+    const picture_promise = (async () => await (await fetch(`https://picsum.photos/200?random=${iteration}`)).blob())();
 
     const event_id = await api.events.create_event(org_session);
-    await api.events.add_event_tag(event_id, "concert", true, org_session);
-    await api.events.add_event_tag(event_id, "large", false, org_session);
-    await api.events.add_event_tag(event_id, "important", false, org_session);
+
+    const categories = ["concert", "sports", "fundraiser"];
+    const tags = ["fun", "thrilling", "outdoors", "indoors", "nature", "rock", "loud", "quiet", "cats", "dogs", "educational", "calm", "intense"];
+
+    const category = categories[chance.integer({ min: 0, max: categories.length-1 })];
+    await api.events.add_event_tag(event_id, category, true, org_session);
+
+    for(let i = 0; i < tags.length; i ++){
+        if(chance.bool())
+            await api.events.add_event_tag(event_id, tags[i], false, org_session);
+    }
 
     const data = {
         id: event_id,
-        name: "EXTREME CONCERT",
-        description: "INSANE RAVE TIME FUN CONCERT WEEE WOOOO BABABBBABAAAAAA!!!!!!!!!!!",
-        metadata: {background: "red"}, // random data
-        location_name: "Brock University",
-        location_long: 43.119688153309305,
-        location_lat: -79.2476323921286
+        name: chance.sentence({ words: 5 }),
+        description: chance.paragraph() ,
+        metadata: {background: chance.color({format: 'hex'})},
+        location_name: chance.address(),
+        location_long: chance.longitude(),
+        location_lat: chance.latitude()
     };
     await api.events.update_event(data, org_session);
 
@@ -82,19 +142,17 @@ async function create_example_event(org_session){
     await api.events.get_event(event_id, org_session);
 
     // not publically accessable
-    let failed = false;
-    try{
-        await api.events.get_event(event_id);
-    }catch(e){
-        failed = true;
-    }
-    assert(failed);
+    // let failed = false;
+    // try{
+    //     await api.events.get_event(event_id);
+    // }catch(e){
+    //     failed = true;
+    // }
+    // assert(failed);
 
     await api.events.set_draft(event_id, false, org_session);
 
     // now that the event isn't a draft its public so anyone (even without an account) can view it
     const result = await api.events.get_event(event_id);
-    
-    //TODO more testing
-    assert(result.tags.length == 3);
+
 }

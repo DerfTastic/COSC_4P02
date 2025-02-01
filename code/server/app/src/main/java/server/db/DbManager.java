@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 public class DbManager implements AutoCloseable{
     private final static HashMap<String, String> resources = new HashMap<>();
 
-    private final LinkedList<Connection> writable = new LinkedList<>();
-    private final LinkedList<Connection> readOnly = new LinkedList<>();
+    private final LinkedList<Connection> writableAvailable = new LinkedList<>();
+    private final LinkedList<Connection> readOnlyAvailable = new LinkedList<>();
     private final HashSet<Connection> inUse = new HashSet<>();
     private int inUseReadOnly = 0;
     private int inUseWritable = 0;
@@ -112,12 +112,12 @@ public class DbManager implements AutoCloseable{
 
     @Override
     public synchronized void close() {
-        for(var conn : readOnly){
+        for(var conn : readOnlyAvailable){
             try{
                 conn.close();
             }catch (Exception ignore){}
         }
-        for(var conn : writable){
+        for(var conn : writableAvailable){
             try{
                 conn.close();
             }catch (Exception ignore){}
@@ -130,29 +130,42 @@ public class DbManager implements AutoCloseable{
     }
 
     protected synchronized void rePoolRo(Connection conn){
-        inUse.remove(conn);
-        readOnly.addLast(conn);
-        inUseReadOnly--;
-        notifyAll();
+        if(inUse.remove(conn)){
+            readOnlyAvailable.addLast(conn);
+            inUseReadOnly--;
+            this.notifyAll();
+        }else{
+            Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
+        }
     }
 
     protected synchronized void rePoolRw(Connection conn){
-        inUse.remove(conn);
-        writable.addLast(conn);
-        inUseWritable--;
-        notifyAll();
+        if(inUse.remove(conn)){
+            writableAvailable.addLast(conn);
+            inUseWritable--;
+            this.notifyAll();
+        }else{
+            Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
+        }
     }
 
     protected synchronized void removeRo(Connection conn) {
-        inUse.remove(conn);
-        inUseReadOnly--;
-        this.notifyAll();
+        if(inUse.remove(conn)){
+            inUseReadOnly--;
+            this.notifyAll();
+        }else{
+            Logger.getGlobal().log(Level.SEVERE, "Tried to remove connection that wasn't in use??");
+        }
     }
 
     protected synchronized void removeRw(Connection conn) {
-        inUse.remove(conn);
-        inUseWritable--;
-        this.notifyAll();
+        if(inUse.remove(conn)){
+            inUseWritable--;
+            this.notifyAll();
+        }else{
+            Logger.getGlobal().log(Level.SEVERE, "Tried to remove connection that wasn't in use??");
+        }
+
     }
 
     private SQLiteConnection initialize(boolean readOnly) throws SQLException{
@@ -165,6 +178,9 @@ public class DbManager implements AutoCloseable{
         connection.createStatement().execute("PRAGMA read_uncommitted=true");
         connection.createStatement().execute("PRAGMA foreign_keys=true");
         connection.createStatement().execute("PRAGMA recursive_triggers=true");
+//        if(!readOnly)
+//            connection.createStatement().execute("PRAGMA journal_mode=WAL");
+
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
         return connection;
@@ -179,25 +195,19 @@ public class DbManager implements AutoCloseable{
     }
 
     public synchronized RoConn ro_conn() throws SQLException {
-        var con = ro_conn_p();
-        inUse.add(con);
-        return new RoConn(con, this);
+        return new RoConn(ro_conn_p(), this);
     }
 
     public synchronized RwConn rw_conn() throws SQLException{
-        var con = rw_conn_p();
-        inUse.add(con);
-        return new RwConn(con, this);
+        return new RwConn(rw_conn_p(), this);
     }
 
     private synchronized Connection rw_conn_p() throws SQLException{
         var seq = sequenceBefore++;
         while(
-            seq!=sequenceCurr||
-                (writable.isEmpty()
-                &&inUseWritable>=maxWritable
-                &&maxWritable>0)
-            ||(canWriteAndReadCoexist&&inUseReadOnly>0)
+            seq!=sequenceCurr
+            ||(inUseWritable>=maxWritable&&maxWritable>0)
+            ||(!canWriteAndReadCoexist&&inUseReadOnly>0)
         ){
             try{
                 wait();
@@ -207,21 +217,24 @@ public class DbManager implements AutoCloseable{
         }
         sequenceCurr++;
         inUseWritable++;
-        if(writable.isEmpty()){
-            return initialize(false);
+        Connection con;
+        if(writableAvailable.isEmpty()){
+            con = initialize(false);
         }else{
-            return writable.pollFirst();
+            con = writableAvailable.pollFirst();
         }
+        inUse.add(con);
+        if(inUseWritable!=1)throw new RuntimeException("aflksdkljsdfjkladflk: "+ inUseWritable);
+        if(inUseReadOnly!=0)throw new RuntimeException("asdlkajsdflffffffffffffffffffff");
+        return con;
     }
 
     public synchronized Connection ro_conn_p() throws SQLException {
         var seq = sequenceBefore++;
         while(
-            seq!=sequenceCurr||
-                (readOnly.isEmpty()
-                &&inUseReadOnly>=maxReadOnly
-                &&maxReadOnly>0)
-            ||(canWriteAndReadCoexist&&inUseWritable>0)
+            seq!=sequenceCurr
+            ||(inUseReadOnly>=maxReadOnly&&maxReadOnly>0)
+            ||(!canWriteAndReadCoexist&&inUseWritable>0)
         ){
             try{
                 wait();
@@ -231,10 +244,14 @@ public class DbManager implements AutoCloseable{
         }
         sequenceCurr++;
         inUseReadOnly++;
-        if(readOnly.isEmpty()){
-            return initialize(true);
+        Connection con;
+        if(readOnlyAvailable.isEmpty()){
+            con = initialize(true);
         }else{
-            return readOnly.pollFirst();
+            con = readOnlyAvailable.pollFirst();
         }
+        inUse.add(con);
+        if(inUseWritable>0)throw new RuntimeException("hih?????????");
+        return con;
     }
 }

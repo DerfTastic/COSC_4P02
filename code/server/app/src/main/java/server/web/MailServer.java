@@ -79,15 +79,15 @@ public class MailServer implements Closeable {
     }
 
     public synchronized void sendMail(MessageConfigurator configurator) {
-        executor.submit(() -> {
-            try{
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(username));
-                configurator.config(message);
-                transport.get().sendMessage(message, message.getAllRecipients());
-            }catch (MessagingException e){
-                Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
-            }
-        });
+//        executor.submit(() -> {
+//            try{
+//                Message message = new MimeMessage(session);
+//                message.setFrom(new InternetAddress(username));
+//                configurator.config(message);
+//                transport.get().sendMessage(message, message.getAllRecipients());
+//            }catch (MessagingException e){
+//                Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
+//            }
+//        });
     }
 }
