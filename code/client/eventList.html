@@ -89,14 +89,30 @@
 <body>
     <div class="sidebar">
         <h3>Filter Events</h3>
-        <label for="sort">Sort by:</label>
-        <select id="sort">
-            <option value="name">Name</option>
-            <option value="location">Location</option>
-            <option value="price">Price</option>
-            <option value="genre">Genre</option>
-            <option value="tags">Tags</option>
-        </select>
+        <form id="filterForm">
+            <label for="filterLocation">Location:</label>
+            <input type="text" id="filterLocation" placeholder="Enter location">
+
+            <label for="filterGenre">Genre:</label>
+            <input type="text" id="filterGenre" placeholder="Enter genre">
+
+            <label for="filterTag">Tag:</label>
+            <input type="text" id="filterTag" placeholder="Enter tag">
+
+            <label for="sort">Sort By:</label>
+            <select id="sort">
+                <option value="title">Name</option>
+                <option value="location">Location</option>
+                <option value="price">Price</option>
+                <option value="genre">Genre</option>
+            </select>
+
+            <label for="order">Order:</label>
+            <select id="order">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </form>
     </div>
 
     <div class="main-content">

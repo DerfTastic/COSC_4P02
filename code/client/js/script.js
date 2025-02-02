@@ -772,6 +772,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const eventsContainer = document.getElementById("eventsContainer");
     const loadMoreButton = document.getElementById("loadMore");
     const sortSelect = document.getElementById("sort");
+    const orderSelect = document.getElementById("order");
+    const filterForm = document.getElementById("filterForm");
 
     function renderEvents(eventList, append = false) {
         if (!append) {
@@ -796,32 +798,54 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadEvents() {
-        const eventSubset = events.slice(eventsDisplayed, eventsDisplayed + eventsPerLoad);
+        let filteredEvents = filterEvents(events);
+        let eventSubset = filteredEvents.slice(eventsDisplayed, eventsDisplayed + eventsPerLoad);
         renderEvents(eventSubset, true);
         eventsDisplayed += eventsPerLoad;
-        if (eventsDisplayed >= events.length) {
+        if (eventsDisplayed >= filteredEvents.length) {
             loadMoreButton.style.display = "none";
         } else {
             loadMoreButton.style.display = "block";
         }
     }
 
-    function sortEvents() {
+    function sortEvents(eventList) {
         const sortBy = sortSelect.value;
-        events.sort((a, b) => {
+        const order = orderSelect.value === "asc" ? 1 : -1;
+        return eventList.sort((a, b) => {
             if (typeof a[sortBy] === "string") {
-                return a[sortBy].localeCompare(b[sortBy]);
+                return a[sortBy].localeCompare(b[sortBy]) * order;
             } else {
-                return a[sortBy] - b[sortBy];
+                return (a[sortBy] - b[sortBy]) * order;
             }
         });
+    }
+
+    function filterEvents(eventList) {
+        const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
+        const genreFilter = document.getElementById("filterGenre").value.toLowerCase();
+        const tagFilter = document.getElementById("filterTag").value.toLowerCase();
+
+        return eventList.filter(event => {
+            return (
+                (locationFilter === "" || event.location.toLowerCase().includes(locationFilter)) &&
+                (genreFilter === "" || event.genre.toLowerCase().includes(genreFilter)) &&
+                (tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter)))
+            );
+        });
+    }
+
+    function updateEvents() {
         eventsDisplayed = 0;
         loadMoreButton.style.display = "block";
+        let filteredAndSortedEvents = sortEvents(filterEvents(events));
         eventsContainer.innerHTML = "";
         loadEvents();
     }
 
-    sortSelect.addEventListener("change", sortEvents);
+    filterForm.addEventListener("change", updateEvents);
+    sortSelect.addEventListener("change", updateEvents);
+    orderSelect.addEventListener("change", updateEvents);
     loadMoreButton.addEventListener("click", loadEvents);
     loadEvents(); // Load initial events
 });
