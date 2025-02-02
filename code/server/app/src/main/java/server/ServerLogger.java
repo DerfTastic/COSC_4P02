@@ -55,12 +55,12 @@ public class ServerLogger {
         Logger.getGlobal().addHandler(fh);
         Logger.getGlobal().addHandler(mh);
 
-        Logger.getGlobal().setLevel(Level.ALL);
+        Logger.getGlobal().setLevel(Level.INFO);
         for (Handler handler : Logger.getGlobal().getParent().getHandlers()) {
-            handler.setLevel(Level.ALL);
+            handler.setLevel(Level.INFO);
         }
 
-        Logger.getGlobal().log(Level.FINE, "Working Directory: " + Paths.get("").toAbsolutePath());
+        Logger.getGlobal().log(Level.INFO, "Working Directory: " + Paths.get("").toAbsolutePath());
     }
 
     public static Stream<LogRecord> streamify(){

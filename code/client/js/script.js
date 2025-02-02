@@ -67,6 +67,19 @@ class UpdateOrganizerEvent{
     /** @type{number} */location_long
 }
 
+class RouteStat{
+    /** @type{number} */average_response_time
+    /** @type{number} */requests_handled
+    /** @type{Object.<number, number>} */code_breakdown
+}
+
+class ServerStatistics{
+    /** @type{Object.<string, RouteStat>} */route_stats
+    /** @type{number} */total_requests_handled
+    /** @type{number} */prepared_statements_executed
+    /** @type{number} */total_db_statements_executed
+}
+
 // actually just a string but shhhh
 /** @type{string} */
 class Session { }
@@ -76,7 +89,7 @@ const api = {
      * @param {string} route 
      * @param {RequestInit} data 
      * @param {string} error 
-     * @returns {Promise}
+     * @returns {Promise<Response>}
      */
     api_call: async function (route, data, error) {
         var response;
@@ -133,6 +146,24 @@ const api = {
                 "An error occured while getting the server logs"
             )).json();
         },
+        
+        /**
+         * @param {Session} session 
+         * @returns {Promise<ServerStatistics>}
+         */
+        get_server_statistics: async function(session) {
+            return await (await api.api_call(
+                `/get_route_statistics`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while getting the route statistics"
+            )).json();
+        }
     },
 
     events: {
@@ -179,7 +210,6 @@ const api = {
          * @returns {Promise<>}
          */
         update_event: async function(update, session){
-            console.log(update);
             await api.api_call(
                 '/update_event',
                 {

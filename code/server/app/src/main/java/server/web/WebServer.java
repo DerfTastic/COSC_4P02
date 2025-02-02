@@ -18,25 +18,29 @@ import java.util.logging.Logger;
 public class WebServer {
     public final HttpServer server;
     private final HashMap<Class<?>, Object> managedResources = new HashMap<>();
+    public ServerStatistics tracker = new ServerStatistics();
 
     public WebServer() throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
         var address = new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port);
         server = HttpServer.create(address, 0);
+
         addManagedResource(server);
         addManagedResource(new TimedEvents());
+        addManagedResource(tracker);
+        addManagedResource(new DynamicMediaHandler());
         try{
             addManagedResource(new DbManager());
         }catch (Exception e){
             this.close();
             throw e;
         }
-        addManagedResource(new DynamicMediaHandler());
 
 
         {   // session expiration
             var db = getManagedResource(DbManager.class);
+            db.setStatsTracker(tracker);
             var timer = getManagedResource(TimedEvents.class);
             timer.addMinutely(() -> {
                 try(var trans = db.rw_transaction()){

@@ -180,11 +180,6 @@ public class RouteImpl {
         throw new RuntimeException("Cannot find path part '" + value + "' for " + sourceMethod);
     }
 
-    public void addRoute(WebServer server) {
-        var context = server.server.createContext(path, handler);
-        context.getAttributes().put(WebServer.class.getName(), server);
-    }
-
     private void parameterDestructError(int param, Throwable e){
         Logger.getGlobal().logp(Level.SEVERE,
                 sourceMethod.getDeclaringClass().getName(),

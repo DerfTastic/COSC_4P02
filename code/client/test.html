@@ -19,11 +19,28 @@
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
 
+    <style>
+        #console {
+            width: 90%;
+            max-width: 90%;
+            height: 100%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 10px;
+            overflow-y: auto;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+
     <title>Ticket Express</title>
 </head>
 
 <body>
-    <button onclick="run_all()">TestAll</button>
+    <div id="console"></div>
 </body>
 
 </html>

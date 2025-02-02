@@ -4,6 +4,7 @@ import server.ServerLogger;
 import server.db.RoConn;
 import server.db.RwConn;
 import server.web.MailServer;
+import server.web.ServerStatistics;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
 import server.web.auth.RequireAdmin;
@@ -54,7 +55,7 @@ public class AdminAPI {
 
     @Route
     public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, RwConn connection, @Body String sql) throws SQLException {
-        try(var stmt = connection.getConn().createStatement()){
+        try(var stmt = connection.createStatement()){
             if(!stmt.execute(sql))return "";
             String list = "";
 
@@ -125,5 +126,10 @@ public class AdminAPI {
             if(stmt.executeUpdate() != 1)
                 throw new ClientError.BadRequest("Account with the specified email does not exist");
         }
+    }
+
+    @Route
+    public static String get_route_statistics(@FromRequest(RequireAdmin.class) UserSession auth, ServerStatistics tracker){
+        return tracker.json();
     }
 }

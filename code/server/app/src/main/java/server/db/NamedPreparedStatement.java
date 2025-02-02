@@ -1,5 +1,6 @@
 package server.db;
 
+import server.web.ServerStatistics;
 import util.SqlSerde;
 import util.Tuple;
 
@@ -12,7 +13,9 @@ import java.util.HashMap;
 public class NamedPreparedStatement implements AutoCloseable {
     private final HashMap<String, Integer> fieldMap;
     private final static HashMap<String, Tuple<String, HashMap<String, Integer>>> fieldMapCache = new HashMap<>();
-    public final PreparedStatement stmt;
+    private final PreparedStatement stmt;
+
+    ServerStatistics stats;
 
     private static Tuple<String, HashMap<String, Integer>> initialize(String sqlO){
         synchronized (fieldMapCache){
@@ -91,14 +94,21 @@ public class NamedPreparedStatement implements AutoCloseable {
     }
 
     public ResultSet executeQuery() throws SQLException {
+        if(stats!=null)stats.executed_prepared_statement();
         return stmt.executeQuery();
     }
 
     public boolean execute() throws SQLException {
+        if(stats!=null)stats.executed_prepared_statement();
         return stmt.execute();
     }
 
     public int executeUpdate() throws SQLException{
+        if(stats!=null)stats.executed_prepared_statement();
         return stmt.executeUpdate();
+    }
+
+    public ResultSet getResultSet() throws SQLException{
+        return stmt.getResultSet();
     }
 }

@@ -4,6 +4,7 @@ package server.db;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
 import server.Config;
+import server.web.ServerStatistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +36,10 @@ public class DbManager implements AutoCloseable{
     private final int maxWritable;
     private final boolean canWriteAndReadCoexist;
 
+    private ServerStatistics stats;
+
     public DbManager() throws SQLException{
-        this(false, Config.CONFIG.wipe_db_on_start);
+        this(Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start);
     }
 
     public DbManager(boolean inMemory, boolean alwaysInitialize) throws SQLException {
@@ -64,7 +67,7 @@ public class DbManager implements AutoCloseable{
             }
         }
 
-        try(var conn = ro_conn()){
+        try(var conn = rw_conn()){
             var major = conn.getConn().getMetaData().getDatabaseMajorVersion();
             var minor = conn.getConn().getMetaData().getDatabaseMinorVersion();
             var name = conn.getConn().getMetaData().getDatabaseProductName();
@@ -76,7 +79,7 @@ public class DbManager implements AutoCloseable{
             try(var conn = rw_conn()){
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
-                try(var stmt = conn.getConn().createStatement()){
+                try(var stmt = conn.createStatement()){
                     conn.getConn().setAutoCommit(true);
                     for(var sql : sql("creation").split(";")){
                         try{
@@ -93,6 +96,14 @@ public class DbManager implements AutoCloseable{
                 Logger.getGlobal().log(Level.FINE, "Initialized DB");
             }
         }
+    }
+
+    public void setStatsTracker(ServerStatistics stats){
+        this.stats = stats;
+    }
+
+    public ServerStatistics getStatsTracker(){
+        return this.stats;
     }
 
     public synchronized static String sql(String id){
@@ -129,19 +140,11 @@ public class DbManager implements AutoCloseable{
         }
     }
 
-    protected synchronized void rePoolRo(Connection conn){
-        if(inUse.remove(conn)){
-            readOnlyAvailable.addLast(conn);
-            inUseReadOnly--;
-            this.notifyAll();
-        }else{
-            Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
-        }
-    }
-
-    protected synchronized void rePoolRw(Connection conn){
-        if(inUse.remove(conn)){
-            writableAvailable.addLast(conn);
+    protected synchronized void rePool(RwConn conn) throws SQLException {
+        if(conn.conn==null)return;
+        if(inUse.remove(conn.conn)){
+            if(!conn.conn.isClosed())
+                writableAvailable.addLast(conn.conn);
             inUseWritable--;
             this.notifyAll();
         }else{
@@ -149,38 +152,28 @@ public class DbManager implements AutoCloseable{
         }
     }
 
-    protected synchronized void removeRo(Connection conn) {
-        if(inUse.remove(conn)){
+    protected synchronized void rePool(RoConn conn) throws SQLException {
+        if(conn.conn==null)return;
+        if(inUse.remove(conn.conn)){
+            if(!conn.conn.isClosed())
+                readOnlyAvailable.addLast(conn.conn);
             inUseReadOnly--;
             this.notifyAll();
         }else{
-            Logger.getGlobal().log(Level.SEVERE, "Tried to remove connection that wasn't in use??");
+            Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
         }
-    }
-
-    protected synchronized void removeRw(Connection conn) {
-        if(inUse.remove(conn)){
-            inUseWritable--;
-            this.notifyAll();
-        }else{
-            Logger.getGlobal().log(Level.SEVERE, "Tried to remove connection that wasn't in use??");
-        }
-
     }
 
     private SQLiteConnection initialize(boolean readOnly) throws SQLException{
         var config = new SQLiteConfig();
-        config.setSharedCache(true);
         config.setReadOnly(readOnly);
-        config.enableRecursiveTriggers(true);
+        config.setPragma(SQLiteConfig.Pragma.SHARED_CACHE, "true");
+        config.setPragma(SQLiteConfig.Pragma.JOURNAL_MODE, SQLiteConfig.JournalMode.WAL.getValue());
+        config.setPragma(SQLiteConfig.Pragma.READ_UNCOMMITTED, "true");
+        config.setPragma(SQLiteConfig.Pragma.FOREIGN_KEYS, "true");
+        config.setPragma(SQLiteConfig.Pragma.RECURSIVE_TRIGGERS, "true");
         var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
-        connection.createStatement().execute("PRAGMA read_uncommitted=true");
-        connection.createStatement().execute("PRAGMA foreign_keys=true");
-        connection.createStatement().execute("PRAGMA recursive_triggers=true");
-//        if(!readOnly)
-//            connection.createStatement().execute("PRAGMA journal_mode=WAL");
-
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
         return connection;

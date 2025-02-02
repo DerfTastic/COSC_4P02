@@ -11,7 +11,34 @@ class Account{
     /** @type{Session} */ session
 }
 
+function log(e){
+    console.log(e);
+    if(typeof e == "object")
+        document.getElementById("console").innerText += JSON.stringify(e, null, 2)+"\n";
+    else
+        document.getElementById("console").innerText += e+"\n";
+}
+
+var time = {};
+
+function timeStart(e){
+    time[e] = new Date();
+    log("Started: " + e);
+}
+
+function timeEnd(e){
+    const start = time[e];
+    const end = new Date();
+    log("Ended: " + e + " Took: " + (end.getTime()-start.getTime()) + "ms");
+}
+
+document.addEventListener("DOMContentLoaded", e => run_all());
+
 async function run_all(){  
+    const pre_stats = await api.admin.get_server_statistics(await api.user.login("admin@localhost", "admin"));
+    timeStart("");
+    const start = new Date();
+
     const user_count = 500;
     const organizer_count = 100;
     const admin_count = 5;  
@@ -19,22 +46,49 @@ async function run_all(){
     // test_register_2();
     // test_default_admin_account();
 
+    timeStart("Creating Admin Users");
     const admins = await Promise.all(generate_users(admin_count).values());
+    timeEnd("Creating Admin Users");
 
+
+    timeStart("Creating Regular Users");
     const users = await Promise.all(generate_users(user_count).values());
+    timeEnd("Creating Regular Users");
     
+    timeStart("Creating Organizer Users");
     const organizers = await Promise.all(generate_users(organizer_count).map(async e => {
         const user = await e;
         await api.organizer.convert_to_organizer_account(user.session);
         return user;
     }).values());
+    timeEnd("Creating Organizer Users");
 
-    (async _ => {
-        for(let i = 0; i < 600; i ++){
-            var session = organizers[chance.integer({ min: 0, max: organizers.length-1 })].session;
-            create_example_event(session, i);
-        }
-    })();
+    
+    timeStart("Creating Events");
+    const meows = [];
+    for(let i = 0; i < 600; i ++){
+        var session = organizers[chance.integer({ min: 0, max: organizers.length-1 })].session;
+        meows.push(create_example_event(session, i));
+    }
+    await Promise.all(meows.values());
+    timeEnd("Creating Events");
+
+
+    const end = new Date();
+    const diff = (end.getTime()-start.getTime())/1000.0;
+    console.log(end.getTime());
+    console.log(start.getTime());
+    console.log(diff);
+    timeEnd("");
+    const post_stats = await api.admin.get_server_statistics(await api.user.login("admin@localhost", "admin"));
+    log("Requests Made: " + (post_stats.total_requests_handled-pre_stats.total_requests_handled));
+    log("Requests Per Second: " + (post_stats.total_requests_handled-pre_stats.total_requests_handled)/diff);
+    log("Db Queries Made: " + (post_stats.total_db_statements_executed-pre_stats.total_db_statements_executed));
+    log("Db Queries Per Second: " + (post_stats.total_db_statements_executed-pre_stats.total_db_statements_executed)/diff);
+    log("Pre Test Statistics");
+    log(pre_stats);
+    log("Post Test Statistics");
+    log(post_stats);
 }
 
 /**
@@ -108,7 +162,7 @@ async function test_default_admin_account(){
 }
 
 async function create_example_event(org_session, iteration){
-    const picture_promise = (async () => await (await fetch(`https://picsum.photos/200?random=${iteration}`)).blob())();
+    // const picture_promise = (async () => await (await fetch(`https://picsum.photos/200?random=${iteration}`)).blob())();
 
     const event_id = await api.events.create_event(org_session);
 
@@ -137,8 +191,8 @@ async function create_example_event(org_session, iteration){
     };
     await api.events.update_event(data, org_session);
 
-    const picture =  await picture_promise;
-    await api.events.set_picture(event_id, picture, org_session);
+    // const picture =  await picture_promise;
+    // await api.events.set_picture(event_id, picture, org_session);
 
 
     // getting the event with a session that we own should work;

@@ -50,7 +50,7 @@ public class RoutesBuilder {
     }
 
     public void attachHandler(WebServer server, String parentPath, Class<? extends HttpHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        server.server.createContext(parentPath, handlerClass.getConstructor().newInstance());
+        createHandlerContext(server, parentPath, -1, handlerClass.getConstructor().newInstance());
         Logger.getGlobal().log(Level.FINE, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
     }
 
@@ -58,9 +58,25 @@ public class RoutesBuilder {
         for(var method : routeClass.getDeclaredMethods()){
             if(method.getAnnotation(server.web.annotations.Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, this);
-            route.addRoute(server);
+            createHandlerContext(server, route.path, route.path.length(), route.handler);
             Logger.getGlobal().log(Level.FINE, "Route mounted at: '" + route.path + "' -> "+route.sourceMethod);
         }
+    }
+
+    private void createHandlerContext(WebServer server, String path, int pathCutoff, HttpHandler handler){
+        var context = server.server.createContext(path, exchange -> {
+            var start = System.nanoTime();
+            handler.handle(exchange);
+            var duration = (System.nanoTime()-start)/1e9;
+
+            var p = exchange.getRequestURI().getPath();
+            if(pathCutoff>0)
+                p = p.substring(0, pathCutoff);
+            var code = exchange.getResponseCode();
+
+            server.tracker.track_route(p, code, duration);
+        });
+        context.getAttributes().put(WebServer.class.getName(), server);
     }
 
 
