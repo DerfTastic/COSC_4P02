@@ -3,66 +3,112 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="initial-scale=1, width=device-width"> -->
     <link rel="stylesheet" href="/style/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
-
     <title>Ticket Express</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        .events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+        .event-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .event-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .load-more-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .load-more {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .load-more:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
     <div src="/header.html" type="text/x-html-template"></div>
 
-
     <div class="content">
-
         <h3>List of Events</h3>
         <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
 
+        <div class="events-container" id="eventsContainer"></div>
 
-
-        <div class="carousel">
-            <button class="arrow left" id="prev">&lt;</button>
-            <div class="product-container">
-                <div class="product-box">
-
-                    <img src="logo.png" alt="Event 1">
-                    <div class="caption">
-                        <h3>Event One</h3>
-                        <p>Join us for an amazing time!</p>
-                    </div>
-                </div>
-
-                <div class="product-box">
-
-                    <img src="logo.png" alt="Event 2">
-                    <div class="caption">
-                        <h3>Event Two</h3>
-                        <p>Don't miss this exciting event.</p>
-                    </div>
-                </div>
-
-                <div class="product-box">
-
-                    <img src="logo.png" alt="Event 3">
-                    <div class="caption">
-                        <h3>Event Three</h3>
-                        <p>A wonderful experience awaits.</p>
-                    </div>
-                </div>
-            </div>
-            <button class="arrow right" id="next">&gt;</button>
+        <div class="load-more-container">
+            <button class="load-more" id="loadMore">Load More Events</button>
         </div>
-
-        <div src="/footer.html" type="text/x-html-template"></div>
     </div>
-    <script src="/js/script.js"></script>
+
+    <div src="/footer.html" type="text/x-html-template"></div>
+    <script>
+        const events = [
+            { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
+            { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png" },
+            { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png" },
+            { title: "Event Four", desc: "Experience something great!", img: "logo.png" },
+            { title: "Event Five", desc: "A special gathering.", img: "logo.png" },
+            { title: "Event Six", desc: "A night to remember.", img: "logo.png" },
+            { title: "Event Seven", desc: "You won’t regret this.", img: "logo.png" },
+            { title: "Event Eight", desc: "An unforgettable experience.", img: "logo.png" },
+            { title: "Event Nine", desc: "Book your spot now!", img: "logo.png" },
+            { title: "Event Ten", desc: "Fun for everyone.", img: "logo.png" },
+            { title: "Event Eleven", desc: "Join the excitement.", img: "logo.png" },
+            { title: "Event Twelve", desc: "A once-in-a-lifetime event.", img: "logo.png" }
+        ];
+
+        let eventsDisplayed = 0;
+        const eventsPerLoad = 10;
+        const eventsContainer = document.getElementById("eventsContainer");
+        const loadMoreButton = document.getElementById("loadMore");
+
+        function loadEvents() {
+            const fragment = document.createDocumentFragment();
+            for (let i = eventsDisplayed; i < eventsDisplayed + eventsPerLoad && i < events.length; i++) {
+                const event = events[i];
+                const eventDiv = document.createElement("div");
+                eventDiv.classList.add("event-box");
+                eventDiv.innerHTML = `
+                    <img src="${event.img}" alt="${event.title}">
+                    <h3>${event.title}</h3>
+                    <p>${event.desc}</p>
+                `;
+                fragment.appendChild(eventDiv);
+            }
+            eventsContainer.appendChild(fragment);
+            eventsDisplayed += eventsPerLoad;
+            if (eventsDisplayed >= events.length) {
+                loadMoreButton.style.display = "none";
+            }
+        }
+
+        loadMoreButton.addEventListener("click", loadEvents);
+        loadEvents(); // Load initial events
+    </script>
 </body>
 
 </html>
