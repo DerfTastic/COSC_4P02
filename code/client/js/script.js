@@ -746,7 +746,32 @@ document.addEventListener("DOMContentLoaded", function () {
         { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
         { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
         { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
         { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] }
+    
     ];
 
     let eventsDisplayed = 0;
