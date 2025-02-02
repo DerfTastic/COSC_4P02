@@ -773,8 +773,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadMoreButton = document.getElementById("loadMore");
     const sortSelect = document.getElementById("sort");
 
-    function renderEvents(eventList) {
-        eventsContainer.innerHTML = "";
+    function renderEvents(eventList, append = false) {
+        if (!append) {
+            eventsContainer.innerHTML = "";
+        }
         const fragment = document.createDocumentFragment();
         eventList.forEach(event => {
             const eventDiv = document.createElement("div");
@@ -795,10 +797,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadEvents() {
         const eventSubset = events.slice(eventsDisplayed, eventsDisplayed + eventsPerLoad);
-        renderEvents(eventSubset);
+        renderEvents(eventSubset, true);
         eventsDisplayed += eventsPerLoad;
         if (eventsDisplayed >= events.length) {
             loadMoreButton.style.display = "none";
+        } else {
+            loadMoreButton.style.display = "block";
         }
     }
 
@@ -813,6 +817,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         eventsDisplayed = 0;
         loadMoreButton.style.display = "block";
+        eventsContainer.innerHTML = "";
         loadEvents();
     }
 
