@@ -743,56 +743,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener("DOMContentLoaded", function () {
     const events = [
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png" },
-        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png" },
-        { title: "Event Four", desc: "Experience something great!", img: "logo.png" },
-        { title: "Event Five", desc: "A special gathering.", img: "logo.png" },
-        { title: "Event Six", desc: "A night to remember.", img: "logo.png" },
-        { title: "Event Seven", desc: "You won’t regret this.", img: "logo.png" },
-        { title: "Event Eight", desc: "An unforgettable experience.", img: "logo.png" },
-        { title: "Event Nine", desc: "Book your spot now!", img: "logo.png" },
-        { title: "Event Ten", desc: "Fun for everyone.", img: "logo.png" },
-        { title: "Event Eleven", desc: "Join the excitement.", img: "logo.png" },
-        { title: "Event Twelve", desc: "A once-in-a-lifetime event.", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png" },
+        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
+        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
+        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
+        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] }
     ];
 
     let eventsDisplayed = 0;
     const eventsPerLoad = 10;
     const eventsContainer = document.getElementById("eventsContainer");
     const loadMoreButton = document.getElementById("loadMore");
+    const sortSelect = document.getElementById("sort");
 
-    function loadEvents() {
+    function renderEvents(eventList) {
+        eventsContainer.innerHTML = "";
         const fragment = document.createDocumentFragment();
-        for (let i = eventsDisplayed; i < eventsDisplayed + eventsPerLoad && i < events.length; i++) {
-            const event = events[i];
+        eventList.forEach(event => {
             const eventDiv = document.createElement("div");
             eventDiv.classList.add("event-box");
             eventDiv.innerHTML = `
                 <img src="${event.img}" alt="${event.title}">
                 <h3>${event.title}</h3>
                 <p>${event.desc}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <p><strong>Price:</strong> $${event.price}</p>
+                <p><strong>Genre:</strong> ${event.genre}</p>
+                <p><strong>Tags:</strong> ${event.tags.join(", ")}</p>
             `;
             fragment.appendChild(eventDiv);
-        }
+        });
         eventsContainer.appendChild(fragment);
+    }
+
+    function loadEvents() {
+        const eventSubset = events.slice(eventsDisplayed, eventsDisplayed + eventsPerLoad);
+        renderEvents(eventSubset);
         eventsDisplayed += eventsPerLoad;
         if (eventsDisplayed >= events.length) {
             loadMoreButton.style.display = "none";
         }
     }
 
+    function sortEvents() {
+        const sortBy = sortSelect.value;
+        events.sort((a, b) => {
+            if (typeof a[sortBy] === "string") {
+                return a[sortBy].localeCompare(b[sortBy]);
+            } else {
+                return a[sortBy] - b[sortBy];
+            }
+        });
+        eventsDisplayed = 0;
+        loadMoreButton.style.display = "block";
+        loadEvents();
+    }
+
+    sortSelect.addEventListener("change", sortEvents);
     loadMoreButton.addEventListener("click", loadEvents);
     loadEvents(); // Load initial events
 });
