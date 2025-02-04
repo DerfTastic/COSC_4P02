@@ -58,7 +58,7 @@ public class WebServer {
             });
         }
 
-        addManagedResource(new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")));
+        addManagedResource(MailServer.class, new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
         new APIRouteBuilder(this).mountRoutes(this, "/", "server.web.root");
 
@@ -67,9 +67,13 @@ public class WebServer {
 
         Logger.getGlobal().log(Level.INFO, "Server started on http://" + address.getAddress().getHostAddress() + ":" + address.getPort());
     }
-
+    
     public <T> void addManagedResource(T resource){
-        managedResources.put(resource.getClass(), resource);
+        addManagedResource(resource.getClass(), resource);
+    }
+
+    public <I extends T, T> void addManagedResource(Class<I> clazz, T resource){
+        managedResources.put(clazz, resource);
     }
 
     @SuppressWarnings("unchecked")
