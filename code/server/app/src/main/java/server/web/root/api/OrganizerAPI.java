@@ -2,7 +2,7 @@ package server.web.root.api;
 
 import server.db.RwTransaction;
 import server.web.annotations.*;
-import server.web.auth.RequireSession;
+import server.web.param_handlers.RequireSession;
 import server.web.auth.UserSession;
 import server.web.route.ClientError;
 

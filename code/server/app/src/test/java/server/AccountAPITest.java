@@ -11,6 +11,8 @@ import server.web.root.api.AccountAPI;
 import server.web.MailServer;
 import server.web.route.ClientError;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
@@ -30,12 +32,12 @@ public class AccountAPITest {
     }
 
     @Test
-    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
+    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException, UnknownHostException {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
         try(var trans = db.rw_transaction()){
-            AccountAPI.login(mail, null, trans, account);
+            AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
         }
     }
 

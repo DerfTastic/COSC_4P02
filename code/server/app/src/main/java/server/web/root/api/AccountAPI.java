@@ -9,13 +9,17 @@ import server.web.MailServer;
 import server.web.Util;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
-import server.web.auth.RequireSession;
+import server.web.param_handlers.IpHandler;
+import server.web.param_handlers.RequireSession;
 import server.web.auth.UserSession;
+import server.web.param_handlers.UserAgentHandler;
 import server.web.route.ClientError;
 import server.web.route.Request;
 import util.SqlSerde;
 
 import javax.mail.Message;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -126,7 +130,10 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, Request request, RwTransaction trans, @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException {
+    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException, UnknownHostException {
+//        var ip = InetAddress.getByName("localhost");
+//        var agent = "";
+
         int user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
@@ -142,18 +149,12 @@ public class AccountAPI {
             }
         }
 
-        var agent = request.exchange.getRequestHeaders().getFirst("User-Agent");
-        var ip = request.exchange.getRemoteAddress().getAddress().getHostAddress();
-        for(var item : request.exchange.getRequestHeaders().entrySet()){
-            System.out.println(item.getKey() + ": " + item.getValue().toString());
-        }
-
         int session_id;
         try(var stmt = trans.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
             stmt.setInt(":user_id", user_id);
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
             stmt.setString(":agent", agent);
-            stmt.setString(":ip", ip);
+            stmt.setString(":ip", ip.getHostAddress());
             session_id = stmt.executeQuery().getInt(1);
         }
 
@@ -169,7 +170,7 @@ public class AccountAPI {
         mail.sendMail(message -> {
             Util.LocationQuery res = null;
             try{
-                res = Util.queryLocation(request.exchange.getRemoteAddress().getAddress());
+                res = Util.queryLocation(ip);
             }catch (Exception ignore){}
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(login.email));
             message.setSubject("Warning");
