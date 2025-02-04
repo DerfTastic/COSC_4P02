@@ -6,6 +6,8 @@ import server.DynamicMediaHandler;
 import server.Secrets;
 import server.ServerLogger;
 import server.db.DbManager;
+import server.web.mail.MailServer;
+import server.web.mail.SmtpMailServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -56,7 +58,7 @@ public class WebServer {
             });
         }
 
-        addManagedResource(new MailServer(Secrets.get("email_account"), Secrets.get("email_password")));
+        addManagedResource(new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
         new APIRouteBuilder(this).mountRoutes(this, "/", "server.web.root");
 

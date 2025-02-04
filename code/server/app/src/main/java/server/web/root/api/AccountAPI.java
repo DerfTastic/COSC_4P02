@@ -5,7 +5,7 @@ import server.db.RoConn;
 import server.db.RoTransaction;
 import server.db.RwConn;
 import server.db.RwTransaction;
-import server.web.MailServer;
+import server.web.mail.MailServer;
 import server.web.Util;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;

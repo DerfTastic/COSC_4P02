@@ -51,14 +51,22 @@ public class ServerLogger {
         mh = new MemHandler();
     }
 
+    public static void setLogLevel(Level level){
+        Logger.getGlobal().setLevel(level);
+        for (Handler handler : Logger.getGlobal().getParent().getHandlers()) {
+            handler.setLevel(level);
+        }
+    }
+
+    public static Level getLogLevel(){
+        return Logger.getGlobal().getLevel();
+    }
+
     public static void initialize(){
         Logger.getGlobal().addHandler(fh);
         Logger.getGlobal().addHandler(mh);
 
-        Logger.getGlobal().setLevel(Level.INFO);
-        for (Handler handler : Logger.getGlobal().getParent().getHandlers()) {
-            handler.setLevel(Level.INFO);
-        }
+        setLogLevel(Level.INFO);
 
         Logger.getGlobal().log(Level.INFO, "Working Directory: " + Paths.get("").toAbsolutePath());
     }

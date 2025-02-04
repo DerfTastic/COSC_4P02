@@ -1,7 +1,6 @@
-package server.web;
+package server.web.mail;
 
 import javax.mail.*;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.Closeable;
@@ -11,8 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MailServer implements Closeable {
-
+public class SmtpMailServer implements Closeable, MailServer {
     private final Session session;
 
     private final String username;
@@ -22,7 +20,7 @@ public class MailServer implements Closeable {
     private final ThreadLocal<Transport> transport;
 
 
-    public MailServer(String username, String password) {
+    public SmtpMailServer(String username, String password) {
         this.username = username;
 
         Properties prop = new Properties();
@@ -32,12 +30,12 @@ public class MailServer implements Closeable {
         prop.put("mail.smtp.starttls.enable", "true");
 
         session = Session.getInstance(
-                    prop,
-                    new javax.mail.Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(username, password);
-                        }
-                    });
+                prop,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
 
         transport = ThreadLocal.withInitial(() -> {
             while(true){
@@ -66,28 +64,17 @@ public class MailServer implements Closeable {
         executor.shutdown();
     }
 
-    public interface MessageConfigurator{
-        void config(Message message) throws MessagingException;
-    }
-
-    public static InternetAddress[] fromStrings(String... in) throws AddressException {
-        var adds = new InternetAddress[in.length];
-        for(int i = 0; i < adds.length; i ++){
-            adds[i] = new InternetAddress(in[i]);
-        }
-        return adds;
-    }
-
+    @Override
     public synchronized void sendMail(MessageConfigurator configurator) {
-//        executor.submit(() -> {
-//            try{
-//                Message message = new MimeMessage(session);
-//                message.setFrom(new InternetAddress(username));
-//                configurator.config(message);
-//                transport.get().sendMessage(message, message.getAllRecipients());
-//            }catch (MessagingException e){
-//                Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
-//            }
-//        });
+        executor.submit(() -> {
+            try{
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(username));
+                configurator.config(message);
+                transport.get().sendMessage(message, message.getAllRecipients());
+            }catch (MessagingException e){
+                Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
+            }
+        });
     }
 }

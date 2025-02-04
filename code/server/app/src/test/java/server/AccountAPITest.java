@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import server.db.DbManager;
 import server.web.root.api.AccountAPI;
-import server.web.MailServer;
+import server.web.mail.MailServer;
 import server.web.route.ClientError;
 
 import java.net.InetAddress;

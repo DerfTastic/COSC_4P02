@@ -153,7 +153,7 @@ const api = {
          */
         get_server_statistics: async function(session) {
             return await (await api.api_call(
-                `/get_route_statistics`,
+                `/get_server_statistics`,
                 {
                     method: 'GET',
                     headers: {
@@ -162,6 +162,100 @@ const api = {
                     },
                 },
                 "An error occured while getting the route statistics"
+            )).json();
+        },
+        
+        /**
+         * @param {Session} session 
+         * @param {string} email 
+         * @returns {Promise<>}
+         */
+        delete_other_account: async function(session, email) {
+            await api.api_call(
+                `/delete_other_account/${encodeURI(email)}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while deleting that account"
+            )
+        },
+
+        /**
+         * @param {Session} session 
+         * @param {boolean} admin 
+         * @param {string} email 
+         * @returns {Promise<>}
+         */
+        set_account_admin: async function(session, admin, email) {
+            await api.api_call(
+                `/set_account_admin/${encodeURI(admin)}/${encodeURI(email)}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while setting that account as admin"
+            )
+        },
+
+        /**
+         * @param {Session} session 
+         * @param {string} level 
+         * @returns {Promise<>}
+         */
+        set_log_level: async function(session, level) {
+            await api.api_call(
+                `/set_log_level/${encodeURI(level)}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while setting the log level"
+            )
+        },
+
+        /**
+         * @param {Session} session 
+         * @returns {Promise<string>}
+         */
+        get_log_level: async function(session) {
+            return await (await api.api_call(
+                `/get_log_level`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while getting the log level"
+            )).text();
+        },
+
+        /**
+         * @param {Session} session 
+         * @returns {Promise<string[]>}
+         */
+        get_log_levels: async function(session) {
+            return await (await api.api_call(
+                `/get_log_levels`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while getting the log levels"
             )).json();
         }
     },

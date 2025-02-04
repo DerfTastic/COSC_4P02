@@ -3,7 +3,7 @@ package server.web.root.api;
 import server.ServerLogger;
 import server.db.RoConn;
 import server.db.RwConn;
-import server.web.MailServer;
+import server.web.mail.MailServer;
 import server.web.ServerStatistics;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 @Routes
@@ -129,7 +130,24 @@ public class AdminAPI {
     }
 
     @Route
-    public static String get_route_statistics(@FromRequest(RequireAdmin.class) UserSession auth, ServerStatistics tracker){
+    public static String get_server_statistics(@FromRequest(RequireAdmin.class) UserSession auth, ServerStatistics tracker){
         return tracker.json();
+    }
+
+    @Route("/set_log_level/<level>")
+    public static void set_log_level(@FromRequest(RequireAdmin.class) UserSession auth, @Path String level){
+        ServerLogger.setLogLevel(Level.parse(level));
+    }
+
+    @Route
+    public static String get_log_level(@FromRequest(RequireAdmin.class) UserSession auth){
+        return ServerLogger.getLogLevel().getName();
+    }
+
+    @Route
+    public static @Json String[] get_log_levels(@FromRequest(RequireAdmin.class) UserSession auth){
+        return new String[]{
+                Level.OFF.getName(), Level.SEVERE.getName(), Level.WARNING.getName(), Level.INFO.getName(), Level.CONFIG.getName(), Level.FINE.getName(), Level.FINER.getName(), Level.FINEST.getName(), Level.ALL.getName()
+        };
     }
 }
