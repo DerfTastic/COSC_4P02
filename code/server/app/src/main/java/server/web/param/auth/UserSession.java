@@ -1,4 +1,4 @@
-package server.web.auth;
+package server.web.param.auth;
 
 public class UserSession {
     public int user_id;

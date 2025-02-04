@@ -1,7 +1,6 @@
-package server.web.param_handlers;
+package server.web.param.auth;
 
 import server.db.DbManager;
-import server.web.auth.UserSession;
 import server.web.route.ClientError;
 import server.web.route.Request;
 import server.web.route.RouteParameter;

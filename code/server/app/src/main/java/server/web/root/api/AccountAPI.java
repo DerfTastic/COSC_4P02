@@ -9,10 +9,10 @@ import server.web.MailServer;
 import server.web.Util;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
-import server.web.param_handlers.IpHandler;
-import server.web.param_handlers.RequireSession;
-import server.web.auth.UserSession;
-import server.web.param_handlers.UserAgentHandler;
+import server.web.param.misc.IpHandler;
+import server.web.param.auth.RequireSession;
+import server.web.param.auth.UserSession;
+import server.web.param.misc.UserAgentHandler;
 import server.web.route.ClientError;
 import util.SqlSerde;
 

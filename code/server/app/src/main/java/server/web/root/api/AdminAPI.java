@@ -7,8 +7,8 @@ import server.web.MailServer;
 import server.web.ServerStatistics;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
-import server.web.auth.RequireAdmin;
-import server.web.auth.UserSession;
+import server.web.param.auth.RequireAdmin;
+import server.web.param.auth.UserSession;
 import server.web.route.ClientError;
 
 import javax.mail.Message;

@@ -1,6 +1,5 @@
-package server.web.auth;
+package server.web.param.auth;
 
-import server.web.param_handlers.RequireSession;
 import server.web.route.ClientError;
 import server.web.route.Request;
 

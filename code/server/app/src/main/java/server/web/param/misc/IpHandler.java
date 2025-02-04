@@ -1,4 +1,4 @@
-package server.web.param_handlers;
+package server.web.param.misc;
 
 import server.web.route.Request;
 import server.web.route.RouteParameter;
