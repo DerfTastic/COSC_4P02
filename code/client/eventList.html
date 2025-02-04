@@ -3,65 +3,135 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="initial-scale=1, width=device-width"> -->
     <link rel="stylesheet" href="/style/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
-
     <title>Ticket Express</title>
+    <style>
+        body {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background: #413c3c;
+            padding: 15px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .event-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .event-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .load-more-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .load-more {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .load-more:hover {
+            background: #0056b3;
+        }
+        .event-box {
+            background-color: #f8e6e0; /* Light peach background */
+            color: #333; /* Dark gray text */
+            border: 1px solid #d1a7a1; /* Light brown border */
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .event-box h3 {
+            color: #b22222; /* Dark red for headings */
+        }
+
+        .event-box p {
+            color: #555; /* Medium gray for text */
+        }
+
+        .event-box strong {
+            color: #8b0000; /* Deep red for strong text */
+        }
+
+    </style>
 </head>
 
 <body>
-    <div src="/header.html" type="text/x-html-template"></div>
+    <div class="sidebar">
+        <h3>Filter Events</h3>
+        <form id="filterForm">
+            <label for="filterLocation">Location:</label>
+            <input type="text" id="filterLocation" placeholder="Enter location">
 
+            <label for="filterGenre">Genre:</label>
+            <input type="text" id="filterGenre" placeholder="Enter genre">
 
-    <div class="content">
+            <label for="filterTag">Tag:</label>
+            <input type="text" id="filterTag" placeholder="Enter tag">
 
-        <h3>List of Events</h3>
-        <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
+            <label for="sort">Sort By:</label>
+            <select id="sort">
+                <option value="title">Name</option>
+                <option value="location">Location</option>
+                <option value="price">Price</option>
+                <option value="genre">Genre</option>
+            </select>
 
+            <label for="order">Order:</label>
+            <select id="order">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </form>
+    </div>
 
+    <div class="main-content">
+        <div src="/header.html" type="text/x-html-template"></div>
 
-        <div class="carousel">
-            <button class="arrow left" id="prev">&lt;</button>
-            <div class="product-container">
-                <div class="product-box">
+        <div class="content">
+            <h3>List of Events</h3>
+            <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
 
-                    <img src="logo.png" alt="Event 1">
-                    <div class="caption">
-                        <h3>Event One</h3>
-                        <p>Join us for an amazing time!</p>
-                    </div>
-                </div>
+            <div class="events-container" id="eventsContainer"></div>
 
-                <div class="product-box">
-
-                    <img src="logo.png" alt="Event 2">
-                    <div class="caption">
-                        <h3>Event Two</h3>
-                        <p>Don't miss this exciting event.</p>
-                    </div>
-                </div>
-
-                <div class="product-box">
-
-                    <img src="logo.png" alt="Event 3">
-                    <div class="caption">
-                        <h3>Event Three</h3>
-                        <p>A wonderful experience awaits.</p>
-                    </div>
-                </div>
+            <div class="load-more-container">
+                <button class="load-more" id="loadMore">Load More Events</button>
             </div>
-            <button class="arrow right" id="next">&gt;</button>
         </div>
 
         <div src="/footer.html" type="text/x-html-template"></div>
     </div>
+
     <script src="/js/script.js"></script>
 </body>
 
