@@ -13,7 +13,6 @@ import server.web.route.ClientError;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 public class AccountAPITest {
@@ -24,7 +23,7 @@ public class AccountAPITest {
     @Before
     public void setup() {
         try{
-            db = new DbManager(true, true);
+            db = new DbManager(true, true, false);
             mail = new MailServer("", "");
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -32,12 +31,13 @@ public class AccountAPITest {
     }
 
     @Test
-    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException, UnknownHostException {
+    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, UnknownHostException {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
+        String session;
         try(var trans = db.rw_transaction()){
-            AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
         }
     }
 

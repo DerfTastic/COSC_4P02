@@ -57,21 +57,21 @@ public class AdminAPI {
     public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, RwConn connection, @Body String sql) throws SQLException {
         try(var stmt = connection.createStatement()){
             if(!stmt.execute(sql))return "";
-            String list = "";
+            StringBuilder list = new StringBuilder();
 
             var rs = stmt.getResultSet();
             while(rs.next()){
-                list += "(";
+                list.append("(");
                 for(int i = 1; ; i++){
                     try{
                         var res = rs.getString(i);
-                        if(i!=1) list += ", ";
-                        list += res;
+                        if(i!=1) list.append(", ");
+                        list.append(res);
                     }catch (SQLException ignore){break;}
                 }
-                list += ")\n";
+                list.append(")\n");
             }
-            return list;
+            return list.toString();
         }
     }
 

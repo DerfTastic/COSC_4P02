@@ -14,13 +14,10 @@ import server.web.param_handlers.RequireSession;
 import server.web.auth.UserSession;
 import server.web.param_handlers.UserAgentHandler;
 import server.web.route.ClientError;
-import server.web.route.Request;
 import util.SqlSerde;
 
 import javax.mail.Message;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -130,10 +127,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, ClientError.Unauthorized, NoSuchAlgorithmException, UnknownHostException {
-//        var ip = InetAddress.getByName("localhost");
-//        var agent = "";
-
+    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, ClientError.Unauthorized {
         int user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){

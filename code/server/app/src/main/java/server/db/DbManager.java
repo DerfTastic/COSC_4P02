@@ -26,6 +26,7 @@ public class DbManager implements AutoCloseable{
     private final LinkedList<Connection> writableAvailable = new LinkedList<>();
     private final LinkedList<Connection> readOnlyAvailable = new LinkedList<>();
     private final HashSet<Connection> inUse = new HashSet<>();
+    private final HashSet<Thread> owning = new HashSet<>();
     private int inUseReadOnly = 0;
     private int inUseWritable = 0;
     private int sequenceBefore = 0;
@@ -39,10 +40,10 @@ public class DbManager implements AutoCloseable{
     private ServerStatistics stats;
 
     public DbManager() throws SQLException{
-        this(Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start);
+        this(Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true);
     }
 
-    public DbManager(boolean inMemory, boolean alwaysInitialize) throws SQLException {
+    public DbManager(boolean inMemory, boolean alwaysInitialize, boolean cacheShared) throws SQLException {
 
         boolean initialized;
 
@@ -52,7 +53,7 @@ public class DbManager implements AutoCloseable{
         maxWritable = 1;
         if(inMemory) {
             initialized = false;
-            url = "jdbc:sqlite:file:memdb1?mode=memory&cache=shared";
+            url = "jdbc:sqlite:file:memdb1?mode=memory"+(cacheShared?"&cache=shared":"");
         }else {
             url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
             initialized = new File("Config.CONFIG.db_path").exists();
@@ -142,6 +143,7 @@ public class DbManager implements AutoCloseable{
 
     protected synchronized void rePool(RwConn conn) throws SQLException {
         if(conn.conn==null)return;
+        owning.remove(Thread.currentThread());
         if(inUse.remove(conn.conn)){
             if(!conn.conn.isClosed())
                 writableAvailable.addLast(conn.conn);
@@ -154,6 +156,7 @@ public class DbManager implements AutoCloseable{
 
     protected synchronized void rePool(RoConn conn) throws SQLException {
         if(conn.conn==null)return;
+        owning.remove(Thread.currentThread());
         if(inUse.remove(conn.conn)){
             if(!conn.conn.isClosed())
                 readOnlyAvailable.addLast(conn.conn);
@@ -202,6 +205,8 @@ public class DbManager implements AutoCloseable{
             ||(inUseWritable>=maxWritable&&maxWritable>0)
             ||(!canWriteAndReadCoexist&&inUseReadOnly>0)
         ){
+            if(owning.contains(Thread.currentThread()))
+                throw new RuntimeException("This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block");
             try{
                 wait();
             }catch (Exception e){
@@ -217,6 +222,7 @@ public class DbManager implements AutoCloseable{
             con = writableAvailable.pollFirst();
         }
         inUse.add(con);
+        owning.add(Thread.currentThread());
         if(inUseWritable!=1)throw new RuntimeException("aflksdkljsdfjkladflk: "+ inUseWritable);
         if(inUseReadOnly!=0)throw new RuntimeException("asdlkajsdflffffffffffffffffffff");
         return con;
@@ -229,6 +235,8 @@ public class DbManager implements AutoCloseable{
             ||(inUseReadOnly>=maxReadOnly&&maxReadOnly>0)
             ||(!canWriteAndReadCoexist&&inUseWritable>0)
         ){
+            if(owning.contains(Thread.currentThread()))
+                throw new RuntimeException("This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block");
             try{
                 wait();
             }catch (Exception e){
@@ -244,6 +252,7 @@ public class DbManager implements AutoCloseable{
             con = readOnlyAvailable.pollFirst();
         }
         inUse.add(con);
+        owning.add(Thread.currentThread());
         if(inUseWritable>0)throw new RuntimeException("hih?????????");
         return con;
     }
