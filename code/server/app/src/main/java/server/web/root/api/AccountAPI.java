@@ -144,6 +144,9 @@ public class AccountAPI {
 
         var agent = request.exchange.getRequestHeaders().getFirst("User-Agent");
         var ip = request.exchange.getRemoteAddress().getAddress().getHostAddress();
+        for(var item : request.exchange.getRequestHeaders().entrySet()){
+            System.out.println(item.getKey() + ": " + item.getValue().toString());
+        }
 
         int session_id;
         try(var stmt = trans.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
