@@ -111,7 +111,7 @@ public class AdminAPI {
     }
 
     @Route("/delete_other_account/<email>")
-    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RoConn conn, @Path String email) throws SQLException, ClientError.BadRequest {
+    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path String email) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from users where email=:email")){
             stmt.setString(":email", email);
             if(stmt.executeUpdate() != 1)
@@ -120,7 +120,7 @@ public class AdminAPI {
     }
 
     @Route("/set_account_admin/<admin>/<email>")
-    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RoConn conn, @Path boolean admin, @Path String email) throws SQLException, ClientError.BadRequest {
+    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path boolean admin, @Path String email) throws SQLException, ClientError.BadRequest {
         try(var stmt = conn.namedPreparedStatement("update users set admin=:admin where email=:email")){
             stmt.setString(":email", email);
             stmt.setBoolean(":admin", admin);

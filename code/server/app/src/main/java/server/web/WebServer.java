@@ -67,7 +67,7 @@ public class WebServer {
 
         Logger.getGlobal().log(Level.INFO, "Server started on http://" + address.getAddress().getHostAddress() + ":" + address.getPort());
     }
-    
+
     public <T> void addManagedResource(T resource){
         addManagedResource(resource.getClass(), resource);
     }
