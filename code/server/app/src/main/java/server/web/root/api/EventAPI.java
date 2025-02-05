@@ -50,6 +50,8 @@ public class EventAPI {
         public String tag;
         public boolean category;
 
+        public EventTag(){}
+
         public EventTag(String tag, boolean category) {
             this.tag = tag;
             this.category = category;

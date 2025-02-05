@@ -56,7 +56,7 @@ public class DbManager implements AutoCloseable{
             url = "jdbc:sqlite:file:memdb1?mode=memory"+(cacheShared?"&cache=shared":"");
         }else {
             url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
-            initialized = new File("Config.CONFIG.db_path").exists();
+            initialized = new File(Config.CONFIG.db_path).exists();
 
             if(!new File("db").exists()){
                 try {

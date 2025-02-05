@@ -33,39 +33,63 @@ public class SearchAPI {
 
     @Route
     public static @Json List<EventAPI.AllEvent> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search) throws SQLException {
-        String whereClause = "(draft=false OR organizer_id=:organizer_id)";
+        StringBuilder whereClause;
+        if(session!=null&&session.organizer_id!=null)
+            whereClause = new StringBuilder("(draft=false OR organizer_id=" + session.organizer_id + ")");
+        else
+            whereClause = new StringBuilder("draft=false");
+
+        if(search.tags!=null)
+            for(var item : search.tags){
+                whereClause.append(" AND id IN (select event_id from event_tags where category=")
+                        .append(item.category)
+                        .append(" AND tag='")
+                        .append(item.tag.replace("'", "\\'"))
+                        .append("')");
+            }
         if(search.distance!=null && search.location_lat!=null && search.location_long!=null){
-            whereClause += " AND (location_lat BETWEEN " + (search.location_lat-search.distance) + "AND" + (search.location_lat+search.distance) + ")";
-            whereClause += " AND (location_long BETWEEN " + (search.location_long-search.distance) + "AND" + (search.location_long+search.distance) + ")";
+            whereClause.append(" AND (location_lat BETWEEN ")
+                    .append(search.location_lat - search.distance)
+                    .append(" AND ")
+                    .append(search.location_lat + search.distance)
+                    .append(")");
+            whereClause.append(" AND (location_long BETWEEN ")
+                    .append(search.location_long - search.distance)
+                    .append(" AND ")
+                    .append(search.location_long + search.distance)
+                    .append(")");
         }
         if(search.organizer_exact!=null){
-            whereClause += " AND (organizer_id="+search.organizer_exact+")";
+            whereClause.append(" AND (organizer_id=").append(search.organizer_exact).append(")");
+        }
+        if(search.organizer_fuzzy!=null){
+            whereClause.append(" AND organizer_id IN (select users.organizer_id from users where events.organizer_id=users.organizer_id AND users.name LIKE '").append(search.organizer_fuzzy.replace("'", "\\'")).append("')");
         }
         if(search.name_fizzy!=null){
-            whereClause += " AND (name LIKE '"+search.name_fizzy.replace("'", "\\'")+"')";
+            whereClause.append(" AND (name LIKE '").append(search.name_fizzy.replace("'", "\\'")).append("')");
+        }
+        if(search.location!=null){
+            whereClause.append(" AND (location LIKE '").append(search.location.replace("'", "\\'")).append("')");
         }
         String order = "id ASC";
 
         String clauses = "where " + whereClause + " order by " + order;
         var limit = search.limit==null?256:Math.max(256, search.limit);
         var offset = search.offset==null?0:search.offset;
-        clauses += " limit " + limit + "," + offset;
+        clauses += " limit " + offset + "," + limit;
 
         List<EventAPI.Event> events_partial;
-        try(var stmt = trans.namedPreparedStatement("select * from events " + clauses)){
-            if(session!=null&&session.organizer_id!=null)
-                stmt.setInt(":organizer_id", session.organizer_id);
-            events_partial = SqlSerde.sqlList(stmt.executeQuery(), EventAPI.Event.class);
+        try(var stmt = trans.createStatement()){
+            var rs = stmt.executeQuery("select * from events " + clauses);
+            events_partial = SqlSerde.sqlList(rs, EventAPI.Event.class);
         }
         List<EventAPI.AllEvent> events = new ArrayList<>(events_partial.size());
         for (EventAPI.Event event : events_partial) {
             events.add(new EventAPI.AllEvent(event, new ArrayList<>()));
         }
 
-        try(var stmt = trans.namedPreparedStatement("select events.id, event_tags.tag, event_tags.category from events left join event_tags on events.id=event_tags.event_id " + clauses)){
-            if(session!=null&&session.organizer_id!=null)
-                stmt.setInt(":organizer_id", session.organizer_id);
-            var rs = stmt.getResultSet();
+        try(var stmt = trans.createStatement()){
+            var rs = stmt.executeQuery("select id, tag, category from events left join event_tags on id=event_id " + clauses);
 
             int index = 0;
             while(rs.next()){

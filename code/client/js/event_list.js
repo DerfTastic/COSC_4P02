@@ -1,15 +1,4 @@
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.style = "display:none";
-    if (typeof Handlebars !== 'undefined') {
-        Handlebars.registerHelper("raw-helper", function (options) {
-            return options.fn();
-        });
-    }
-
-    page.initialize_content(document);
-    page.load_dynamic_content(document);
-});
 
 document.addEventListener("DOMContentLoaded", function () {
     const events = [

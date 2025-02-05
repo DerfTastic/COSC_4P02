@@ -81,20 +81,20 @@ class ServerStatistics{
 }
 
 class Search{
-    /** @type{number} */ date_start
-    /** @type{number} */ date_end
-    /** @type{number} */ max_duration
-    /** @type{number} */ min_duration
-    /** @type{OrganizerEventTag[]} */ tags
-    /** @type{string} */ organizer_fuzzy
-    /** @type{string} */ name_fizzy
-    /** @type{number} */ organizer_exact
-    /** @type{number} */ distance
-    /** @type{number} */ location_lat
-    /** @type{number} */ location_long
-    /** @type{string} */ location
-    /** @type{number} */ offset
-    /** @type{number} */ limit
+    /** @type{number?} */ date_start
+    /** @type{number?} */ date_end
+    /** @type{number?} */ max_duration
+    /** @type{number?} */ min_duration
+    /** @type{OrganizerEventTag[]?} */ tags
+    /** @type{string?} */ organizer_fuzzy
+    /** @type{string?} */ name_fizzy
+    /** @type{number?} */ organizer_exact
+    /** @type{number?} */ distance
+    /** @type{number?} */ location_lat
+    /** @type{number?} */ location_long
+    /** @type{string?} */ location
+    /** @type{number?} */ offset
+    /** @type{number?} */ limit
 }
 
 // actually just a string but shhhh
@@ -860,4 +860,17 @@ document.addEventListener('html_templates_finished', () => {
 document.addEventListener('dynamic_content_finished', () => {
     console.log("Dynamic content finished loading");
     document.body.style = "";
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.style = "display:none";
+    if (typeof Handlebars !== 'undefined') {
+        Handlebars.registerHelper("raw-helper", function (options) {
+            return options.fn();
+        });
+    }
+
+    page.initialize_content(document);
+    page.load_dynamic_content(document);
 });
