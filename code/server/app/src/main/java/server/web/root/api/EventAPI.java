@@ -7,6 +7,7 @@ import server.db.RoTransaction;
 import server.db.RwTransaction;
 import server.web.annotations.*;
 import server.web.annotations.url.Path;
+import server.web.param.auth.OptionalAuth;
 import server.web.param.auth.RequireOrganizer;
 import server.web.param.auth.UserSession;
 import server.web.route.ClientError;
@@ -48,6 +49,11 @@ public class EventAPI {
     public static class EventTag{
         public String tag;
         public boolean category;
+
+        public EventTag(String tag, boolean category) {
+            this.tag = tag;
+            this.category = category;
+        }
     }
 
     public record AllEvent(
@@ -55,30 +61,13 @@ public class EventAPI {
             List<EventTag> tags
     ){}
 
-    public static class OptionalAuth implements RouteParameter<Integer>{
-        @Override
-        public Integer construct(Request request) throws Exception {
-            var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
-            if (token == null) return null;
-            if(token.isEmpty()) return null;
-            try (var conn = request.getServer().getManagedResource(DbManager.class).ro_conn()) {
-                try (var stmt = conn.namedPreparedStatement("select organizer_id from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {
-                    stmt.setString(":token", token);
-                    var result = stmt.executeQuery();
-                    if (result == null || !result.next()) return null;
-                    return result.getInt("organizer_id");
-                }
-            }
-        }
-    }
-
     @Route("/get_event/<id>")
-    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) Integer organizer_id, RoTransaction trans, @Path int id) throws SQLException, ClientError.BadRequest {
+    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path int id) throws SQLException, ClientError.BadRequest {
         Event event;
         try(var stmt = trans.namedPreparedStatement("select * from events where id=:id AND (draft=false OR organizer_id=:organizer_id)")){
             stmt.setInt(":id", id);
-            if(organizer_id!=null)
-                stmt.setInt(":organizer_id", organizer_id);
+            if(session!=null&&session.organizer_id!=null)
+                stmt.setInt(":organizer_id", session.organizer_id);
             var result = SqlSerde.sqlList(stmt.executeQuery(), Event.class);
             if(result.isEmpty())
                 throw new ClientError.BadRequest("Event doesn't exist or you do not have permission to view it");
