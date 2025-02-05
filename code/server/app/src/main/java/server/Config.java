@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Config implements Serializable {
-    public static final Config CONFIG;
+    public static final Config CONFIG; // Variable to another instance of this class?
 
     public final Integer web_threads = initialize(256);
     public final Boolean wipe_db_on_start = initialize(false);

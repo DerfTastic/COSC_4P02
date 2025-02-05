@@ -18,13 +18,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WebServer {
-    public final HttpServer server;
-    private final HashMap<Class<?>, Object> managedResources = new HashMap<>();
+    public final HttpServer server; // Ticket Express server
+    private final HashMap<Class<?>, Object> managedResources = new HashMap<>(); //
     public ServerStatistics tracker = new ServerStatistics();
 
     public WebServer() throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
+        // Create a socket address using "Config.CONFIG.hostname" as the respective hostname and
+        // "Config.CONFIG.port" as the port.
+        // Currently, localhost 80
         var address = new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port);
         server = HttpServer.create(address, 0);
 
@@ -68,19 +71,30 @@ public class WebServer {
         Logger.getGlobal().log(Level.INFO, "Server started on http://" + address.getAddress().getHostAddress() + ":" + address.getPort());
     }
 
+    // See second function call below
     public <T> void addManagedResource(T resource){
         addManagedResource(resource.getClass(), resource);
     }
 
+    // Second
     public <I extends T, T> void addManagedResource(Class<I> clazz, T resource){
         managedResources.put(clazz, resource);
     }
 
+    /**
+     *
+     * @param clazz
+     * @return Returns a managed resource retrieved using the provided class
+     * @param <T> Generic Class Template
+     */
     @SuppressWarnings("unchecked")
     public <T> T getManagedResource(Class<T> clazz){
         return (T) managedResources.get(clazz);
     }
 
+    /**
+     * This method closes the webserver.
+     */
     public void close(){
         Logger.getGlobal().log(Level.INFO, "Shutting down");
         for(var resource : managedResources.values()){
