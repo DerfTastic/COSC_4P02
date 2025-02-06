@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+
+    <title>Ticket Express</title>
+    
+</head>
+<body>
+    <div class="content">
+        <div id="eventPage" style="display: none;">
+            <h1 id="eventTitleDisplay"></h1>
+            <p id="eventVenueDisplay"></p>
+            
+            <p id="eventDateDisplay"></p>
+            <p id="eventTimeDisplay"></p>
+            <p id="eventDescriptionDisplay"></p>
+            
+            <h2>Tags:</h2>
+            <div id="eventTagsDisplay"></div>
+    
+            <h2>Tickets:</h2>
+            <ul id="eventTicketsDisplay"></ul>
+            
+            <h2>Media:</h2>
+            <div id="eventMediaDisplay"></div>
+        </div>
+    </div>
+<script>
+    window.onload = function () {
+        // Retrieve the event ID from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');  
+
+        // Check if event ID is provided
+        if (!eventId) {
+            console.log("No event ID found.");
+            return;
+        }
+
+        const storedData = JSON.parse(localStorage.getItem(`event-${eventId}`));
+        
+        if (!storedData) {
+            alert("Event data not found.");
+            return;
+        }
+
+        console.log("Loaded Event Data:", storedData);
+
+        // Populate the event details
+        const eventPage = document.getElementById("eventPage");
+
+        eventPage.querySelector("#eventTitleDisplay").textContent = storedData.title || "Untitled Event";
+        eventPage.querySelector("#eventVenueDisplay").textContent = `Venue: ${storedData.venue || "Not specified"}`;
+        eventPage.querySelector("#eventDescriptionDisplay").textContent = storedData.description || "No description provided.";
+        eventPage.querySelector("#eventDateDisplay").textContent = `Date: ${storedData.startDate || "N/A"} - ${storedData.endDate || "N/A"}`;
+        eventPage.querySelector("#eventTimeDisplay").textContent = `Time: ${storedData.startTime || "N/A"} - ${storedData.endTime || "N/A"}`;
+
+        // Tags
+        const tagContainer = document.getElementById("eventTagsDisplay");
+        tagContainer.innerHTML = "";
+        (storedData.tags || []).forEach(tag => {
+            const tagElement = document.createElement("span");
+            tagElement.textContent = `#${tag}`;
+            tagElement.classList.add("event-tag");
+            tagContainer.appendChild(tagElement);
+        });
+
+        // Tickets
+        const ticketsList = document.getElementById("eventTicketsDisplay");
+        ticketsList.innerHTML = "";
+        (storedData.tickets || []).forEach(ticket => {
+            const ticketItem = document.createElement("li");
+            ticketItem.textContent = `${ticket.type.charAt(0).toUpperCase() + ticket.type.slice(1)}: ${ticket.quantity} tickets @ $${ticket.price} each`;
+            ticketsList.appendChild(ticketItem);
+        });
+
+        // Media
+        const mediaContainer = document.getElementById("eventMediaDisplay");
+        mediaContainer.innerHTML = ""; 
+
+        storedData.mediaFiles.forEach(file => {
+            let mediaElement;
+            if (file.type.startsWith("image")) {
+                mediaElement = document.createElement("img");
+                mediaElement.src = file.url; // Use stored Base64 URL
+                mediaElement.alt = "Event Image";
+            } else if (file.type.startsWith("video")) {
+                mediaElement = document.createElement("video");
+                mediaElement.src = file.url;
+                mediaElement.controls = true;
+            }
+            mediaElement.classList.add("media-preview");
+            mediaContainer.appendChild(mediaElement);
+        });
+
+        // Apply styling
+        eventPage.style.backgroundColor = storedData.styling.bgColor || "#ffffff";
+        eventPage.style.color = storedData.styling.textColor || "#000000";
+        eventPage.style.fontFamily = storedData.styling.font || "Arial, sans-serif";
+        eventPage.style.textAlign = storedData.styling.textAlign || "left";
+        eventPage.style.border = `2px ${storedData.styling.borderStyle || "solid"} black`;
+        eventPage.style.borderRadius = `${storedData.styling.borderRadius || 0}px`;
+
+        // Animation
+        if (storedData.styling.animationEffect) {
+            eventPage.classList.add(storedData.styling.animationEffect);
+        }
+
+        // Edit button
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit Event";
+        editButton.classList.add("edit-btn");
+        editButton.onclick = () => history.back();
+        eventPage.appendChild(editButton);
+
+        // Show the event page
+        eventPage.style.display = "block";
+    };
+</script>
+    
+        <div src="/header.html" type="text/x-html-template"></div>
+        <div src="/footer.html" type="text/x-html-template"></div>
+    
+        <script src="/js/script.js"></script>
+        <script src="/js/ui.js"></script>
+        
+</body>
+
+</html>
