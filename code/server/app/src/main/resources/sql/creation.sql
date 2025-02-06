@@ -34,6 +34,8 @@ create table events(
     organizer_id INTEGER not null,
     name TEXT not null,
     description TEXT not null,
+    start INTEGER,
+    duration INTEGER,
     picture INTEGER,
     metadata TEXT,
     available_total_tickets INTEGER,

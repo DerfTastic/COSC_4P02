@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class EventAPI {
     @Route
     public static int create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
-        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :organizer_id, '', '', null, null, null, true, null, null, null) returning id")){
+        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :organizer_id, '', '', null, null, null, null, null, true, null, null, null) returning id")){
             stmt.setInt(":organizer_id", session.organizer_id);
             return stmt.executeQuery().getInt("id");
         }
@@ -36,6 +36,8 @@ public class EventAPI {
             public int organizer_id;
             public String name;
             public String description;
+            public long start;
+            public long duration;
             public int picture;
             public JsonObject metadata;
             public int available_total_tickets;
@@ -91,6 +93,8 @@ public class EventAPI {
             int id,
             String name,
             String description,
+            long start,
+            long duration,
             JsonObject metadata,
             int available_total_tickets,
 
@@ -101,12 +105,14 @@ public class EventAPI {
 
     @Route
     public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Body @Json UpdateEvent update) throws SQLException, ClientError.BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND organizer_id=:organizer_id")){
+        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND organizer_id=:organizer_id")){
             stmt.setInt(":id", update.id);
             stmt.setInt(":organizer_id", session.organizer_id);
 
             stmt.setString(":name", update.name);
             stmt.setString(":description", update.description);
+            stmt.setLong(":start", update.start);
+            stmt.setLong(":duration", update.duration);
             stmt.setString(":metadata", update.metadata.toString());
             stmt.setInt(":available_total_tickets", update.available_total_tickets);
             stmt.setString(":location_name", update.location_name);
