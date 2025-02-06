@@ -877,3 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
     page.initialize_content(document);
     page.load_dynamic_content(document);
 });
+
+function gen_qr(data, size=150){
+    return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=`+encodeURI(data);
+}

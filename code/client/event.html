@@ -70,14 +70,14 @@
         eventPage.querySelector("#eventTimeDisplay").textContent = `End: ${storedData.start || "N/A"} + ${storedData.duration || "N/A"}`;
 
         // Tags
-        // const tagContainer = document.getElementById("eventTagsDisplay");
-        // tagContainer.innerHTML = "";
-        // (storedData.tags || []).forEach(tag => {
-        //     const tagElement = document.createElement("span");
-        //     tagElement.textContent = `#${tag}`;
-        //     tagElement.classList.add("event-tag");
-        //     tagContainer.appendChild(tagElement);
-        // });
+        const tagContainer = document.getElementById("eventTagsDisplay");
+        tagContainer.innerHTML = "";
+        (event.tags || []).forEach(tag => {
+            const tagElement = document.createElement("span");
+            tagElement.textContent = `#${tag.tag}`;
+            tagElement.classList.add("event-tag");
+            tagContainer.appendChild(tagElement);
+        });
 
         // Tickets
         // const ticketsList = document.getElementById("eventTicketsDisplay");
