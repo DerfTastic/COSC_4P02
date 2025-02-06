@@ -59,6 +59,9 @@ class UpdateOrganizerEvent{
     /** @type{string} */name
     /** @type{string} */description
     /** @type{object} */metadata
+
+    /** @type{number} */start
+    /** @type{number} */duration
     
     /** @type{number} */available_total_tickets
 

@@ -28,7 +28,6 @@ public class Config implements Serializable {
 
     static{
         try {
-
             var properties = new Properties();
             try{
                 properties.load(new FileInputStream("server.properties"));

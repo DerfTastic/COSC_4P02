@@ -32,7 +32,7 @@ public class SearchAPI {
             Long min_duration,
             List<EventAPI.EventTag> tags,
             String organizer_fuzzy,
-            String name_fizzy,
+            String name_fuzzy,
             Integer organizer_exact,
             Double distance,
             Double location_lat,
@@ -97,8 +97,8 @@ public class SearchAPI {
         if(search.organizer_fuzzy!=null){
             whereClause.append(" AND organizer_id IN (select users.organizer_id from users where events.organizer_id=users.organizer_id AND users.name LIKE '").append(search.organizer_fuzzy.replace("'", "\\'")).append("')");
         }
-        if(search.name_fizzy!=null){
-            whereClause.append(" AND (name LIKE '").append(search.name_fizzy.replace("'", "\\'")).append("')");
+        if(search.name_fuzzy!=null){
+            whereClause.append(" AND (name LIKE '").append(search.name_fuzzy.replace("'", "\\'")).append("')");
         }
         if(search.location!=null){
             whereClause.append(" AND (location_name LIKE '").append(search.location.replace("'", "\\'")).append("')");
