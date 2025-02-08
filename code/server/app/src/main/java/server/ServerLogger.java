@@ -22,8 +22,6 @@ public class ServerLogger {
 
     static {
         try {
-            if(!new File("./logs").exists())
-                Files.createDirectory(Path.of("./logs"));
             if(new File("./logs/log").exists()){
                 var file = new File("./logs/log");
                 var name = Files.readAttributes(file.toPath(), BasicFileAttributes.class);

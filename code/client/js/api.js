@@ -677,6 +677,7 @@ const page = {
         register: async function (name, email, password) {
             try {
                 await api.user.register(name, email, password);
+                window.location.href = '/login';
             } catch ({ error, code }) {
                 alert(error);
             }

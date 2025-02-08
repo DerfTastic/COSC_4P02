@@ -57,15 +57,6 @@ public class DbManager implements AutoCloseable{
         }else {
             url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
             initialized = new File(Config.CONFIG.db_path).exists();
-
-            if(!new File("db").exists()){
-                try {
-                    Files.createDirectory(Path.of("db"));
-                } catch (IOException e) {
-                    Logger.getGlobal().log(Level.SEVERE, "Cannot create database folder", e);
-                    throw new RuntimeException(e);
-                }
-            }
         }
 
         try(var conn = rw_conn()){
