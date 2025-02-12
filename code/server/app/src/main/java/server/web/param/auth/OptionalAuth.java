@@ -23,7 +23,7 @@ public class OptionalAuth implements RouteParameter<UserSession> {
                     auth.email = result.getString("email");
                     auth.admin = result.getBoolean("admin");
 
-                    auth.organizer_id = result.getString("organizer_id")==null?null:result.getInt("organizer_id");
+                    auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
                     auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
                     return auth;
                 }

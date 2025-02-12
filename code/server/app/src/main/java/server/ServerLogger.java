@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -24,18 +24,19 @@ public class ServerLogger {
         try {
             if(new File("./logs/log").exists()){
                 var file = new File("./logs/log");
-                var name = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                var log_attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                var dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                var name = dateFormat.format(new Date(log_attributes.creationTime().toMillis()));
 
-                var on = new Date(name.creationTime().toMillis()).toString();
-                var out_file = new File("./logs/" + on + ".zip");
+                var out_file = new File("./logs/" + name + ".zip");
                 ZipOutputStream out = new ZipOutputStream(new FileOutputStream(out_file));
-                ZipEntry e = new ZipEntry(on);
+                ZipEntry e = new ZipEntry(name);
                 out.putNextEntry(e);
 
                 byte[] data = Files.readAllBytes(file.toPath());
                 out.write(data, 0, data.length);
                 out.closeEntry();
-
+                out.flush();
                 out.close();
             }
         } catch (IOException e) {

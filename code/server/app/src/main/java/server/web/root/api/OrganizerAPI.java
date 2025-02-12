@@ -15,7 +15,7 @@ public class OrganizerAPI {
     @Route
     public static void convert_to_organizer_account(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans) throws SQLException, ClientError.BadRequest {
         try(var stmt = trans.namedPreparedStatement("select organizer_id from users where id=:user_id")){
-            stmt.setInt(":user_id", session.user_id);
+            stmt.setLong(":user_id", session.user_id);
             if(stmt.executeQuery().getInt("organizer_id")!=0)
                 throw new ClientError.BadRequest("Account already an organizer");
         }
