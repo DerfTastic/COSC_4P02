@@ -64,7 +64,7 @@ public class DbManager implements AutoCloseable{
             var minor = conn.getConn().getMetaData().getDatabaseMinorVersion();
             var name = conn.getConn().getMetaData().getDatabaseProductName();
             var v = conn.getConn().getMetaData().getDatabaseProductVersion();
-            Logger.getGlobal().log(Level.FINE, "Connected to DB " + major + "." + minor + " " + name + "("+v+")");
+            Logger.getGlobal().log(Level.INFO, "Connected to DB " + major + "." + minor + " " + name + "("+v+")");
         }
 
         if(!initialized || alwaysInitialize){
@@ -82,10 +82,10 @@ public class DbManager implements AutoCloseable{
                         }
                     }
                 }catch (SQLException e){
-                    Logger.getGlobal().log(Level.FINE, "Failed to initialize DB", e);
+                    Logger.getGlobal().log(Level.SEVERE, "Failed to initialize DB", e);
                     throw e;
                 }
-                Logger.getGlobal().log(Level.FINE, "Initialized DB");
+                Logger.getGlobal().log(Level.CONFIG, "Initialized DB");
             }
         }
     }

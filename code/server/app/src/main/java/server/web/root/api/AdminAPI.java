@@ -57,10 +57,13 @@ public class AdminAPI {
     @Route
     public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, RwConn connection, @Body String sql) throws SQLException {
         try(var stmt = connection.createStatement()){
-            if(!stmt.execute(sql))return "";
+            var rows = stmt.execute(sql);
             StringBuilder list = new StringBuilder();
 
             var rs = stmt.getResultSet();
+            list.append("Updated ").append(stmt.getUpdateCount()).append("\n");
+            if(rs==null)return list.toString();
+            if(!rows)return list.toString();
             while(rs.next()){
                 list.append("(");
                 for(int i = 1; ; i++){
