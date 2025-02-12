@@ -33,13 +33,13 @@ public class SearchAPI {
             List<EventAPI.EventTag> tags,
             String organizer_fuzzy,
             String name_fuzzy,
-            Integer organizer_exact,
+            Long organizer_exact,
             Double distance,
             Double location_lat,
             Double location_long,
             String location,
-            Integer offset,
-            Integer limit,
+            Long offset,
+            Long limit,
             SortBy sort_by
     ){}
 
@@ -140,7 +140,7 @@ public class SearchAPI {
 
             int index = 0;
             while(rs.next()){
-                var id = rs.getInt("id");
+                var id = rs.getLong("id");
                 var tag = rs.getString("tag");
                 var category = rs.getBoolean("category");
                 while(events.get(index).event().id!=id)index++;

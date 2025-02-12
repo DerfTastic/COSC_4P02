@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class TicketsAPI {
 
     @Route("/create_ticket/<event_id>")
-    public static int create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path int event_id) throws SQLException {
+    public static int create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException {
 //        try(var stmt = trans.namedPreparedStatement("select"))
 
         try(var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")){
@@ -28,10 +28,10 @@ public class TicketsAPI {
     }
 
     public static class Ticket{
-        public int id;
-        public int event_id;
+        public long id;
+        public long event_id;
         public String name;
-        public int price;
+        public long price;
         public Integer limit;
     }
 
@@ -40,7 +40,7 @@ public class TicketsAPI {
     }
 
     @Route
-    public static int update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans){
+    public static long update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans){
         return -1;
     }
 }

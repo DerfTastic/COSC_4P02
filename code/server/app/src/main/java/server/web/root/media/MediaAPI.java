@@ -10,7 +10,7 @@ import server.web.annotations.url.Path;
 public class MediaAPI {
 
     @Route("/<id>")
-    public static byte[] media(DynamicMediaHandler handler, @Path int id){
+    public static byte[] media(DynamicMediaHandler handler, @Path long id){
         return handler.get(id);
     }
 }

@@ -19,12 +19,12 @@ public class RequireSession implements RouteParameter<UserSession> {
 
                 var auth = new UserSession();
 
-                auth.session_id = result.getInt("id");
-                auth.user_id = result.getInt("user_id");
+                auth.session_id = result.getLong("id");
+                auth.user_id = result.getLong("user_id");
                 auth.email = result.getString("email");
                 auth.admin = result.getBoolean("admin");
 
-                auth.organizer_id = result.getString("organizer_id")==null?null:result.getInt("organizer_id");
+                auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
                 auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
                 return auth;
             }
