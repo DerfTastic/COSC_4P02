@@ -8,7 +8,7 @@ Ticket Express is a state-of-the-art product designed for professionals in the e
 
 This was made for a semester-long group project in Software Engineering 2 COSC 4P02 at Brock University.
 
-## Group 17  Members
+__Group 17  Members:__
 - Sinatra Almeida (7060049)
 - Jacob Applebaum (7215031)
 - Joycelyn Chan (7239486)
