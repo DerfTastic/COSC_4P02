@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function filterAndSortEvents() {
         filteredEvents = [...events];
+        displayedEvents = 0; // Reset displayed count when filtering/sorting
         
         const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
         const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
@@ -88,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
         
-        displayedEvents = Math.min(displayedEvents, filteredEvents.length);
         loadMoreEvents();
     }
     
