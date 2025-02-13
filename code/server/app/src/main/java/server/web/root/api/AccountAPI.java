@@ -57,7 +57,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
+    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
         if(!account.email.equals(auth.email))
             throw new ClientError.Unauthorized("Incorrect email");
         account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
@@ -106,7 +106,8 @@ public class AccountAPI {
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);
-            stmt.execute();
+            if(stmt.executeUpdate()!=1)
+                throw new RuntimeException("Account couldn't be created");
         }catch (SQLiteException e){
             if(e.getResultCode().code==2067){//UNIQUE CONSTRAINTS FAILED
                 throw new ClientError.BadRequest("Account with that email already exists");

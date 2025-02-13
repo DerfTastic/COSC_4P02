@@ -5,7 +5,7 @@ package server;
 
 import org.junit.jupiter.api.*;
 import server.db.DbManager;
-import server.web.mail.MessageConfigurator;
+import server.web.param.auth.UserSession;
 import server.web.root.api.AccountAPI;
 import server.web.mail.MailServer;
 import server.web.route.ClientError;
@@ -14,21 +14,19 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountAPITest {
 
-    private DbManager db;
-    private MailServer mail;
+    private static DbManager db;
+    private static MailServer mail;
 
-    @BeforeEach
-    public void setup() {
+    private static String session;
+
+    @BeforeAll
+    public static void setup() {
         try{
-            db = new DbManager(true, true, false);
-            mail = new MailServer() {
-                @Override
-                public void sendMail(MessageConfigurator configurator) {
-
-                }
-            };
+            db = new DbManager("account_api_test", true, true, true);
+            mail = configurator -> {};
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -43,6 +41,7 @@ public class AccountAPITest {
         account.password = "password";
         try(var trans = db.rw_transaction()){
             AccountAPI.register(mail, trans, account);
+            trans.commit();
         }
     }
 
@@ -52,15 +51,44 @@ public class AccountAPITest {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
-        String session;
         try(var trans = db.rw_transaction()){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            trans.commit();
         }
     }
 
-    @AfterEach
-    public void close() {
+    @Test
+    @Order(51)
+    public void testDeleteAccount() throws SQLException, ClientError.Unauthorized {
+        UserSession session;
+        try(var conn = db.ro_conn()){
+            session = UserSession.create(AccountAPITest.session, conn);
+        }
+        try(var trans = db.rw_transaction()){
+            var da = new AccountAPI.DeleteAccount();
+            da.email = "yui@gmail.com";
+            da.password = "password";
+            AccountAPI.delete_account(session, trans, da);
+            trans.commit();
+        }
+    }
+
+    @Test
+    @Order(52)
+    public void testAccountDeleted() throws SQLException, UnknownHostException {
+        var account = new AccountAPI.Login();
+        account.email = "yui@gmail.com";
+        account.password = "password";
+        try(var trans = db.rw_transaction()){
+            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            Assertions.fail();
+        }catch (ClientError.Unauthorized e){
+            Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+        }
+    }
+
+    @AfterAll
+    public static void close() {
         db.close();
-//        mail.close();
     }
 }

@@ -40,10 +40,10 @@ public class DbManager implements AutoCloseable{
     private ServerStatistics stats;
 
     public DbManager() throws SQLException{
-        this(Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true);
+        this(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true);
     }
 
-    public DbManager(boolean inMemory, boolean alwaysInitialize, boolean cacheShared) throws SQLException {
+    public DbManager(String path, boolean inMemory, boolean alwaysInitialize, boolean cacheShared) throws SQLException {
 
         boolean initialized;
 
@@ -53,10 +53,10 @@ public class DbManager implements AutoCloseable{
         maxWritable = 1;
         if(inMemory) {
             initialized = false;
-            url = "jdbc:sqlite:file:memdb1?mode=memory"+(cacheShared?"&cache=shared":"");
+            url = "jdbc:sqlite:file:"+path+"?mode=memory"+(cacheShared?"&cache=shared":"");
         }else {
-            url = "jdbc:sqlite:"+ Config.CONFIG.db_path;
-            initialized = new File(Config.CONFIG.db_path).exists();
+            url = "jdbc:sqlite:"+ path;
+            initialized = new File(path).exists();
         }
 
         try(var conn = rw_conn()){
@@ -214,12 +214,10 @@ public class DbManager implements AutoCloseable{
         }
         inUse.add(con);
         owning.add(Thread.currentThread());
-        if(inUseWritable!=1)throw new RuntimeException("aflksdkljsdfjkladflk: "+ inUseWritable);
-        if(inUseReadOnly!=0)throw new RuntimeException("asdlkajsdflffffffffffffffffffff");
         return con;
     }
 
-    public synchronized Connection ro_conn_p() throws SQLException {
+    private synchronized Connection ro_conn_p() throws SQLException {
         var seq = sequenceBefore++;
         while(
             seq!=sequenceCurr
@@ -244,7 +242,6 @@ public class DbManager implements AutoCloseable{
         }
         inUse.add(con);
         owning.add(Thread.currentThread());
-        if(inUseWritable>0)throw new RuntimeException("hih?????????");
         return con;
     }
 }
