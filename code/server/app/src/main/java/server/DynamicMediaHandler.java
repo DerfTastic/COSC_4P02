@@ -25,7 +25,6 @@ public class DynamicMediaHandler {
             root_path = Config.CONFIG.dynamic_media_path + "/";
         max_cache_size = Config.CONFIG.dynamic_media_cache_size;
 
-        //TODO this doesn't actually work
         next_id = 0;
         var buf = new StringBuilder();
         buf.append(root_path);
