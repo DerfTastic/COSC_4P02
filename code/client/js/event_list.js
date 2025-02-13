@@ -1,90 +1,88 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const events = [
-        { title: "Event One", desc: "Join us for an amazing time!", img: "logo.png", location: "New York", price: 20, genre: "Music", tags: ["Concert", "Live"] },
-        { title: "Event Two", desc: "Don't miss this exciting event.", img: "logo.png", location: "Los Angeles", price: 35, genre: "Comedy", tags: ["Stand-up", "Entertainment"] },
-        { title: "Event Three", desc: "A wonderful experience awaits.", img: "logo.png", location: "Chicago", price: 15, genre: "Theater", tags: ["Play", "Drama"] },
-        { title: "Event Four", desc: "Experience something great!", img: "logo.png", location: "Miami", price: 50, genre: "Festival", tags: ["Outdoor", "Fun"] }
-    ];
-
-    let eventsDisplayed = 0;
-    const eventsPerLoad = 10;
     const eventsContainer = document.getElementById("eventsContainer");
     const loadMoreButton = document.getElementById("loadMore");
-    const sortSelect = document.getElementById("sort");
-    const orderSelect = document.getElementById("order");
     const filterForm = document.getElementById("filterForm");
+    
+    let events = [
+        { title: "Live Concert", location: "New York", category: "Concert", type: "Music", price: 50, date: "2024-06-15", image: "/images/concert.jpg" },
+        { title: "Broadway Show", location: "Los Angeles", category: "Theater", type: "Drama", price: 75, date: "2024-07-20", image: "/images/theater.jpg" }
+    ];
 
-    function renderEvents(eventList, append = false) {
-        if (!append) {
-            eventsContainer.innerHTML = "";
-        }
-        const fragment = document.createDocumentFragment();
+    let displayedEvents = 0;
+    const eventsPerPage = 10;
+
+    function renderEvents(eventList) {
+        eventsContainer.innerHTML = "";
         eventList.forEach(event => {
-            const eventDiv = document.createElement("div");
-            eventDiv.classList.add("event-box");
-            eventDiv.innerHTML = `
-                <img src="${event.img}" alt="${event.title}">
+            const eventBox = document.createElement("div");
+            eventBox.classList.add("event-box");
+            eventBox.dataset.location = event.location;
+            eventBox.dataset.category = event.category;
+            eventBox.dataset.type = event.type;
+            eventBox.dataset.price = event.price;
+            eventBox.dataset.date = event.date;
+            
+            eventBox.innerHTML = `
+                <img src="${event.image}" alt="${event.title}">
                 <h3>${event.title}</h3>
-                <p>${event.desc}</p>
-                <p><strong>Location:</strong> ${event.location}</p>
-                <p><strong>Price:</strong> $${event.price}</p>
-                <p><strong>Genre:</strong> ${event.genre}</p>
-                <p><strong>Tags:</strong> ${event.tags.join(", ")}</p>
+                <p>Location: ${event.location}</p>
+                <p>Category: ${event.category}</p>
+                <p>Type: ${event.type}</p>
+                <p>Price: $${event.price}</p>
+                <p>Date: ${event.date}</p>
             `;
-            fragment.appendChild(eventDiv);
+            eventsContainer.appendChild(eventBox);
         });
-        eventsContainer.appendChild(fragment);
     }
 
-    function loadEvents() {
-        let filteredEvents = filterEvents(events);
-        let eventSubset = filteredEvents.slice(eventsDisplayed, eventsDisplayed + eventsPerLoad);
-        renderEvents(eventSubset, true);
-        eventsDisplayed += eventsPerLoad;
-        if (eventsDisplayed >= filteredEvents.length) {
+    function loadMoreEvents() {
+        const newEvents = events.slice(displayedEvents, displayedEvents + eventsPerPage);
+        renderEvents(newEvents);
+        displayedEvents += newEvents.length;
+        if (displayedEvents >= events.length) {
             loadMoreButton.style.display = "none";
-        } else {
-            loadMoreButton.style.display = "block";
         }
     }
 
-    function sortEvents(eventList) {
-        const sortBy = sortSelect.value;
-        const order = orderSelect.value === "asc" ? 1 : -1;
-        return eventList.sort((a, b) => {
-            if (typeof a[sortBy] === "string") {
-                return a[sortBy].localeCompare(b[sortBy]) * order;
+    function filterAndSortEvents() {
+        let filteredEvents = [...events];
+        
+        const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
+        const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
+        const typeFilter = document.getElementById("filterType").value.toLowerCase();
+        const tagFilter = document.getElementById("filterTag").value.toLowerCase();
+        const minPrice = parseInt(document.getElementById("minPrice").value) || 0;
+        const maxPrice = parseInt(document.getElementById("maxPrice").value) || 500;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        
+        filteredEvents = filteredEvents.filter(event => {
+            return (!locationFilter || event.location.toLowerCase().includes(locationFilter)) &&
+                   (!categoryFilter || event.category.toLowerCase().includes(categoryFilter)) &&
+                   (!typeFilter || event.type.toLowerCase().includes(typeFilter)) &&
+                   (!tagFilter || event.title.toLowerCase().includes(tagFilter)) &&
+                   (event.price >= minPrice && event.price <= maxPrice) &&
+                   (!startDate || new Date(event.date) >= new Date(startDate)) &&
+                   (!endDate || new Date(event.date) <= new Date(endDate));
+        });
+        
+        const sortBy = document.getElementById("sort").value;
+        const order = document.getElementById("order").value;
+        filteredEvents.sort((a, b) => {
+            if (sortBy === "price") {
+                return order === "asc" ? a.price - b.price : b.price - a.price;
+            } else if (sortBy === "date") {
+                return order === "asc" ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date);
             } else {
-                return (a[sortBy] - b[sortBy]) * order;
+                return order === "asc" ? a[sortBy].localeCompare(b[sortBy]) : b[sortBy].localeCompare(a[sortBy]);
             }
         });
+        
+        renderEvents(filteredEvents);
     }
-
-    function filterEvents(eventList) {
-        const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
-        const genreFilter = document.getElementById("filterGenre").value.toLowerCase();
-        const tagFilter = document.getElementById("filterTag").value.toLowerCase();
-
-        return eventList.filter(event => {
-            return (
-                (locationFilter === "" || event.location.toLowerCase().includes(locationFilter)) &&
-                (genreFilter === "" || event.genre.toLowerCase().includes(genreFilter)) &&
-                (tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter)))
-            );
-        });
-    }
-
-    function updateEvents() {
-        eventsDisplayed = 0;
-        loadMoreButton.style.display = "block";
-        let filteredAndSortedEvents = sortEvents(filterEvents(events));
-        eventsContainer.innerHTML = "";
-        loadEvents();
-    }
-
-    filterForm.addEventListener("change", updateEvents);
-    sortSelect.addEventListener("change", updateEvents);
-    orderSelect.addEventListener("change", updateEvents);
-    loadMoreButton.addEventListener("click", loadEvents);
-    loadEvents(); // Load initial events
+    
+    filterForm.addEventListener("input", filterAndSortEvents);
+    loadMoreButton.addEventListener("click", loadMoreEvents);
+    
+    loadMoreEvents();
 });

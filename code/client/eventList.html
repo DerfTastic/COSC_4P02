@@ -3,8 +3,87 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Event List</title>
-    <link rel="stylesheet" href="/style/styles.css">
+    <script src="/js/api.js"></script>
+    <script src="/js/event_list.js"></script>
+    <link rel="stylesheet" href="/style/styles.css"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+    <title>Ticket Express</title>
+    <style>
+        body {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background: #413c3c;
+            padding: 15px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .events-container {
+            display: block;
+        }
+        .event-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+        }
+        .event-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .load-more-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .load-more {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .load-more:hover {
+            background: #0056b3;
+        }
+        .event-box {
+            background-color: #f8e6e0;
+            color: #333;
+            border: 1px solid #d1a7a1;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .event-box h3 {
+            color: #b22222;
+        }
+
+        .event-box p {
+            color: #555;
+        }
+
+        .event-box strong {
+            color: #8b0000;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,35 +93,42 @@
             <label for="filterLocation">Location:</label>
             <input type="text" id="filterLocation" placeholder="Enter location">
 
-            <label for="filterGenre">Genre:</label>
-            <input type="text" id="filterGenre" placeholder="Enter genre">
+            <label for="filterCategory">Event Category:</label>
+            <input type="text" id="filterCategory" placeholder="Enter category">
+
+            <label for="filterType">Event Type:</label>
+            <input type="text" id="filterType" placeholder="Enter type">
 
             <label for="filterTag">Tag:</label>
             <input type="text" id="filterTag" placeholder="Enter tag">
 
-            <label for="sort">Sort By:</label>
-            <select id="sort">
-                <option value="title">Name</option>
-                <option value="location">Location</option>
-                <option value="price">Price</option>
-                <option value="genre">Genre</option>
-            </select>
+            <label for="priceRange">Price Range:</label>
+            <input type="range" id="minPrice" min="0" max="500" step="5">
+            <input type="range" id="maxPrice" min="0" max="500" step="5">
+            <span id="priceDisplay"></span>
 
-            <label for="order">Order:</label>
-            <select id="order">
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
+            <label for="dateRange">Event Date:</label>
+            <input type="date" id="startDate">
+            <input type="date" id="endDate">
         </form>
     </div>
 
-    <div class="content">
-        <h2>List of Events</h2>
-        <div id="eventsContainer"></div>
-        <button id="loadMore">Load More Events</button>
-    </div>
+    <div class="main-content">
+        <div src="/header.html" type="text/x-html-template"></div>
 
-    <script src="/js/script.js"></script>
+        <div class="content">
+            <h3>List of Events</h3>
+            <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
+
+            <div class="events-container" id="eventsContainer"></div>
+
+            <div class="load-more-container">
+                <button class="load-more" id="loadMore">Load More Events</button>
+            </div>
+        </div>
+
+        <div src="/footer.html" type="text/x-html-template"></div>
+    </div>
 </body>
 
 </html>
