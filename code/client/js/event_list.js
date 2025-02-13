@@ -49,11 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const newEvents = filteredEvents.slice(0, displayedEvents + eventsPerPage);
         renderEvents(newEvents);
         displayedEvents = newEvents.length;
-        if (displayedEvents >= filteredEvents.length) {
-            loadMoreButton.style.display = "none";
-        } else {
-            loadMoreButton.style.display = "block";
-        }
+        loadMoreButton.style.display = displayedEvents >= filteredEvents.length ? "none" : "block";
     }
 
     function filterAndSortEvents() {
@@ -67,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const maxPrice = parseInt(document.getElementById("maxPrice").value) || 500;
         const startDate = document.getElementById("startDate").value;
         const endDate = document.getElementById("endDate").value;
-        const sortBy = document.getElementById("sort")?.value;
-        const order = document.getElementById("order")?.value;
+        const sortBy = document.getElementById("sort").value;
+        const order = document.getElementById("order").value;
         
         filteredEvents = filteredEvents.filter(event => {
             return (!locationFilter || event.location.toLowerCase().includes(locationFilter)) &&
@@ -92,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
         
-        displayedEvents = 0;
+        displayedEvents = Math.min(displayedEvents, filteredEvents.length);
         loadMoreEvents();
     }
     
