@@ -8,6 +8,7 @@ Ticket Express is a state-of-the-art product designed for professionals in the e
 
 After doing `git pull`, navigate to the `/code/server` folder and run `run.sh` (or `run.bat` if you're on Windows) to start the server application on `localhost:8080`.
 While it's running, to see the front page (`/code/client/index.html`), type in `https://localhost:8080` as the URL in your browser.
+
 You can access any other page by typing in the name of one of the `.html` files in `/code/client` after `https://localhost:8080/` `<name>`.
 
 ## Disclaimer: 
