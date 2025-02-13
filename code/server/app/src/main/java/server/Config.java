@@ -19,7 +19,8 @@ public class Config implements Serializable {
     public final Integer port = initialize(80);
 
     public final String db_path = initialize("db/database.db");
-    public final String media_path = initialize("media/");
+    public final String dynamic_media_path = initialize("media");
+    public final Long dynamic_media_cache_size = initialize(1L<<30);
     public final String secrets_path = initialize("secrets");
 
     public final String static_content_path = initialize(null);
@@ -44,6 +45,8 @@ public class Config implements Serializable {
                     String value = properties.getProperty(field.getName()).trim();
                     if(field.getType()==Integer.class){
                         field.set(config, Integer.parseInt(value));
+                    }else if(field.getType()== Long.class){
+                        field.set(config, Long.parseLong(value));
                     }else if(field.getType()==Boolean.class){
                         field.set(config, Boolean.parseBoolean(value));
                     }else{

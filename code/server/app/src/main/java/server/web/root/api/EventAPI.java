@@ -166,6 +166,11 @@ public class EventAPI {
 
     @Route("/set_picture/<id>")
     public static long set_picture(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, ClientError.BadRequest {
+        // 10 MiB
+        if(data.length > (1<<20)*10){
+            throw new ClientError.BadRequest("File too large, maximum file size is 10 MiB");
+        }
+
         try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND organizer_id=:organizer_id")){
             stmt.setLong(":id", id);
             stmt.setLong(":organizer_id", session.organizer_id);
