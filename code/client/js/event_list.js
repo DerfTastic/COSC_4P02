@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () { 
     const eventsContainer = document.getElementById("eventsContainer");
     const loadMoreButton = document.getElementById("loadMore");
     const filterForm = document.getElementById("filterForm");
@@ -55,6 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const maxPrice = parseInt(document.getElementById("maxPrice").value) || 500;
         const startDate = document.getElementById("startDate").value;
         const endDate = document.getElementById("endDate").value;
+        const sortBy = document.getElementById("sort").value;
+        const order = document.getElementById("order").value;
         
         filteredEvents = filteredEvents.filter(event => {
             return (!locationFilter || event.location.toLowerCase().includes(locationFilter)) &&
@@ -66,8 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
                    (!endDate || new Date(event.date) <= new Date(endDate));
         });
         
-        const sortBy = document.getElementById("sort").value;
-        const order = document.getElementById("order").value;
         filteredEvents.sort((a, b) => {
             if (sortBy === "price") {
                 return order === "asc" ? a.price - b.price : b.price - a.price;
