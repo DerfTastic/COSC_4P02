@@ -3,9 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <script src="/js/api.js"></script>
-    <script src="/js/event_list.js"></script>
-    <link rel="stylesheet" href="/style/styles.css"> 
+    <link rel="stylesheet" href="/style/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
@@ -33,7 +31,9 @@
             padding: 20px;
         }
         .events-container {
-            display: block;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
         }
         .event-box {
             border: 1px solid #ccc;
@@ -41,7 +41,6 @@
             text-align: center;
             border-radius: 8px;
             background: #f9f9f9;
-            margin-bottom: 15px;
         }
         .event-box img {
             width: 100%;
@@ -64,25 +63,26 @@
             background: #0056b3;
         }
         .event-box {
-            background-color: #f8e6e0;
-            color: #333;
-            border: 1px solid #d1a7a1;
+            background-color: #f8e6e0; /* Light peach background */
+            color: #333; /* Dark gray text */
+            border: 1px solid #d1a7a1; /* Light brown border */
             padding: 15px;
             text-align: center;
             border-radius: 8px;
         }
 
         .event-box h3 {
-            color: #b22222;
+            color: #b22222; /* Dark red for headings */
         }
 
         .event-box p {
-            color: #555;
+            color: #555; /* Medium gray for text */
         }
 
         .event-box strong {
-            color: #8b0000;
+            color: #8b0000; /* Deep red for strong text */
         }
+
     </style>
 </head>
 
@@ -93,23 +93,25 @@
             <label for="filterLocation">Location:</label>
             <input type="text" id="filterLocation" placeholder="Enter location">
 
-            <label for="filterCategory">Event Category:</label>
-            <input type="text" id="filterCategory" placeholder="Enter category">
-
-            <label for="filterType">Event Type:</label>
-            <input type="text" id="filterType" placeholder="Enter type">
+            <label for="filterGenre">Genre:</label>
+            <input type="text" id="filterGenre" placeholder="Enter genre">
 
             <label for="filterTag">Tag:</label>
             <input type="text" id="filterTag" placeholder="Enter tag">
 
-            <label for="priceRange">Price Range:</label>
-            <input type="range" id="minPrice" min="0" max="500" step="5">
-            <input type="range" id="maxPrice" min="0" max="500" step="5">
-            <span id="priceDisplay"></span>
+            <label for="sort">Sort By:</label>
+            <select id="sort">
+                <option value="title">Name</option>
+                <option value="location">Location</option>
+                <option value="price">Price</option>
+                <option value="genre">Genre</option>
+            </select>
 
-            <label for="dateRange">Event Date:</label>
-            <input type="date" id="startDate">
-            <input type="date" id="endDate">
+            <label for="order">Order:</label>
+            <select id="order">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
         </form>
     </div>
 
@@ -120,27 +122,7 @@
             <h3>List of Events</h3>
             <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
 
-            <div class="events-container" id="eventsContainer">
-                <div class="event-box" data-location="New York" data-category="Concert" data-type="Music" data-price="50" data-date="2024-06-15">
-                    <img src="/images/concert.jpg" alt="Concert">
-                    <h3>Live Concert</h3>
-                    <p>Location: New York</p>
-                    <p>Category: Concert</p>
-                    <p>Type: Music</p>
-                    <p>Price: $50</p>
-                    <p>Date: June 15, 2024</p>
-                </div>
-
-                <div class="event-box" data-location="Los Angeles" data-category="Theater" data-type="Drama" data-price="75" data-date="2024-07-20">
-                    <img src="/images/theater.jpg" alt="Theater Show">
-                    <h3>Broadway Show</h3>
-                    <p>Location: Los Angeles</p>
-                    <p>Category: Theater</p>
-                    <p>Type: Drama</p>
-                    <p>Price: $75</p>
-                    <p>Date: July 20, 2024</p>
-                </div>
-            </div>
+            <div class="events-container" id="eventsContainer"></div>
 
             <div class="load-more-container">
                 <button class="load-more" id="loadMore">Load More Events</button>
@@ -149,6 +131,8 @@
 
         <div src="/footer.html" type="text/x-html-template"></div>
     </div>
+
+    <script src="/js/script.js"></script>
 </body>
 
 </html>
