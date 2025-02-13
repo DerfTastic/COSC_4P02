@@ -1,4 +1,8 @@
-# COSC_4P02_PROJECT
+# Ticket Express
+
+![The logo for ticket express](https://github.com/DerfTastic/COSC_4P02/blob/main/code/client/images/logo.png)
+
+Ticket Express is a state-of-the-art product designed for professionals in the entertainment industry and common consumers. Unlike contemporary software alternatives, Ticket Express is completely available to any individual interested in effectively organizing an event.
 
 ## Group Members
 - Sinatra Almeida (7060049)
