@@ -1,6 +1,5 @@
 package server;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,15 +14,28 @@ public class DynamicMediaHandler {
     private final HashMap<Long, byte[]> cache = new HashMap<>();
     private long cache_size = 0;
     private final long max_cache_size;
-    private final long bit_split = 8;
-    private final long mask = (1<<bit_split)-1;
 
-    public DynamicMediaHandler() throws IOException {
-        if(Config.CONFIG.dynamic_media_path.endsWith("/")||Config.CONFIG.dynamic_media_path.endsWith("\\"))
-            root_path = Config.CONFIG.dynamic_media_path;
+
+    private final long bit_split;
+    private final long mask;
+    private final long bits_used;
+    private final long sections;
+    private final long first_section_start_bit;
+
+    public DynamicMediaHandler(String rp, long cache_size, int section_bits, int bits_used) throws IOException{
+
+        this.bit_split = section_bits;
+        this.mask = (1L<<bit_split)-1;
+        this.bits_used = bits_used;
+        this.sections = (bits_used+bit_split-1)/bit_split;
+        this.first_section_start_bit = (sections-1)*bit_split;
+
+        if(rp.endsWith("/")||rp.endsWith("\\"))
+            root_path = rp;
         else
-            root_path = Config.CONFIG.dynamic_media_path + "/";
-        max_cache_size = Config.CONFIG.dynamic_media_cache_size;
+            root_path = rp + "/";
+
+        this.max_cache_size = cache_size;
 
         next_id = 0;
         var buf = new StringBuilder();
@@ -62,10 +74,15 @@ public class DynamicMediaHandler {
         }
         next_id+=1;
         if(next_id==0)next_id=1;
+
+    }
+
+    public DynamicMediaHandler() throws IOException {
+        this(Config.CONFIG.dynamic_media_path, Config.CONFIG.dynamic_media_cache_size, 8, 64);
     }
 
     private String pathFromId(long id, boolean createDirectories) throws IOException {
-        var start_bit = ((64+bit_split-1)/bit_split)*bit_split-bit_split;
+        var start_bit = first_section_start_bit;
         var builder = new StringBuilder();
         builder.append(root_path);
         while(start_bit>0){
@@ -116,7 +133,7 @@ public class DynamicMediaHandler {
                 if(Files.exists(path)){
                     Files.delete(path);
                 }
-                for(int i = 0; i < 64/bit_split-1; i ++){
+                for(int i = 0; i < sections-1; i ++){
                     path = path.getParent();
                     try(var list = Files.list(path)){
                         if(list.toList().isEmpty()){

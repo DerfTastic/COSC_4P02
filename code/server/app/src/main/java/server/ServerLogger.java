@@ -22,13 +22,13 @@ public class ServerLogger {
 
     static {
         try {
-            if(new File("./logs/log").exists()){
-                var file = new File("./logs/log");
+            if(new File(Config.CONFIG.log_path+"/log").exists()){
+                var file = new File(Config.CONFIG.log_path+"/log");
                 var log_attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                 var dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
                 var name = dateFormat.format(new Date(log_attributes.creationTime().toMillis()));
 
-                var out_file = new File("./logs/" + name + ".zip");
+                var out_file = new File(Config.CONFIG.log_path+"/" + name + ".zip");
                 ZipOutputStream out = new ZipOutputStream(new FileOutputStream(out_file));
                 ZipEntry e = new ZipEntry(name);
                 out.putNextEntry(e);
@@ -43,7 +43,7 @@ public class ServerLogger {
             Logger.getGlobal().log(Level.SEVERE, "Failed to zip older log file", e);
         }
         try{
-            fh = new FileHandler("./logs/log");
+            fh = new FileHandler(Config.CONFIG.log_path+"/log");
         }catch (Exception e){
             throw new RuntimeException(e);
         }

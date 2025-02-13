@@ -23,9 +23,13 @@ public class Config implements Serializable {
     public final Long dynamic_media_cache_size = initialize(1L<<30);
     public final String secrets_path = initialize("secrets");
 
+    public final String log_path = initialize("logs");
+
     public final String static_content_path = initialize(null);
 
     public final Boolean cache_static_content = initialize(false);
+
+    public final Boolean create_paths = initialize(true);
 
     static{
         try {
