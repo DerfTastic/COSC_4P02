@@ -3,10 +3,9 @@
  */
 package server;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import server.db.DbManager;
+import server.web.mail.MessageConfigurator;
 import server.web.root.api.AccountAPI;
 import server.web.mail.MailServer;
 import server.web.route.ClientError;
@@ -20,28 +19,23 @@ public class AccountAPITest {
     private DbManager db;
     private MailServer mail;
 
-    @Before
+    @BeforeEach
     public void setup() {
         try{
             db = new DbManager(true, true, false);
-            mail = new MailServer("", "");
+            mail = new MailServer() {
+                @Override
+                public void sendMail(MessageConfigurator configurator) {
+
+                }
+            };
         }catch (Exception e){
             throw new RuntimeException(e);
         }
     }
 
     @Test
-    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, UnknownHostException {
-        var account = new AccountAPI.Login();
-        account.email = "yui@gmail.com";
-        account.password = "password";
-        String session;
-        try(var trans = db.rw_transaction()){
-            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
-        }
-    }
-
-    @Test
+    @Order(1)
     public void testAccountRegistration() throws ClientError.BadRequest, SQLException {
         var account = new AccountAPI.Register();
         account.name = "Parker";
@@ -52,9 +46,21 @@ public class AccountAPITest {
         }
     }
 
-    @After
+    @Test
+    @Order(2)
+    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, UnknownHostException {
+        var account = new AccountAPI.Login();
+        account.email = "yui@gmail.com";
+        account.password = "password";
+        String session;
+        try(var trans = db.rw_transaction()){
+            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+        }
+    }
+
+    @AfterEach
     public void close() {
         db.close();
-        mail.close();
+//        mail.close();
     }
 }
