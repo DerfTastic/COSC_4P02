@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let displayedEvents = 0;
     const eventsPerPage = 10;
+    let filteredEvents = [...events];
 
     function renderEvents(eventList) {
         eventsContainer.innerHTML = "";
@@ -45,16 +46,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadMoreEvents() {
-        const newEvents = events.slice(0, displayedEvents + eventsPerPage);
+        const newEvents = filteredEvents.slice(0, displayedEvents + eventsPerPage);
         renderEvents(newEvents);
         displayedEvents = newEvents.length;
-        if (displayedEvents >= events.length) {
+        if (displayedEvents >= filteredEvents.length) {
             loadMoreButton.style.display = "none";
+        } else {
+            loadMoreButton.style.display = "block";
         }
     }
 
     function filterAndSortEvents() {
-        let filteredEvents = [...events];
+        filteredEvents = [...events];
         
         const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
         const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
@@ -89,7 +92,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
         
-        renderEvents(filteredEvents);
+        displayedEvents = 0;
+        loadMoreEvents();
     }
     
     filterForm.addEventListener("input", filterAndSortEvents);
