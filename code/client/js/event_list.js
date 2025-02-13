@@ -5,7 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
     
     let events = [
         { title: "Live Concert", location: "New York", category: "Concert", type: "Music", price: 50, date: "2024-06-15", image: "/images/concert.jpg" },
-        { title: "Broadway Show", location: "Los Angeles", category: "Theater", type: "Drama", price: 75, date: "2024-07-20", image: "/images/theater.jpg" }
+        { title: "Broadway Show", location: "Los Angeles", category: "Theater", type: "Drama", price: 75, date: "2024-07-20", image: "/images/theater.jpg" },
+        { title: "Comedy Night", location: "Chicago", category: "Comedy", type: "Stand-up", price: 30, date: "2024-08-10", image: "/images/comedy.jpg" },
+        { title: "Food Festival", location: "San Francisco", category: "Festival", type: "Food", price: 20, date: "2024-09-05", image: "/images/food.jpg" },
+        { title: "Tech Conference", location: "Seattle", category: "Conference", type: "Technology", price: 100, date: "2024-10-12", image: "/images/tech.jpg" },
+        { title: "Art Exhibition", location: "Miami", category: "Exhibition", type: "Art", price: 25, date: "2024-11-18", image: "/images/art.jpg" },
+        { title: "Jazz Festival", location: "New Orleans", category: "Festival", type: "Music", price: 60, date: "2024-12-22", image: "/images/jazz.jpg" },
+        { title: "Book Fair", location: "Boston", category: "Fair", type: "Books", price: 15, date: "2025-01-08", image: "/images/book.jpg" },
+        { title: "Gaming Expo", location: "Las Vegas", category: "Expo", type: "Gaming", price: 90, date: "2025-02-20", image: "/images/gaming.jpg" },
+        { title: "Opera Night", location: "Washington D.C.", category: "Theater", type: "Opera", price: 80, date: "2025-03-14", image: "/images/opera.jpg" },
+        { title: "Wine Tasting", location: "Napa Valley", category: "Festival", type: "Wine", price: 40, date: "2025-04-10", image: "/images/wine.jpg" }
     ];
 
     let displayedEvents = 0;
@@ -36,9 +45,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadMoreEvents() {
-        const newEvents = events.slice(displayedEvents, displayedEvents + eventsPerPage);
+        const newEvents = events.slice(0, displayedEvents + eventsPerPage);
         renderEvents(newEvents);
-        displayedEvents += newEvents.length;
+        displayedEvents = newEvents.length;
         if (displayedEvents >= events.length) {
             loadMoreButton.style.display = "none";
         }
@@ -55,8 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const maxPrice = parseInt(document.getElementById("maxPrice").value) || 500;
         const startDate = document.getElementById("startDate").value;
         const endDate = document.getElementById("endDate").value;
-        const sortBy = document.getElementById("sort").value;
-        const order = document.getElementById("order").value;
+        const sortBy = document.getElementById("sort")?.value;
+        const order = document.getElementById("order")?.value;
         
         filteredEvents = filteredEvents.filter(event => {
             return (!locationFilter || event.location.toLowerCase().includes(locationFilter)) &&
@@ -68,15 +77,17 @@ document.addEventListener("DOMContentLoaded", function () {
                    (!endDate || new Date(event.date) <= new Date(endDate));
         });
         
-        filteredEvents.sort((a, b) => {
-            if (sortBy === "price") {
-                return order === "asc" ? a.price - b.price : b.price - a.price;
-            } else if (sortBy === "date") {
-                return order === "asc" ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date);
-            } else {
-                return order === "asc" ? a[sortBy].localeCompare(b[sortBy]) : b[sortBy].localeCompare(a[sortBy]);
-            }
-        });
+        if (sortBy) {
+            filteredEvents.sort((a, b) => {
+                if (sortBy === "price") {
+                    return order === "asc" ? a.price - b.price : b.price - a.price;
+                } else if (sortBy === "date") {
+                    return order === "asc" ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date);
+                } else {
+                    return order === "asc" ? a[sortBy].localeCompare(b[sortBy]) : b[sortBy].localeCompare(a[sortBy]);
+                }
+            });
+        }
         
         renderEvents(filteredEvents);
     }
