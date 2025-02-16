@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ *
+ */
 public class TimedEvents implements Closeable {
     private final Timer timer;
     private final ArrayList<Runnable> minutely = new ArrayList<>();
