@@ -4,11 +4,11 @@
 package server.api;
 
 import org.junit.jupiter.api.*;
-import server.db.DbManager;
-import server.web.param.auth.UserSession;
-import server.web.root.api.AccountAPI;
-import server.web.mail.MailServer;
-import server.web.route.ClientError;
+import server.framework.db.DbManager;
+import server.framework.web.param.auth.UserSession;
+import server.infrastructure.root.api.AccountAPI;
+import server.framework.web.mail.MailServer;
+import server.framework.web.route.ClientError;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

@@ -1,6 +1,7 @@
 package server;
 
-import server.web.WebServer;
+import server.framework.web.WebServer;
+import server.infrastructure.WebServerImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ public class Main {
         }
         ServerLogger.initialize();
         try{
-            new WebServer();
+            new WebServerImpl().start();
         }catch (Exception e){
             Logger.getGlobal().log(Level.SEVERE, "Failed to start server", e);
         }

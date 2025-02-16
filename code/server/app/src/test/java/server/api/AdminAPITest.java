@@ -4,15 +4,7 @@
 package server.api;
 
 import org.junit.jupiter.api.*;
-import server.db.DbManager;
-import server.web.mail.MailServer;
-import server.web.param.auth.UserSession;
-import server.web.root.api.AccountAPI;
-import server.web.route.ClientError;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
+import server.framework.db.DbManager;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdminAPITest {
