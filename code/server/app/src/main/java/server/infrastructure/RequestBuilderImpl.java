@@ -1,22 +1,19 @@
 package server.infrastructure;
 
 import server.framework.db.*;
-import server.framework.web.WebServer;
-import server.framework.web.route.Request;
+import server.framework.web.request.Request;
+import server.framework.web.route.RequestsBuilder;
 import server.framework.web.route.RouteImpl;
 import server.framework.web.route.RouteParameter;
-import server.framework.web.route.RoutesBuilder;
 
 import java.lang.reflect.Parameter;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-public class APIRouteBuilder extends RoutesBuilder {
-    private final DbManager db;
+public class RequestBuilderImpl extends RequestsBuilder {
     private final HashMap<Class<?>, RouteParameter<?>> parameterHandlerMap = new HashMap<>();
 
-    public APIRouteBuilder(WebServer server){
-        this.db = server.getManagedResource(DbManager.class);
+    public RequestBuilderImpl(){
         initializeParameterHandlers();
     }
 
@@ -24,7 +21,7 @@ public class APIRouteBuilder extends RoutesBuilder {
         this.addParameterHandler(RoTransaction.class, new RouteParameter<>() {
             @Override
             public RoTransaction construct(Request request) throws SQLException {
-                return db.ro_transaction();
+                return request.server.getManagedResource(DbManager.class).ro_transaction();
             }
 
             @Override
@@ -40,7 +37,7 @@ public class APIRouteBuilder extends RoutesBuilder {
         this.addParameterHandler(RwTransaction.class, new RouteParameter<>() {
             @Override
             public RwTransaction construct(Request request) throws SQLException {
-                return db.rw_transaction();
+                return request.server.getManagedResource(DbManager.class).rw_transaction();
             }
 
             @Override
@@ -56,7 +53,7 @@ public class APIRouteBuilder extends RoutesBuilder {
         addParameterHandler(RoConn.class, new RouteParameter<>() {
             @Override
             public RoConn construct(Request request) throws Exception {
-                return db.ro_conn();
+                return request.server.getManagedResource(DbManager.class).ro_conn();
             }
 
             @Override
@@ -67,7 +64,7 @@ public class APIRouteBuilder extends RoutesBuilder {
         addParameterHandler(RwConn.class, new RouteParameter<>() {
             @Override
             public RwConn construct(Request request) throws Exception {
-                return db.rw_conn();
+                return request.server.getManagedResource(DbManager.class).rw_conn();
             }
 
             @Override
@@ -75,7 +72,6 @@ public class APIRouteBuilder extends RoutesBuilder {
                 type.close();
             }
         });
-        addParameterHandler(DbManager.class, request -> db);
     }
 
     private <T> void addParameterHandler(Class<T> clazz, RouteParameter<T> handler){

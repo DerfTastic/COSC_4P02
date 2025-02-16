@@ -3,12 +3,12 @@ package server.infrastructure.root.api;
 import server.ServerLogger;
 import server.framework.db.RwConn;
 import server.framework.web.annotations.*;
+import server.framework.web.error.BadRequest;
 import server.framework.web.mail.MailServer;
 import server.framework.web.ServerStatistics;
 import server.framework.web.annotations.url.Path;
-import server.framework.web.param.auth.RequireAdmin;
-import server.framework.web.param.auth.UserSession;
-import server.framework.web.route.ClientError;
+import server.infrastructure.param.auth.RequireAdmin;
+import server.infrastructure.param.auth.UserSession;
 
 import javax.mail.Message;
 import java.io.PrintWriter;
@@ -113,21 +113,21 @@ public class AdminAPI {
     }
 
     @Route("/delete_other_account/<email>")
-    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path String email) throws SQLException, ClientError.BadRequest {
+    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path String email) throws SQLException, BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from users where email=:email")){
             stmt.setString(":email", email);
             if(stmt.executeUpdate() != 1)
-                throw new ClientError.BadRequest("Account with the specified email does not exist");
+                throw new BadRequest("Account with the specified email does not exist");
         }
     }
 
     @Route("/set_account_admin/<admin>/<email>")
-    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path boolean admin, @Path String email) throws SQLException, ClientError.BadRequest {
+    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
         try(var stmt = conn.namedPreparedStatement("update users set admin=:admin where email=:email")){
             stmt.setString(":email", email);
             stmt.setBoolean(":admin", admin);
             if(stmt.executeUpdate() != 1)
-                throw new ClientError.BadRequest("Account with the specified email does not exist");
+                throw new BadRequest("Account with the specified email does not exist");
         }
     }
 

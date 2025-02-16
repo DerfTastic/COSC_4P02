@@ -6,14 +6,15 @@ import server.framework.db.RoTransaction;
 import server.framework.db.RwConn;
 import server.framework.db.RwTransaction;
 import server.framework.web.annotations.*;
+import server.framework.web.error.BadRequest;
+import server.framework.web.error.Unauthorized;
 import server.framework.web.mail.MailServer;
 import server.framework.web.Util;
 import server.framework.web.annotations.url.Path;
 import server.framework.web.param.misc.IpHandler;
-import server.framework.web.param.auth.RequireSession;
-import server.framework.web.param.auth.UserSession;
+import server.infrastructure.param.auth.RequireSession;
+import server.infrastructure.param.auth.UserSession;
 import server.framework.web.param.misc.UserAgentHandler;
-import server.framework.web.route.ClientError;
 import util.SqlSerde;
 
 import javax.mail.Message;
@@ -57,15 +58,15 @@ public class AccountAPI {
     }
 
     @Route
-    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account) throws SQLException, ClientError.Unauthorized {
+    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account) throws SQLException, Unauthorized {
         if(!account.email.equals(auth.email))
-            throw new ClientError.Unauthorized("Incorrect email");
+            throw new Unauthorized("Incorrect email");
         account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("delete from users where email=:email AND pass=:pass")){
             stmt.setString(":email", auth.email);
             stmt.setString(":pass", account.password);
             if(stmt.executeUpdate() != 1)
-                throw new ClientError.Unauthorized("Incorrect password");
+                throw new Unauthorized("Incorrect password");
         }
     }
 
@@ -100,7 +101,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, ClientError.BadRequest{
+    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, null, null, null)")){
             stmt.setString(":name", register.name);
@@ -110,7 +111,7 @@ public class AccountAPI {
                 throw new RuntimeException("Account couldn't be created");
         }catch (SQLiteException e){
             if(e.getResultCode().code==2067){//UNIQUE CONSTRAINTS FAILED
-                throw new ClientError.BadRequest("Account with that email already exists");
+                throw new BadRequest("Account with that email already exists");
             }
             throw e;
         }
@@ -128,7 +129,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, ClientError.Unauthorized {
+    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, Unauthorized {
         long user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
@@ -136,11 +137,11 @@ public class AccountAPI {
             stmt.setString(":pass", login.password);
             var res = stmt.executeQuery();
             if(!res.next())
-                throw new ClientError.Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+                throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
             try{
                 user_id = res.getLong(1);
             }catch (SQLException ignore){
-                throw new ClientError.Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+                throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
             }
         }
 
@@ -192,12 +193,12 @@ public class AccountAPI {
     }
 
     @Route("/invalidate_session/<session_id>")
-    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwConn conn, @Path long session_id) throws SQLException, ClientError.BadRequest {
+    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwConn conn, @Path long session_id) throws SQLException, BadRequest {
         try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setLong(":session_id", session_id);
             stmt.setLong(":user_id", auth.user_id);
             if(stmt.executeUpdate() != 1)
-                throw new ClientError.BadRequest("Could not invalidate session, session does not belong to you or does not exist");
+                throw new BadRequest("Could not invalidate session, session does not belong to you or does not exist");
         }
     }
 

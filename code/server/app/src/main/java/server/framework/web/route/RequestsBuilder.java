@@ -1,84 +1,20 @@
 package server.framework.web.route;
 
-import com.google.common.reflect.ClassPath;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import server.framework.web.request.Request;
 import server.framework.web.annotations.*;
-import server.framework.web.WebServer;
 import server.framework.web.annotations.url.Nullable;
 import server.framework.web.annotations.url.Path;
 import server.framework.web.annotations.url.QueryFlag;
 import server.framework.web.annotations.url.QueryValue;
+import server.framework.web.error.BadRequest;
 import util.TypeReflect;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 
-public class RoutesBuilder {
-    @SuppressWarnings("UnstableApiUsage")
-    public static Stream<Class<?>> findAllClassesInPackage(String packageName) {
-        try {
-            return ClassPath.from(RoutesBuilder.class.getClassLoader())
-                    .getTopLevelClassesRecursive(packageName)
-                    .stream().map(ClassPath.ClassInfo::load);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void mountRoutes(WebServer server, String parentPath, String classPath){
-        try{
-            for(var clazz : findAllClassesInPackage(classPath).toList()){
-                var pack = clazz.getPackage().getName()+"/";
-                var path = parentPath+pack.substring(classPath.length()+1).replace(".", "/");
-                if(clazz.isAnnotationPresent(Routes.class)){
-                    attachRoutes(server, path, clazz);
-                }else if(clazz.isAnnotationPresent(Handler.class)){
-                    attachHandler(server, path, (Class<? extends HttpHandler>) clazz);
-                }
-            }
-        }catch (Exception e){
-            Logger.getGlobal().log(Level.SEVERE, "Failed to load routes", e);
-        }
-    }
-
-    public void attachHandler(WebServer server, String parentPath, Class<? extends HttpHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        createHandlerContext(server, parentPath, -1, handlerClass.getConstructor().newInstance());
-        Logger.getGlobal().log(Level.FINE, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
-    }
-
-    public void attachRoutes(WebServer server, String parentPath, Class<?> routeClass) {
-        for(var method : routeClass.getDeclaredMethods()){
-            if(method.getAnnotation(Route.class) == null) continue;
-            var route = new RouteImpl(method, parentPath, this);
-            createHandlerContext(server, route.path, route.path.length(), route.handler);
-            Logger.getGlobal().log(Level.FINE, "Route mounted at: '" + route.path + "' -> "+route.sourceMethod);
-        }
-    }
-
-    private void createHandlerContext(WebServer server, String path, int pathCutoff, HttpHandler handler){
-        var context = server.createContext(path, exchange -> {
-            var start = System.nanoTime();
-            handler.handle(exchange);
-            var duration = (System.nanoTime()-start)/1e9;
-
-            var p = exchange.getRequestURI().getPath();
-            if(pathCutoff>0)
-                p = p.substring(0, pathCutoff);
-            var code = exchange.getResponseCode();
-
-            server.tracker.track_route(p, code, duration);
-        });
-        context.getAttributes().put(WebServer.class.getName(), server);
-    }
-
+public class RequestsBuilder {
 
     protected RouteParameter<?> getParameterHandler(RouteImpl route, Parameter param) throws Throwable{
         if(param.getAnnotation(FromRequest.class) != null){
@@ -103,7 +39,7 @@ public class RoutesBuilder {
                     try {
                         return stringsAdapter.parseSingular(new String(request.exchange.getRequestBody().readAllBytes()));
                     } catch (Throwable e) {
-                        throw new ClientError.BadRequest("Failed to construct parameter " + param + " for method " + route.sourceMethod, e);
+                        throw new BadRequest("Failed to construct parameter " + param + " for method " + route.sourceMethod, e);
                     }
                 };
             }else if(param.getAnnotation(Path.class) != null){
@@ -115,7 +51,7 @@ public class RoutesBuilder {
                     try {
                         return stringsAdapter.parseSingular(request.getPathPart(index));
                     } catch (Throwable e) {
-                        throw new ClientError.BadRequest("Failed to construct parameter " + param + " for method " + route.sourceMethod, e);
+                        throw new BadRequest("Failed to construct parameter " + param + " for method " + route.sourceMethod, e);
                     }
                 };
             }else if(param.getAnnotation(QueryValue.class) != null){
@@ -126,7 +62,7 @@ public class RoutesBuilder {
                     try {
                         return stringsAdapter.parseMultiple(request.getQueryParam(value));
                     } catch (Throwable e) {
-                        throw new ClientError.BadRequest("Failed to construct parameter " + param + " for method " + route.sourceMethod, e);
+                        throw new BadRequest("Failed to construct parameter " + param + " for method " + route.sourceMethod, e);
                     }
                 };
             }
@@ -268,15 +204,15 @@ public class RoutesBuilder {
 
     protected RouteReturn<?> getReturnHandler(RouteImpl route, Method method) throws Throwable{
         if(method.getReturnType().equals(void.class)){
-            return (request, data) -> request.sendResponse(request, "");
+            return (request, data) -> request.sendResponse("");
         }else if(method.getAnnotation(Json.class) != null){
-            return (request, data) -> request.sendResponse(request, data);
+            return (request, data) -> request.sendResponse(data);
         }else if(method.getReturnType().equals(byte[].class)){
-            return (request, data) -> request.sendResponse(request, (byte[])data);
+            return (request, data) -> request.sendResponse((byte[])data);
         }else if(method.getReturnType().equals(String.class)){
-            return (request, data) -> request.sendResponse(request, (String)data);
+            return (request, data) -> request.sendResponse((String)data);
         }else{
-            return (request, data) -> request.sendResponse(request, data.toString());
+            return (request, data) -> request.sendResponse(data.toString());
         }
     }
 }

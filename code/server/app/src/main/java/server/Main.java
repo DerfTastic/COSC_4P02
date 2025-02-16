@@ -1,6 +1,5 @@
 package server;
 
-import server.framework.web.WebServer;
 import server.infrastructure.WebServerImpl;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class Main {
                     Files.createDirectories(p);
             }
         }
-        ServerLogger.initialize();
+        ServerLogger.initialize(Level.CONFIG);
         try{
             new WebServerImpl().start();
         }catch (Exception e){

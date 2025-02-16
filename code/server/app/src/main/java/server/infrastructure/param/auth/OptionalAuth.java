@@ -1,7 +1,7 @@
-package server.framework.web.param.auth;
+package server.infrastructure.param.auth;
 
 import server.framework.db.DbManager;
-import server.framework.web.route.Request;
+import server.framework.web.request.Request;
 import server.framework.web.route.RouteParameter;
 
 public class OptionalAuth implements RouteParameter<UserSession> {

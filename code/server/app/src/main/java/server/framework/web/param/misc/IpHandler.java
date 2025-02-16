@@ -1,6 +1,6 @@
 package server.framework.web.param.misc;
 
-import server.framework.web.route.Request;
+import server.framework.web.request.Request;
 import server.framework.web.route.RouteParameter;
 
 import java.net.InetAddress;

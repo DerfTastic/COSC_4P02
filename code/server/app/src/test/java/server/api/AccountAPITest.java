@@ -5,10 +5,11 @@ package server.api;
 
 import org.junit.jupiter.api.*;
 import server.framework.db.DbManager;
-import server.framework.web.param.auth.UserSession;
+import server.framework.web.error.BadRequest;
+import server.framework.web.error.Unauthorized;
+import server.infrastructure.param.auth.UserSession;
 import server.infrastructure.root.api.AccountAPI;
 import server.framework.web.mail.MailServer;
-import server.framework.web.route.ClientError;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -34,7 +35,7 @@ public class AccountAPITest {
 
     @Test
     @Order(1)
-    public void testAccountRegistration() throws ClientError.BadRequest, SQLException {
+    public void testAccountRegistration() throws BadRequest, SQLException {
         var account = new AccountAPI.Register();
         account.name = "Parker";
         account.email = "yui@gmail.com";
@@ -47,7 +48,7 @@ public class AccountAPITest {
 
     @Test
     @Order(2)
-    public void testAccountLogin() throws SQLException, ClientError.Unauthorized, UnknownHostException {
+    public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
@@ -59,7 +60,7 @@ public class AccountAPITest {
 
     @Test
     @Order(51)
-    public void testDeleteAccount() throws SQLException, ClientError.Unauthorized {
+    public void testDeleteAccount() throws SQLException, Unauthorized {
         UserSession session;
         try(var conn = db.ro_conn()){
             session = UserSession.create(AccountAPITest.session, conn);
@@ -82,7 +83,7 @@ public class AccountAPITest {
         try(var trans = db.rw_transaction()){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
             Assertions.fail();
-        }catch (ClientError.Unauthorized e){
+        }catch (Unauthorized e){
             Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
         }
     }

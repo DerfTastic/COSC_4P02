@@ -2,8 +2,8 @@ package server.infrastructure.root.api;
 
 import server.framework.db.RoTransaction;
 import server.framework.web.annotations.*;
-import server.framework.web.param.auth.OptionalAuth;
-import server.framework.web.param.auth.UserSession;
+import server.infrastructure.param.auth.OptionalAuth;
+import server.infrastructure.param.auth.UserSession;
 import util.SqlSerde;
 
 import java.sql.SQLException;

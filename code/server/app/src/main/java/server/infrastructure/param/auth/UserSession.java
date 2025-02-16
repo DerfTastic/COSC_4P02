@@ -1,7 +1,7 @@
-package server.framework.web.param.auth;
+package server.infrastructure.param.auth;
 
 import server.framework.db.RoConn;
-import server.framework.web.route.ClientError;
+import server.framework.web.error.Unauthorized;
 
 import java.sql.SQLException;
 
@@ -17,12 +17,12 @@ public class UserSession {
 
     private UserSession(){}
 
-    public static UserSession create(String token, RoConn conn) throws SQLException, ClientError.Unauthorized {
+    public static UserSession create(String token, RoConn conn) throws SQLException, Unauthorized {
         try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {
             stmt.setString(":token", token);
             var result = stmt.executeQuery();
             if (result == null || !result.next())
-                throw new ClientError.Unauthorized("No valid session");
+                throw new Unauthorized("No valid session");
 
             var auth = new UserSession();
 

@@ -1,15 +1,15 @@
 package server.infrastructure.root.api;
 
 import com.google.gson.JsonObject;
+import server.framework.web.error.BadRequest;
 import server.infrastructure.DynamicMediaHandler;
 import server.framework.db.RoTransaction;
 import server.framework.db.RwTransaction;
 import server.framework.web.annotations.*;
 import server.framework.web.annotations.url.Path;
-import server.framework.web.param.auth.OptionalAuth;
-import server.framework.web.param.auth.RequireOrganizer;
-import server.framework.web.param.auth.UserSession;
-import server.framework.web.route.ClientError;
+import server.infrastructure.param.auth.OptionalAuth;
+import server.infrastructure.param.auth.RequireOrganizer;
+import server.infrastructure.param.auth.UserSession;
 import util.SqlSerde;
 
 import java.sql.SQLException;
@@ -63,7 +63,7 @@ public class EventAPI {
     ){}
 
     @Route("/get_event/<id>")
-    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, ClientError.BadRequest {
+    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, BadRequest {
         Event event;
         try(var stmt = trans.namedPreparedStatement("select * from events where id=:id AND (draft=false OR organizer_id=:organizer_id)")){
             stmt.setLong(":id", id);
@@ -71,7 +71,7 @@ public class EventAPI {
                 stmt.setLong(":organizer_id", session.organizer_id);
             var result = SqlSerde.sqlList(stmt.executeQuery(), Event.class);
             if(result.isEmpty())
-                throw new ClientError.BadRequest("Event doesn't exist or you do not have permission to view it");
+                throw new BadRequest("Event doesn't exist or you do not have permission to view it");
             if(result.size()>1)
                 throw new SQLException("Expected single value found multiple");
             event = result.get(0);
@@ -101,7 +101,7 @@ public class EventAPI {
     ){}
 
     @Route
-    public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Body @Json UpdateEvent update) throws SQLException, ClientError.BadRequest {
+    public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Body @Json UpdateEvent update) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND organizer_id=:organizer_id")){
             stmt.setLong(":id", update.id);
             stmt.setLong(":organizer_id", session.organizer_id);
@@ -116,59 +116,59 @@ public class EventAPI {
             stmt.setDouble(":location_lat", update.location_lat);
             stmt.setDouble(":location_long", update.location_long);
             if(stmt.executeUpdate()!=1)
-                throw new ClientError.BadRequest("Failed to update event");
+                throw new BadRequest("Failed to update event");
         }
     }
 
     @Route("/delete_event/<id>")
-    public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id) throws SQLException, ClientError.BadRequest {
+    public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND organizer_id=:organizer_id")){
             stmt.setLong(":id", id);
             stmt.setLong(":organizer_id", session.organizer_id);
             if(stmt.executeUpdate()!=1)
-                throw new ClientError.BadRequest("Could not delete event. Event doesn't exist or you don't own event");
+                throw new BadRequest("Could not delete event. Event doesn't exist or you don't own event");
         }
     }
 
 
     @Route("/add_event_tag/<id>/<tag>/<category>")
-    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag, @Path boolean category) throws SQLException, ClientError.BadRequest {
+    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag, @Path boolean category) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :category, :id)")){
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
             stmt.setBoolean(":category", category);
             if(stmt.executeUpdate()!=1)
-                throw new ClientError.BadRequest("Could not add tag. Tag already exists or you do now own event");
+                throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
         }
     }
 
     @Route("/remove_event_tag/<id>/<tag>/<category>")
-    public static void remove_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag, @Path boolean category) throws SQLException, ClientError.BadRequest {
+    public static void remove_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag, @Path boolean category) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("delete from event_tags where tag=:tag AND event_id=:event_id AND category=:category")){
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
             stmt.setBoolean(":category", category);
             if(stmt.executeUpdate()!=1)
-                throw new ClientError.BadRequest("Could not remove tag. Tag does not exist or you do now own event");
+                throw new BadRequest("Could not remove tag. Tag does not exist or you do now own event");
         }
     }
 
     @Route("/set_draft/<id>/<draft>")
-    public static void set_draft(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, ClientError.BadRequest {
+    public static void set_draft(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND organizer_id=:organizer_id")){
             stmt.setLong(":id", id);
             stmt.setLong(":organizer_id", session.organizer_id);
             stmt.setBoolean(":draft", draft);
             if(stmt.executeUpdate()!=1)
-                throw new ClientError.BadRequest("Couldn't update the specified event. Either the event doesn't exist, or you don't control this event");
+                throw new BadRequest("Couldn't update the specified event. Either the event doesn't exist, or you don't control this event");
         }
     }
 
     @Route("/set_picture/<id>")
-    public static long set_picture(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, ClientError.BadRequest {
+    public static long set_picture(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
         if(data.length > (1<<20)*10){
-            throw new ClientError.BadRequest("File too large, maximum file size is 10 MiB");
+            throw new BadRequest("File too large, maximum file size is 10 MiB");
         }
 
         try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND organizer_id=:organizer_id")){
@@ -188,7 +188,7 @@ public class EventAPI {
             stmt.setLong(":organizer_id", session.organizer_id);
             stmt.setLong(":picture", media_id);
             if(stmt.executeUpdate()!=1)
-                throw new ClientError.BadRequest("Failed to add picture to event. Event doesn't exit or you don't own event");
+                throw new BadRequest("Failed to add picture to event. Event doesn't exit or you don't own event");
         }catch (Exception e){
             handler.delete(media_id);
             throw e;

@@ -54,6 +54,6 @@ public class WebServerImpl extends WebServer {
 
         addManagedResource(MailServer.class, new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
-        new APIRouteBuilder(this).mountRoutes(this, "/", "server.infrastructure.root");
+        mount(new RequestBuilderImpl(), "/", "server.infrastructure.root");
     }
 }

@@ -1,7 +1,7 @@
-package server.framework.web.param.auth;
+package server.infrastructure.param.auth;
 
-import server.framework.web.route.ClientError;
-import server.framework.web.route.Request;
+import server.framework.web.error.Unauthorized;
+import server.framework.web.request.Request;
 
 public class RequireOrganizer extends RequireSession {
 
@@ -9,7 +9,7 @@ public class RequireOrganizer extends RequireSession {
     public UserSession construct(Request request) throws Exception {
         var auth = super.construct(request);
         if(auth.organizer_id==null)
-            throw new ClientError.Unauthorized("Organizer account needed");
+            throw new Unauthorized("Organizer account needed");
         return auth;
     }
 }

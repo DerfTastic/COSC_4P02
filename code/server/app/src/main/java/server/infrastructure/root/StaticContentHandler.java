@@ -1,10 +1,9 @@
 package server.infrastructure.root;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import server.Config;
-import server.framework.web.Util;
+import server.framework.web.request.RequestHandler;
 import server.framework.web.annotations.Handler;
+import server.framework.web.request.Request;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +11,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 @Handler
-public class StaticContentHandler implements HttpHandler {
+public class StaticContentHandler implements RequestHandler {
 
     public final boolean checkCachedSources = true;
 
@@ -25,10 +24,10 @@ public class StaticContentHandler implements HttpHandler {
     private final HashMap<String, CachedItem> cache = new HashMap<>();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String requestedPath = exchange.getRequestURI().getPath();
-        if(!exchange.getRequestMethod().equalsIgnoreCase("GET")){
-            Util.sendResponse(exchange, 405, "Invalid Method Specified");
+    public void handle(Request request) throws IOException {
+        String requestedPath = request.exchange.getRequestURI().getPath();
+        if(!request.exchange.getRequestMethod().equalsIgnoreCase("GET")){
+            request.sendResponse(405, "Invalid Method Specified");
             return;
         }
 
@@ -62,13 +61,13 @@ public class StaticContentHandler implements HttpHandler {
             var path = Path.of(Config.CONFIG.static_content_path + builder);
 
             if(requestedPath.contains("..")){
-                Util.sendResponse(exchange, 400, "");
+                request.sendResponse(400, "");
             }
             if(Files.isDirectory(path)){
-                Util.sendResponse(exchange, 400, "Not a File");
+                request.sendResponse(400, "Not a File");
             }
             if (!Files.exists(path)) {
-                Util.sendResponse(exchange, 404, "Not Found");
+                request.sendResponse(404, "Not Found");
                 return;
             }else{
                 cached = new CachedItem();
@@ -79,10 +78,10 @@ public class StaticContentHandler implements HttpHandler {
             }
         }
 
-        exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
+        request.exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
         if(Config.CONFIG.cache_static_content)
-            exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
-        Util.sendResponse(exchange, 200, cached.content);
+            request.exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
+        request.sendResponse(200, cached.content);
     }
 
     private static String getContentType(String fileName) {

@@ -1,5 +1,7 @@
 package server.framework.web.route;
 
+import server.framework.web.request.Request;
+
 public interface RouteParameter<T> {
     T construct(Request request) throws Exception;
 

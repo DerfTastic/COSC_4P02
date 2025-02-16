@@ -1,53 +1,82 @@
-package server.framework.web.route;
+package server.framework.web.request;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import server.framework.web.WebServer;
+import server.framework.web.error.ClientError;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Request {
     public final HttpExchange exchange;
+    public final WebServer server;
     private Map<String, List<String>> queryMap;
     private String[] pathParts;
 
-    public Request(HttpExchange exchange) {
+    public Request(WebServer server, HttpExchange exchange) {
+        this.server = server;
         this.exchange = exchange;
     }
 
-    public abstract void begin() throws ClientError.MethodNotAllowed;
+    public void begin() throws ClientError {}
 
     public int code(){
         return 200;
     }
-    public abstract void sendResponse(Request request, int code, byte[] content) throws IOException;
 
-    public void sendResponse(Request request, byte[] content) throws IOException{
-        sendResponse(request, code(), content);
+    protected void logResponse(String path, int code, int len){
+        var frame = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                .walk(
+                        e -> e
+                                .skip(1)
+                                .filter(f ->
+                                        !f.getMethodName().equals("sendResponse")
+                                )
+                                .findFirst()
+                ).get();
+        Logger.getGlobal().logp(
+                Level.FINE, frame.getClassName(), frame.getMethodName(),
+                "Requested: '"+path+"'" + " Response Code: "+code+" Content Length: "+len
+        );
     }
 
-    public void sendResponse(Request request, String content) throws IOException{
-        sendResponse(request, code(), content);
+    public void sendResponse(int code, byte[] content) throws IOException{
+        exchange.sendResponseHeaders(code, content.length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(content);
+        }
+        logResponse(exchange.getRequestURI().toString(), code, content.length);
     }
 
-    public <T> void sendResponse(Request request, T content) throws IOException{
-        sendResponse(request, code(), content);
+    public void sendResponse(byte[] content) throws IOException{
+        sendResponse(code(), content);
     }
 
-    public void sendResponse(Request request, int code, String content) throws IOException{
-        sendResponse(request, code, content.getBytes());
+    public void sendResponse(String content) throws IOException{
+        sendResponse(code(), content);
     }
 
-    public <T> void sendResponse(Request request, int code, T message) throws IOException{
-        sendResponse(request, code, new Gson().toJson(message));
+    public <T> void sendResponse(T content) throws IOException{
+        sendResponse(code(), content);
+    }
+
+    public void sendResponse(int code, String content) throws IOException{
+        sendResponse(code, content.getBytes());
+    }
+
+    public <T> void sendResponse(int code, T message) throws IOException{
+        sendResponse(code, new Gson().toJson(message));
     }
 
 
@@ -103,7 +132,7 @@ public abstract class Request {
     }
 
     public WebServer getServer() {
-        return (WebServer) exchange.getHttpContext().getAttributes().get(WebServer.class.getName());
+        return server;
     }
 
     public String getPathPart(int index) {

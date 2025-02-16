@@ -1,5 +1,7 @@
 package server.framework.web.route;
 
+import server.framework.web.error.BadRequest;
+
 import java.util.List;
 
 public interface StringSingleNullableAdapter<T> extends StringsAdapter<T> {
@@ -14,6 +16,6 @@ public interface StringSingleNullableAdapter<T> extends StringsAdapter<T> {
         if (str == null) return null;
         if (str.isEmpty()) return null;
         if (str.size() == 1) return parseSingular(str.get(0));
-        throw new ClientError.BadRequest("Expected a single value");
+        throw new BadRequest("Expected a single value");
     }
 }

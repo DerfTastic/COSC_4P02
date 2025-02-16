@@ -2,8 +2,8 @@ package server.infrastructure.root.api;
 
 import server.framework.db.RwTransaction;
 import server.framework.web.annotations.*;
-import server.framework.web.param.auth.RequireSession;
-import server.framework.web.param.auth.UserSession;
+import server.infrastructure.param.auth.RequireSession;
+import server.infrastructure.param.auth.UserSession;
 
 /**
  * @implNote <br>

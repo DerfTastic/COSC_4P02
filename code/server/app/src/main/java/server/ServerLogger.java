@@ -61,13 +61,13 @@ public class ServerLogger {
         return Logger.getGlobal().getLevel();
     }
 
-    public static void initialize(){
+    public static void initialize(Level level){
         Logger.getGlobal().addHandler(fh);
         Logger.getGlobal().addHandler(mh);
 
-        setLogLevel(Level.INFO);
+        setLogLevel(level);
 
-        Logger.getGlobal().log(Level.INFO, "Working Directory: " + Paths.get("").toAbsolutePath());
+        Logger.getGlobal().log(level, "Working Directory: " + Paths.get("").toAbsolutePath());
     }
 
     public static Stream<LogRecord> streamify(){

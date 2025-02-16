@@ -1,18 +1,21 @@
 package server.framework.web.route;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import server.framework.web.request.Request;
+import server.framework.web.request.RequestHandler;
+import server.framework.web.WebServer;
 import server.framework.web.annotations.Route;
 import server.framework.web.annotations.http.Delete;
 import server.framework.web.annotations.http.Get;
 import server.framework.web.annotations.http.Post;
 import server.framework.web.annotations.http.Put;
+import server.framework.web.error.ClientError;
+import server.framework.web.error.MethodNotAllowed;
 import util.TypeReflect;
 import util.func.*;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.invoke.LambdaMetafactory;
@@ -33,11 +36,11 @@ public class RouteImpl {
     private final String[] pathParts;
     final RouteParameter<?>[] phs;
     final RouteReturn<?> ret;
-    final HttpHandler handler;
+    public final RequestHandler handler;
     public final int code;
     public final String method;
 
-    protected RouteImpl(Method sourceMethod, String parentPath, RoutesBuilder builder) {
+    public RouteImpl(Method sourceMethod, String parentPath, RequestsBuilder builder) {
         this.sourceMethod = sourceMethod;
 
         var route = sourceMethod.getAnnotation(Route.class);
@@ -45,14 +48,14 @@ public class RouteImpl {
         var p = route.value().isEmpty()?sourceMethod.getName():route.value().substring(1);
         this.pathParts = (parentPath+p).split("/");
 
-        var path = "";
+        StringBuilder path = new StringBuilder();
         for (String pathPart : this.pathParts) {
             if (pathPart.contains("<")) break;
             if (pathPart.isEmpty()) continue;
-            path += "/"+pathPart;
+            path.append("/").append(pathPart);
         }
-        path = path.isEmpty()?"/":path;
-        this.path = path;
+        path = new StringBuilder((path.isEmpty()) ? "/" : path.toString());
+        this.path = path.toString();
 
         if(sourceMethod.getAnnotation(Get.class) != null){
             this.method = "GET";
@@ -86,7 +89,7 @@ public class RouteImpl {
         }
     }
 
-    private HttpHandler makeHandler() throws Throwable {
+    private RequestHandler makeHandler() throws Throwable {
         var params = sourceMethod.getParameters();
 
         // fallback(slower)
@@ -140,37 +143,6 @@ public class RouteImpl {
         };
     }
 
-    public void sendResponse(Request request, byte[] content) throws IOException{
-        sendResponse(request, code, content);
-    }
-
-    public void sendResponse(Request request, String content) throws IOException{
-        sendResponse(request, code, content);
-    }
-
-    public <T> void sendResponse(Request request, T content) throws IOException{
-        sendResponse(request, code, content);
-    }
-
-    public void sendResponse(Request request, int code, byte[] content) throws IOException {
-        request.exchange.sendResponseHeaders(code, content.length);
-        try (OutputStream os = request.exchange.getResponseBody()) {
-            os.write(content);
-        }
-        Logger.getGlobal().logp(
-            Level.FINE, sourceMethod.getDeclaringClass().getName(), sourceMethod.getName(),
-            "Requested: '"+ path +"'" + " Response Code: "+code+" Content Length: "+content.length
-        );
-    }
-
-    public void sendResponse(Request request, int code, String content) throws IOException{
-        sendResponse(request, code, content.getBytes());
-    }
-
-    public <T> void sendResponse(Request request, int code, T message) throws IOException{
-        sendResponse(request, code, new Gson().toJson(message));
-    }
-
     public int findPathPartIndex(String value) {
         for(int i = 0; i < pathParts.length; i ++){
             if(pathParts[i].equals("<"+value+">")){
@@ -209,27 +181,36 @@ public class RouteImpl {
         try{
             var ps = new StringWriter();
             exception.printStackTrace(new PrintWriter(ps));
-            sendResponse(request, 500, message + "\n" + ps);
+            request.sendResponse(500, message + "\n" + ps);
         }catch (IOException e){
             Logger.getGlobal().log(Level.SEVERE, "Failed to send server error message", e);
         }
     }
 
+    public HttpHandler handler(WebServer server){
+        return exchange -> {
+            this.handler.handle(new RequestImpl(server, exchange));
+        };
+    }
+
     private class RequestImpl extends Request{
 
         @Override
-        public void begin() throws ClientError.MethodNotAllowed {
+        public void begin() throws MethodNotAllowed {
             if (method != null && !method.equalsIgnoreCase(exchange.getRequestMethod()))
-                throw new ClientError.MethodNotAllowed();
+                throw new MethodNotAllowed();
         }
 
-        public RequestImpl(HttpExchange exchange) {
-            super(exchange);
+        public RequestImpl(WebServer server, HttpExchange exchange) {
+            super(server, exchange);
         }
 
         @Override
-        public void sendResponse(Request request, int code, byte[] content) throws IOException{
-            RouteImpl.this.sendResponse(request, code, content);
+        protected void logResponse(String path, int code, int len) {
+            Logger.getGlobal().logp(
+                    Level.FINE, sourceMethod.getDeclaringClass().getName(), sourceMethod.getName(),
+                    "Requested: '"+ path +"'" + " Response Code: "+code+" Content Length: "+len
+            );
         }
 
         @Override
@@ -243,15 +224,10 @@ public class RouteImpl {
         }
     }
 
-    private Request startRequest(HttpExchange exchange){
-        return new RequestImpl(exchange);
-    }
-
     @SuppressWarnings("unchecked")
-    protected HttpHandler createRoute(){
-        return exchange -> {
+    protected RequestHandler createRoute(){
+        return request -> {
             Object[] r = new Object[phs.length];
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 for(int i = 0; i < phs.length; i ++)
@@ -282,10 +258,9 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected HttpHandler createRoute(Consume0 route){
+    protected RequestHandler createRoute(Consume0 route){
         final var rh = (RouteReturn<Void>)ret;
-        return exchange -> {
-            var request = startRequest(exchange);
+        return request -> {
             try{
                 request.begin();
                 route.call();
@@ -301,12 +276,11 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1> HttpHandler createRoute(Consume1<T1> route){
+    protected <T1> RequestHandler createRoute(Consume1<T1> route){
         final var rh = (RouteReturn<Void>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -325,14 +299,13 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1, T2> HttpHandler createRoute(Consume2<T1, T2> route){
+    protected <T1, T2> RequestHandler createRoute(Consume2<T1, T2> route){
         final var rh = (RouteReturn<Void>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -354,16 +327,15 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1, T2, T3> HttpHandler createRoute(Consume3<T1, T2, T3> route){
+    protected <T1, T2, T3> RequestHandler createRoute(Consume3<T1, T2, T3> route){
         final var rh = (RouteReturn<Void>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
         final var r3_ph = (RouteParameter<T3>)phs[2];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -388,18 +360,17 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1, T2, T3, T4> HttpHandler createRoute(Consume4<T1, T2, T3, T4> route){
+    protected <T1, T2, T3, T4> RequestHandler createRoute(Consume4<T1, T2, T3, T4> route){
         final var rh = (RouteReturn<Void>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
         final var r3_ph = (RouteParameter<T3>)phs[2];
         final var r4_ph = (RouteParameter<T4>)phs[3];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
             T4 r4 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -427,20 +398,19 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1, T2, T3, T4, T5> HttpHandler createRoute(Consume5<T1, T2, T3, T4, T5> route){
+    protected <T1, T2, T3, T4, T5> RequestHandler createRoute(Consume5<T1, T2, T3, T4, T5> route){
         final var rh = (RouteReturn<Void>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
         final var r3_ph = (RouteParameter<T3>)phs[2];
         final var r4_ph = (RouteParameter<T4>)phs[3];
         final var r5_ph = (RouteParameter<T5>)phs[4];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
             T4 r4 = null;
             T5 r5 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -471,7 +441,7 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1, T2, T3, T4, T5, T6> HttpHandler createRoute(Consume6<T1, T2, T3, T4, T5, T6> route){
+    protected <T1, T2, T3, T4, T5, T6> RequestHandler createRoute(Consume6<T1, T2, T3, T4, T5, T6> route){
         final var rh = (RouteReturn<Void>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
@@ -479,14 +449,13 @@ public class RouteImpl {
         final var r4_ph = (RouteParameter<T4>)phs[3];
         final var r5_ph = (RouteParameter<T5>)phs[4];
         final var r6_ph = (RouteParameter<T6>)phs[5];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
             T4 r4 = null;
             T5 r5 = null;
             T6 r6 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -520,10 +489,9 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R> HttpHandler createRoute(Function0<R> route){
+    protected <R> RequestHandler createRoute(Function0<R> route){
         final var rh = (RouteReturn<R>)ret;
-        return exchange -> {
-            var request = startRequest(exchange);
+        return request -> {
             try{
                 request.begin();
                 var result = route.call();
@@ -539,12 +507,11 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R, T1> HttpHandler createRoute(Function1<R, T1> route){
+    protected <R, T1> RequestHandler createRoute(Function1<R, T1> route){
         final var rh = (RouteReturn<R>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -563,14 +530,13 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R, T1, T2> HttpHandler createRoute(Function2<R, T1, T2> route){
+    protected <R, T1, T2> RequestHandler createRoute(Function2<R, T1, T2> route){
         final var rh = (RouteReturn<R>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -592,16 +558,15 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R, T1, T2, T3> HttpHandler createRoute(Function3<R, T1, T2, T3> route){
+    protected <R, T1, T2, T3> RequestHandler createRoute(Function3<R, T1, T2, T3> route){
         final var rh = (RouteReturn<R>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
         final var r3_ph = (RouteParameter<T3>)phs[2];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -626,18 +591,17 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R, T1, T2, T3, T4> HttpHandler createRoute(Function4<R, T1, T2, T3, T4> route){
+    protected <R, T1, T2, T3, T4> RequestHandler createRoute(Function4<R, T1, T2, T3, T4> route){
         final var rh = (RouteReturn<R>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
         final var r3_ph = (RouteParameter<T3>)phs[2];
         final var r4_ph = (RouteParameter<T4>)phs[3];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
             T4 r4 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -665,20 +629,19 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R, T1, T2, T3, T4, T5> HttpHandler createRoute(Function5<R, T1, T2, T3, T4, T5> route){
+    protected <R, T1, T2, T3, T4, T5> RequestHandler createRoute(Function5<R, T1, T2, T3, T4, T5> route){
         final var rh = (RouteReturn<R>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
         final var r3_ph = (RouteParameter<T3>)phs[2];
         final var r4_ph = (RouteParameter<T4>)phs[3];
         final var r5_ph = (RouteParameter<T5>)phs[4];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
             T4 r4 = null;
             T5 r5 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
@@ -709,7 +672,7 @@ public class RouteImpl {
     }
 
     @SuppressWarnings("unchecked")
-    protected <R, T1, T2, T3, T4, T5, T6> HttpHandler createRoute(Function6<R, T1, T2, T3, T4, T5, T6> route){
+    protected <R, T1, T2, T3, T4, T5, T6> RequestHandler createRoute(Function6<R, T1, T2, T3, T4, T5, T6> route){
         final var rh = (RouteReturn<R>)ret;
         final var r1_ph = (RouteParameter<T1>)phs[0];
         final var r2_ph = (RouteParameter<T2>)phs[1];
@@ -717,14 +680,13 @@ public class RouteImpl {
         final var r4_ph = (RouteParameter<T4>)phs[3];
         final var r5_ph = (RouteParameter<T5>)phs[4];
         final var r6_ph = (RouteParameter<T6>)phs[5];
-        return exchange -> {
+        return request -> {
             T1 r1 = null;
             T2 r2 = null;
             T3 r3 = null;
             T4 r4 = null;
             T5 r5 = null;
             T6 r6 = null;
-            var request = startRequest(exchange);
             try{
                 request.begin();
                 r1 = r1_ph.construct(request);
