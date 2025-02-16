@@ -4,12 +4,12 @@
 package infrastructure.api;
 
 import org.junit.jupiter.api.*;
-import server.framework.db.DbManager;
-import server.framework.web.error.BadRequest;
-import server.framework.web.error.Unauthorized;
+import framework.db.DbManager;
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
 import server.infrastructure.param.auth.UserSession;
 import server.infrastructure.root.api.AccountAPI;
-import server.framework.web.mail.MailServer;
+import framework.web.mail.MailServer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

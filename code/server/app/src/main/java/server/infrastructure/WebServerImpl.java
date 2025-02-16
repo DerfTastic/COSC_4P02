@@ -2,11 +2,11 @@ package server.infrastructure;
 
 import server.Config;
 import server.Secrets;
-import server.framework.db.DbManager;
-import server.framework.web.TimedEvents;
-import server.framework.web.WebServer;
-import server.framework.web.mail.MailServer;
-import server.framework.web.mail.SmtpMailServer;
+import framework.db.DbManager;
+import framework.web.TimedEvents;
+import framework.web.WebServer;
+import framework.web.mail.MailServer;
+import framework.web.mail.SmtpMailServer;
 
 import java.net.InetSocketAddress;
 import java.util.Date;

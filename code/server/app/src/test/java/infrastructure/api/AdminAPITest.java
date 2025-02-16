@@ -4,7 +4,7 @@
 package infrastructure.api;
 
 import org.junit.jupiter.api.*;
-import server.framework.db.DbManager;
+import framework.db.DbManager;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdminAPITest {

@@ -1,9 +1,9 @@
 package server.infrastructure.root;
 
 import server.Config;
-import server.framework.web.request.RequestHandler;
-import server.framework.web.annotations.Handler;
-import server.framework.web.request.Request;
+import framework.web.request.RequestHandler;
+import framework.web.annotations.Handler;
+import framework.web.request.Request;
 
 import java.io.IOException;
 import java.nio.file.Files;

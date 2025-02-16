@@ -1,9 +1,9 @@
 package server.infrastructure.root.media;
 
 import server.infrastructure.DynamicMediaHandler;
-import server.framework.web.annotations.Route;
-import server.framework.web.annotations.Routes;
-import server.framework.web.annotations.url.Path;
+import framework.web.annotations.Route;
+import framework.web.annotations.Routes;
+import framework.web.annotations.url.Path;
 
 @SuppressWarnings("unused")
 @Routes

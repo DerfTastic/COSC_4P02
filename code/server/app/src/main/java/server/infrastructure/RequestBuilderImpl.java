@@ -1,10 +1,10 @@
 package server.infrastructure;
 
-import server.framework.db.*;
-import server.framework.web.request.Request;
-import server.framework.web.route.RequestsBuilder;
-import server.framework.web.route.RouteImpl;
-import server.framework.web.route.RouteParameter;
+import framework.db.*;
+import framework.web.request.Request;
+import framework.web.route.RequestsBuilder;
+import framework.web.route.RouteImpl;
+import framework.web.route.RouteParameter;
 
 import java.lang.reflect.Parameter;
 import java.sql.SQLException;

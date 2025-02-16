@@ -7,7 +7,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
-import server.framework.db.DbManager;
+import framework.db.DbManager;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SearchAPITest {

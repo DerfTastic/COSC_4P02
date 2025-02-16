@@ -1,9 +1,9 @@
 package server.infrastructure.param.auth;
 
-import server.framework.db.DbManager;
-import server.framework.web.error.Unauthorized;
-import server.framework.web.request.Request;
-import server.framework.web.route.RouteParameter;
+import framework.db.DbManager;
+import framework.web.error.Unauthorized;
+import framework.web.request.Request;
+import framework.web.route.RouteParameter;
 
 public class RequireSession implements RouteParameter<UserSession> {
 
