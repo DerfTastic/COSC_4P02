@@ -1,14 +1,16 @@
 package server;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Config implements Serializable {
+public class Config {
     public static final Config CONFIG; // Variable to another instance of this class?
 
     public final Integer web_threads = initialize(256);
@@ -25,15 +27,25 @@ public class Config implements Serializable {
 
     public final String log_path = initialize("logs");
 
-    public final String static_content_path = initialize(null);
+    public final String static_content_path = initialize("site");
 
     public final Boolean cache_static_content = initialize(false);
 
     public final Boolean create_paths = initialize(true);
 
     static{
+        outer:
         try {
             var properties = new Properties();
+            if (!Files.exists(Path.of("server.properties"))){
+                CONFIG = new Config();
+
+                for(var field : Config.class.getFields()) {
+                    properties.put(field.getName(), field.get(CONFIG).toString());
+                }
+                properties.store(new FileOutputStream("server.properties"), null);
+                break outer;
+            }
             try{
                 properties.load(new FileInputStream("server.properties"));
             }catch (IOException e){
@@ -63,6 +75,19 @@ public class Config implements Serializable {
             CONFIG = config;
         } catch (Throwable e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void init() throws IOException {
+        if(Config.CONFIG.create_paths){
+            var paths = new String[]{Config.CONFIG.db_path, Config.CONFIG.dynamic_media_path, Config.CONFIG.log_path};
+            for(var path : paths){
+                var p = Path.of(path);
+                if(p.getFileName().toString().contains("."))
+                    Files.createDirectories(p.getParent());
+                else
+                    Files.createDirectories(p);
+            }
         }
     }
 
