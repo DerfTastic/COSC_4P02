@@ -371,6 +371,264 @@ nav  a:hover, .cart:hover {
     background-color: #778da9;
 }
 
+* { box-sizing: border-box; }
+
+.create-event-container { 
+    display: grid;
+    grid-template-areas: 
+        "top-section right-section"
+        "media-preview right-section"
+        "left-section right-section";
+    grid-template-columns: 2fr 1fr;
+    padding: 5px;
+}
+
+.create-event-container button, .edit-btn {
+    padding: 12px;
+    background-color: #415a77;
+    border: none;
+    border-radius: 5px;
+    color: #eeeef0;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+    text-align: center;
+}
+
+.create-event-container button:hover,.edit-btn:hover {
+    background-color: #415a77;
+    transform: translateY(-3px); 
+}
+
+
+
+.create-event-container button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(85, 110, 224, 0.8); 
+}
+
+
+.top-section { 
+    grid-area: top-section; 
+    padding: 10px; 
+    height: 100%;
+    flex-direction: column;
+}
+
+.media-preview {
+    grid-area: media-preview; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+}
+
+.left-section { 
+    grid-area: left-section; 
+    padding: 10px;
+    height: 100%;
+}
+
+.right-section { 
+    grid-area: right-section;
+    padding: 10px;
+    height: 100%;
+}
+
+.top-section img {
+    width: auto;      
+    height: auto;      
+    max-width: 100%;   
+    max-height: 300px;  
+    object-fit: cover;
+}
+
+.upload-container {
+    min-height: 50vh;
+    border: 2px dashed #eeeef0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.upload-container:hover {
+    border-color: #415a77;
+}
+
+.upload-container input {
+    display: none;
+}
+
+.upload-text {
+    font-size: 16px;
+    color: #eeeef0;
+    margin-top: 10px;
+}
+
+.preview-item {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #eeeef0;
+    cursor: pointer;
+    position: relative;
+}
+
+.create-event-container .remove-btn {
+    background: red;
+    color: #eeeef0;
+    border: none;
+    cursor: pointer;
+    padding: 3px 6px;
+    font-size: 12px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border-radius: 50%;
+}
+
+.upload-status {
+    font-size: 14px;
+    color: #415a77;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.upload-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+}
+
+      
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide-in {
+    animation: slideIn 1s ease-out;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.zoom-in {
+    animation: zoomIn 1s ease-out;
+}
+
+.input-field, .select-field, .color-picker, .range-slider {
+    padding: 12px;
+    background-color: #eeeef0;
+    border: none;
+    border-radius: 5px;
+    color: #28282a;
+    font-size: 16px;
+    outline: none;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.color-picker{
+    padding: 0;
+}
+
+.input-field:focus, .select-field:focus, .color-picker:focus, .range-slider:focus {
+    box-shadow: 0 0 5px #415a77; 
+    background-color: #eeeef0;
+}
+
+.input-field::placeholder, .select-field::placeholder, .color-picker::placeholder {
+    color: #aaa;
+}
+
+.select-field {
+    background-color: #eeeef0;
+}
+
+.range-slider {
+    width: 100%;
+    height: 8px;
+    background: #eeeef0;
+    border-radius: 5px;
+    outline: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #415a77;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.event-tag {
+    display: inline-block;
+    background-color: #415a77;
+    color:#eeeef0;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+#eventPage{
+    padding:10px;
+}
+
+#eventMediaDisplay {
+    display: flex;               
+    flex-wrap: wrap;            
+    gap: 15px;                  
+    justify-content: center;   
+}
+
+#eventMediaDisplay img,
+#eventMediaDisplay video {
+    width: 400px;               
+    height: auto;               
+    border-radius: 8px;          
+}
+
 
 @media (max-width: 768px) {
 

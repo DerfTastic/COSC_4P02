@@ -20,7 +20,9 @@ public abstract class Conn implements AutoCloseable {
     }
 
     public Statement createStatement() throws SQLException{
-        return getConn().createStatement();
+        var stmt = new StatementM(getConn().createStatement());
+        stmt.stats = this.db.getStatsTracker();
+        return stmt;
     }
 
     @Override

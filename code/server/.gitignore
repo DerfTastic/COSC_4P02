@@ -12,3 +12,5 @@ db/**
 secrets
 
 logs/
+
+media/**

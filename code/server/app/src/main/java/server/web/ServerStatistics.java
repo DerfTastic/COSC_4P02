@@ -9,6 +9,7 @@ public class ServerStatistics {
     private long total_requests_handled = 0;
 
     private long prepared_statements_executed = 0;
+    private long statements_executed = 0;
     private long total_db_statements_executed = 0;
 
     public final static class Stats{
@@ -35,6 +36,11 @@ public class ServerStatistics {
 
     public synchronized void executed_prepared_statement(){
         prepared_statements_executed++;
+        total_db_statements_executed++;
+    }
+
+    public synchronized void executed_statement(){
+        statements_executed++;
         total_db_statements_executed++;
     }
 

@@ -59,6 +59,9 @@ class UpdateOrganizerEvent{
     /** @type{string} */name
     /** @type{string} */description
     /** @type{object} */metadata
+
+    /** @type{number} */start
+    /** @type{number} */duration
     
     /** @type{number} */available_total_tickets
 
@@ -674,6 +677,7 @@ const page = {
         register: async function (name, email, password) {
             try {
                 await api.user.register(name, email, password);
+                window.location.href = '/login';
             } catch ({ error, code }) {
                 alert(error);
             }
@@ -874,3 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     page.initialize_content(document);
     page.load_dynamic_content(document);
 });
+
+function gen_qr(data, size=150){
+    return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=`+encodeURI(data);
+}
