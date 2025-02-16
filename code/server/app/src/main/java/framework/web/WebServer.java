@@ -100,7 +100,7 @@ public class WebServer {
 
 
     @SuppressWarnings("UnstableApiUsage")
-    public static Stream<Class<?>> findAllClassesInPackage(String packageName) {
+    private static Stream<Class<?>> findAllClassesInPackage(String packageName) {
         try {
             return ClassPath.from(RequestsBuilder.class.getClassLoader())
                     .getTopLevelClassesRecursive(packageName)
@@ -127,7 +127,7 @@ public class WebServer {
         }
     }
 
-    public void attachHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void attachHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var instance = handlerClass.getConstructor().newInstance();
         createHttpHandler(parentPath, -1, exchange -> {
             instance.handle(new Request(this, exchange) {
@@ -140,7 +140,7 @@ public class WebServer {
         Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
     }
 
-    public void attachRoutes(RequestsBuilder builder, String parentPath, Class<?> routeClass) {
+    private void attachRoutes(RequestsBuilder builder, String parentPath, Class<?> routeClass) {
         for(var method : routeClass.getDeclaredMethods()){
             if(method.getAnnotation(Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, builder);
@@ -151,7 +151,7 @@ public class WebServer {
         }
     }
 
-    private void createHttpHandler(String path, int pathCutoff, HttpHandler handler){
+    public void createHttpHandler(String path, int pathCutoff, HttpHandler handler){
         server.createContext(path, exchange -> {
             var start = System.nanoTime();
             handler.handle(exchange);
