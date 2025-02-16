@@ -94,6 +94,7 @@ public class RouteImpl {
 
         // fallback(slower)
         if(sourceMethod.getParameters().length > 6){
+            Logger.getGlobal().log(Level.WARNING, "Route method uses more than 6 parameters, A slower handler will be used");
             return createRoute();
         }
 
