@@ -91,6 +91,10 @@ public class Config {
         }
     }
 
+    /**
+     * This method exists purely so we can define default values in a semi non annoying way but without java treating our
+     * initializers as a constant expression and inlining their values preventing us from changing them if loaded from a file.
+     */
     private <T> T initialize(T val){
         return val;
     }
