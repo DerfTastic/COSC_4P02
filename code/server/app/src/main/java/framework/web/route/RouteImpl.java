@@ -28,14 +28,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RouteImpl {
-    final static Class<?>[] consumers = new Class[]{Consume0.class, Consume1.class, Consume2.class, Consume3.class, Consume4.class, Consume5.class, Consume6.class};
-    final static Class<?>[] functions = new Class[]{Function0.class, Function1.class, Function2.class, Function3.class, Function4.class, Function5.class, Function6.class};
+    private final static Class<?>[] consumers = new Class[]{Consume0.class, Consume1.class, Consume2.class, Consume3.class, Consume4.class, Consume5.class, Consume6.class};
+    private final static Class<?>[] functions = new Class[]{Function0.class, Function1.class, Function2.class, Function3.class, Function4.class, Function5.class, Function6.class};
 
     public final Method sourceMethod;
     public final String path;
     private final String[] pathParts;
-    final RouteParameter<?>[] phs;
-    final RouteReturn<?> ret;
+    private final RouteParameter<?>[] phs;
+    private final RouteReturn<?> ret;
     public final RequestHandler handler;
     public final int code;
     public final String method;
