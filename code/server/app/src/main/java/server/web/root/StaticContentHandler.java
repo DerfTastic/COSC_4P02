@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +20,15 @@ import java.util.logging.Logger;
 @Handler
 public class StaticContentHandler implements HttpHandler {
 
-    private final HashMap<String, Tuple<Long, byte[]>> cache = new HashMap<>();
+    public final boolean checkCachedSources = true;
+
+    private final static class CachedItem{
+        Path resolved;
+        long last_modified;
+        byte[] content;
+    }
+
+    private final HashMap<String, CachedItem> cache = new HashMap<>();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -28,42 +38,57 @@ public class StaticContentHandler implements HttpHandler {
             return;
         }
 
-        if (requestedPath.endsWith("/")) {
-            requestedPath += "index.html";
-        }
-        if(!requestedPath.contains(".")){
-            if(new File(Config.CONFIG.static_content_path +requestedPath+".html").exists())
-                requestedPath += ".html";
-            else if(new File(Config.CONFIG.static_content_path + requestedPath+".hbs").exists())
-                requestedPath += ".hbs";
-        }
-        File file = new File(Config.CONFIG.static_content_path + requestedPath);
-
-        if (!file.exists()
-                || file.isDirectory()
-                || requestedPath.contains("..")) {
-            Util.sendResponse(exchange, 404, "Not Found");
-            return;
-        }
-
-        byte[] content;
-        var entry = cache.getOrDefault(requestedPath, null);
-        if (entry == null || entry.t1 < file.lastModified()) {
-            try (InputStream is = new FileInputStream(file)) {
-                content = is.readAllBytes();
-                cache.put(requestedPath, new Tuple<>(file.lastModified(), content));
-            } catch (IOException e) {
-                Util.sendResponse(exchange, 500, "Internal Server Error");
-                Logger.getGlobal().log(Level.SEVERE, "", e);
-                return;
+        var cached = cache.get(requestedPath);
+        cached:
+        if(cached != null){
+            if(checkCachedSources){
+                if(!Files.exists(cached.resolved)){
+                    cache.remove(requestedPath);
+                    break cached;
+                }
+                var time = Files.getLastModifiedTime(cached.resolved).toMillis();
+                if(time>cached.last_modified){
+                    cached.content = Files.readAllBytes(cached.resolved);
+                    cached.last_modified = time;
+                }
             }
-        } else {
-            content = entry.t2;
         }
-        exchange.getResponseHeaders().add("Content-Type", getContentType(file.getName()));
+        if(cached==null){
+            StringBuilder builder = new StringBuilder(requestedPath);
+            if(builder.toString().endsWith("/"))
+                builder.append("index");
+            else if(Files.isDirectory(Path.of(Config.CONFIG.static_content_path+builder)))
+                builder.append("/index");
+            if(!builder.toString().contains("."))
+                if(Files.exists(Path.of(Config.CONFIG.static_content_path + builder + ".html")))
+                    builder.append(".html");
+                else if(Files.exists(Path.of(Config.CONFIG.static_content_path + builder +".hbs")))
+                    builder.append(".hbs");
+
+            var path = Path.of(Config.CONFIG.static_content_path + builder);
+
+            if(requestedPath.contains("..")){
+                Util.sendResponse(exchange, 400, "");
+            }
+            if(Files.isDirectory(path)){
+                Util.sendResponse(exchange, 400, "Not a File");
+            }
+            if (!Files.exists(path)) {
+                Util.sendResponse(exchange, 404, "Not Found");
+                return;
+            }else{
+                cached = new CachedItem();
+                cached.resolved = path;
+                cached.last_modified = Files.getLastModifiedTime(cached.resolved).toMillis();
+                cached.content = Files.readAllBytes(cached.resolved);
+                cache.put(requestedPath, cached);
+            }
+        }
+
+        exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
         if(Config.CONFIG.cache_static_content)
             exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
-        Util.sendResponse(exchange, 200, content);
+        Util.sendResponse(exchange, 200, cached.content);
     }
 
     private static String getContentType(String fileName) {

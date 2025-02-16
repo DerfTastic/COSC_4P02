@@ -76,14 +76,13 @@ create table tickets(
 );
 
 create table purchased_tickets(
+    id INTEGER primary key not null,
     user_id INTEGER,
     ticket_id INTEGER,
 
     payment_id INTEGER NOT NULL,
 
     purchase_price NUMERIC NOT NULL,
-
-    PRIMARY KEY(user_id, ticket_id),
 
     FOREIGN KEY (user_id)
         REFERENCES users (id)

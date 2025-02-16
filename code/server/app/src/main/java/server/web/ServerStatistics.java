@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class ServerStatistics {
     private final HashMap<String, Stats> route_stats = new HashMap<>();
     private long total_requests_handled = 0;

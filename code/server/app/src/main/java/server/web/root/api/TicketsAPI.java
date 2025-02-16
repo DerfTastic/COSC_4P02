@@ -10,6 +10,7 @@ import server.web.annotations.url.Path;
 import server.web.param.auth.OptionalAuth;
 import server.web.param.auth.RequireOrganizer;
 import server.web.param.auth.UserSession;
+import server.web.route.ClientError;
 
 import java.sql.SQLException;
 
@@ -18,13 +19,16 @@ import java.sql.SQLException;
 public class TicketsAPI {
 
     @Route("/create_ticket/<event_id>")
-    public static int create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException {
-//        try(var stmt = trans.namedPreparedStatement("select"))
-
-        try(var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")){
-            stmt.executeUpdate();
+    public static int create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, ClientError.Unauthorized {
+        try(var stmt = trans.namedPreparedStatement("select organizer_id from events where id=:id")){
+            stmt.setLong("id", event_id);
+            var rs = stmt.executeQuery();
+            if(!rs.next()||rs.getLong("organizer_id")!=session.organizer_id)
+                throw new ClientError.Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
-        return -1;
+        try(var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")){
+            return stmt.executeQuery().getInt("id");
+        }
     }
 
     public static class Ticket{

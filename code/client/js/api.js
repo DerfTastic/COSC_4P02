@@ -80,6 +80,7 @@ class ServerStatistics{
     /** @type{Object.<string, RouteStat>} */route_stats
     /** @type{number} */total_requests_handled
     /** @type{number} */prepared_statements_executed
+    /** @type{number} */statements_executed
     /** @type{number} */total_db_statements_executed
 }
 
@@ -628,7 +629,7 @@ const cookies = {
 const utility = {
     logout: function () {
         cookies.deleteSessionToken();
-        window.location.href = '/login';
+        window.location.href = '/account/login';
     },
     /**
      * @param {number|string} id 
@@ -641,7 +642,7 @@ const utility = {
     },
     require_logged_in: function () {
         if (cookies.getSession() == null || cookies.getSession().length == 0) {
-            window.location.href = "/login";
+            window.location.href = "/account/login";
         }
     }
 
@@ -677,7 +678,7 @@ const page = {
         register: async function (name, email, password) {
             try {
                 await api.user.register(name, email, password);
-                window.location.href = '/login';
+                window.location.href = '/account/login';
             } catch ({ error, code }) {
                 alert(error);
             }
