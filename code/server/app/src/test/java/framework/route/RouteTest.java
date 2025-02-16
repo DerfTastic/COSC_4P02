@@ -1,4 +1,4 @@
-package server.route;
+package framework.route;
 
 public class RouteTest {
 }
