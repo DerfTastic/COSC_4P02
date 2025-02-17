@@ -15,10 +15,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of the web server for the Ticket Express application.
+ * Implementation of the web server for the Ticket Express service.
  */
 public class WebServerImpl extends WebServer {
 
+    /**
+     * Constructor for WebServerImpl. Creates an instance of the WebServer class and sets a thread-pool to run
+     * the web tasks.
+     */
     public WebServerImpl() throws Exception {
         // Create a socket address using "Config.CONFIG.hostname" as the respective hostname and
         // "Config.CONFIG.port" as the port.
@@ -26,8 +30,7 @@ public class WebServerImpl extends WebServer {
         super(new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port));
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
 
-
-        addManagedResource(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
+        addManagedResource(new TimedEvents()); //
         addManagedResource(new DynamicMediaHandler()); //
         try{
             addManagedResource(new DbManager(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true));
@@ -37,7 +40,7 @@ public class WebServerImpl extends WebServer {
         }
 
 
-        {   // session expiration
+        {   // session expiration; remove expired sessions from database every minute
             var db = getManagedResource(DbManager.class);
             db.setStatsTracker(tracker);
             var timer = getManagedResource(TimedEvents.class);
@@ -55,6 +58,7 @@ public class WebServerImpl extends WebServer {
             });
         }
 
+        //
         addManagedResource(MailServer.class, new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")));
 
         mount(new RequestBuilderImpl(), "/", "server.infrastructure.root");

@@ -24,8 +24,8 @@ import java.util.stream.Stream;
 public class WebServer {
     protected final HttpServer server; // Ticket Express server
     private final HashMap<Class<?>, Object> managedResources = new HashMap<>(); //
-    public final ServerStatistics tracker = new ServerStatistics(); //
-    private final InetSocketAddress address;
+    public final ServerStatistics tracker = new ServerStatistics();
+    private final InetSocketAddress address; // Address of HTTP server
 
     /**
      * Constructor for WebServer.
@@ -48,21 +48,12 @@ public class WebServer {
     /**
      * This method adds a resource object of type T to managedResources by calling the function directly below.
      * See function below.
-     * @param resource
-     * @param <T>
      */
     public <T> void addManagedResource(T resource){
         // Deconstruct resource into
         addManagedResource(resource.getClass(), resource);
     }
 
-    /**
-     *
-     * @param clazz
-     * @param resource
-     * @param <I>
-     * @param <T>
-     */
     public <I extends T, T> void addManagedResource(Class<I> clazz, T resource){
         managedResources.put(clazz, resource);
     }
@@ -107,6 +98,7 @@ public class WebServer {
             throw new RuntimeException(e);
         }
     }
+
 
     @SuppressWarnings("unchecked")
     public void mount(RequestsBuilder builder, String parentPath, String classPath){
