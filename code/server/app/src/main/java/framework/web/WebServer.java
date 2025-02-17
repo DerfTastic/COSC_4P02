@@ -22,9 +22,12 @@ import java.util.stream.Stream;
 
 
 public class WebServer {
-    protected final HttpServer server; // Ticket Express server
-    private final HashMap<Class<?>, Object> managedResources = new HashMap<>(); //
-    public final ServerStatistics tracker = new ServerStatistics(); //
+    protected final HttpServer server;
+    /**
+     * A store of all the state which is managed by this web server
+     */
+    private final HashMap<Class<?>, Object> managedState = new HashMap<>();
+    public final ServerStatistics tracker = new ServerStatistics();
     private final InetSocketAddress address;
 
     /**
@@ -32,12 +35,13 @@ public class WebServer {
      * @throws Exception for
      */
     public WebServer(InetSocketAddress address) throws Exception {
-        Runtime.getRuntime().addShutdownHook(new Thread(this::close)); // ???
+        // on program exit try to do a graceful shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
         this.address = address;
         server = HttpServer.create(address, 0); // Create HTTPServer at 'address' with no backlog
 
-        addManagedResource(server); // Add HTTP Server to managed resources
-        addManagedResource(tracker);
+        addManagedState(server); // Add HTTP Server to managed resources
+        addManagedState(tracker);
     }
 
     public void start(){
@@ -45,37 +49,49 @@ public class WebServer {
         Logger.getGlobal().log(Level.INFO, "Server started on http://" + address.getAddress().getHostAddress() + ":" + address.getPort());
     }
 
-    /**
-     * This method adds a resource object of type T to managedResources by calling the function directly below.
-     * See function below.
-     * @param resource
-     * @param <T>
-     */
-    public <T> void addManagedResource(T resource){
-        // Deconstruct resource into
-        addManagedResource(resource.getClass(), resource);
-    }
 
     /**
+     * Adds state to a pool of managed objects which are associated with this webserver.
+     * The state is associated with a type and can be recalled through it.
+     * </br></br>
+     * State is shared with all routes and resources within the webserver, all state has the same scope.
+     * All state unless the behavior is otherwise specified by the user or annotations can be recalled and used
+     * by defining the state type in a @Route method parameter, or through {@link WebServer#getManagedState(Class)}
      *
-     * @param clazz
-     * @param resource
-     * @param <I>
-     * @param <T>
+     * @param state the state to be added
+     * @param <T>   the type of state
      */
-    public <I extends T, T> void addManagedResource(Class<I> clazz, T resource){
-        managedResources.put(clazz, resource);
+    public <T> void addManagedState(T state){
+        managedState.put(state.getClass(), state);
     }
 
     /**
-     *  This method returns a managed resource when provided a class.
-     * @param clazz The class object being retrieved from 'managedResources'
-     * @return Returns a managed resource retrieved using the provided class
-     * @param <T> Generic Class Template
+     * Adds state to a pool of managed objects which are associated with this webserver.
+     * The state is associated with a type and can be recalled through it.
+     * </br></br>
+     * State is shared with all routes and resources within the webserver, all state has the same scope.
+     * All state unless the behavior is otherwise specified by the user or annotations can be recalled and used
+     * by defining the state type in a @Route method parameter, or through {@link WebServer#getManagedState(Class)}
+     *
+     * @param state the state to be added
+     * @param clazz the super class for which this state will be associated to
+     * @param <T> the type of state
+     * @param <I> The type we want to associate this state with
+     */
+    public <T extends I, I> void addManagedState(T state, Class<I> clazz){
+        managedState.put(clazz, state);
+    }
+
+
+    /**
+     * retrieves managed state associated with the provided type.
+     * @param clazz The class type of state
+     * @return  The state itself can be null
+     * @param <T> the type of state
      */
     @SuppressWarnings("unchecked")
-    public <T> T getManagedResource(Class<T> clazz){
-        return (T) managedResources.get(clazz);
+    public <T> T getManagedState(Class<T> clazz){
+        return (T) managedState.get(clazz);
     }
 
     /**
@@ -83,7 +99,7 @@ public class WebServer {
      */
     public void close(){
         Logger.getGlobal().log(Level.INFO, "Shutting down");
-        for(var resource : managedResources.values()){
+        for(var resource : managedState.values()){
             if(resource instanceof Closeable c){
                 try{
                     c.close();

@@ -27,10 +27,10 @@ public class WebServerImpl extends WebServer {
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
 
 
-        addManagedResource(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
-        addManagedResource(new DynamicMediaHandler()); //
+        addManagedState(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
+        addManagedState(new DynamicMediaHandler()); //
         try{
-            addManagedResource(new DbManager(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true));
+            addManagedState(new DbManager(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true));
         }catch (Exception e){
             this.close();
             throw e;
@@ -38,9 +38,9 @@ public class WebServerImpl extends WebServer {
 
 
         {   // session expiration
-            var db = getManagedResource(DbManager.class);
+            var db = getManagedState(DbManager.class);
             db.setStatsTracker(tracker);
-            var timer = getManagedResource(TimedEvents.class);
+            var timer = getManagedState(TimedEvents.class);
             timer.addMinutely(() -> {
                 try(var trans = db.rw_transaction()){
                     try(var stmt = trans.namedPreparedStatement("delete from sessions where expiration<:now")){
@@ -55,7 +55,7 @@ public class WebServerImpl extends WebServer {
             });
         }
 
-        addManagedResource(MailServer.class, new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")));
+        addManagedState(new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")), MailServer.class);
 
         mount(new RequestBuilderImpl(), "/", "server.infrastructure.root");
     }

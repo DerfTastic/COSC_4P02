@@ -10,7 +10,7 @@ public class OptionalAuth implements RouteParameter<UserSession> {
             var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
             if (token == null) return null;
             if(token.isEmpty()) return null;
-            try (var conn = request.getServer().getManagedResource(DbManager.class).ro_conn()) {
+            try (var conn = request.getServer().getManagedState(DbManager.class).ro_conn()) {
                 return UserSession.optional(token, conn);
             }
         }

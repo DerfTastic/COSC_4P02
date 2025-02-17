@@ -71,7 +71,7 @@ public class RequestsBuilder {
         }
         if(param.getType().equals(HttpExchange.class)) return request -> request.exchange;
         if(param.getType().equals(Request.class)) return request -> request;
-        return request -> request.getServer().getManagedResource(param.getType());
+        return request -> request.getServer().getManagedState(param.getType());
     }
 
     private StringsAdapter<?> getParameterStringAdapter(Class<?> type, boolean nullable) {
