@@ -12,11 +12,9 @@ import java.util.logging.Logger;
 
 public class Config {
     public static final Config CONFIG;
-
     public final Integer web_threads = initialize(256);
     public final Boolean wipe_db_on_start = initialize(false);
     public final Boolean store_db_in_memory = initialize(false);
-
     public final String hostname = initialize("localhost");
     public final Integer port = initialize(80);
 
@@ -33,7 +31,8 @@ public class Config {
 
     public final Boolean create_paths = initialize(true);
 
-    static{
+    // Creates default values inside server properties file
+    static {
         outer:
         try {
             var properties = new Properties();
@@ -54,7 +53,7 @@ public class Config {
 
             var config = new Config();
             for(var field : Config.class.getFields()){
-                if(Modifier.isStatic(field.getModifiers()))continue;
+                if(Modifier.isStatic(field.getModifiers())) continue; // Skip if static
                 field.setAccessible(true);
 
                 if(properties.containsKey(field.getName())){
@@ -78,6 +77,10 @@ public class Config {
         }
     }
 
+    /**
+     * This method creates default directories for the database, media, and logs iff this class is configured to create paths.
+     * @throws IOException if a failure occurs creating a core directory
+     */
     public static void init() throws IOException {
         if(Config.CONFIG.create_paths){
             var paths = new String[]{Config.CONFIG.db_path, Config.CONFIG.dynamic_media_path, Config.CONFIG.log_path};
@@ -92,7 +95,7 @@ public class Config {
     }
 
     /**
-     * This method exists purely so we can define default values in a semi non annoying way but without java treating our
+     * This method exists purely so we can define default values in a semi non-annoying way without java treating our
      * initializers as a constant expression and inlining their values preventing us from changing them if loaded from a file.
      */
     private <T> T initialize(T val){
