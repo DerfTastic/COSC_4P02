@@ -8,9 +8,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Config is used to
+ */
 public class Config implements Serializable {
-    public static final Config CONFIG; // Variable to another instance of this class?
-
+    public static final Config CONFIG; // See Static below
     public final Integer web_threads = initialize(256);
     public final Boolean wipe_db_on_start = initialize(false);
     public final Boolean store_db_in_memory = initialize(false);
@@ -33,7 +35,7 @@ public class Config implements Serializable {
 
     static{
         try {
-            var properties = new Properties();
+            var properties = new Properties(); // Empty property list
             try{
                 properties.load(new FileInputStream("server.properties"));
             }catch (IOException e){
@@ -66,6 +68,12 @@ public class Config implements Serializable {
         }
     }
 
+    /**
+     * This function is a generic method that returns the value it receives as an argument.
+     * @param val the generic type argument.
+     * @return val, the value of the argument.
+     * @param <T> Generic type parameter T
+     */
     private <T> T initialize(T val){
         return val;
     }

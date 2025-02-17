@@ -16,6 +16,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * @See WebServerImpl
+ */
 public class ServerLogger {
     private static final FileHandler fh;
     private static final MemHandler mh;
