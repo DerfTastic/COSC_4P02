@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 public class WebServer {
     protected final HttpServer server;
     /**
-     * A store of all the state which is managed by this web server
+     * A store of all the state which is managed by this web server indexed by their associated type
      */
     private final HashMap<Class<?>, Object> managedState = new HashMap<>();
     public final ServerStatistics tracker = new ServerStatistics();
