@@ -38,10 +38,11 @@ public class AccountAPI {
 
     @Route
     public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
+        UserInfo result;
         try(var stmt = conn.namedPreparedStatement("select name, bio from users where id=:id")){
             stmt.setLong(":id", auth.user_id);
             var rs = stmt.executeQuery();
-            return new UserInfo(
+            result = new UserInfo(
                     auth.user_id,
                     rs.getString("name"),
                     auth.email,
@@ -50,6 +51,8 @@ public class AccountAPI {
                     auth.has_analytics
             );
         }
+        conn.close();
+        return result;
     }
 
     public static class DeleteAccount{
@@ -68,6 +71,7 @@ public class AccountAPI {
             if(stmt.executeUpdate() != 1)
                 throw new Unauthorized("Incorrect password");
         }
+        trans.commit();
     }
 
     public static class ChangePassword{
@@ -92,6 +96,7 @@ public class AccountAPI {
             stmt.setLong(":id", auth.user_id);
             stmt.execute();
         }
+        trans.commit();
     }
 
     public static class Register{
@@ -115,6 +120,7 @@ public class AccountAPI {
             }
             throw e;
         }
+        trans.commit();
 
         mail.sendMail(message -> {
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
@@ -162,6 +168,7 @@ public class AccountAPI {
             stmt.setLong(":id", session_id);
             stmt.execute();
         }
+        trans.commit();
 
         mail.sendMail(message -> {
             Util.LocationQuery res = null;
@@ -186,10 +193,13 @@ public class AccountAPI {
 
     @Route
     public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
+        List<Session> result;
         try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
             stmt.setLong(":id", auth.user_id);
-            return SqlSerde.sqlList(stmt.executeQuery(), Session.class);
+            result = SqlSerde.sqlList(stmt.executeQuery(), Session.class);
         }
+        conn.close();
+        return result;
     }
 
     @Route("/invalidate_session/<session_id>")
@@ -200,6 +210,7 @@ public class AccountAPI {
             if(stmt.executeUpdate() != 1)
                 throw new BadRequest("Could not invalidate session, session does not belong to you or does not exist");
         }
+        conn.close();
     }
 
 }
