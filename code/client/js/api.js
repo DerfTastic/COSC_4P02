@@ -881,6 +881,14 @@ document.addEventListener('DOMContentLoaded', () => {
         Handlebars.registerHelper("raw-helper", function (options) {
             return options.fn();
         });
+        Handlebars.registerHelper('formatTime', function(millis) {
+            const date = new Date(millis);
+            return date.toLocaleTimeString();
+        });
+        Handlebars.registerHelper('logColor', function(level) {
+            const colors = { "SEVERE": "red", "WARNING": "yellow", "INFO": "blue", "CONFIG": "grey" };
+            return colors[level] || "grey";
+        });
     }
 
     page.initialize_content(document);

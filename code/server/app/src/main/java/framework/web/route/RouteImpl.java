@@ -256,7 +256,7 @@ public class RouteImpl {
                 }
         };
     }
-    
+
     @SuppressWarnings({"unchecked", "UnnecessaryReturnStatement"})
     protected RequestHandler createRoute(Consume0 route){
         final var rh = (RouteReturn<Void>)ret;
