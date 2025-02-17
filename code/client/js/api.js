@@ -596,6 +596,13 @@ const api = {
 
 
 const cookies = {
+    secure_flag: function (){
+        if (location.protocol === 'https:') {
+            return "Secure";
+        }else{
+            return "";
+        }
+    }(),
     /**
      * 
      * @param {string} token 
@@ -604,7 +611,7 @@ const cookies = {
     setSession: function (token, days = 30) {
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `sessionToken=${encodeURIComponent(token)};expires=${expires.toUTCString()};path=/;Secure`;
+        document.cookie = `sessionToken=${encodeURIComponent(token)};expires=${expires.toUTCString()};path=/;${cookies.secure_flag}`;
     },
 
     /**
@@ -622,7 +629,7 @@ const cookies = {
     },
 
     deleteSessionToken: function () {
-        document.cookie = `sessionToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;Secure`;
+        document.cookie = `sessionToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;${cookies.secure_flag}`;
     },
 }
 
