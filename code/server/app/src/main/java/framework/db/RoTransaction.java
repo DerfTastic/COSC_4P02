@@ -1,12 +1,16 @@
 package framework.db;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class RoTransaction extends RoConn implements AutoCloseable{
 
-    public RoTransaction(Connection conn, DbManager db) throws SQLException {
-        super(conn, db);
+    public RoTransaction(DbManager db) {
+        super(db);
+    }
+
+    @Override
+    protected void initialize() throws SQLException {
+        super.initialize();
         conn.setAutoCommit(false);
     }
 

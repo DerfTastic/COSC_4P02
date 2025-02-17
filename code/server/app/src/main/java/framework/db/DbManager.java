@@ -167,22 +167,22 @@ public class DbManager implements AutoCloseable{
     }
 
     public RwTransaction rw_transaction() throws SQLException {
-        return new RwTransaction(rw_conn_p(), this);
+        return new RwTransaction(this);
     }
 
     public RoTransaction ro_transaction() throws SQLException {
-        return new RoTransaction(ro_conn_p(), this);
+        return new RoTransaction(this);
     }
 
     public synchronized RoConn ro_conn() throws SQLException {
-        return new RoConn(ro_conn_p(), this);
+        return new RoConn(this);
     }
 
     public synchronized RwConn rw_conn() throws SQLException{
-        return new RwConn(rw_conn_p(), this);
+        return new RwConn(this);
     }
 
-    private synchronized Connection rw_conn_p() throws SQLException{
+    protected synchronized Connection rw_conn_p() throws SQLException{
         var seq = sequenceBefore++;
         while(
             seq!=sequenceCurr
@@ -210,7 +210,7 @@ public class DbManager implements AutoCloseable{
         return con;
     }
 
-    private synchronized Connection ro_conn_p() throws SQLException {
+    protected synchronized Connection ro_conn_p() throws SQLException {
         var seq = sequenceBefore++;
         while(
             seq!=sequenceCurr

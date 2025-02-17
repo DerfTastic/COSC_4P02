@@ -1,11 +1,15 @@
 package framework.db;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class RwTransaction extends RwConn implements AutoCloseable{
-    public RwTransaction(Connection conn, DbManager db) throws SQLException {
-        super(conn, db);
+    public RwTransaction(DbManager db) {
+        super(db);
+    }
+
+    @Override
+    protected void initialize() throws SQLException {
+        super.initialize();
         conn.setAutoCommit(false);
     }
 

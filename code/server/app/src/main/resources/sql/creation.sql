@@ -24,6 +24,12 @@ create table users(
               ON UPDATE NO ACTION
 );
 
+CREATE UNIQUE INDEX user_email_idx ON users(email);
+CREATE INDEX user_pass_idx ON users(pass);
+CREATE INDEX user_admin_idx ON users(admin);
+CREATE INDEX user_name_idx ON users(name);
+CREATE UNIQUE INDEX user_organizer_idx ON users(organizer_id) WHERE organizer_id IS NOT NULL;
+
 create table organizers(
     id INTEGER primary key not null,
     has_analytics BOOLEAN not null
@@ -51,6 +57,15 @@ create table events(
               ON UPDATE NO ACTION
 );
 
+CREATE INDEX event_organizer_id_idx ON events(organizer_id);
+CREATE INDEX event_name_idx ON events(name);
+CREATE INDEX event_location_name_idx ON events(location_name) WHERE location_name IS NOT NULL;
+CREATE INDEX event_location_lat_idx ON events(location_lat) WHERE location_lat IS NOT NULL;
+CREATE INDEX event_location_long_idx ON events(location_long) WHERE location_long IS NOT NULL;
+CREATE INDEX event_draft_idx ON events(draft);
+CREATE INDEX event_start_idx ON events(start) WHERE start IS NOT NULL;
+CREATE INDEX event_duration_idx ON events(duration) WHERE duration IS NOT NULL;
+
 create table event_tags(
     tag TEXT not null,
     category BOOLEAN not null,
@@ -61,6 +76,9 @@ create table event_tags(
           ON DELETE CASCADE
           ON UPDATE NO ACTION
 );
+
+CREATE INDEX event_tags_idx ON event_tags(event_id);
+
 
 create table tickets(
     id INTEGER primary key not null,
@@ -74,6 +92,10 @@ create table tickets(
               ON DELETE SET NULL
               ON UPDATE NO ACTION
 );
+
+CREATE INDEX tickets_event_id_idx ON tickets(event_id) WHERE event_id IS NOT NULL;
+CREATE INDEX tickets_price_idx ON tickets(price);
+CREATE INDEX tickets_available_tickets_idx ON tickets(available_tickets) WHERE available_tickets IS NOT NULL;
 
 create table purchased_tickets(
     id INTEGER primary key not null,
@@ -98,6 +120,11 @@ create table purchased_tickets(
             ON UPDATE RESTRICT
 );
 
+CREATE INDEX purchased_tickets_user_id_idx ON purchased_tickets(user_id) WHERE user_id IS NOT NULL;
+CREATE INDEX purchased_ticket_id_id_idx ON purchased_tickets(ticket_id) WHERE ticket_id IS NOT NULL;
+CREATE INDEX purchased_payment_id_id_idx ON purchased_tickets(payment_id) WHERE payment_id IS NOT NULL;
+
+
 create table payments(
     id INTEGER primary key not null,
     user_id INTEGER,
@@ -109,6 +136,8 @@ create table payments(
             ON DELETE SET NULL
             ON UPDATE NO ACTION
 );
+
+CREATE INDEX payments_user_id_idx ON payments(user_id);
 
 create table sessions(
     id INTEGER primary key not null,
@@ -124,5 +153,9 @@ create table sessions(
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 );
+
+CREATE INDEX sessions_user_id_idx ON sessions(user_id);
+CREATE UNIQUE INDEX sessions_token_idx ON sessions(token) WHERE token IS NOT NULL;
+CREATE INDEX sessions_expiration_idx ON sessions(expiration);
 
 insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, null, null, null);
