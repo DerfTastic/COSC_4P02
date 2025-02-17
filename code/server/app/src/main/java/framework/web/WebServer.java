@@ -21,7 +21,9 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
- *
+ * This class is the webserver for the Ticket Express application.
+ * Class inherited by WebServerImpl.
+ * @See server/infrastructure/WebServerImpl.java
  */
 public class WebServer {
     protected final HttpServer server; // Ticket Express server

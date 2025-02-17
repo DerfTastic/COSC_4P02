@@ -14,6 +14,11 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Implementation of the web server for the Ticket Express application.
+ * It creates an instance of the parent class WebServer using the hostname and port stored in the Config class.
+ *
+ */
 public class WebServerImpl extends WebServer {
 
     public WebServerImpl() throws Exception {
@@ -25,7 +30,7 @@ public class WebServerImpl extends WebServer {
 
 
         addManagedResource(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
-        addManagedResource(new DynamicMediaHandler());
+        addManagedResource(new DynamicMediaHandler()); //
         try{
             addManagedResource(new DbManager(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true));
         }catch (Exception e){
