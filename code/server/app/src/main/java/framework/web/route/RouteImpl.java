@@ -89,6 +89,7 @@ public class RouteImpl {
         }
     }
 
+    @SuppressWarnings("PointlessArithmeticExpression")
     private RequestHandler makeHandler() throws Throwable {
         var params = sourceMethod.getParameters();
 
@@ -123,23 +124,23 @@ public class RouteImpl {
                 dynamicMethodType
         );
 
-        var lamda = factory.getTarget().invoke();
-        return switch((isVoid?0:1000)+params.length){
-            case 0 -> createRoute((Consume0)lamda);
-            case 1 -> createRoute((Consume1<?>)lamda);
-            case 2 -> createRoute((Consume2<?, ?>)lamda);
-            case 3 -> createRoute((Consume3<?, ?, ?>)lamda);
-            case 4 -> createRoute((Consume4<?, ?, ?, ?>)lamda);
-            case 5 -> createRoute((Consume5<?, ?, ?, ?, ?>)lamda);
-            case 6 -> createRoute((Consume6<?, ?, ?, ?, ?, ?>)lamda);
+        var lambda = factory.getTarget().invoke();
+        return switch((isVoid?0:1)+params.length*2){
+            case 0 *2 -> createRoute((Consume0)lambda);
+            case 1 *2 -> createRoute((Consume1<?>)lambda);
+            case 2 *2 -> createRoute((Consume2<?, ?>)lambda);
+            case 3 *2 -> createRoute((Consume3<?, ?, ?>)lambda);
+            case 4 *2 -> createRoute((Consume4<?, ?, ?, ?>)lambda);
+            case 5 *2 -> createRoute((Consume5<?, ?, ?, ?, ?>)lambda);
+            case 6 *2 -> createRoute((Consume6<?, ?, ?, ?, ?, ?>)lambda);
 
-            case 1000 -> createRoute((Function0<?>)lamda);
-            case 1001 -> createRoute((Function1<?, ?>)lamda);
-            case 1002 -> createRoute((Function2<?, ?, ?>)lamda);
-            case 1003 -> createRoute((Function3<?, ?, ?, ?>)lamda);
-            case 1004 -> createRoute((Function4<?, ?, ?, ?, ?>)lamda);
-            case 1005 -> createRoute((Function5<?, ?, ?, ?, ?, ?>)lamda);
-            case 1006 -> createRoute((Function6<?, ?, ?, ?, ?, ?, ?>)lamda);
+            case 0 *2+1 -> createRoute((Function0<?>)lambda);
+            case 1 *2+1 -> createRoute((Function1<?, ?>)lambda);
+            case 2 *2+1 -> createRoute((Function2<?, ?, ?>)lambda);
+            case 3 *2+1 -> createRoute((Function3<?, ?, ?, ?>)lambda);
+            case 4 *2+1 -> createRoute((Function4<?, ?, ?, ?, ?>)lambda);
+            case 5 *2+1 -> createRoute((Function5<?, ?, ?, ?, ?, ?>)lambda);
+            case 6 *2+1 -> createRoute((Function6<?, ?, ?, ?, ?, ?, ?>)lambda);
             default -> throw new RuntimeException("Invalid State");
         };
     }
@@ -189,9 +190,7 @@ public class RouteImpl {
     }
 
     public HttpHandler handler(WebServer server){
-        return exchange -> {
-            this.handler.handle(new RequestImpl(server, exchange));
-        };
+        return exchange -> this.handler.handle(new RequestImpl(server, exchange));
     }
 
     private class RequestImpl extends Request{
@@ -257,8 +256,8 @@ public class RouteImpl {
                 }
         };
     }
-
-    @SuppressWarnings("unchecked")
+    
+    @SuppressWarnings({"unchecked", "UnnecessaryReturnStatement"})
     protected RequestHandler createRoute(Consume0 route){
         final var rh = (RouteReturn<Void>)ret;
         return request -> {
@@ -489,7 +488,7 @@ public class RouteImpl {
         };
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "UnnecessaryReturnStatement"})
     protected <R> RequestHandler createRoute(Function0<R> route){
         final var rh = (RouteReturn<R>)ret;
         return request -> {
