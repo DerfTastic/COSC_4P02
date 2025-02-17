@@ -147,6 +147,7 @@ public class SearchAPI {
                 events.get(index).tags().add(new EventAPI.EventTag(tag, category));
             }
         }
+        trans.commit();
 
         return events;
     }

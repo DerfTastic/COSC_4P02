@@ -33,5 +33,6 @@ public class OrganizerAPI {
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to make account an organizer");
         }
+        trans.commit();
     }
 }
