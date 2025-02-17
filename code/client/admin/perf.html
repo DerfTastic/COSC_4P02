@@ -122,6 +122,7 @@
             data: data,
             options: {
                 responsive: true,
+                animation: false,
                 scales: {
                     x: {
                         title: { display: true, text: 'Time' }
@@ -139,25 +140,23 @@
         let previousStat = null;
         let updateInterval = null;
         const updateButton = document.getElementById('updateButton');
+        let start = new Date();
 
-        let update_time = 5;
+        let update_time = 3;
 
         function updateChart(statInstance) {
-            const now = new Date().toLocaleTimeString();
+            const max_len = 35;
+            const now = new Date();
+            const delta = (now.getTime()-start.getTime())/1000.0;
             if (previousStat) {
                 const diffRequests = statInstance.total_requests_handled - previousStat.total_requests_handled;
                 const diffPreparedStatements = statInstance.prepared_statements_executed - previousStat.prepared_statements_executed;
                 const diffDBStatements = statInstance.total_db_statements_executed - previousStat.total_db_statements_executed;
                 
-                if (data.labels.length > 20) { // Keep only last 20 entries
-                    data.labels.shift();
-                    data.datasets.forEach(dataset => dataset.data.shift());
-                }
-
-                data.labels.push(now);
-                data.datasets[0].data.push(diffRequests/update_time);
-                data.datasets[1].data.push(diffPreparedStatements/update_time);
-                data.datasets[2].data.push(diffDBStatements/update_time);
+                data.labels.push(now.toLocaleTimeString());
+                data.datasets[0].data.push(diffRequests/delta);
+                data.datasets[1].data.push(diffPreparedStatements/delta);
+                data.datasets[2].data.push(diffDBStatements/delta);
 
                 // Update per-route request statistics
                 Object.keys(statInstance.route_stats).forEach((route, index) => {
@@ -173,13 +172,25 @@
                         };
                         data.datasets.push(dataset);
                     }
-                    if (dataset.data.length > 20) dataset.data.shift();
-                    dataset.data.push(diffRouteRequests/update_time);
-                });
+                    dataset.data.push(diffRouteRequests/delta);
+                });   
+            }
+            while(data.labels.length<=max_len){
+                data.labels.push(now.toLocaleTimeString());
+            }
+            data.datasets.forEach(e => {
+                while(e.data.length<=max_len){
+                    e.data.unshift(0);
+                }
+            });
+            if (data.labels.length > max_len) {
+                data.labels.shift();
+                data.datasets.forEach(dataset => dataset.data.shift());
             }
 
             previousStat = statInstance;
             myChart.update();
+            start = now;
         }
 
         function toggleDataset(index) {
@@ -216,8 +227,6 @@
         async function update(){
             updateChart(await api.admin.get_server_statistics(cookies.getSession()))
         }
-        update();
-        update();
     </script>
 </body>
 </html>

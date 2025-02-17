@@ -162,7 +162,7 @@ async function test_default_admin_account(){
 }
 
 async function create_example_event(org_session, iteration){
-    const picture_promise = (async () => await (await fetch(`https://picsum.photos/200?random=${iteration}`)).blob())();
+    // const picture_promise = (async () => await (await fetch(`https://picsum.photos/200?random=${iteration}`)).blob())();
 
     const event_id = await api.events.create_event(org_session);
 
@@ -191,8 +191,8 @@ async function create_example_event(org_session, iteration){
     };
     await api.events.update_event(data, org_session);
 
-    const picture =  await picture_promise;
-    await api.events.set_picture(event_id, picture, org_session);
+    // const picture =  await picture_promise;
+    // await api.events.set_picture(event_id, picture, org_session);
 
 
     // getting the event with a session that we own should work;
