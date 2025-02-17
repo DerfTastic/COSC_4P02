@@ -16,8 +16,6 @@ import java.util.logging.Logger;
 
 /**
  * Implementation of the web server for the Ticket Express application.
- * It creates an instance of the parent class WebServer using the hostname and port stored in the Config class.
- *
  */
 public class WebServerImpl extends WebServer {
 
