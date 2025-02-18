@@ -22,10 +22,13 @@ import java.util.logging.Logger;
 public class EventAPI {
     @Route
     public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
+        long result;
         try(var stmt = trans.namedPreparedStatement("insert into events values(null, :organizer_id, '', '', null, null, null, null, null, true, null, null, null) returning id")){
             stmt.setLong(":organizer_id", session.organizer_id);
-            return stmt.executeQuery().getLong("id");
+            result = stmt.executeQuery().getLong("id");
         }
+        trans.commit();
+        return result;
     }
 
     public static class Event{
@@ -65,7 +68,7 @@ public class EventAPI {
     @Route("/get_event/<id>")
     public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, BadRequest {
         Event event;
-        try(var stmt = trans.namedPreparedStatement("select * from events where id=:id AND (draft=false OR organizer_id=:organizer_id)")){
+        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:id AND draft=false) OR (id=:id AND organizer_id=:organizer_id)")){
             stmt.setLong(":id", id);
             if(session!=null&&session.organizer_id!=null)
                 stmt.setLong(":organizer_id", session.organizer_id);
@@ -82,6 +85,7 @@ public class EventAPI {
             stmt.setLong(":event_id", event.id);
             tags = SqlSerde.sqlList(stmt.executeQuery(), EventTag.class);
         }
+        trans.commit();
 
         return new AllEvent(event, tags);
     }
@@ -118,6 +122,7 @@ public class EventAPI {
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to update event");
         }
+        trans.commit();
     }
 
     @Route("/delete_event/<id>")
@@ -128,6 +133,7 @@ public class EventAPI {
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Could not delete event. Event doesn't exist or you don't own event");
         }
+        trans.commit();
     }
 
 
@@ -140,6 +146,7 @@ public class EventAPI {
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
         }
+        trans.commit();
     }
 
     @Route("/remove_event_tag/<id>/<tag>/<category>")
@@ -151,6 +158,7 @@ public class EventAPI {
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Could not remove tag. Tag does not exist or you do now own event");
         }
+        trans.commit();
     }
 
     @Route("/set_draft/<id>/<draft>")
@@ -162,6 +170,7 @@ public class EventAPI {
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Couldn't update the specified event. Either the event doesn't exist, or you don't control this event");
         }
+        trans.commit();
     }
 
     @Route("/set_picture/<id>")
@@ -181,6 +190,7 @@ public class EventAPI {
             }
         }
 
+        //TODO the database is locked here.. splitting the transaction into two may yield much better performance
         var media_id = handler.add(data);
 
         try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND organizer_id=:organizer_id")){
@@ -193,6 +203,7 @@ public class EventAPI {
             handler.delete(media_id);
             throw e;
         }
+        trans.commit();
         return media_id;
     }
 }

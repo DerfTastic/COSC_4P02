@@ -19,16 +19,19 @@ import java.sql.SQLException;
 public class TicketsAPI {
 
     @Route("/create_ticket/<event_id>")
-    public static int create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
-        try(var stmt = trans.namedPreparedStatement("select organizer_id from events where id=:id")){
+    public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
+        try (var stmt = trans.namedPreparedStatement("select organizer_id from events where id=:id")) {
             stmt.setLong("id", event_id);
             var rs = stmt.executeQuery();
-            if(!rs.next()||rs.getLong("organizer_id")!=session.organizer_id)
+            if (!rs.next() || rs.getLong("organizer_id") != session.organizer_id)
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
-        try(var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")){
-            return stmt.executeQuery().getInt("id");
+        long result;
+        try (var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")) {
+            result = stmt.executeQuery().getLong("id");
         }
+        trans.commit();
+        return result;
     }
 
     public static class Ticket{

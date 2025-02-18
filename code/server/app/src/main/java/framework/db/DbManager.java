@@ -65,7 +65,6 @@ public class DbManager implements AutoCloseable{
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
                 try(var stmt = conn.createStatement()){
-                    conn.getConn().setAutoCommit(true);
                     for(var sql : sql("creation").split(";")){
                         try{
                             stmt.execute(sql);
@@ -78,6 +77,7 @@ public class DbManager implements AutoCloseable{
                     Logger.getGlobal().log(Level.SEVERE, "Failed to initialize DB", e);
                     throw e;
                 }
+                conn.commit();
                 Logger.getGlobal().log(Level.CONFIG, "Initialized DB");
             }
         }
@@ -161,28 +161,29 @@ public class DbManager implements AutoCloseable{
         config.setPragma(SQLiteConfig.Pragma.RECURSIVE_TRIGGERS, "true");
         var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
+        connection.setAutoCommit(false);
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
         return connection;
     }
 
     public RwTransaction rw_transaction() throws SQLException {
-        return new RwTransaction(rw_conn_p(), this);
+        return new RwTransaction(this);
     }
 
     public RoTransaction ro_transaction() throws SQLException {
-        return new RoTransaction(ro_conn_p(), this);
+        return new RoTransaction(this);
     }
 
     public synchronized RoConn ro_conn() throws SQLException {
-        return new RoConn(ro_conn_p(), this);
+        return new RoConn(this);
     }
 
     public synchronized RwConn rw_conn() throws SQLException{
-        return new RwConn(rw_conn_p(), this);
+        return new RwConn(this);
     }
 
-    private synchronized Connection rw_conn_p() throws SQLException{
+    protected synchronized Connection rw_conn_p() throws SQLException{
         var seq = sequenceBefore++;
         while(
             seq!=sequenceCurr
@@ -210,7 +211,7 @@ public class DbManager implements AutoCloseable{
         return con;
     }
 
-    private synchronized Connection ro_conn_p() throws SQLException {
+    protected synchronized Connection ro_conn_p() throws SQLException {
         var seq = sequenceBefore++;
         while(
             seq!=sequenceCurr

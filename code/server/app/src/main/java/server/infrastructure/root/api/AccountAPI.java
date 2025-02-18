@@ -4,7 +4,6 @@ import framework.web.annotations.*;
 import org.sqlite.SQLiteException;
 import framework.db.RoConn;
 import framework.db.RoTransaction;
-import framework.db.RwConn;
 import framework.db.RwTransaction;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
@@ -37,11 +36,12 @@ public class AccountAPI {
     ){}
 
     @Route
-    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
-        try(var stmt = conn.namedPreparedStatement("select name, bio from users where id=:id")){
+    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans) throws SQLException {
+        UserInfo result;
+        try(trans; var stmt = trans.namedPreparedStatement("select name, bio from users where id=:id")){
             stmt.setLong(":id", auth.user_id);
             var rs = stmt.executeQuery();
-            return new UserInfo(
+            result = new UserInfo(
                     auth.user_id,
                     rs.getString("name"),
                     auth.email,
@@ -50,6 +50,8 @@ public class AccountAPI {
                     auth.has_analytics
             );
         }
+
+        return result;
     }
 
     public static class DeleteAccount{
@@ -68,6 +70,7 @@ public class AccountAPI {
             if(stmt.executeUpdate() != 1)
                 throw new Unauthorized("Incorrect password");
         }
+        trans.commit();
     }
 
     public static class ChangePassword{
@@ -92,6 +95,7 @@ public class AccountAPI {
             stmt.setLong(":id", auth.user_id);
             stmt.execute();
         }
+        trans.commit();
     }
 
     public static class Register{
@@ -115,6 +119,7 @@ public class AccountAPI {
             }
             throw e;
         }
+        trans.commit();
 
         mail.sendMail(message -> {
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
@@ -135,13 +140,14 @@ public class AccountAPI {
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
             stmt.setString(":pass", login.password);
-            var res = stmt.executeQuery();
-            if(!res.next())
-                throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
-            try{
-                user_id = res.getLong(1);
-            }catch (SQLException ignore){
-                throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+            try(var res = stmt.executeQuery()){
+                if(!res.next())
+                    throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+                try{
+                    user_id = res.getLong(1);
+                }catch (SQLException ignore){
+                    throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+                }
             }
         }
 
@@ -151,7 +157,9 @@ public class AccountAPI {
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
             stmt.setString(":agent", agent);
             stmt.setString(":ip", ip.getHostAddress());
-            session_id = stmt.executeQuery().getLong(1);
+            try(var res = stmt.executeQuery()){
+                session_id = res.getLong(1);
+            }
         }
 
         var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id).getBytes());
@@ -162,6 +170,7 @@ public class AccountAPI {
             stmt.setLong(":id", session_id);
             stmt.execute();
         }
+        trans.commit();
 
         mail.sendMail(message -> {
             Util.LocationQuery res = null;
@@ -186,20 +195,24 @@ public class AccountAPI {
 
     @Route
     public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
+        List<Session> result;
         try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
             stmt.setLong(":id", auth.user_id);
-            return SqlSerde.sqlList(stmt.executeQuery(), Session.class);
+            result = SqlSerde.sqlList(stmt.executeQuery(), Session.class);
         }
+        conn.close();
+        return result;
     }
 
     @Route("/invalidate_session/<session_id>")
-    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwConn conn, @Path long session_id) throws SQLException, BadRequest {
-        try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
+    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setLong(":session_id", session_id);
             stmt.setLong(":user_id", auth.user_id);
             if(stmt.executeUpdate() != 1)
                 throw new BadRequest("Could not invalidate session, session does not belong to you or does not exist");
         }
+        trans.commit();
     }
 
 }

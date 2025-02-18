@@ -1,5 +1,6 @@
 package server.infrastructure.root.api;
 
+import framework.db.RwTransaction;
 import framework.web.annotations.*;
 import server.ServerLogger;
 import framework.db.RwConn;
@@ -55,27 +56,31 @@ public class AdminAPI {
 
     @Route
     public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, RwConn connection, @Body String sql) throws SQLException {
-        try(var stmt = connection.createStatement()){
+        StringBuilder list;
+        try (var stmt = connection.createStatement()) {
             var rows = stmt.execute(sql);
-            StringBuilder list = new StringBuilder();
+            list = new StringBuilder();
 
             var rs = stmt.getResultSet();
             list.append("Updated ").append(stmt.getUpdateCount()).append("\n");
-            if(rs==null)return list.toString();
-            if(!rows)return list.toString();
-            while(rs.next()){
+            if (rs == null) return list.toString();
+            if (!rows) return list.toString();
+            while (rs.next()) {
                 list.append("(");
-                for(int i = 1; ; i++){
-                    try{
+                for (int i = 1; ; i++) {
+                    try {
                         var res = rs.getString(i);
-                        if(i!=1) list.append(", ");
+                        if (i != 1) list.append(", ");
                         list.append(res);
-                    }catch (SQLException ignore){break;}
+                    } catch (SQLException ignore) {
+                        break;
+                    }
                 }
                 list.append(")\n");
             }
-            return list.toString();
         }
+        connection.commit();
+        return list.toString();
     }
 
     public record LogR(
@@ -113,22 +118,24 @@ public class AdminAPI {
     }
 
     @Route("/delete_other_account/<email>")
-    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path String email) throws SQLException, BadRequest {
-        try(var stmt = conn.namedPreparedStatement("delete from users where email=:email")){
+    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RwTransaction trans, @Path String email) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("delete from users where email=:email")){
             stmt.setString(":email", email);
             if(stmt.executeUpdate() != 1)
                 throw new BadRequest("Account with the specified email does not exist");
         }
+        trans.commit();
     }
 
     @Route("/set_account_admin/<admin>/<email>")
-    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwConn conn, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
-        try(var stmt = conn.namedPreparedStatement("update users set admin=:admin where email=:email")){
+    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwTransaction trans, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("update users set admin=:admin where email=:email")){
             stmt.setString(":email", email);
             stmt.setBoolean(":admin", admin);
             if(stmt.executeUpdate() != 1)
                 throw new BadRequest("Account with the specified email does not exist");
         }
+        trans.commit();
     }
 
     @Route

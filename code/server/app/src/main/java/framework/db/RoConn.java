@@ -5,8 +5,13 @@ import java.sql.SQLException;
 
 
 public class RoConn extends Conn{
-    public RoConn(Connection conn, DbManager db) {
-        super(conn, db);
+    public RoConn(DbManager db) {
+        super(db);
+    }
+
+    @Override
+    protected void initialize() throws SQLException {
+        conn = db.ro_conn_p();
     }
 
     @Override

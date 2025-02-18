@@ -883,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         Handlebars.registerHelper('formatTime', function(millis) {
             const date = new Date(millis);
-            return date.toLocaleTimeString();
+            return date.toLocaleString();
         });
         Handlebars.registerHelper('logColor', function(level) {
             const colors = { "SEVERE": "red", "WARNING": "yellow", "INFO": "blue", "CONFIG": "grey" };

@@ -10,6 +10,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Config.init(); // initialize fundamental directories
         ServerLogger.initialize(Level.CONFIG);
+        Logger.getGlobal().log(Level.INFO, "Max Heap Size: " + Runtime.getRuntime().maxMemory());
         try{
             new WebServerImpl().start();
         }catch (Exception e){
