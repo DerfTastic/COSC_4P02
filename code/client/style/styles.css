@@ -1,18 +1,32 @@
 
 body {
     color: #f4f4f9;
-    background-color: #28282a;
+    background: linear-gradient(135deg, #1b263b 0%, #2a3e59 40%, #415a77 75%, #778da9 100%);
     font-family: "Times New Roman", Times, serif;
     margin: 0;
     margin-top: 10vh;
     font-size: 20px;
-    padding: 10px;
     grid-template-rows: auto 1fr auto;
+    width: 100%;
+    padding:0;
+    animation: fadeIn 0.6s ease-out;
 }
-
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+html {
+    scroll-behavior: smooth;
+  }
+  
 .content{
     margin: auto;
     justify-content: center;
+    padding: 10px;
 }
 
 
@@ -28,18 +42,22 @@ footer {
     justify-self: center;
     width: 100%;
     padding: 10px;
-    background-color: #415a77;
+    border-top: 1px solid rgba(238, 238, 240, 0.2);
+    background: rgba(238, 238, 240, 0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: #eeeef0;
     text-align: center;
     font-size: 18px;
-    margin-bottom: -10px;
 }
 
 
 
 header {
     width: 100%;
-    background-color: #415a77;
+    background: rgba(238, 238, 240, 0.1);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(238, 238, 240, 0.2);
     position:fixed;
     top: 0;
     left: 0;
@@ -57,6 +75,7 @@ header h1, h2, h3 {
     color: #eeeef0;
     margin: 0;
     padding: 10px 0;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 nav  {
@@ -103,9 +122,9 @@ header .logo {
     padding-left: 10px;
     border:none;
     outline: none;
-    background-color: #28282a;
-    color: #eeeef0;
-    border-radius: 50px;
+    background-color: #eeeef0;
+    color: #28282a;
+    border-radius: 25px;
     width: 100%;
     height: 100%;
     max-width: 250px;
@@ -138,6 +157,7 @@ header .logo {
 nav  a, .cart {
     text-decoration: none;
     color: #eeeef0;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     font-size: 20px;
     padding: 15px 25px;
     display: block;
@@ -149,7 +169,6 @@ nav  a, .cart {
 
 nav  a:hover, .cart:hover {
     background-color: #778da9;
-    color: #eeeef0;
 }
 
 .cart {
@@ -195,11 +214,12 @@ nav  a:hover, .cart:hover {
 }
 
 .product-box {
-    background-color: #28282a;
-    border: 3px solid #eeeef0;
+    background: rgba(238, 238, 240, 0.1); 
+  border: 5px solid rgba(238, 238, 240, 0.2);  
     width: calc((100% - (20px * 3)) / 4);
     height: 400px;
-    box-shadow:  0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow:  0 4px 20px rgba(0, 0, 0, 0.2); 
+  
     overflow: hidden;
     flex-shrink: 0;
     display: flex;
@@ -209,6 +229,7 @@ nav  a:hover, .cart:hover {
     position: relative;
     transition: transform 0.3s ease;
     box-sizing: border-box;
+    backdrop-filter: blur(15px);  
 }
 
 .product-box:hover {
@@ -241,7 +262,7 @@ nav  a:hover, .cart:hover {
 
 .product-box .caption p {
     font-size: 14px;
-    color: #666;
+    color: #28282a;
     margin: 0;
 }
 
@@ -309,6 +330,7 @@ nav  a:hover, .cart:hover {
     justify-content: center;
     align-items: center;
     min-height: 70vh;
+    background-color: transparent;
 }
 .login-container,.register-container {
     display: flex;
@@ -317,11 +339,16 @@ nav  a:hover, .cart:hover {
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    background-color: #415a77;
-    border-radius: 8px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(238, 238, 240, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     color: #eeeef0;
+}
 
+.login-container:hover, .register-container:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
+    background: rgba(238, 238, 240, 0.2);  
 }
 
 .login-form h2, .register-form h2 {
@@ -351,14 +378,27 @@ nav  a:hover, .cart:hover {
     transition: box-shadow 0.3s ease;
 }
 
-.form-group input:focus {
-    box-shadow: 0 0 5px rgba(85, 110, 224, 0.8);
-}
+input, textarea {
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: rgba(238, 238, 240, 0.1);
+    border: 1px solid rgba(238, 238, 240, 0.2);
+    color: #eeeef0;
+    font-size: 16px;
+    font-family: "Times New Roman", Times, serif;
+    transition: all 0.3s ease;
+  }
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(78, 169, 248, 0.8);
+    box-shadow: 0 0 8px rgba(78, 169, 248, 0.8);
+  }
 
 .btn-login, .btn-register {
     width: 100%;
     padding: 10px;
-    background-color: #415a77;
+    background-color: transparent;
     border: none;
     border-radius: 5px;
     color: #eeeef0;
@@ -557,7 +597,7 @@ nav  a:hover, .cart:hover {
 
 .input-field, .select-field, .color-picker, .range-slider {
     padding: 12px;
-    background-color: #eeeef0;
+    background: rgba(238, 238, 240, 0.1);
     border: none;
     border-radius: 5px;
     color: #28282a;
@@ -633,13 +673,15 @@ nav  a:hover, .cart:hover {
 @media (max-width: 768px) {
 
     body{
-        margin-top: 25vh;
+        margin-top: 35vh;
     }
     
     .container {
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0;
+        padding: 20px;
     }
     .content{
         margin:0;
@@ -710,13 +752,15 @@ nav  a:hover, .cart:hover {
 
 @media (max-width: 480px) {
     body{
-        margin-top: 20vh;
+        margin-top: 30vh;
     }
     
     .container {
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0;
+        padding: 20px;
     }
 
    
