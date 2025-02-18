@@ -79,7 +79,7 @@ public class AdminAPI {
                 list.append(")\n");
             }
         }
-        connection.close();
+        connection.commit();
         return list.toString();
     }
 

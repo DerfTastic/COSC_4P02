@@ -39,9 +39,10 @@ async function run_all(){
     timeStart("");
     const start = new Date();
 
-    const user_count = 500;
-    const organizer_count = 100;
+    const user_count = 5000;
+    const organizer_count = 1000;
     const admin_count = 5;  
+    const event_count = 1000;
     // test_register_1();
     // test_register_2();
     // test_default_admin_account();
@@ -66,7 +67,7 @@ async function run_all(){
     
     timeStart("Creating Events");
     const meows = [];
-    for(let i = 0; i < 600; i ++){
+    for(let i = 0; i < event_count; i ++){
         var session = organizers[chance.integer({ min: 0, max: organizers.length-1 })].session;
         meows.push(create_example_event(session, i));
     }

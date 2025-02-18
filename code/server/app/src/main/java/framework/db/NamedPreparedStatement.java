@@ -8,11 +8,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NamedPreparedStatement implements AutoCloseable {
     private final HashMap<String, Integer> fieldMap;
     private final static HashMap<String, Tuple<String, HashMap<String, Integer>>> fieldMapCache = new HashMap<>();
+    private final static HashMap<Tuple<Connection, String>, PreparedStatement> preparedMap = new HashMap<>();
     private final PreparedStatement stmt;
 
     ServerStatistics stats;
@@ -32,9 +34,15 @@ public class NamedPreparedStatement implements AutoCloseable {
             pos++;
             while(pos < sql.length() && validChar(sql.charAt(pos)))pos++;
 
-            fieldMap.put(sql.substring(start,pos), index);
-            index += 1;
-            sql = sql.substring(0, start) + "?" + sql.substring(pos);
+            int idx;
+            if(fieldMap.containsKey(sql.substring(start,pos))){
+                idx = fieldMap.get(sql.substring(start,pos));
+            }else{
+                fieldMap.put(sql.substring(start,pos), index);
+                idx = index;
+                index += 1;
+            }
+            sql = sql.substring(0, start) + "?" + idx + sql.substring(pos);
         }
         var ret = new Tuple<>(sql, fieldMap);
         synchronized (fieldMapCache){
@@ -72,7 +80,16 @@ public class NamedPreparedStatement implements AutoCloseable {
     }
 
     private NamedPreparedStatement(Connection conn, Tuple<String, HashMap<String, Integer>> sql) throws SQLException {
-        this.stmt = conn.prepareStatement(sql.t1);
+        var tuple = new Tuple<>(conn, sql.t1);
+        synchronized (preparedMap){
+            if(preparedMap.containsKey(tuple)){
+                this.stmt = preparedMap.get(tuple);
+            }else{
+                this.stmt = conn.prepareStatement(sql.t1);
+                preparedMap.put(tuple, this.stmt);
+            }
+        }
+        this.stmt.clearParameters();
         fieldMap = sql.t2;
     }
 
@@ -88,14 +105,22 @@ public class NamedPreparedStatement implements AutoCloseable {
         }
     }
 
+    private final ArrayList<ResultSet> results = new ArrayList<>();
+
     @Override
     public void close() throws SQLException {
-        stmt.close();
+        for(var res : results){
+            res.close();
+        }
+        results.clear();
+//        stmt.close();
     }
 
     public ResultSet executeQuery() throws SQLException {
         if(stats!=null)stats.executed_prepared_statement();
-        return stmt.executeQuery();
+        var rs = stmt.executeQuery();
+        results.add(rs);
+        return rs;
     }
 
     public boolean execute() throws SQLException {
@@ -109,6 +134,8 @@ public class NamedPreparedStatement implements AutoCloseable {
     }
 
     public ResultSet getResultSet() throws SQLException{
-        return stmt.getResultSet();
+        var rs = stmt.getResultSet();
+        results.add(rs);
+        return rs;
     }
 }

@@ -43,4 +43,14 @@ public abstract class Conn implements AutoCloseable {
         }
         return conn;
     }
+
+    public void commit() throws SQLException {
+        if(!isClosed())
+            conn.commit();
+    }
+
+    public void rollback() throws SQLException{
+        if(!isClosed())
+            conn.rollback();
+    }
 }

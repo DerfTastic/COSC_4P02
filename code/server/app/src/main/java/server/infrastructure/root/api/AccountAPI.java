@@ -4,7 +4,6 @@ import framework.web.annotations.*;
 import org.sqlite.SQLiteException;
 import framework.db.RoConn;
 import framework.db.RoTransaction;
-import framework.db.RwConn;
 import framework.db.RwTransaction;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
@@ -37,9 +36,9 @@ public class AccountAPI {
     ){}
 
     @Route
-    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
+    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans) throws SQLException {
         UserInfo result;
-        try(var stmt = conn.namedPreparedStatement("select name, bio from users where id=:id")){
+        try(trans; var stmt = trans.namedPreparedStatement("select name, bio from users where id=:id")){
             stmt.setLong(":id", auth.user_id);
             var rs = stmt.executeQuery();
             result = new UserInfo(
@@ -51,7 +50,7 @@ public class AccountAPI {
                     auth.has_analytics
             );
         }
-        conn.close();
+
         return result;
     }
 
@@ -141,13 +140,14 @@ public class AccountAPI {
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
             stmt.setString(":pass", login.password);
-            var res = stmt.executeQuery();
-            if(!res.next())
-                throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
-            try{
-                user_id = res.getLong(1);
-            }catch (SQLException ignore){
-                throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+            try(var res = stmt.executeQuery()){
+                if(!res.next())
+                    throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+                try{
+                    user_id = res.getLong(1);
+                }catch (SQLException ignore){
+                    throw new Unauthorized("An account with the specified email does not exist, or the specified password is incorrect");
+                }
             }
         }
 
@@ -157,7 +157,9 @@ public class AccountAPI {
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
             stmt.setString(":agent", agent);
             stmt.setString(":ip", ip.getHostAddress());
-            session_id = stmt.executeQuery().getLong(1);
+            try(var res = stmt.executeQuery()){
+                session_id = res.getLong(1);
+            }
         }
 
         var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id).getBytes());
@@ -203,14 +205,14 @@ public class AccountAPI {
     }
 
     @Route("/invalidate_session/<session_id>")
-    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwConn conn, @Path long session_id) throws SQLException, BadRequest {
-        try(var stmt = conn.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
+    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setLong(":session_id", session_id);
             stmt.setLong(":user_id", auth.user_id);
             if(stmt.executeUpdate() != 1)
                 throw new BadRequest("Could not invalidate session, session does not belong to you or does not exist");
         }
-        conn.close();
+        trans.commit();
     }
 
 }
