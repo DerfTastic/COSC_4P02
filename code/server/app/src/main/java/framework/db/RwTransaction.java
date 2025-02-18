@@ -3,6 +3,9 @@ package framework.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Class for read/write database transactions.
+ */
 public class RwTransaction extends RwConn implements AutoCloseable{
     public RwTransaction(Connection conn, DbManager db) throws SQLException {
         super(conn, db);

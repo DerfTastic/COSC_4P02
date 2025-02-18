@@ -71,6 +71,12 @@ public class NamedPreparedStatement implements AutoCloseable {
         stmt.setDouble(getIndex(name), value);
     }
 
+    /**
+     * This constructor takes a connection and tuple returned by initialize(sql) as arguments to instantiate this class.
+     * @param conn the connection to the database
+     * @param sql tuple containing a string and a String-Integer hashmap
+     * @throws SQLException if an error occurs preparing SQL statement
+     */
     private NamedPreparedStatement(Connection conn, Tuple<String, HashMap<String, Integer>> sql) throws SQLException {
         this.stmt = conn.prepareStatement(sql.t1);
         fieldMap = sql.t2;

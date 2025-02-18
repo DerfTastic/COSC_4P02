@@ -42,21 +42,20 @@ public class WebServerImpl extends WebServer {
             db.setStatsTracker(tracker);
             var timer = getManagedState(TimedEvents.class);
             timer.addMinutely(() -> {
-                try(var trans = db.rw_transaction()){
-                    try(var stmt = trans.namedPreparedStatement("delete from sessions where expiration<:now")){
+                try (var trans = db.rw_transaction()) {
+                    try (var stmt = trans.namedPreparedStatement("delete from sessions where expiration<:now")){
                         stmt.setLong(":now", new Date().getTime());
                         stmt.execute();
                     }
                     trans.commit();
                     Logger.getGlobal().log(Level.FINE, "Ran session expiration clear");
-                }catch (Exception e){
+                } catch (Exception e) {
                     Logger.getGlobal().log(Level.SEVERE, "Failed to run session expiration clear", e);
                 }
             });
         }
 
         addManagedState(new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")), MailServer.class);
-
         mount(new RequestBuilderImpl(), "/", "server.infrastructure.root");
     }
 }
