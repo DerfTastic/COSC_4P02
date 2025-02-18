@@ -68,7 +68,7 @@ public class EventAPI {
     @Route("/get_event/<id>")
     public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, BadRequest {
         Event event;
-        try(var stmt = trans.namedPreparedStatement("select * from events where id=:id AND (draft=false OR organizer_id=:organizer_id)")){
+        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:id AND draft=false) OR (id=:id AND organizer_id=:organizer_id)")){
             stmt.setLong(":id", id);
             if(session!=null&&session.organizer_id!=null)
                 stmt.setLong(":organizer_id", session.organizer_id);

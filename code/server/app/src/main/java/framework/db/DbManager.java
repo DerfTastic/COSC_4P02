@@ -65,7 +65,6 @@ public class DbManager implements AutoCloseable{
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
                 try(var stmt = conn.createStatement()){
-                    conn.getConn().setAutoCommit(true);
                     for(var sql : sql("creation").split(";")){
                         try{
                             stmt.execute(sql);
@@ -78,6 +77,7 @@ public class DbManager implements AutoCloseable{
                     Logger.getGlobal().log(Level.SEVERE, "Failed to initialize DB", e);
                     throw e;
                 }
+                conn.commit();
                 Logger.getGlobal().log(Level.CONFIG, "Initialized DB");
             }
         }
@@ -161,6 +161,7 @@ public class DbManager implements AutoCloseable{
         config.setPragma(SQLiteConfig.Pragma.RECURSIVE_TRIGGERS, "true");
         var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
+        connection.setAutoCommit(false);
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
         return connection;

@@ -78,7 +78,7 @@
             {{#each @root}}
             <p>
                 <button onclick="page.account.remove_session(this, {{id}})">Remove Session</button>
-                {{ip}}: {{expiration}}, {{agent}}
+                {{ip}}: {{formatTime expiration}}, {{agent}}
             </p>
             {{/each}}
         </article>

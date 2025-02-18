@@ -20,21 +20,23 @@ public class UserSession {
     public static UserSession create(String token, RoConn conn) throws SQLException, Unauthorized {
         try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {
             stmt.setString(":token", token);
-            var result = stmt.executeQuery();
-            if (result == null || !result.next())
-                throw new Unauthorized("No valid session");
+            try(var result = stmt.executeQuery()){
+                if (result == null || !result.next())
+                    throw new Unauthorized("No valid session");
 
-            var auth = new UserSession();
 
-            auth.session_id = result.getLong("id");
-            auth.user_id = result.getLong("user_id");
-            auth.email = result.getString("email");
-            auth.admin = result.getBoolean("admin");
+                var auth = new UserSession();
 
-            auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
-            auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
+                auth.session_id = result.getLong("id");
+                auth.user_id = result.getLong("user_id");
+                auth.email = result.getString("email");
+                auth.admin = result.getBoolean("admin");
 
-            return auth;
+                auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
+                auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
+
+                return auth;
+            }
         }
     }
 
@@ -43,19 +45,20 @@ public class UserSession {
         if(token.isEmpty()) return null;
         try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {
             stmt.setString(":token", token);
-            var result = stmt.executeQuery();
-            if (result == null || !result.next()) return null;
+            try(var result = stmt.executeQuery()){
+                if (result == null || !result.next()) return null;
 
-            var auth = new UserSession();
+                var auth = new UserSession();
 
-            auth.session_id = result.getInt("id");
-            auth.user_id = result.getInt("user_id");
-            auth.email = result.getString("email");
-            auth.admin = result.getBoolean("admin");
+                auth.session_id = result.getInt("id");
+                auth.user_id = result.getInt("user_id");
+                auth.email = result.getString("email");
+                auth.admin = result.getBoolean("admin");
 
-            auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
-            auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
-            return auth;
+                auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
+                auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
+                return auth;
+            }
         }
     }
 }
