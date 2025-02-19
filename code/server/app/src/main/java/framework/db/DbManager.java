@@ -3,7 +3,6 @@ package framework.db;
 
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
-import framework.web.ServerStatistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class DbManager implements AutoCloseable{
     private final int maxWritable;
     private final boolean canWriteAndReadCoexist;
 
-    private ServerStatistics stats;
+    private final DbStatistics tracker = new DbStatistics();
 
     public DbManager(String path, boolean inMemory, boolean alwaysInitialize, boolean cacheShared) throws SQLException {
 
@@ -52,7 +51,7 @@ public class DbManager implements AutoCloseable{
             initialized = new File(path).exists();
         }
 
-        try(var conn = rw_conn()){
+        try(var conn = rw_conn(">initialization")){
             var major = conn.getConn().getMetaData().getDatabaseMajorVersion();
             var minor = conn.getConn().getMetaData().getDatabaseMinorVersion();
             var name = conn.getConn().getMetaData().getDatabaseProductName();
@@ -61,7 +60,7 @@ public class DbManager implements AutoCloseable{
         }
 
         if(!initialized || alwaysInitialize){
-            try(var conn = rw_conn()){
+            try(var conn = rw_conn(">initialization")){
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
                 try(var stmt = conn.createStatement()){
@@ -83,12 +82,8 @@ public class DbManager implements AutoCloseable{
         }
     }
 
-    public void setStatsTracker(ServerStatistics stats){
-        this.stats = stats;
-    }
-
-    public ServerStatistics getStatsTracker(){
-        return this.stats;
+    public DbStatistics getTracker(){
+        return this.tracker;
     }
 
     public synchronized static String sql(String id){
@@ -136,6 +131,7 @@ public class DbManager implements AutoCloseable{
         }else{
             Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
         }
+        tracker.db_release(conn.id, true, System.nanoTime()-conn.acquired);
     }
 
     protected synchronized void rePool(RoConn conn) throws SQLException {
@@ -149,6 +145,7 @@ public class DbManager implements AutoCloseable{
         }else{
             Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
         }
+        tracker.db_release(conn.id, false, System.nanoTime()-conn.acquired);
     }
 
     private SQLiteConnection initialize(boolean readOnly) throws SQLException{
@@ -167,29 +164,35 @@ public class DbManager implements AutoCloseable{
         return connection;
     }
 
-    public RwTransaction rw_transaction() throws SQLException {
-        return new RwTransaction(this);
+    public RwTransaction rw_transaction(String id) throws SQLException {
+        return new RwTransaction(this, id);
     }
 
-    public RoTransaction ro_transaction() throws SQLException {
-        return new RoTransaction(this);
+    public RoTransaction ro_transaction(String id) throws SQLException {
+        return new RoTransaction(this, id);
     }
 
-    public synchronized RoConn ro_conn() throws SQLException {
-        return new RoConn(this);
+    public synchronized RoConn ro_conn(String id) throws SQLException {
+        return new RoConn(this, id);
     }
 
-    public synchronized RwConn rw_conn() throws SQLException{
-        return new RwConn(this);
+    public synchronized RwConn rw_conn(String id) throws SQLException{
+        return new RwConn(this, id);
     }
 
-    protected synchronized Connection rw_conn_p() throws SQLException{
+    protected synchronized Connection rw_conn_p(RwConn conn) throws SQLException{
         var seq = sequenceBefore++;
+        boolean first = true;
         while(
             seq!=sequenceCurr
             ||(inUseWritable>=maxWritable&&maxWritable>0)
             ||(!canWriteAndReadCoexist&&inUseReadOnly>0)
         ){
+            if(first){
+                tracker.db_lock_waited(conn.id, true);
+                first = false;
+            }
+            var start = System.nanoTime();
             if(owning.contains(Thread.currentThread()))
                 throw new RuntimeException("This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block");
             try{
@@ -197,7 +200,10 @@ public class DbManager implements AutoCloseable{
             }catch (Exception e){
                 throw new SQLException(e);
             }
+            tracker.db_lock_waited(conn.id, true, System.nanoTime()-start);
         }
+        tracker.db_acquire(conn.id, true);
+        conn.acquired = System.nanoTime();
         sequenceCurr++;
         inUseWritable++;
         Connection con;
@@ -211,13 +217,19 @@ public class DbManager implements AutoCloseable{
         return con;
     }
 
-    protected synchronized Connection ro_conn_p() throws SQLException {
+    protected synchronized Connection ro_conn_p(RoConn conn) throws SQLException {
         var seq = sequenceBefore++;
+        boolean first = true;
         while(
             seq!=sequenceCurr
             ||(inUseReadOnly>=maxReadOnly&&maxReadOnly>0)
             ||(!canWriteAndReadCoexist&&inUseWritable>0)
         ){
+            if(first){
+                tracker.db_lock_waited(conn.id, false);
+                first = false;
+            }
+            var start = System.nanoTime();
             if(owning.contains(Thread.currentThread()))
                 throw new RuntimeException("This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block");
             try{
@@ -225,7 +237,10 @@ public class DbManager implements AutoCloseable{
             }catch (Exception e){
                 throw new SQLException(e);
             }
+            tracker.db_lock_waited(conn.id, false, System.nanoTime()-start);
         }
+        tracker.db_acquire(conn.id, false);
+        conn.acquired = System.nanoTime();
         sequenceCurr++;
         inUseReadOnly++;
         Connection con;

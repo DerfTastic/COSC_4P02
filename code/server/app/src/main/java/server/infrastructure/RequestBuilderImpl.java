@@ -21,7 +21,7 @@ public class RequestBuilderImpl extends RequestsBuilder {
         this.addParameterHandler(RoTransaction.class, new RouteParameter<>() {
             @Override
             public RoTransaction construct(Request request) throws SQLException {
-                return request.server.getManagedState(DbManager.class).ro_transaction();
+                return request.server.getManagedState(DbManager.class).ro_transaction(request.mountedPath());
             }
 
             @Override
@@ -37,7 +37,7 @@ public class RequestBuilderImpl extends RequestsBuilder {
         this.addParameterHandler(RwTransaction.class, new RouteParameter<>() {
             @Override
             public RwTransaction construct(Request request) throws SQLException {
-                return request.server.getManagedState(DbManager.class).rw_transaction();
+                return request.server.getManagedState(DbManager.class).rw_transaction(request.mountedPath());
             }
 
             @Override
@@ -53,7 +53,7 @@ public class RequestBuilderImpl extends RequestsBuilder {
         addParameterHandler(RoConn.class, new RouteParameter<>() {
             @Override
             public RoConn construct(Request request) throws Exception {
-                return request.server.getManagedState(DbManager.class).ro_conn();
+                return request.server.getManagedState(DbManager.class).ro_conn(request.mountedPath());
             }
 
             @Override
@@ -64,7 +64,7 @@ public class RequestBuilderImpl extends RequestsBuilder {
         addParameterHandler(RwConn.class, new RouteParameter<>() {
             @Override
             public RwConn construct(Request request) throws Exception {
-                return request.server.getManagedState(DbManager.class).rw_conn();
+                return request.server.getManagedState(DbManager.class).rw_conn(request.mountedPath());
             }
 
             @Override

@@ -8,20 +8,23 @@ public abstract class Conn implements AutoCloseable {
     private boolean first = true;
     protected Connection conn;
     protected final DbManager db;
+    protected final boolean rw;
+    protected final String id;
+    protected long acquired;
 
-    public Conn(DbManager db) {
+    protected Conn(DbManager db, String id, boolean rw) {
         this.db = db;
+        this.rw = rw;
+        this.id = id;
     }
 
     public NamedPreparedStatement namedPreparedStatement(String sql) throws SQLException {
-        var stmt = new NamedPreparedStatement(getConn(), sql);
-        stmt.stats = this.db.getStatsTracker();
+        var stmt = new NamedPreparedStatement(this, sql);
         return stmt;
     }
 
     public Statement createStatement() throws SQLException{
-        var stmt = new StatementM(getConn().createStatement());
-        stmt.stats = this.db.getStatsTracker();
+        var stmt = new StatementM(this);
         return stmt;
     }
 

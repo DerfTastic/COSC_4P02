@@ -6,7 +6,7 @@ import server.ServerLogger;
 import framework.db.RwConn;
 import framework.web.error.BadRequest;
 import framework.web.mail.MailServer;
-import framework.web.ServerStatistics;
+import server.ServerStatistics;
 import framework.web.annotations.url.Path;
 import server.infrastructure.param.auth.RequireAdmin;
 import server.infrastructure.param.auth.UserSession;

@@ -21,6 +21,8 @@ import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 @Routes
@@ -182,6 +184,8 @@ public class AccountAPI {
 
             message.setContent("Someone logged into your account <br/>IP: " + ip + "<br/>User Agent: " + agent, "text/html");
         });
+
+        Logger.getGlobal().log(Level.FINER, "User: " + login.email + " Logged in with session: " + token);
 
         return token;
     }

@@ -4,8 +4,8 @@ import java.sql.SQLException;
 
 public class RoTransaction extends RoConn implements AutoCloseable{
 
-    public RoTransaction(DbManager db) {
-        super(db);
+    public RoTransaction(DbManager db, String id) {
+        super(db, id);
     }
 
     @Override

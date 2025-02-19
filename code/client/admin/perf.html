@@ -5,6 +5,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
         <script src="/js/api.js" type="text/javascript"></script>
+        <script src="/js/perf.js" type="text/javascript"></script>
         <!-- Redirects user to login when a page requires the user to have an account-->
         <script>utility.require_logged_in()</script>
     
@@ -30,16 +31,31 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        .container {
-            width: 80%;
-            max-height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .section {
+            margin-bottom: 30px;
+            width: 100%;
         }
-        canvas {
-            max-width: 100%;
-            max-height: 100%;
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-around;
+        }
+        .chart-wrapper {
+            flex: 1 1 calc(25% - 20px);
+            width: 50%;
+            max-width: 50%;
+            text-align: center;
+        }
+        @media (max-width: 1200px) {
+            .chart-wrapper {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+        @media (max-width: 600px) {
+            .chart-wrapper {
+                flex: 1 1 100%;
+            }
         }
         .buttons {
             margin-top: 10px;
@@ -68,16 +84,45 @@
 </head>
 <body>
     <div class="everything">
-        <div class="container">
-            <div class="buttons">
-                <button class="button" onclick="toggleDataset(0)">Toggle Total Requests</button>
-                <button class="button" onclick="toggleDataset(1)">Toggle Prepared Statements</button>
-                <button class="button" onclick="toggleDataset(2)">Toggle DB Statements</button>
-                <button class="button" onclick="toggleRouteStats()">Toggle Route Stats</button>            
-                <button class="button" id="updateButton" onclick="toggleUpdating()">Start Updating</button>
 
+        <div class="section">
+            <h2>Database Global Statistics</h2>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="globalPreparedStatementsChart"></canvas></div>
+                <!-- <div class="chart-wrapper"><canvas id="globalDbHeldChart"></canvas></div> -->
             </div>
-            <canvas id="performanceChart"></canvas>
+            <div class="charts-container">
+                <!-- <div class="chart-wrapper"><canvas id="globalDbWaitedChart"></canvas></div> -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Database Sectioned Statistics</h2>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="rwStatementsChart"></canvas></div>
+                <div class="chart-wrapper"><canvas id="nya"></canvas></div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div>
+                <p>Total Requests Handled: <span id="totalRequests">0</span></p>
+                <p>Requests Per Second: <span id="requestsPerSecond">0</span></p>
+            </div>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="requestsStatsChart"></canvas></div>
+                <div class="chart-wrapper"><canvas id="routeStatsChart"></canvas></div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="routeTimeChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>System Stats</h2>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="memoryUsageChart"></canvas></div>
+            </div>
         </div>
     </div>
 
@@ -85,148 +130,5 @@
 
     <div src="/partials/header.html" type="text/x-html-template"></div>
     <div src="/partials/footer.html" type="text/x-html-template"></div>
-    <script>
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-
-        Chart.defaults.backgroundColor = '#AAA';
-        Chart.defaults.borderColor = '#AAA';
-        Chart.defaults.color = '#AAA';
-        Chart.defaults.elements.line.tension = 0.3;
-        
-        const data = {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Total Requests Handled',
-                    borderColor: 'red',
-                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                    data: [],
-                },
-                {
-                    label: 'Prepared Statements Executed',
-                    borderColor: 'blue',
-                    backgroundColor: 'rgba(0, 0, 255, 0.2)',
-                    data: [],
-                },
-                {
-                    label: 'Total DB Statements Executed',
-                    borderColor: 'green',
-                    backgroundColor: 'rgba(0, 255, 0, 0.2)',
-                    data: [],
-                }
-            ]
-        };
-
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                animation: false,
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Time' }
-                    },
-                    y: {
-                        title: { display: true, text: 'Count' },
-                        min: 0
-                    }
-                }
-            }
-        };
-
-        const myChart = new Chart(ctx, config);
-
-        let previousStat = null;
-        let updateInterval = null;
-        const updateButton = document.getElementById('updateButton');
-        let start = new Date();
-
-        let update_time = 3;
-
-        function updateChart(statInstance) {
-            const max_len = 35;
-            const now = new Date();
-            const delta = (now.getTime()-start.getTime())/1000.0;
-            if (previousStat) {
-                const diffRequests = statInstance.total_requests_handled - previousStat.total_requests_handled;
-                const diffPreparedStatements = statInstance.prepared_statements_executed - previousStat.prepared_statements_executed;
-                const diffDBStatements = statInstance.total_db_statements_executed - previousStat.total_db_statements_executed;
-                
-                data.labels.push(now.toLocaleTimeString());
-                data.datasets[0].data.push(diffRequests/delta);
-                data.datasets[1].data.push(diffPreparedStatements/delta);
-                data.datasets[2].data.push(diffDBStatements/delta);
-
-                // Update per-route request statistics
-                Object.keys(statInstance.route_stats).forEach((route, index) => {
-                    const diffRouteRequests = statInstance.route_stats[route].requests_handled - (previousStat.route_stats[route]?.requests_handled || 0);
-                    let dataset = data.datasets.find(ds => ds.label === `Requests - ${route}`);
-                    if (!dataset) {
-                        dataset = {
-                            label: `Requests - ${route}`,
-                            borderColor: `hsl(${index * 50}, 70%, 50%)`,
-                            backgroundColor: `hsla(${index * 50}, 70%, 50%, 0.2)`,
-                            data: [],
-                            hidden: false
-                        };
-                        data.datasets.push(dataset);
-                    }
-                    dataset.data.push(diffRouteRequests/delta);
-                });   
-            }
-            while(data.labels.length<=max_len){
-                data.labels.push(now.toLocaleTimeString());
-            }
-            data.datasets.forEach(e => {
-                while(e.data.length<=max_len){
-                    e.data.unshift(0);
-                }
-            });
-            if (data.labels.length > max_len) {
-                data.labels.shift();
-                data.datasets.forEach(dataset => dataset.data.shift());
-            }
-
-            previousStat = statInstance;
-            myChart.update();
-            start = now;
-        }
-
-        function toggleDataset(index) {
-            data.datasets[index].hidden = !data.datasets[index].hidden;
-            myChart.update();
-        }
-
-        function toggleRouteStats() {
-            data.datasets.forEach(dataset => {
-                if (dataset.label.startsWith('Requests - ')) {
-                    dataset.hidden = !dataset.hidden;
-                }
-            });
-            myChart.update();
-        }
-
-        function toggleUpdating() {
-            if (updateInterval) {
-                clearInterval(updateInterval);
-                updateInterval = null;
-                updateButton.classList.remove('active');
-                updateButton.textContent = 'Start Updating';
-            } else {
-                update();
-                updateInterval = setInterval(update, update_time*1000);
-                updateButton.classList.add('active');
-                updateButton.textContent = 'Stop Updating';
-            }
-        }
-
-        toggleUpdating();
-
-
-        async function update(){
-            updateChart(await api.admin.get_server_statistics(cookies.getSession()))
-        }
-    </script>
 </body>
 </html>
