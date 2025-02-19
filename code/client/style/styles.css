@@ -378,10 +378,9 @@ nav  a:hover, .cart:hover {
     transition: box-shadow 0.3s ease;
 }
 
-input, textarea {
+.form-group input,.form-group textarea {
     padding: 12px 20px;
     border-radius: 8px;
-    background: rgba(238, 238, 240, 0.1);
     border: 1px solid rgba(238, 238, 240, 0.2);
     color: #eeeef0;
     font-size: 16px;
@@ -389,7 +388,7 @@ input, textarea {
     transition: all 0.3s ease;
   }
 
-input:focus, textarea:focus {
+  .form-group input:focus,.form-group textarea:focus {
     outline: none;
     border-color: rgba(78, 169, 248, 0.8);
     box-shadow: 0 0 8px rgba(78, 169, 248, 0.8);
