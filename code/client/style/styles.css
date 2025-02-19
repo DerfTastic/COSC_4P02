@@ -11,14 +11,7 @@ body {
     padding:0;
     animation: fadeIn 0.6s ease-out;
 }
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+
 html {
     scroll-behavior: smooth;
   }
@@ -70,13 +63,6 @@ header {
     padding: 0 20px;
 }
 
-
-header h1, h2, h3 {
-    color: #eeeef0;
-    margin: 0;
-    padding: 10px 0;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-}
 
 nav  {
     display: flex;
@@ -340,9 +326,9 @@ nav  a:hover, .cart:hover {
     max-width: 400px;
     padding: 20px;
     background: rgba(238, 238, 240, 0.1);
-  backdrop-filter: blur(15px);
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     color: #eeeef0;
 }
 
@@ -353,6 +339,11 @@ nav  a:hover, .cart:hover {
 .login-form h2, .register-form h2 {
     margin: 0 0 20px;
     text-align: center;
+}
+
+.form-footer a{
+    color: #1b263b;
+    font-weight: bold;
 }
 
 .form-group {
@@ -368,13 +359,18 @@ nav  a:hover, .cart:hover {
 
 .form-group input {
     padding: 10px;
-    border: none;
+    background: rgba(238, 238, 240, 0.1);
+    backdrop-filter: blur(12px); 
+    border: 1px solid rgba(238, 238, 240, 0.3); 
     border-radius: 5px;
-    background-color: #eeeef0;
-    color: #28282a;
+    color: #eeeef0;
     font-size: 16px;
     outline: none;
     transition: box-shadow 0.3s ease;
+}
+.form-group input::placeholder
+{
+    color: #eeeef09a;
 }
 
 .form-group input,.form-group textarea {
@@ -387,25 +383,26 @@ nav  a:hover, .cart:hover {
   }
 
   .form-group input:focus,.form-group textarea:focus {
-    outline: none;
-    border-color: rgba(78, 169, 248, 0.8);
-    box-shadow: 0 0 8px rgba(78, 169, 248, 0.8);
+    border-color: #778da9;
+    box-shadow: 0 0 5px #778da9; 
   }
 
 .btn-login, .btn-register {
     width: 100%;
     padding: 10px;
-    background-color: transparent;
-    border: none;
+    background-color:transparent ;
+    border: 1px solid #eeeef0;
     border-radius: 5px;
     color: #eeeef0;
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .btn-login:hover, .btn-register:hover {
-    background-color: #778da9;
+    background:#1b263b ;
 }
 
 * { box-sizing: border-box; }
@@ -498,7 +495,7 @@ nav  a:hover, .cart:hover {
 }
 
 .upload-container:hover {
-    border-color: #415a77;
+    border-color: #778da9;
 }
 
 .upload-container input {
@@ -594,7 +591,7 @@ nav  a:hover, .cart:hover {
 
 .input-field, .select-field, .color-picker, .range-slider {
     padding: 12px;
-    background: rgba(238, 238, 240, 0.1);
+    background-color: #eeeef0;
     border: none;
     border-radius: 5px;
     color: #28282a;
@@ -609,7 +606,6 @@ nav  a:hover, .cart:hover {
 
 .input-field:focus, .select-field:focus, .color-picker:focus, .range-slider:focus {
     box-shadow: 0 0 5px #415a77; 
-    background-color: #eeeef0;
 }
 
 .input-field::placeholder, .select-field::placeholder, .color-picker::placeholder {
