@@ -12,6 +12,7 @@ import framework.web.annotations.Route;
 import framework.web.annotations.Routes;
 import framework.web.route.RequestsBuilder;
 import framework.web.route.RouteImpl;
+import server.ServerStatistics;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +29,6 @@ public class WebServer {
      * A store of all the state which is managed by this web server indexed by their associated type
      */
     private final HashMap<Class<?>, Object> managedState = new HashMap<>();
-    public final ServerStatistics tracker = new ServerStatistics();
     private final InetSocketAddress address;
 
     /**
@@ -42,7 +42,6 @@ public class WebServer {
         server = HttpServer.create(address, 0); // Create HTTPServer at 'address' with no backlog
 
         addManagedState(server); // Add HTTP Server to managed resources
-        addManagedState(tracker);
     }
 
     public void start(){
@@ -145,7 +144,7 @@ public class WebServer {
     private void attachRouteHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var instance = handlerClass.getConstructor().newInstance();
         HttpHandler handler = exchange -> instance.handle(new Request(this, exchange, parentPath));
-        attachHandler(parentPath, -1, handler);
+        attachHandler(parentPath, handler);
         Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
     }
 
@@ -153,24 +152,14 @@ public class WebServer {
         for(var method : routeClass.getDeclaredMethods()){
             if(method.getAnnotation(Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, builder);
-            attachHandler(route.path, route.path.length(), route.handler(this));
+            attachHandler(route.path, route.handler(this));
 
             Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + route.path + "' -> "+route.sourceMethod);
         }
     }
 
-    public HttpContext attachHandler(String path, int pathCutoff, HttpHandler handler){
-        return server.createContext(path, exchange -> {
-            var start = System.nanoTime();
-            handler.handle(exchange);
-            var duration = (System.nanoTime()-start)/1e9;
 
-            var p = exchange.getRequestURI().getPath();
-            if(pathCutoff>0)
-                p = p.substring(0, pathCutoff);
-            var code = exchange.getResponseCode();
-
-            tracker.track_route(p, code, duration);
-        });
+    public HttpContext attachHandler(String path, HttpHandler handler){
+        return server.createContext(path, handler);
     }
 }

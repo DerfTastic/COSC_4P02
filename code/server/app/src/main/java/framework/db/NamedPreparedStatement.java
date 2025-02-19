@@ -1,6 +1,5 @@
 package framework.db;
 
-import framework.web.ServerStatistics;
 import framework.util.SqlSerde;
 import framework.util.Tuple;
 
@@ -16,8 +15,8 @@ public class NamedPreparedStatement implements AutoCloseable {
     private final static HashMap<String, Tuple<String, HashMap<String, Integer>>> fieldMapCache = new HashMap<>();
     private final static HashMap<Tuple<Connection, String>, PreparedStatement> preparedMap = new HashMap<>();
     private final PreparedStatement stmt;
-
-    ServerStatistics stats;
+    private final Conn conn;
+    private final DbStatistics stats;
 
     private static Tuple<String, HashMap<String, Integer>> initialize(String sqlO){
         synchronized (fieldMapCache){
@@ -55,7 +54,7 @@ public class NamedPreparedStatement implements AutoCloseable {
         return Character.isAlphabetic(c) || Character.isDigit(c) || c == '_';
     }
 
-    public NamedPreparedStatement(Connection conn, String sql) throws SQLException {
+    public NamedPreparedStatement(Conn conn, String sql) throws SQLException {
         this(conn, initialize(sql));
     }
 
@@ -79,13 +78,15 @@ public class NamedPreparedStatement implements AutoCloseable {
         stmt.setDouble(getIndex(name), value);
     }
 
-    private NamedPreparedStatement(Connection conn, Tuple<String, HashMap<String, Integer>> sql) throws SQLException {
-        var tuple = new Tuple<>(conn, sql.t1);
+    private NamedPreparedStatement(Conn conn, Tuple<String, HashMap<String, Integer>> sql) throws SQLException {
+        this.stats = conn.db.getTracker();
+        this.conn = conn;
+        var tuple = new Tuple<>(conn.getConn(), sql.t1);
         synchronized (preparedMap){
             if(preparedMap.containsKey(tuple)){
                 this.stmt = preparedMap.get(tuple);
             }else{
-                this.stmt = conn.prepareStatement(sql.t1);
+                this.stmt = conn.getConn().prepareStatement(sql.t1);
                 preparedMap.put(tuple, this.stmt);
             }
         }
@@ -117,19 +118,19 @@ public class NamedPreparedStatement implements AutoCloseable {
     }
 
     public ResultSet executeQuery() throws SQLException {
-        if(stats!=null)stats.executed_prepared_statement();
+        if(stats!=null)stats.prepared_statement_executed(conn.id, conn.rw);
         var rs = stmt.executeQuery();
         results.add(rs);
         return rs;
     }
 
     public boolean execute() throws SQLException {
-        if(stats!=null)stats.executed_prepared_statement();
+        if(stats!=null)stats.prepared_statement_executed(conn.id, conn.rw);
         return stmt.execute();
     }
 
     public int executeUpdate() throws SQLException{
-        if(stats!=null)stats.executed_prepared_statement();
+        if(stats!=null)stats.prepared_statement_executed(conn.id, conn.rw);
         return stmt.executeUpdate();
     }
 

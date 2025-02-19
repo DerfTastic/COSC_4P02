@@ -71,17 +71,49 @@ class UpdateOrganizerEvent{
 }
 
 class RouteStat{
-    /** @type{number} */average_response_time
+    /** @type{number} */total_response_time_ns
     /** @type{number} */requests_handled
     /** @type{Object.<number, number>} */code_breakdown
+}
+
+class DbStat{
+    /** @type{number} */rw_statements_executed
+    /** @type{number} */ro_statements_executed
+    
+    /** @type{number} */rw_prepared_statements_executed
+    /** @type{number} */ro_prepared_statements_executed
+
+    /** @type{number} */rw_db_acquires
+    /** @type{number} */ro_db_acquires
+
+    /** @type{number} */rw_db_releases
+    /** @type{number} */ro_db_releases
+
+    /** @type{number} */rw_db_lock_waited
+    /** @type{number} */ro_db_lock_waited
+
+    /** @type{number} */rw_db_lock_waited_ns
+    /** @type{number} */ro_db_lock_waited_ns
+
+    /** @type{number} */rw_db_lock_held_ns
+    /** @type{number} */ro_db_lock_held_ns
+}
+
+class DbStats{
+    /** @type{Object.<string, DbStat>} */individual
+    /** @type{DbStat} */global
 }
 
 class ServerStatistics{
     /** @type{Object.<string, RouteStat>} */route_stats
     /** @type{number} */total_requests_handled
-    /** @type{number} */prepared_statements_executed
-    /** @type{number} */statements_executed
-    /** @type{number} */total_db_statements_executed
+
+    /** @type{DbStats} */db_stats
+
+    /** @type{number} */curr_time_ms
+    /** @type{number} */max_mem
+    /** @type{number} */total_mem
+    /** @type{number} */free_mem
 }
 
 class Search{

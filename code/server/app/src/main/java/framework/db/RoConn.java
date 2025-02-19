@@ -1,17 +1,16 @@
 package framework.db;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 
 public class RoConn extends Conn{
-    public RoConn(DbManager db) {
-        super(db);
+    public RoConn(DbManager db, String id) {
+        super(db, id, false);
     }
 
     @Override
     protected void initialize() throws SQLException {
-        conn = db.ro_conn_p();
+        conn = db.ro_conn_p(this);
     }
 
     @Override
