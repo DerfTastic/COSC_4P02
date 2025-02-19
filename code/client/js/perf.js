@@ -84,8 +84,6 @@ function update(){
     document.getElementById("requestsPerSecond").innerText = (latestStat.total_requests_handled-earliestStat.total_requests_handled)/(latestStat.curr_time_ms-earliestStat.curr_time_ms)*1000.0;
 
     const timestamps = list.map(stat => new Date(stat.curr_time_ms).toLocaleTimeString());
-    const rwStatements = list.map(stat => stat.db_stats.global.rw_statements_executed);
-    const roStatements = list.map(stat => stat.db_stats.global.ro_statements_executed);
     const totalMemory = list.map(stat => stat.total_mem);
     const freeMemory = list.map(stat => stat.free_mem);
     const maxMemory = list.map(stat => stat.max_mem);
@@ -139,11 +137,70 @@ function update(){
         updateChart(requestsStatsChart, timestamps, datasets);
     }
 
+    {
+        const labels = [];
+        const datasets = [
+            {
+                borderColor: [],
+                backgroundColor: [],
+                data: [],
+                hidden: false
+            }
+        ];
+        Object.keys(latestStat.route_stats).forEach((route, index) => {
 
-    updateChart(rwStatementsChart, timestamps, [
-        { label: "RW Statements", data: rwStatements, borderColor: "red" },
-        { label: "RO Statements", data: roStatements, borderColor: "blue" }
-    ]);
+            let early; 
+            try{
+                early = earliestStat.route_stats[route];
+            }catch(e){
+                early = {
+                    total_response_time_ns: 0,
+                    requests_handled: 0
+                };
+            }
+            const total_time_ns = latestStat.route_stats[route].total_response_time_ns-early.total_response_time_ns;
+            const total_handled = latestStat.route_stats[route].requests_handled-early.requests_handled;
+            time = total_time_ns/total_handled/1e9*1000;
+            
+            
+            labels.push(route);
+            datasets[0].borderColor.push(`hsl(${index * 50}, 70%, 50%)`);
+            datasets[0].backgroundColor.push(`hsl(${index * 50}, 70%, 50%, 0.2)`);
+            datasets[0].data.push(time);
+        });   
+        updateChart(routeTimeChart, labels, datasets);
+    }
+
+
+    const rwStatements = list.map(stat => stat.db_stats.global.rw_prepared_statements_executed);
+    const roStatements = list.map(stat => stat.db_stats.global.ro_prepared_statements_executed);
+    
+    {
+        const datasets = [
+            {
+                label: `RW Prepared Statements/s`,
+                borderColor: "red",
+                data: [],
+                hidden: false
+            },
+            {
+                label: `RO Prepared Statements/s`,
+                borderColor: "blue",
+                data: [],
+                hidden: false
+            },
+        ]; 
+        datasets[0].data.push(NaN);
+        datasets[1].data.push(NaN);
+        pairwise(list, (earlier, later) => {
+            const rw_handled = later.db_stats.global.rw_prepared_statements_executed-earlier.db_stats.global.rw_prepared_statements_executed;
+            const ro_handled = later.db_stats.global.ro_prepared_statements_executed-earlier.db_stats.global.ro_prepared_statements_executed;
+            const time = later.curr_time_ms-earlier.curr_time_ms;
+            datasets[0].data.push(rw_handled/time*1000.0)
+            datasets[1].data.push(ro_handled/time*1000.0)
+        });
+        updateChart(globalPreparedStatementsChart, timestamps, datasets);
+    }
     
     updateChart(memoryUsageChart, timestamps, [
         { label: "Total Memory", data: totalMemory, borderColor: "green" },
@@ -193,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Chart.defaults.borderColor = '#AAA';
     Chart.defaults.color = '#AAA';
     Chart.defaults.elements.line.tension = 0.3;
-    rwStatementsChart = createChart(document.getElementById("rwStatementsChart").getContext("2d"), "RW vs RO Statements Executed", {
+    globalPreparedStatementsChart = createChart(document.getElementById("globalPreparedStatementsChart").getContext("2d"), "RW vs RO Statements Executed", {
         x: {
             title: { display: true, text: 'Time' }
         },
@@ -227,6 +284,34 @@ document.addEventListener("DOMContentLoaded", () => {
         y: {
             title: { display: true, text: 'Requests/s' },
             min: 0
+        }
+    });
+    routeTimeChart = new Chart(document.getElementById("routeTimeChart").getContext("2d"), {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            elements: {
+              bar: {
+                borderWidth: 2,
+              }
+            },
+        
+            responsive: true,
+            animation: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: "Average Response Time(ms)"
+                }
+            }
         }
     });
 });
