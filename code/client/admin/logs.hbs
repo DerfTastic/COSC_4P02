@@ -33,48 +33,68 @@
         .log-stacktrace { font-family: monospace; white-space: pre-wrap; background-color: rgba(255, 255, 255, 0.1); padding: 5px; border-radius: 5px; margin-top: 5px; font-size: 0.85em; }
      </style>
 </head>
-
 <body>
     <div src="/partials/header.html" type="text/x-html-template"></div>
-    <script src="page.account.all_userinfo()" type="text/x-handlebars-template">
-        <article class="entry">
-            <h1>{{name}}</h1>
-            <div class="body">name: {{name}}</div>
-            <div class="body">email: {{email}}</div>
-            <div class="body">bio: {{bio}}</div>
-            <div class="body">user_id: {{email}}</div>
-            <!-- <div class="body">organizer_id: {{organizer_id}}</div> -->
-            <div class="body">max_events: {{max_events}}</div>
-            <div class="body">has_analytics: {{has_analytics}}</div>
-            <div class="body">admin: {{admin}}</div>
-        </article>
 
-        {{#if admin}}
-        <p><a href="/admin/logs">Logs</a></p>
-        <p><a href="/admin/console">Console</a></p>
-        <p><a href="/admin/perf">Stats</a></p>
-        {{/if}}
-    </script>
-    <div></div>
-
-    <button onclick="utility.logout()">Logout</button>
-    <!-- <button onclick="page.account.delete_account()">Logout</button> -->
-
-    <script src="page.account.list_sessions()" type="text/x-handlebars-template">
-        <article class="entry">
-            <h1>Sessions</h1>
-            {{#each @root}}
-            <p>
-                <button onclick="page.account.remove_session(this, {{id}})">Remove Session</button>
-                {{ip}}: {{formatTime expiration}}, {{agent}}
-            </p>
+    <script src="get_log_levels()" type="text/x-handlebars-template">
+        <select onChange="changed_level(this);">
+            {{#each options}}
+                <option value="{{this}}" 
+                {{#if (eq this ../selectedValue)}}
+                    selected
+                {{/if}}
+                >{{this}}</option>
             {{/each}}
-        </article>
+        </select>
+
     </script>
     <div></div>
+
+    <script id="loglist" type="text/x-handlebars-template">
+        {{#each (reverseArray @root)}}
+        <div class="log-entry {{logColor level_s}}">
+            <div class="log-message">{{level_s}}: {{message}}</div>
+            <div class="log-source">{{sourceClassName}}.{{sourceMethodName}} - {{formatTime millis}}</div>
+            {{#if thrown}}
+            <div class="log-stacktrace">{{thrown}}</div>
+            {{/if}}
+        </div>
+        {{/each}}
+    </script>
+    <div class="log-container"></div>
 
 
     <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 
+     <script>
+        async function changed_level(thing){
+            try{
+                await api.admin.set_log_level(thing.value, cookies.getSession());
+            }catch({error, code}){
+                alert(error + " " + code);
+            }
+        }
+        async function get_log_levels(){
+            return {
+                options: await api.admin.get_log_levels(cookies.getSession()),
+                selectedValue: await api.admin.get_log_level(cookies.getSession())
+            }
+        }
+
+        const list = document.getElementById("loglist");
+        const log_template = Handlebars.compile(list.innerHTML);
+        Handlebars.registerHelper('reverseArray', (array) => array==null?null:array.reverse());
+        async function show_logs(){
+            try{
+                let logs = await api.admin.get_server_logs(cookies.getSession());
+                list.nextElementSibling.innerHTML = log_template(logs);
+            }catch({error, code}){
+                alert(error + " " + code);
+                window.location.href = '/account/login';
+            }
+        }
+        show_logs();
+        setInterval(show_logs, 1000);
+     </script>
 </html>
