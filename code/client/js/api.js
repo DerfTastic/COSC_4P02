@@ -816,16 +816,20 @@ const page = {
                 page.check_for_handlers();
             })();
         }
-        for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
+        for (let e of item.querySelectorAll("script[type='text/x-handlebars-template']")) {
             this.awaiting_handlebar_templates++;
             (async _ => {
                 try {
-                    const result = await eval(e.getAttribute("src"));
-                    var template = Handlebars.compile(e.innerHTML);
-                    var html = template(result);
-                    e.nextElementSibling.innerHTML = html;
+                    if(e.hasAttributes("src")){
+                        const result = await eval(e.getAttribute("src"));
+                        var template = Handlebars.compile(e.innerHTML);
+                        var html = template(result);
+                        e.nextElementSibling.innerHTML = html;
+                    }
                 } catch (err) {
-                    e.nextElementSibling.innerHTML = JSON.stringify(err);
+                    console.log(e);
+                    console.log(err);
+                    e.nextElementSibling.innerHTML = "ERROR: " + JSON.stringify(err, 2, null);
                 }
 
                 page.initialize_content(e.nextElementSibling);
@@ -889,6 +893,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const colors = { "SEVERE": "red", "WARNING": "yellow", "INFO": "blue", "CONFIG": "grey" };
             return colors[level] || "grey";
         });
+        Handlebars.registerHelper('eq', function(a, b) {
+            return (a === b);
+        });
+        Handlebars.registerHelper('gt', function(a, b) {
+            return (a > b);
+        });
+        Handlebars.registerHelper('gte', function(a, b) {
+            return (a >= b);
+        });
+        Handlebars.registerHelper('lt', function(a, b) {
+            return (a < b);
+        });
+        Handlebars.registerHelper('lte', function(a, b) {
+            return (a <= b);
+        });
+        Handlebars.registerHelper('ne', function(a, b) {
+            return (a !== b);
+        });
+        
     }
 
     page.initialize_content(document);

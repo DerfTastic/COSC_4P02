@@ -190,10 +190,10 @@ public class RouteImpl {
     }
 
     public HttpHandler handler(WebServer server){
-        return exchange -> this.handler.handle(new RequestImpl(server, exchange));
+        return exchange -> this.handler.handle(new RouteRequest(server, exchange,path));
     }
 
-    private class RequestImpl extends Request{
+    private class RouteRequest extends Request{
 
         @Override
         public void begin() throws MethodNotAllowed {
@@ -201,8 +201,8 @@ public class RouteImpl {
                 throw new MethodNotAllowed();
         }
 
-        public RequestImpl(WebServer server, HttpExchange exchange) {
-            super(server, exchange);
+        public RouteRequest(WebServer server, HttpExchange exchange, String mountedPath) {
+            super(server, exchange, mountedPath);
         }
 
         @Override
@@ -216,11 +216,6 @@ public class RouteImpl {
         @Override
         public int code() {
             return RouteImpl.this.code;
-        }
-
-        @Override
-        public String path() {
-            return RouteImpl.this.path;
         }
     }
 
