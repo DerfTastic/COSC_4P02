@@ -18,15 +18,17 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class Request {
+public class Request {
     public final HttpExchange exchange;
     public final WebServer server;
     private Map<String, List<String>> queryMap;
     private String[] pathParts;
+    private final String mountedPath;
 
-    public Request(WebServer server, HttpExchange exchange) {
+    public Request(WebServer server, HttpExchange exchange, String mountedPath) {
         this.server = server;
         this.exchange = exchange;
+        this.mountedPath = mountedPath;
     }
 
     public void begin() throws ClientError {}
@@ -140,5 +142,7 @@ public abstract class Request {
         return pathParts[index];
     }
 
-    public abstract String path();
+    public String mountedPath(){
+        return mountedPath;
+    }
 }

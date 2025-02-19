@@ -31,7 +31,7 @@ public class ClientError extends Exception {
 
     public void respond(Request request) throws IOException {
         request.sendResponse(code, getMessage());
-        Logger.getGlobal().log(Level.WARNING, "Route " + request.path() + " Failed to complete", this);
+        Logger.getGlobal().log(Level.WARNING, "Route " + request.mountedPath() + " Failed to complete", this);
     }
 
 }

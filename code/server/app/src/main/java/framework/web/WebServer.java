@@ -1,6 +1,7 @@
 package framework.web;
 
 import com.google.common.reflect.ClassPath;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import server.ServerLogger;
@@ -133,7 +134,7 @@ public class WebServer {
                 if(clazz.isAnnotationPresent(Routes.class)){
                     attachRoutes(builder, path, clazz);
                 }else if(clazz.isAnnotationPresent(Handler.class)){
-                    attachHandler(path, (Class<? extends RequestHandler>) clazz);
+                    attachRouteHandler(path, (Class<? extends RequestHandler>) clazz);
                 }
             }
         }catch (Exception e){
@@ -141,16 +142,10 @@ public class WebServer {
         }
     }
 
-    private void attachHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void attachRouteHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var instance = handlerClass.getConstructor().newInstance();
-        createHttpHandler(parentPath, -1, exchange -> {
-            instance.handle(new Request(this, exchange) {
-                @Override
-                public String path() {
-                    return parentPath;
-                }
-            });
-        });
+        HttpHandler handler = exchange -> instance.handle(new Request(this, exchange, parentPath));
+        attachHandler(parentPath, -1, handler);
         Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
     }
 
@@ -158,15 +153,14 @@ public class WebServer {
         for(var method : routeClass.getDeclaredMethods()){
             if(method.getAnnotation(Route.class) == null) continue;
             var route = new RouteImpl(method, parentPath, builder);
-
-            createHttpHandler(route.path, route.path.length(), route.handler(this));
+            attachHandler(route.path, route.path.length(), route.handler(this));
 
             Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + route.path + "' -> "+route.sourceMethod);
         }
     }
 
-    public void createHttpHandler(String path, int pathCutoff, HttpHandler handler){
-        server.createContext(path, exchange -> {
+    public HttpContext attachHandler(String path, int pathCutoff, HttpHandler handler){
+        return server.createContext(path, exchange -> {
             var start = System.nanoTime();
             handler.handle(exchange);
             var duration = (System.nanoTime()-start)/1e9;
