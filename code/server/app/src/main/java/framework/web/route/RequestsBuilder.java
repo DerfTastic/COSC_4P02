@@ -1,6 +1,7 @@
 package framework.web.route;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import framework.web.annotations.Body;
 import framework.web.annotations.FromRequest;
@@ -198,6 +199,7 @@ public class RequestsBuilder {
 
     private StringsAdapter<?> getParameterStringAdapter(Parameter param) {
         if(param.getAnnotation(Json.class) != null){
+            //TODO a bunch of CPU time is spent here, consider using a faster json serializer?
             return (StringSingleNullableAdapter<?>) str -> new Gson().fromJson(str, param.getType());
         }else{
             return getParameterStringAdapter(param.getType(), param.getAnnotation(Nullable.class)!=null);
