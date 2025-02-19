@@ -46,7 +46,7 @@ public class UserSession {
 
     public static UserSession optional(String token, RoConn conn) throws SQLException {
         Logger.getGlobal().log(Level.FINER, "Authenticating with sessions: " + token);
-        
+
         if (token == null) return null;
         if(token.isEmpty()) return null;
         try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {

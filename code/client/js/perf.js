@@ -149,10 +149,11 @@ function update(){
         ];
         Object.keys(latestStat.route_stats).forEach((route, index) => {
 
-            let early; 
+            let early;
             try{
                 early = earliestStat.route_stats[route];
-            }catch(e){
+            }catch(e){}
+            if(early === undefined){
                 early = {
                     total_response_time_ns: 0,
                     requests_handled: 0
