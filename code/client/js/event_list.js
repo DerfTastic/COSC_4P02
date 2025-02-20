@@ -26,20 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
-            eventBox.dataset.location = event.location;
-            eventBox.dataset.category = event.category;
-            eventBox.dataset.type = event.type;
-            eventBox.dataset.price = event.price;
-            eventBox.dataset.date = event.date;
-            
+    
             eventBox.innerHTML = `
-                <img src="${event.image}" alt="${event.title}">
-                <h3>${event.title}</h3>
-                <p>Location: ${event.location}</p>
-                <p>Category: ${event.category}</p>
-                <p>Type: ${event.type}</p>
-                <p>Price: $${event.price}</p>
-                <p>Date: ${event.date}</p>
+                <div class="event-content">
+                    <img src="/images/ticket.png" alt="Event Background" class="event-image">
+                    <div class="event-overlay">
+                        <h3>${event.title}</h3>
+                        <p><strong>Location:</strong> ${event.location}</p>
+                        <p><strong>Category:</strong> ${event.category}</p>
+                        <p><strong>Type:</strong> ${event.type}</p>
+                        <p><strong>Price:</strong> $${event.price}</p>
+                        <p><strong>Date:</strong> ${event.date}</p>
+                    </div>
+                </div>
             `;
             eventsContainer.appendChild(eventBox);
         });
