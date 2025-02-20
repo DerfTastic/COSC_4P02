@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const typeFilter = document.getElementById("filterType").value.toLowerCase();
         const tagFilter = document.getElementById("filterTag").value.toLowerCase();
         const minPrice = parseInt(document.getElementById("minPrice").value) || 0;
-        const maxPrice = parseInt(document.getElementById("maxPrice").value) || 500;
+        const maxPrice = parseInt(document.getElementById("maxPrice").value) || 200;
         const startDate = document.getElementById("startDate").value;
         const endDate = document.getElementById("endDate").value;
         const sortBy = document.getElementById("sort").value;
