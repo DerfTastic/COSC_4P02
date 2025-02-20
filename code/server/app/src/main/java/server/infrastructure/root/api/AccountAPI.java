@@ -33,6 +33,7 @@ public class AccountAPI {
             String name,
             String email,
             String bio,
+            Long organizer_id,
             boolean admin,
             Boolean has_analytics
     ){}
@@ -48,6 +49,7 @@ public class AccountAPI {
                     rs.getString("name"),
                     auth.email,
                     rs.getString("bio"),
+                    auth.organizer_id,
                     auth.admin,
                     auth.has_analytics
             );
