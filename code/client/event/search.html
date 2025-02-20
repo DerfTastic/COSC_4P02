@@ -18,7 +18,7 @@
         }
         .sidebar {
             width: 250px;
-            background: #415a77;
+            background: rgba(238, 238, 240, 0.1);
             padding: 10px;
             position: fixed;
             height: 85vh;
@@ -45,22 +45,31 @@
             flex-grow: 1;
             padding: 20px;
         }
-        .events-container {
-            display: block;
-        }
         .event-box {
-            border: 1px solid #ccc;
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            background: #f9f9f9;
-            margin-bottom: 15px;
-        }
-        .event-box img {
             width: 100%;
-            height: auto;
-            border-radius: 5px;
+            height: 250px;
+            border-radius: 10px;
+            position: relative; /* Important for text overlay */
+            color: white;
+            font-weight: bold;
+            text-align: right; /* Align text to the right */
+            padding: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
         }
+
+        /* Overlay to ensure text readability */
+        .event-overlay {
+            position: absolute;
+            top: 50%;
+            right: 20px; /* Move text to the right */
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+            padding: 10px;
+            border-radius: 5px;
+            text-align: right; /* Ensure text inside is also right-aligned */
+        }
+
         .load-more-container {
             text-align: center;
             margin: 20px 0;
@@ -75,26 +84,6 @@
         }
         .load-more:hover {
             background: #0056b3;
-        }
-        .event-box {
-            background-color: #f8e6e0;
-            color: #333;
-            border: 1px solid #d1a7a1;
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-        }
-
-        .event-box h3 {
-            color: #b22222;
-        }
-
-        .event-box p {
-            color: #555;
-        }
-
-        .event-box strong {
-            color: #8b0000;
         }
     </style>
 </head>
@@ -116,9 +105,8 @@
             <input type="text" id="filterTag" placeholder="Enter tag">
 
             <label for="priceRange">Price Range:</label>
-            <input type="range" id="minPrice" min="0" max="500" step="10">
-            <input type="range" id="maxPrice" min="0" max="500" step="10">
-            <span id="priceDisplay"></span>
+            <input type="text" id="minPrice" placeholder="Enter minimum price">
+            <input type="text" id="maxPrice" placeholder="Enter maximum price">
 
             <label for="dateRange">Event Date:</label>
             <input type="date" id="startDate">
