@@ -52,7 +52,7 @@
             position: relative; /* Important for text overlay */
             color: white;
             font-weight: bold;
-            text-align: left;
+            text-align: right; /* Align text to the right */
             padding: 15px;
             margin-bottom: 15px;
             overflow: hidden;
@@ -62,11 +62,12 @@
         .event-overlay {
             position: absolute;
             top: 50%;
-            left: 20px;
+            right: 20px; /* Move text to the right */
             transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
             padding: 10px;
             border-radius: 5px;
+            text-align: right; /* Ensure text inside is also right-aligned */
         }
 
         .load-more-container {
