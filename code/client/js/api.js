@@ -5,6 +5,8 @@ class AllUserInfo {
     /** @type{string} */name
     /** @type{string} */email
     /** @type{string} */bio
+    /** @type{number?} */organizer_id
+    /** @type{boolean} */organizer
     /** @type{boolean} */admin
     /** @type{boolean} */has_analytics
 }
@@ -522,7 +524,7 @@ const api = {
          * @returns {Promise<AllUserInfo>}
          */
         all_userinfo: async function (session) {
-            return await (await api.api_call(
+            const result = await (await api.api_call(
                 `/all_userinfo`,
                 {
                     method: 'POST',
@@ -533,6 +535,8 @@ const api = {
                 },
                 "An error occured while fetching userinfo"
             )).json();
+            result.organizer = Object.hasOwn(result, "organizer_id")&&result.organizer_id>0;
+            return result;
         },
 
         /**
@@ -679,8 +683,11 @@ const utility = {
         const curr_id = cookies.getSession().substring(cookies.getSession().length - 8, cookies.getSession().length);
         return parseInt(curr_id, 16) == id;
     },
+    is_logged_in: function() {
+        return cookies.getSession() != null && cookies.getSession().length > 0;
+    },
     require_logged_in: function () {
-        if (cookies.getSession() == null || cookies.getSession().length == 0) {
+        if (!this.is_logged_in()) {
             window.location.href = "/account/login";
         }
     }
@@ -841,6 +848,7 @@ const page = {
                 } catch (err) {
                     e.innerHTML = JSON.stringify(err);
                 }
+                nodeScriptReplace(e);
 
                 page.initialize_content(e.nextElementSibling);
                 page.load_dynamic_content(e.nextElementSibling);
@@ -895,6 +903,31 @@ const page = {
         }
     }
 };
+
+function nodeScriptReplace(node) {
+    if(node.tagName === 'SCRIPT'){
+        node.parentNode.replaceChild(nodeScriptClone(node) , node);
+    }else{
+        var i = -1;
+        var children = node.childNodes;
+        while(++i < children.length){
+            nodeScriptReplace(children[i]);
+        }
+    }
+
+    return node;
+}
+function nodeScriptClone(node){
+    var script  = document.createElement("script");
+    script.text = node.innerHTML;
+
+    var i = -1;
+    var attrs = node.attributes, attr;
+    while( ++i < attrs.length ) {                                    
+        script.setAttribute((attr = attrs[i]).name, attr.value);
+    }
+    return script;
+}
 
 
 document.addEventListener('handlebar_templates_finished', () => {
