@@ -49,23 +49,24 @@
             width: 100%;
             height: 250px;
             border-radius: 10px;
-            position: relative; /* Important for text overlay */
+            position: relative;
+            text-align: right; /* Align text to the right */
+            padding: 15px;
+            margin-bottom: 15px;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
         }
 
-        /* Text overlay */
+        /* Overlay to ensure text readability */
         .event-overlay {
             position: absolute;
             top: 50%;
-            right: 20px; /* Keep it on the right side */
+            right: 800px; /* Move text to the right */
             transform: translateY(-50%);
-            color: black; /* Make text black */
-            text-align: left; /* Left-align the text */
-            width: 50%; /* Adjust width so it stays on the right side */
+            padding: 10px;
+            color: black;
+            border-radius: 5px;
+            text-align: left; /* Ensure text inside is also right-aligned */
         }
-
 
         .load-more-container {
             text-align: center;
