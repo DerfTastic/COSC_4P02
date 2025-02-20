@@ -49,34 +49,24 @@
             width: 100%;
             height: 250px;
             border-radius: 10px;
-            position: relative; /* Important for overlay */
+            position: relative;
+            text-align: right; /* Align text to the right */
+            padding: 15px;
+            margin-bottom: 15px;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
-            display: flex;
         }
 
-        /* Left side (blank image placeholder) */
-        .event-image {
-            width: 75%; /* Covers 3/4 of the event box */
-            height: 100%;
-            background-image: url('/images/blank.png'); /* Your blank image */
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* Right side (text) */
+        /* Overlay to ensure text readability */
         .event-overlay {
-            width: 25%; /* Takes up the remaining 1/4 */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Vertically centered */
-            align-items: flex-start; /* Left-aligned text */
-            padding-left: 15px; /* Some spacing */
-            color: black; /* Black text */
-            text-align: left;
+            position: absolute;
+            top: 50%;
+            right: 20px; /* Move text to the right */
+            transform: translateY(-50%);
+            padding: 10px;
+            color: black;
+            border-radius: 5px;
+            text-align: right; /* Ensure text inside is also right-aligned */
         }
-
 
         .load-more-container {
             text-align: center;
