@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
-            eventBox.style.backgroundImage = `url(${event.image})`; // Set image as background
+            eventBox.style.backgroundImage = `url(images/ticket.png)`; // Set image as background
             eventBox.style.backgroundSize = "cover";
             eventBox.style.backgroundPosition = "center";
     
