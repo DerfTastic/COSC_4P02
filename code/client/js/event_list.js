@@ -26,21 +26,21 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
+            eventBox.style.backgroundImage = `url(${event.image})`; // Set image as background
+            eventBox.style.backgroundSize = "cover";
+            eventBox.style.backgroundPosition = "center";
     
             eventBox.innerHTML = `
-                <div class="event-content">
-                    <img src="/images/ticket.png" alt="Event Background" class="event-image">
-                    <div class="event-overlay">
-                        <h3>${event.title}</h3>
-                        <p><strong>Location:</strong> ${event.location}</p>
-                        <p><strong>Category:</strong> ${event.category}</p>
-                        <p><strong>Type:</strong> ${event.type}</p>
-                        <p><strong>Price:</strong> $${event.price}</p>
-                        <p><strong>Date:</strong> ${event.date}</p>
-                    </div>
-                </div>
-            `;
-            eventsContainer.appendChild(eventBox);
+            <div class="event-overlay">
+                <h3>${event.title}</h3>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <p><strong>Category:</strong> ${event.category}</p>
+                <p><strong>Type:</strong> ${event.type}</p>
+                <p><strong>Price:</strong> $${event.price}</p>
+                <p><strong>Date:</strong> ${event.date}</p>
+            </div>
+        `;
+        eventsContainer.appendChild(eventBox);
         });
     }
 
