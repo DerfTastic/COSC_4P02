@@ -20,21 +20,70 @@
                 </svg>
             </button>
         </form>
-
+        
         <nav>
-            <a href="/event/search">Browse Events</a>
-            <a href="/event/create">Create Events</a>
-            <a href="/account/login">Login</a>
-            <a href="/account/register">Signup</a>
-       
+            <a href="/event/search" id ="search-event-link">Browse Events</a>
+            <a href="/event/create" id="create-event-link">Create Events</a>
+            <a href="/account/login" id="login-link">Login</a>
+            <a href="/account/register" id="signup-link">Signup</a>
+            <a href="#" id="logout-link" style="display: none;">Logout</a>
 
-        <button class="cart" aria-label="View Cart">
+        <button id = "cart" class="cart" aria-label="View Cart">
             <!-- <i class="fa badge fa-lg">&#xf07a;</i> -->
             <i class="fa  fa-lg">&#xf07a;</i>
-
         </button>
     </nav>
-
-       
-   
 </header>
+
+
+<script>
+    async function updateAuthLinks() {
+        const loginLink = document.getElementById("login-link");
+        const signupLink = document.getElementById("signup-link");
+        const logoutLink = document.getElementById("logout-link");
+        const searchLink = document.getElementById("search-event-link");
+        const createLink = document.getElementById("create-event-link");
+        const cart = document.getElementById("cart");
+        const session = cookies.getSession();
+
+        if (session && session.length > 0) {
+            loginLink.style.display = 'none';
+            signupLink.style.display = 'none';
+            logoutLink.style.display = 'inline';
+
+            signupLink.insertAdjacentHTML('afterend','<a href="/account">Home</a>');
+
+            logoutLink.onclick = function() {
+                utility.logout(); 
+                setTimeout(function() {
+                    updateAuthLinks();
+                }, 2000);
+            };
+            try {
+                const userInfo = await page.account.all_userinfo();
+                if (userInfo && userInfo.admin) {
+                    searchLink.style.display = 'none';
+                    createLink.style.display = 'none';
+                    cart.style.display = 'none';
+                    const adminLinksHTML = `
+                        <a href="/admin/logs">Logs</a>
+                        <a href="/admin/console">Console</a>
+                        <a href="/admin/perf">Stats</a>
+                    `;
+                    loginLink.insertAdjacentHTML('afterend', adminLinksHTML);
+                }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        } else {
+            searchLink.style.display = 'inline';
+            createLink.style.display = 'inline';
+            loginLink.style.display = 'inline';
+            signupLink.style.display = 'inline';
+            logoutLink.style.display = 'none';
+            cart.style.display = 'inline';
+        }
+    }
+    updateAuthLinks();
+</script>
+

@@ -20,7 +20,7 @@
     
         <title>Ticket Express</title>
     <style>
-        body {
+        .sql {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -29,7 +29,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #f4f4f9;
+            background-color: transparent;
         }
 
         #console {
@@ -58,7 +58,7 @@
             font-family: monospace;
         }
 
-        button {
+        .go {
             margin-top: 10px;
             padding: 10px 20px;
             font-size: 16px;
@@ -69,17 +69,18 @@
             cursor: pointer;
         }
 
-        button:hover {
+        .go:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>SQL Console</h1>
+    <div class="sql">
+    <h2>SQL Console</h2>
     <textarea id="sqlInput" placeholder="Enter your SQL query here..."></textarea>
-    <!-- <button onclick="executeSQL()">Run Query</button> -->
+    <!-- <button class = "go" onclick="executeSQL()">Run Query</button> -->
     <div id="console"></div>
-
+</div>
     <script>
         const sqlInput = document.getElementById('sqlInput');
 

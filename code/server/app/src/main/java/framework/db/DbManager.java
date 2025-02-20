@@ -47,9 +47,10 @@ public class DbManager implements AutoCloseable{
             initialized = false;
             url = "jdbc:sqlite:file:"+path+"?mode=memory"+(cacheShared?"&cache=shared":"");
         }else {
-            url = "jdbc:sqlite:"+ path;
+            url = "jdbc:sqlite:file:"+path+(cacheShared?"?cache=shared":"");
             initialized = new File(path).exists();
         }
+        Logger.getGlobal().log(Level.CONFIG, "DB url: " + url);
 
         try(var conn = rw_conn(">initialization")){
             var major = conn.getConn().getMetaData().getDatabaseMajorVersion();
