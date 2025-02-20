@@ -22,7 +22,7 @@
         </form>
         
         <nav>
-            <a href="/" id ="search-event-link">Browse Events</a>
+            <!-- <a href="/" id ="search-event-link">Home</a> -->
             <a href="/event/create" id="create-event-link">Create Events</a>
             <a href="/account/login" id="login-link">Login</a>
             <a href="/account/register" id="signup-link">Signup</a>
@@ -41,7 +41,7 @@
         const loginLink = document.getElementById("login-link");
         const signupLink = document.getElementById("signup-link");
         const logoutLink = document.getElementById("logout-link");
-        const searchLink = document.getElementById("search-event-link");
+        // const searchLink = document.getElementById("search-event-link");
         const createLink = document.getElementById("create-event-link");
         const cart = document.getElementById("cart");
         const session = cookies.getSession();
@@ -51,7 +51,7 @@
             signupLink.style.display = 'none';
             logoutLink.style.display = 'inline';
 
-            signupLink.insertAdjacentHTML('afterend','<a href="/account">Home</a>');
+            signupLink.insertAdjacentHTML('afterend','<a href="/account">Account</a>');
 
             logoutLink.onclick = function() {
                 utility.logout(); 
@@ -62,7 +62,7 @@
             try {
                 const userInfo = await page.account.all_userinfo();
                 if (userInfo && userInfo.admin) {
-                    searchLink.style.display = 'none';
+                    // searchLink.style.display = 'none';
                     createLink.style.display = 'none';
                     cart.style.display = 'none';
                     const adminLinksHTML = `
@@ -76,7 +76,7 @@
                 console.error('Error fetching user info:', error);
             }
         } else {
-            searchLink.style.display = 'inline';
+            // searchLink.style.display = 'inline';
             createLink.style.display = 'inline';
             loginLink.style.display = 'inline';
             signupLink.style.display = 'inline';
