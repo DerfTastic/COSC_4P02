@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             eventBox.classList.add("event-box");
         
             eventBox.innerHTML = `
-                <div class="event-image"></div> <!-- Blank image covers left 3/4 -->
+                <div class="event-image"></div>
                 <div class="event-overlay">
                     <h3>${event.title}</h3>
                     <p><strong>Location:</strong> ${event.location}</p>
