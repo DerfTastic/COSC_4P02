@@ -26,24 +26,27 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
-            eventBox.dataset.location = event.location;
-            eventBox.dataset.category = event.category;
-            eventBox.dataset.type = event.type;
-            eventBox.dataset.price = event.price;
-            eventBox.dataset.date = event.date;
-            
+            eventBox.style.backgroundImage = `url('/images/ticket.png')`; // Set image as background
+            eventBox.style.backgroundSize = "cover";
+            eventBox.style.backgroundPosition = "center";
+            eventBox.style.width = "100%"; // Ensure it takes full width
+            eventBox.style.height = "250px"; // Adjust height as needed
+            eventBox.style.position = "relative"; // Ensure text can overlay
+    
             eventBox.innerHTML = `
-                <img src="${event.image}" alt="${event.title}">
-                <h3>${event.title}</h3>
-                <p>Location: ${event.location}</p>
-                <p>Category: ${event.category}</p>
-                <p>Type: ${event.type}</p>
-                <p>Price: $${event.price}</p>
-                <p>Date: ${event.date}</p>
+                <div class="event-overlay">
+                    <h3>${event.title}</h3>
+                    <p><strong>Location:</strong> ${event.location}</p>
+                    <p><strong>Category:</strong> ${event.category}</p>
+                    <p><strong>Type:</strong> ${event.type}</p>
+                    <p><strong>Price:</strong> $${event.price}</p>
+                    <p><strong>Date:</strong> ${event.date}</p>
+                </div>
             `;
             eventsContainer.appendChild(eventBox);
         });
     }
+    
 
     function loadMoreEvents() {
         const newEvents = filteredEvents.slice(0, displayedEvents + eventsPerPage);
@@ -61,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const typeFilter = document.getElementById("filterType").value.toLowerCase();
         const tagFilter = document.getElementById("filterTag").value.toLowerCase();
         const minPrice = parseInt(document.getElementById("minPrice").value) || 0;
-        const maxPrice = parseInt(document.getElementById("maxPrice").value) || 500;
+        const maxPrice = parseInt(document.getElementById("maxPrice").value) || 200;
         const startDate = document.getElementById("startDate").value;
         const endDate = document.getElementById("endDate").value;
         const sortBy = document.getElementById("sort").value;
