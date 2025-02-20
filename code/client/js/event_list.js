@@ -26,23 +26,27 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
-            eventBox.style.backgroundImage = "/images/ticket.png"; // Set image as background
+            eventBox.style.backgroundImage = `url('/images/ticket.png')`; // Set image as background
             eventBox.style.backgroundSize = "cover";
             eventBox.style.backgroundPosition = "center";
+            eventBox.style.width = "100%"; // Ensure it takes full width
+            eventBox.style.height = "250px"; // Adjust height as needed
+            eventBox.style.position = "relative"; // Ensure text can overlay
     
             eventBox.innerHTML = `
-            <div class="event-overlay">
-                <h3>${event.title}</h3>
-                <p><strong>Location:</strong> ${event.location}</p>
-                <p><strong>Category:</strong> ${event.category}</p>
-                <p><strong>Type:</strong> ${event.type}</p>
-                <p><strong>Price:</strong> $${event.price}</p>
-                <p><strong>Date:</strong> ${event.date}</p>
-            </div>
-        `;
-        eventsContainer.appendChild(eventBox);
+                <div class="event-overlay">
+                    <h3>${event.title}</h3>
+                    <p><strong>Location:</strong> ${event.location}</p>
+                    <p><strong>Category:</strong> ${event.category}</p>
+                    <p><strong>Type:</strong> ${event.type}</p>
+                    <p><strong>Price:</strong> $${event.price}</p>
+                    <p><strong>Date:</strong> ${event.date}</p>
+                </div>
+            `;
+            eventsContainer.appendChild(eventBox);
         });
     }
+    
 
     function loadMoreEvents() {
         const newEvents = filteredEvents.slice(0, displayedEvents + eventsPerPage);
