@@ -85,6 +85,11 @@ header .logo {
     gap: 10px;
 }
 
+.logo-and-title a
+{
+    text-decoration: none;
+}
+
 
  .search-bar {
     position: relative;
