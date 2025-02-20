@@ -36,8 +36,9 @@
             width: 100%;
         }
         .charts-container {
+            height: 60vh;
             display: flex;
-            flex-wrap: wrap;
+            /* flex-wrap: wrap; */
             gap: 20px;
             justify-content: space-around;
         }
@@ -88,19 +89,23 @@
         <div class="section">
             <h2>Database Global Statistics</h2>
             <div class="charts-container">
-                <div class="chart-wrapper"><canvas id="globalPreparedStatementsChart"></canvas></div>
-                <!-- <div class="chart-wrapper"><canvas id="globalDbHeldChart"></canvas></div> -->
-            </div>
-            <div class="charts-container">
-                <!-- <div class="chart-wrapper"><canvas id="globalDbWaitedChart"></canvas></div> -->
+                <div class="chart-wrapper"><canvas id="globalStatementsChart"></canvas></div>
+                <div class="chart-wrapper"><canvas id="globalTimingsChart"></canvas></div>
             </div>
         </div>
 
         <div class="section">
             <h2>Database Sectioned Statistics</h2>
             <div class="charts-container">
-                <div class="chart-wrapper"><canvas id="rwStatementsChart"></canvas></div>
-                <div class="chart-wrapper"><canvas id="nya"></canvas></div>
+                <div class="chart-wrapper"><canvas id="totalStatementsChart"></canvas></div>
+                <div class="chart-wrapper"><canvas id="heldRankingChart"></canvas></div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="averageHeldChart"></canvas></div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="averageWaitedChart"></canvas></div>
+                <div class="chart-wrapper"><canvas id="waitRankingChart"></canvas></div>
             </div>
         </div>
         

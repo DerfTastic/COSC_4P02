@@ -157,6 +157,8 @@ public class DbManager implements AutoCloseable{
         config.setPragma(SQLiteConfig.Pragma.READ_UNCOMMITTED, "true");
         config.setPragma(SQLiteConfig.Pragma.FOREIGN_KEYS, "true");
         config.setPragma(SQLiteConfig.Pragma.RECURSIVE_TRIGGERS, "true");
+        config.setPragma(SQLiteConfig.Pragma.SYNCHRONOUS, "normal");
+        config.setPragma(SQLiteConfig.Pragma.JOURNAL_SIZE_LIMIT, "6144000");
         var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
         connection.setAutoCommit(false);
@@ -183,16 +185,13 @@ public class DbManager implements AutoCloseable{
 
     protected synchronized Connection rw_conn_p(RwConn conn) throws SQLException{
         var seq = sequenceBefore++;
-        boolean first = true;
+
+        tracker.db_lock_waited(conn.id, true);
         while(
             seq!=sequenceCurr
             ||(inUseWritable>=maxWritable&&maxWritable>0)
             ||(!canWriteAndReadCoexist&&inUseReadOnly>0)
         ){
-            if(first){
-                tracker.db_lock_waited(conn.id, true);
-                first = false;
-            }
             var start = System.nanoTime();
             if(owning.contains(Thread.currentThread()))
                 throw new RuntimeException("This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block");
@@ -220,16 +219,13 @@ public class DbManager implements AutoCloseable{
 
     protected synchronized Connection ro_conn_p(RoConn conn) throws SQLException {
         var seq = sequenceBefore++;
-        boolean first = true;
+
+        tracker.db_lock_waited(conn.id, false);
         while(
             seq!=sequenceCurr
             ||(inUseReadOnly>=maxReadOnly&&maxReadOnly>0)
             ||(!canWriteAndReadCoexist&&inUseWritable>0)
         ){
-            if(first){
-                tracker.db_lock_waited(conn.id, false);
-                first = false;
-            }
             var start = System.nanoTime();
             if(owning.contains(Thread.currentThread()))
                 throw new RuntimeException("This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block");

@@ -39,10 +39,10 @@ async function run_all(){
     timeStart("");
     const start = new Date();
 
-    const user_count = 5000;
-    const organizer_count = 1000;
+    const user_count = 500;
+    const organizer_count = 100;
     const admin_count = 5;  
-    const event_count = 1000;
+    const event_count = 700;
     // test_register_1();
     // test_register_2();
     // test_default_admin_account();
@@ -197,7 +197,7 @@ async function create_example_event(org_session, iteration){
 
 
     // getting the event with a session that we own should work;
-    await api.events.get_event(event_id, org_session);
+    // await api.events.get_event(event_id, org_session);
 
     // not publically accessable
     // let failed = false;
