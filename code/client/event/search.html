@@ -46,29 +46,29 @@
             padding: 20px;
         }
         .event-box {
-            width: 100%; /* Full width */
-            height: 250px; /* Adjust based on your needs */
+            width: 100%;
+            height: 250px;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            color: white; 
+            position: relative; /* Important for text overlay */
+            color: white;
             font-weight: bold;
             text-align: left;
             padding: 15px;
             margin-bottom: 15px;
             overflow: hidden;
         }
+
+        /* Overlay to ensure text readability */
         .event-overlay {
             position: absolute;
             top: 50%;
             left: 20px;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
             padding: 10px;
             border-radius: 5px;
         }
+
         .load-more-container {
             text-align: center;
             margin: 20px 0;
