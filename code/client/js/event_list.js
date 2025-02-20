@@ -22,12 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let filteredEvents = [...events];
 
     function renderEvents(eventList) {
-        const eventImage = event.image ? event.image : "/images/ticket.png"; // Use event image or fallback
         eventsContainer.innerHTML = "";
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
-            eventBox.style.backgroundImage = eventImage; // Set image as background
+            eventBox.style.backgroundImage = "/images/ticket.png"; // Set image as background
             eventBox.style.backgroundSize = "cover";
             eventBox.style.backgroundPosition = "center";
     
