@@ -5,7 +5,7 @@ import framework.web.annotations.*;
 import server.ServerLogger;
 import framework.db.RwConn;
 import framework.web.error.BadRequest;
-import framework.web.mail.MailServer;
+import server.mail.MailServer;
 import server.ServerStatistics;
 import framework.web.annotations.url.Path;
 import server.infrastructure.param.auth.RequireAdmin;

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import framework.db.DbManager;
+import server.infrastructure.DbManagerImpl;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SearchAPITest {
@@ -18,7 +19,7 @@ public class SearchAPITest {
     @BeforeAll
     public static void setup() {
         try{
-            db = new DbManager("search_api_test", true, true, true);
+            db = new DbManagerImpl("search_api_test", true, true, true);
         }catch (Exception e){
             throw new RuntimeException(e);
         }

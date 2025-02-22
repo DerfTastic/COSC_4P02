@@ -7,7 +7,7 @@ import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
-import framework.web.mail.MailServer;
+import server.mail.MailServer;
 import framework.web.Util;
 import framework.web.annotations.url.Path;
 import framework.web.param.misc.IpHandler;
@@ -166,7 +166,7 @@ public class AccountAPI {
             }
         }
 
-        var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id).getBytes());
+        var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id + "\0\0\0\0" + System.nanoTime()).getBytes());
         var token = String.format("%s%08X", hash, session_id);
 
         try(var stmt = trans.namedPreparedStatement("update sessions set token=:token where id=:id")){

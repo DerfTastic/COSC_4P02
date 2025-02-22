@@ -5,6 +5,7 @@ package infrastructure.api;
 
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
+import server.infrastructure.DbManagerImpl;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdminAPITest {
@@ -15,7 +16,7 @@ public class AdminAPITest {
     @BeforeAll
     public static void setup() {
         try{
-            db = new DbManager("admin_api_test", true, true, true);
+            db = new DbManagerImpl("admin_api_test", true, true, true);
         }catch (Exception e){
             throw new RuntimeException(e);
         }

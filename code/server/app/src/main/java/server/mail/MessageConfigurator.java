@@ -1,4 +1,4 @@
-package framework.web.mail;
+package server.mail;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;

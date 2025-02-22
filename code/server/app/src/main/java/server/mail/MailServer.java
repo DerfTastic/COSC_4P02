@@ -1,4 +1,4 @@
-package framework.web.mail;
+package server.mail;
 
 
 import javax.mail.internet.AddressException;

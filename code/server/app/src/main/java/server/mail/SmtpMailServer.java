@@ -1,6 +1,11 @@
-package framework.web.mail;
+package server.mail;
+
+import framework.db.Conn;
+import server.Config;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.Closeable;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -64,15 +69,17 @@ public class SmtpMailServer implements Closeable, MailServer {
 
     @Override
     public synchronized void sendMail(MessageConfigurator configurator) {
-//        executor.submit(() -> {
-//            try{
-//                Message message = new MimeMessage(session);
-//                message.setFrom(new InternetAddress(username));
-//                configurator.config(message);
-//                transport.get().sendMessage(message, message.getAllRecipients());
-//            }catch (MessagingException e){
-//                Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
-//            }
-//        });
+        if(Config.CONFIG.send_mail){
+            executor.submit(() -> {
+                try{
+                    Message message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress(username));
+                    configurator.config(message);
+                    transport.get().sendMessage(message, message.getAllRecipients());
+                }catch (MessagingException e){
+                    Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
+                }
+            });
+        }
     }
 }

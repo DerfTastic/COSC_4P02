@@ -19,13 +19,11 @@ public abstract class Conn implements AutoCloseable {
     }
 
     public NamedPreparedStatement namedPreparedStatement(String sql) throws SQLException {
-        var stmt = new NamedPreparedStatement(this, sql);
-        return stmt;
+        return db.namedPreparedStatement(this, sql);
     }
 
     public Statement createStatement() throws SQLException{
-        var stmt = new StatementM(this);
-        return stmt;
+        return new StatementM(this);
     }
 
     @Override

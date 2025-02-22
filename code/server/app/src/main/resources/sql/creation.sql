@@ -77,7 +77,8 @@ create table event_tags(
           ON UPDATE NO ACTION
 );
 
-CREATE INDEX event_tags_idx ON event_tags(event_id);
+CREATE INDEX event_tags_event_id_idx ON event_tags(event_id);
+CREATE INDEX event_tags_tag_idx ON event_tags(tag);
 
 
 create table tickets(
