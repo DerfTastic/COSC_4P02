@@ -61,26 +61,31 @@ public abstract class DbManager implements AutoCloseable{
     public synchronized void close() {
         for(var conn : readOnlyAvailable){
             try{
-                conn.close();
+                closeConnection(conn);
             }catch (Exception ignore){}
         }
+        readOnlyAvailable.clear();
         for(var conn : writableAvailable){
             try{
-                conn.close();
+                closeConnection(conn);
             }catch (Exception ignore){}
         }
+        writableAvailable.clear();
         for(var conn : inUse){
             try{
-                conn.close();
+                closeConnection(conn);
             }catch (Exception ignore){}
         }
+        inUse.clear();
     }
 
     protected synchronized void rePool(RwConn conn) throws SQLException {
         if(conn.conn==null)return;
         owning.remove(Thread.currentThread());
         if(inUse.remove(conn.conn)){
-            if(!conn.conn.isClosed())
+            if(conn.conn.isClosed())
+                closeConnection(conn.conn);
+            else
                 writableAvailable.addLast(conn.conn);
             inUseWritable--;
             this.notifyAll();
@@ -90,11 +95,26 @@ public abstract class DbManager implements AutoCloseable{
         tracker.db_release(conn.id, true, System.nanoTime()-conn.acquired);
     }
 
+    private void closeConnection(Connection conn) {
+        try{
+            conn.close();
+        }catch (SQLException ignore){}
+        for(var stmts : preparedCache.remove(conn).values()){
+            for(var stmt : stmts){
+                try{
+                    stmt.stmt.close();
+                }catch (SQLException ignore){}
+            }
+        }
+    }
+
     protected synchronized void rePool(RoConn conn) throws SQLException {
         if(conn.conn==null)return;
         owning.remove(Thread.currentThread());
         if(inUse.remove(conn.conn)){
-            if(!conn.conn.isClosed())
+            if(conn.conn.isClosed())
+                closeConnection(conn.conn);
+            else
                 readOnlyAvailable.addLast(conn.conn);
             inUseReadOnly--;
             this.notifyAll();
