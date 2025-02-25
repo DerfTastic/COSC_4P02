@@ -1,6 +1,7 @@
 package server.infrastructure.root.api;
 
 import framework.db.RoTransaction;
+import framework.util.Tuple;
 import framework.web.annotations.*;
 import server.infrastructure.param.auth.OptionalAuth;
 import server.infrastructure.param.auth.UserSession;
@@ -8,6 +9,7 @@ import framework.util.SqlSerde;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -38,6 +40,8 @@ public class SearchAPI {
             Double location_lat,
             Double location_long,
             String location,
+            Boolean owning,
+            Boolean draft,
             Long offset,
             Long limit,
             SortBy sort_by
@@ -45,70 +49,87 @@ public class SearchAPI {
 
     @Route
     public static @Json List<EventAPI.AllEvent> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search) throws SQLException {
-        StringBuilder whereClause;
-        if(session!=null&&session.organizer_id!=null)
-            whereClause = new StringBuilder("(draft=false OR organizer_id=" + session.organizer_id + ")");
-        else
-            whereClause = new StringBuilder("draft=false");
+        var long_map = new HashMap<String, Long>();
+        var str_map = new HashMap<String, String>();
+        var real_map = new HashMap<String, Double>();
 
-        if(search.tags!=null)
-            for(var item : search.tags){
-                whereClause.append(" AND (events.id IN (select event_id from event_tags where category=")
-                        .append(item.category)
-                        .append(" AND tag='")
-                        .append(item.tag.replace("'", "\\'"))
-                        .append("'))");
+        StringBuilder whereClause = new StringBuilder();
+        if(search.draft==null|| !search.draft) {
+            if (search.owning == null || !search.owning) {
+                whereClause.append("draft=false");
+            } else {
+                whereClause.append("draft=false AND organizer_id=:organizer_id");
+                long_map.put(":organizer_id", session.organizer_id);
             }
+        }else {
+            whereClause.append("draft=true AND organizer_id=:organizer_id");
+            long_map.put(":organizer_id", session.organizer_id);
+        }
+
+        if(search.tags!=null) {
+            int index = 0;
+            for (var item : search.tags) {
+                String category = ":tag_category_" + index;
+                String id = ":tag_id_" + index;
+                whereClause.append(" AND (events.id IN (select event_id from event_tags where category=")
+                        .append(category).append(" AND tag='").append(id).append("'))");
+                long_map.put(category, item.category?1L:0L);
+                str_map.put(id, item.tag);
+                index ++;
+            }
+        }
         if(search.distance!=null && search.location_lat!=null && search.location_long!=null){
-            whereClause.append(" AND (location_lat BETWEEN ")
-                    .append(search.location_lat - search.distance)
-                    .append(" AND ")
-                    .append(search.location_lat + search.distance)
-                    .append(")");
-            whereClause.append(" AND (location_long BETWEEN ")
-                    .append(search.location_long - search.distance)
-                    .append(" AND ")
-                    .append(search.location_long + search.distance)
-                    .append(")");
+            whereClause.append(" AND (location_lat BETWEEN :lat_lower AND :lat_upper)");
+            whereClause.append(" AND (location_long BETWEEN :long_lower AND :long_upper)");
+
+            real_map.put(":lat_lower", search.location_lat - search.distance);
+            real_map.put(":lat_upper", search.location_lat + search.distance);
+
+            real_map.put(":long_lower", search.location_lat - search.distance);
+            real_map.put(":long_upper", search.location_lat + search.distance);
         }
         if(search.date_start!=null){
-            whereClause.append(" AND (start >= ")
-                    .append(search.date_start)
-                    .append(" OR start IS NULL)");
+            whereClause.append(" AND (start >= :date_start OR start IS NULL)");
+            long_map.put(":date_start", search.date_start);
         }
         if(search.date_end!=null){
-            whereClause.append(" AND (start <= ")
-                    .append(search.date_end)
-                    .append(" OR start IS NULL)");
+            whereClause.append(" AND (start <= :date_end OR start IS NULL)");
+            long_map.put(":date_end", search.date_end);
         }
         if(search.max_duration!=null){
-            whereClause.append(" AND (duration <= ")
-                    .append(search.max_duration)
-                    .append(" OR duration IS NULL)");
+            whereClause.append(" AND (duration <= :max_duration OR duration IS NULL)");
+            long_map.put(":max_duration", search.max_duration);
         }
         if(search.min_duration!=null){
-            whereClause.append(" AND (duration >= ")
-                    .append(search.min_duration)
-                    .append(" OR duration IS NULL)");
+            whereClause.append(" AND (duration >= :min_duration OR duration IS NULL)");
+            long_map.put(":min_duration", search.min_duration);
         }
         if(search.organizer_exact!=null){
-            whereClause.append(" AND (organizer_id=").append(search.organizer_exact).append(")");
+            whereClause.append(" AND (organizer_id=:organizer_exact)");
+            long_map.put(":organizer_exact", search.organizer_exact);
         }
         if(search.organizer_fuzzy!=null){
-            whereClause.append(" AND organizer_id IN (select users.organizer_id from users where events.organizer_id=users.organizer_id AND users.name LIKE '").append(search.organizer_fuzzy.replace("'", "\\'")).append("')");
+            whereClause.append(" AND organizer_id IN (select users.organizer_id from users where events.organizer_id=users.organizer_id AND users.name LIKE :organizer_name_fuzzy)");
+            str_map.put(":organizer_name_fuzzy", search.organizer_fuzzy);
         }
         if(search.name_fuzzy!=null){
-            whereClause.append(" AND (name LIKE '").append(search.name_fuzzy.replace("'", "\\'")).append("')");
+            whereClause.append(" AND (name LIKE :event_name_fuzzy");
+            str_map.put(":event_name_fuzzy", search.name_fuzzy);
         }
         if(search.location!=null){
-            whereClause.append(" AND (location_name LIKE '").append(search.location.replace("'", "\\'")).append("')");
+            whereClause.append(" AND (location_name LIKE :location_fuzzy)");
+            str_map.put(":location_fuzzy", search.location);
         }
 
         String order = switch(search.sort_by==null?SortBy.Nothing:search.sort_by){
             case MinPrice -> "(select min(price) from tickets where event_id=id) ASC";
             case MaxPrice -> "(select max(price) from tickets where event_id=id) DESC";
             case TicketsAvailable -> "(coalesce(coalesce((select sum(available_tickets) from tickets where tickets.event_id=events.id),events.available_total_tickets)-(select count(*) from purchased_tickets where purchased_tickets.ticket_id in (select tickets.id from tickets where tickets.event_id=events.id)),999999999)) DESC";
-            case Closest -> "abs(location_lat-"+search.location_lat+") ASC abs(location_long-"+search.location_long+") ASC";
+            case Closest -> {
+                real_map.put(":location_lat", search.location_lat);
+                real_map.put(":location_long", search.location_long);
+                yield "abs(location_lat-:location_lat) ASC abs(location_long-:location_long) ASC";
+            }
             case StartTime -> "start ASC";
             case MinDuration -> "duration ASC";
             case MaxDuration -> "duration DESC";
@@ -120,11 +141,22 @@ public class SearchAPI {
         String clauses = "where " + whereClause + " order by " + order;
         var limit = search.limit==null?256:Math.max(256, search.limit);
         var offset = search.offset==null?0:search.offset;
-        clauses += " limit " + offset + "," + limit;
+        clauses += " limit :offset, :limit";
+        long_map.put(":offset", offset);
+        long_map.put(":limit", limit);
 
         List<EventAPI.Event> events_partial;
-        try(var stmt = trans.createStatement()){
-            var rs = stmt.executeQuery("select * from events " + clauses);
+        try(var stmt = trans.namedPreparedStatement("select * from events " + clauses)){
+            for(var es : str_map.entrySet()){
+                stmt.setString(es.getKey(), es.getValue());
+            }
+            for(var es : long_map.entrySet()){
+                stmt.setLong(es.getKey(), es.getValue());
+            }
+            for(var es : real_map.entrySet()){
+                stmt.setDouble(es.getKey(), es.getValue());
+            }
+            var rs = stmt.executeQuery();
             events_partial = SqlSerde.sqlList(rs, EventAPI.Event.class);
         }
         List<EventAPI.AllEvent> events = new ArrayList<>(events_partial.size());
@@ -132,8 +164,17 @@ public class SearchAPI {
             events.add(new EventAPI.AllEvent(event, new ArrayList<>()));
         }
 
-        try(var stmt = trans.createStatement()){
-            var rs = stmt.executeQuery("select id, tag, category from events left join event_tags on id=event_id " + clauses);
+        try(var stmt = trans.namedPreparedStatement("select id, tag, category from events left join event_tags on id=event_id " + clauses)){
+            for(var es : str_map.entrySet()){
+                stmt.setString(es.getKey(), es.getValue());
+            }
+            for(var es : long_map.entrySet()){
+                stmt.setLong(es.getKey(), es.getValue());
+            }
+            for(var es : real_map.entrySet()){
+                stmt.setDouble(es.getKey(), es.getValue());
+            }
+            var rs = stmt.executeQuery();
 
             int index = 0;
             while(rs.next()){

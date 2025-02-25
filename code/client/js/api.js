@@ -22,6 +22,13 @@ class Log {
     /** @type{string} */thrown
 }
 
+class EventTagKind{
+    static Tag = "Tag";
+    static Category = "Category";
+    static Type = "Type";
+}
+
+
 class OrganizerEventTag {
     /** @type{string} */tag
     /** @type{boolean} */category
@@ -130,6 +137,8 @@ class Search{
     /** @type{number?} */ distance
     /** @type{number?} */ location_lat
     /** @type{number?} */ location_long
+    /** @type{boolean?} */ owning
+    /** @type{boolean?} */ draft
     /** @type{string?} */ location
     /** @type{number?} */ offset
     /** @type{number?} */ limit
