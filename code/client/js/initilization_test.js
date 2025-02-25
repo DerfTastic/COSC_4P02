@@ -85,10 +85,7 @@ async function withRandomSession(list, cb){
     });
 }
 
-/**
- * 
- * @param {*} cb 
- */
+
 async function withRandomAccountSession(cb){
     withRandomSession(accounts, cb);
 }
@@ -121,13 +118,15 @@ meows.push(async function() {
 });
 
 meows.push(async function() {
-    let account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
-    if(account==null)return;
-    while(Math.random()<0.8&&account.sessions.length > 1){
-        var session = removeRandom(account.sessions);
-        var id = utility.get_id_from_session(session);
-        await api.user.invalidate_session(id, session);
-        api_calls += 1;
+    while(true){
+        let account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
+        if(account==null)return;
+        while(account.sessions.length > 1){
+            var session = removeRandom(account.sessions);
+            var id = utility.get_id_from_session(session);
+            await api.user.invalidate_session(id, session);
+            api_calls += 1;
+        }   
     }
 });
 
@@ -198,6 +197,45 @@ meows.push(async function(){
     if(account==null)return;
     const session = getRandom(account.sessions);
     const search = new Search();
+    search.owning = chance.bool();
+    search.draft = chance.bool();
+    for(let i = 0; i < 4 && chance.bool(); i ++){
+        search.tags.push({
+            category: chance.bool(),
+            tag: getRandom(["loud", "edm"])
+        })
+    }
+    search.location_lat = chance.longitude();
+    search.location_long = chance.latitude();
+    if(chance.bool())
+        search.date_end = chance.timestamp()*1000;
+    if(chance.bool())
+        search.date_start = chance.timestamp()*1000;
+
+    if(chance.bool())
+        search.max_duration = chance.integer({min: 15*60*1000, min: 12*60*60*1000});
+    if(chance.bool())
+        search.min_duration = chance.integer({min: 15*60*1000, min: 12*60*60*1000});
+    
+    if(Math.random()<.2)
+        search.min_duration = chance.integer({min: 1, min: 500});
+
+    if(Math.random()<.2)
+        search.organizer_fuzzy = `%${chance.character()}%`;
+
+    if(Math.random()<.2)
+        search.name_fuzzy = `%${chance.character()}%`;
+
+    if(Math.random()<.2)
+        search.location = `%${chance.character()}%`;
+
+    if(Math.random()<.1)
+        search.distance = Math.random()*10000-5000;
+
+    if(chance.bool()){
+        search.sort_by = getRandom(["MinPrice", "MaxPrice", "TicketsAvailable", "Closest", "StartTime", "MinDuration", "MaxDuration"]);
+    }
+    
     await api.search.search_events(search, session);
     api_calls += 1;
 });
@@ -205,6 +243,28 @@ meows.push(async function(){
 // events
 meows.push(async function(){
     //TODO set picture
+});
+
+const tags = ["bannana", "meow", "nya", "bwaaaaaa", "edm", "loud", "test"];
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.events.add_event_tag(event, getRandom(tags), chance.bool(), session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.events.delete_event_tag(event, getRandom(tags), chance.bool(), session);
+    api_calls += 1;
 });
 
 meows.push(async function(){

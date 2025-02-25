@@ -132,7 +132,7 @@ class Search{
     /** @type{number?} */ min_duration
     /** @type{OrganizerEventTag[]?} */ tags
     /** @type{string?} */ organizer_fuzzy
-    /** @type{string?} */ name_fizzy
+    /** @type{string?} */ name_fuzzy
     /** @type{number?} */ organizer_exact
     /** @type{number?} */ distance
     /** @type{number?} */ location_lat

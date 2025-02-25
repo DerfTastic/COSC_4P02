@@ -143,8 +143,12 @@ public class EventAPI {
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
             stmt.setBoolean(":category", category);
-            if(stmt.executeUpdate()!=1)
+            try{
+                if(stmt.executeUpdate()!=1)
+                    throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
+            }catch (SQLException e){
                 throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
+            }
         }
         trans.commit();
     }

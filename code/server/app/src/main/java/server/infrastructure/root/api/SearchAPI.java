@@ -59,11 +59,11 @@ public class SearchAPI {
                 whereClause.append("draft=false");
             } else {
                 whereClause.append("draft=false AND organizer_id=:organizer_id");
-                long_map.put(":organizer_id", session.organizer_id);
+                long_map.put(":organizer_id", session==null?0:session.organizer_id==null?0:session.organizer_id);
             }
         }else {
             whereClause.append("draft=true AND organizer_id=:organizer_id");
-            long_map.put(":organizer_id", session.organizer_id);
+            long_map.put(":organizer_id", session==null?0:session.organizer_id==null?0:session.organizer_id);
         }
 
         if(search.tags!=null) {
@@ -113,7 +113,7 @@ public class SearchAPI {
             str_map.put(":organizer_name_fuzzy", search.organizer_fuzzy);
         }
         if(search.name_fuzzy!=null){
-            whereClause.append(" AND (name LIKE :event_name_fuzzy");
+            whereClause.append(" AND (name LIKE :event_name_fuzzy)");
             str_map.put(":event_name_fuzzy", search.name_fuzzy);
         }
         if(search.location!=null){
@@ -128,7 +128,7 @@ public class SearchAPI {
             case Closest -> {
                 real_map.put(":location_lat", search.location_lat);
                 real_map.put(":location_long", search.location_long);
-                yield "abs(location_lat-:location_lat) ASC abs(location_long-:location_long) ASC";
+                yield "abs(location_lat-:location_lat) ASC, abs(location_long-:location_long) ASC";
             }
             case StartTime -> "start ASC";
             case MinDuration -> "duration ASC";
