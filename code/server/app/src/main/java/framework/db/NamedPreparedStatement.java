@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class NamedPreparedStatement implements AutoCloseable {
     private final HashMap<String, Integer> fieldMap;
     private final ArrayList<ResultSet> results = new ArrayList<>();
-    private final PreparedStatement stmt;
+    protected final PreparedStatement stmt;
     protected final String originalSql;
     protected final String sql;
 

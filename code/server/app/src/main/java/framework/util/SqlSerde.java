@@ -66,9 +66,11 @@ public class SqlSerde {
                     }else if(field.getType().equals(String.class)) {
                         field.set(instance, rs.getString(name));
                     }else if(field.getType().equals(JsonObject.class)){
-                        field.set(instance, JsonParser.parseString(rs.getString(name)).getAsJsonObject());
+                        var t = rs.getString(name);
+                        field.set(instance, JsonParser.parseString(t==null?"{}":t).getAsJsonObject());
                     }else if(field.getType().equals(JsonArray.class)){
-                        field.set(instance, JsonParser.parseString(rs.getString(name)).getAsJsonArray());
+                        var t = rs.getString(name);
+                        field.set(instance, JsonParser.parseString(t==null?"[]":t).getAsJsonArray());
                     }else throw new RuntimeException("Invalid field type: " + field);
                 }
                 list.add(instance);

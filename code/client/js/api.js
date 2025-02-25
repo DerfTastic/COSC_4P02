@@ -60,16 +60,16 @@ class UpdateOrganizerEvent{
     /** @type{number} */id
     /** @type{string} */name
     /** @type{string} */description
-    /** @type{object} */metadata
+    /** @type{object?} */metadata
 
-    /** @type{number} */start
-    /** @type{number} */duration
+    /** @type{number?} */start
+    /** @type{number?} */duration
     
-    /** @type{number} */available_total_tickets
+    /** @type{number?} */available_total_tickets
 
-    /** @type{string} */location_name
-    /** @type{number} */location_lat
-    /** @type{number} */location_long
+    /** @type{string?} */location_name
+    /** @type{number?} */location_lat
+    /** @type{number?} */location_long
 }
 
 class RouteStat{
@@ -476,12 +476,13 @@ const api = {
         }
     },
 
-    /**
-     * @param {Search} search 
-     * @param {Session} session 
-     * @returns {Promise<AllOrganizerEvent[]>}
-     */
+
     search: {
+        /**
+         * @param {Search} search 
+         * @param {Session} session 
+         * @returns {Promise<AllOrganizerEvent[]>}
+         */
         search_events: async function(search, session){
             return await (await api.api_call(
                 '/search_events',
@@ -515,6 +516,23 @@ const api = {
                 },
                 "An error occured while converting account to organizer"
             );
+        },
+
+
+        /**
+         * @param {Search} search 
+         * @returns {Promise<AllOrganizerEvent[]>}
+         */
+        get_drafts: async function (session) {
+            return await api.search.search_events({draft: true}, session)
+        },
+
+        /**
+         * @param {Search} search 
+         * @returns {Promise<AllOrganizerEvent[]>}
+         */
+        get_events: async function (session) {
+            return await api.search.search_events({draft: false, owning: true}, session)
         }
     },
 
@@ -618,7 +636,7 @@ const api = {
          */
         delete_account: async function (email, password, session) {
             await api.api_call(
-                `/delete_account/${sessionId}`,
+                `/delete_account`,
                 {
                     method: 'DELETE',
                     headers: { 'X-UserAPIToken': session },
@@ -682,6 +700,15 @@ const utility = {
         if (cookies.getSession() == null || cookies.getSession().length == 0) return false;
         const curr_id = cookies.getSession().substring(cookies.getSession().length - 8, cookies.getSession().length);
         return parseInt(curr_id, 16) == id;
+    },
+    /**
+     * @param {string} session 
+     * @returns {number|null}
+     */
+    get_id_from_session: function (session) {
+        if (cookies.getSession() == null || cookies.getSession().length == 0) return null;
+        const curr_id = session.substring(session.length - 8, session.length);
+        return parseInt(curr_id, 16);
     },
     is_logged_in: function() {
         return cookies.getSession() != null && cookies.getSession().length > 0;

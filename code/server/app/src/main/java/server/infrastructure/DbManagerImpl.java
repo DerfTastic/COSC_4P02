@@ -27,8 +27,8 @@ public class DbManagerImpl extends DbManager {
             initialize("jdbc:sqlite:file:"+path+"?mode=memory"+(cacheShared?"&cache=shared":""));
             createTables = true;
         }else {
-            initialize("jdbc:sqlite:file:"+path+(cacheShared?"?cache=shared":""));
             createTables = !new File(path).exists();
+            initialize("jdbc:sqlite:file:"+path+(cacheShared?"?cache=shared":""));
         }
 
         if(createTables||alwaysInitialize){
