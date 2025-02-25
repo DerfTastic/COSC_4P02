@@ -122,8 +122,6 @@ public class SearchAPI {
         var offset = search.offset==null?0:search.offset;
         clauses += " limit " + offset + "," + limit;
 
-        System.out.println(clauses);
-
         List<EventAPI.Event> events_partial;
         try(var stmt = trans.createStatement()){
             var rs = stmt.executeQuery("select * from events " + clauses);
@@ -136,7 +134,6 @@ public class SearchAPI {
 
         try(var stmt = trans.createStatement()){
             var rs = stmt.executeQuery("select id, tag, category from events left join event_tags on id=event_id " + clauses);
-            System.out.println("select id, tag, category from events left join event_tags on id=event_id " + clauses);
 
             int index = 0;
             while(rs.next()){
