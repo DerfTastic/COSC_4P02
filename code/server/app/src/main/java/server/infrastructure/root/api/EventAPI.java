@@ -184,30 +184,33 @@ public class EventAPI {
             throw new BadRequest("File too large, maximum file size is 10 MiB");
         }
 
-        try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND organizer_id=:organizer_id")){
-            stmt.setLong(":id", id);
-            stmt.setLong(":organizer_id", session.organizer_id);
-            var media = stmt.executeQuery().getLong(1);
-            if(media!=0){
-                Logger.getGlobal().log(Level.WARNING, "Picture deleted " + media);
-                handler.delete(media);
+        var media_id = handler.add(data);
+        long old_media = 0;
+        try{
+            try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND organizer_id=:organizer_id")){
+                stmt.setLong(":id", id);
+                stmt.setLong(":organizer_id", session.organizer_id);
+                old_media = stmt.executeQuery().getLong(1);
+            }
+
+            try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND organizer_id=:organizer_id")){
+                stmt.setLong(":id", id);
+                stmt.setLong(":organizer_id", session.organizer_id);
+                stmt.setLong(":picture", media_id);
+                if(stmt.executeUpdate()!=1)
+                    throw new BadRequest("Failed to add picture to event. Event doesn't exit or you don't own event");
+            }
+            trans.commit();
+        }catch (Exception e){
+            trans.commit();
+            if(media_id!=0){
+                handler.delete(media_id);
             }
         }
-
-        //TODO the database is locked here.. splitting the transaction into two may yield much better performance
-        var media_id = handler.add(data);
-
-        try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND organizer_id=:organizer_id")){
-            stmt.setLong(":id", id);
-            stmt.setLong(":organizer_id", session.organizer_id);
-            stmt.setLong(":picture", media_id);
-            if(stmt.executeUpdate()!=1)
-                throw new BadRequest("Failed to add picture to event. Event doesn't exit or you don't own event");
-        }catch (Exception e){
-            handler.delete(media_id);
-            throw e;
+        if(old_media!=0){
+            handler.delete(old_media);
         }
-        trans.commit();
+
         return media_id;
     }
 }
