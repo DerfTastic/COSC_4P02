@@ -1,12 +1,3 @@
-drop table if exists users;
-drop table if exists organizers;
-drop table if exists events;
-drop table if exists event_tags;
-drop table if exists tickets;
-drop table if exists purchased_tickets;
-drop table if exists payments;
-drop table if exists sessions;
-
 
 create table users(
     id INTEGER primary key not null,
@@ -85,7 +76,7 @@ create table tickets(
     id INTEGER primary key not null,
     event_id INTEGER,
     name TEXT not null,
-    price NUMERIC not null,
+    price INTEGER not null,
     available_tickets INTEGER,
 
      FOREIGN KEY (event_id)
@@ -105,7 +96,7 @@ create table purchased_tickets(
 
     payment_id INTEGER NOT NULL,
 
-    purchase_price NUMERIC NOT NULL,
+    purchase_price INTEGER NOT NULL,
 
     FOREIGN KEY (user_id)
         REFERENCES users (id)
@@ -130,8 +121,8 @@ create table payments(
     id INTEGER primary key not null,
     user_id INTEGER,
     receipt TEXT NOT NULL,
-    amount NUMERIC NOT NULL,
-    payment_date NUMERIC NOT NULL,
+    amount INTEGER NOT NULL,
+    payment_date INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users (id)
             ON DELETE SET NULL

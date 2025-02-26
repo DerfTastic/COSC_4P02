@@ -39,6 +39,7 @@ class EventTicket {
     /** @type{number} */event_id
     /** @type{string} */name
     /** @type{number} */price
+    /** @type{number} */available_tickets
 }
 
 class OrganizerEvent {
@@ -171,6 +172,78 @@ const api = {
         } else {
             throw { error, code: response.status };
         }
+    },
+
+    tickets: {
+        /**
+         * @param {number} ticket_id 
+         * @param {Session} session 
+         * @returns {Promise<integer>}
+         */
+        create_ticket: async function(event_id, session){
+            return await (await api.api_call(
+                `/create_ticket/${event_id}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while creating ticket"
+            )).json();
+        },
+        /**
+         * @param {EventTicket} ticket 
+         * @param {Session} session 
+         * @returns {Promise}
+         */
+        update_ticket: async function(ticket, session){
+            await api.api_call(
+                `/update_ticket`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(ticket),
+                },
+                "An error occured while updating ticket"
+            )
+        },
+        /**
+         * @param {number} ticket_id 
+         * @param {Session} session 
+         * @returns {Promise}
+         */
+        delete_ticket: async function(ticket_id, session){
+            await api.api_call(
+                `/delete_ticket/${ticket_id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while deleting ticket"
+            )
+        },
+        /**
+         * @param {number} event_id 
+         * @param {Session} session 
+         * @returns {Promise<EventTicket[]>}
+         */
+        get_tickets: async function(event_id, session){
+            return await (await api.api_call(
+                `/get_tickets/${event_id}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured while getting tickets"
+            )).json();
+        },
     },
 
     admin: {

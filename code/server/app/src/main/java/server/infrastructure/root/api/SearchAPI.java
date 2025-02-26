@@ -1,7 +1,6 @@
 package server.infrastructure.root.api;
 
 import framework.db.RoTransaction;
-import framework.util.Tuple;
 import framework.web.annotations.*;
 import server.infrastructure.param.auth.OptionalAuth;
 import server.infrastructure.param.auth.UserSession;

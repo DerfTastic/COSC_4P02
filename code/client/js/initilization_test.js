@@ -4,13 +4,18 @@ function assert(condition, message) {
     }
 }
 
+class MyEvent{
+    /** @type{integer} */ id
+    /** @type{integer[]} */ tickets
+}
+
 class Account{
     /** @type{string} */ email
     /** @type{string} */ password
     
     /** @type{string[]} */ sessions = []
 
-    /** @type{integer[]} */ events = []
+    /** @type{MyEvent[]} */ events = []
 }
 
 /** @type{Account[]} */
@@ -253,7 +258,7 @@ meows.push(async function(){
     const session = getRandom(account.sessions);
     const event = getRandom(account.events);
     if(event==null)return;
-    await api.events.add_event_tag(event, getRandom(tags), chance.bool(), session);
+    await api.events.add_event_tag(event.id, getRandom(tags), chance.bool(), session);
     api_calls += 1;
 });
 
@@ -263,7 +268,7 @@ meows.push(async function(){
     const session = getRandom(account.sessions);
     const event = getRandom(account.events);
     if(event==null)return;
-    await api.events.delete_event_tag(event, getRandom(tags), chance.bool(), session);
+    await api.events.delete_event_tag(event.id, getRandom(tags), chance.bool(), session);
     api_calls += 1;
 });
 
@@ -273,7 +278,7 @@ meows.push(async function(){
     const session = getRandom(account.sessions);
     const event = getRandom(account.events);
     if(event==null)return;
-    await api.events.set_draft(event, chance.bool(), session);
+    await api.events.set_draft(event.id, chance.bool(), session);
     api_calls += 1;
 });
 
@@ -283,7 +288,7 @@ meows.push(async function(){
     const session = getRandom(account.sessions);
     const event = removeRandom(account.events);
     if(event==null)return;
-    await api.events.delete_event(event, session);
+    await api.events.delete_event(event.id, session);
     api_calls += 1;
 });
 
@@ -317,7 +322,9 @@ meows.push(async function(){
     const account = getRandom(organizer_accounts);
     if(account==null)return;
     const session = getRandom(account.sessions);
-    const event = await api.events.create_event(session);
+    const event = new MyEvent();
+    event.tickets = [];
+    event.id = await api.events.create_event(session);
     account.events.push(event);
     api_calls += 1;
 });
@@ -328,7 +335,7 @@ meows.push(async function(){
     const session = getRandom(account.sessions);
     const event = getRandom(account.events);
     if(event==null)return;
-    await api.events.get_event(event, session);
+    await api.events.get_event(event.id, session);
     api_calls += 1;
 });
 
@@ -407,13 +414,65 @@ meows.push(async function(){
     api_calls += 1;
 });
 
+//tickets
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    const ticket_id = await api.tickets.create_ticket(event.id, session);
+    event.tickets.push(ticket_id);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.tickets.get_tickets(event.id, session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    const ticket_id = getRandom(event.tickets);
+    if(ticket_id==null)return;
+    const ticket = new EventTicket();
+    ticket.id = ticket_id;
+    ticket.available_tickets = chance.bool()?undefined:chance.integer({min:10, max:500});
+    ticket.name = chance.sentence({ words: 5 });
+    ticket.price = chance.integer({min: 0, max: 20}); 
+    await api.tickets.update_ticket(ticket, session);
+    event.tickets.push(ticket_id);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    const ticket_id = getRandom(event.tickets);
+    if(ticket_id==null)return;
+    await api.tickets.delete_ticket(ticket_id, session);
+    event.tickets.push(ticket_id);
+    api_calls += 1;
+});
+
 
 function stuffy(){
     for(let i = 0; i < 100; i ++){
         (async() => {while(true)try{await getRandom(meows)()}catch(e){}})();
     }
-} 
-
+}
 
 async function start(){
     const account = new Account();
