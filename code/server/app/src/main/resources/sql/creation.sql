@@ -5,30 +5,20 @@ create table users(
     email TEXT not null unique,
     pass TEXT not null,
     admin BOOLEAN not null,
+    organizer BOOLEAN not null,
     bio TEXT,
-    organizer_id INTEGER default NULL,
-    picture INTEGER,
-
-     FOREIGN KEY (organizer_id)
-           REFERENCES organizers (id)
-              ON DELETE SET NULL
-              ON UPDATE NO ACTION
+    picture INTEGER
 );
 
 CREATE UNIQUE INDEX user_email_idx ON users(email);
 CREATE INDEX user_pass_idx ON users(pass);
 CREATE INDEX user_admin_idx ON users(admin);
 CREATE INDEX user_name_idx ON users(name);
-CREATE UNIQUE INDEX user_organizer_idx ON users(organizer_id) WHERE organizer_id IS NOT NULL;
-
-create table organizers(
-    id INTEGER primary key not null,
-    has_analytics BOOLEAN not null
-);
+CREATE INDEX user_organizer_idx ON users(organizer);
 
 create table events(
     id INTEGER primary key not null,
-    organizer_id INTEGER not null,
+    owner_id INTEGER not null,
     name TEXT not null,
     description TEXT not null,
     start INTEGER,
@@ -42,13 +32,13 @@ create table events(
     location_lat REAL,
     location_long REAL,
 
-     FOREIGN KEY (organizer_id)
-           REFERENCES organizers (id)
+     FOREIGN KEY (owner_id)
+           REFERENCES users (id)
               ON DELETE CASCADE
               ON UPDATE NO ACTION
 );
 
-CREATE INDEX event_organizer_id_idx ON events(organizer_id);
+CREATE INDEX event_organizer_id_idx ON events(owner_id);
 CREATE INDEX event_name_idx ON events(name);
 CREATE INDEX event_location_name_idx ON events(location_name) WHERE location_name IS NOT NULL;
 CREATE INDEX event_location_lat_idx ON events(location_lat) WHERE location_lat IS NOT NULL;
@@ -150,4 +140,4 @@ CREATE INDEX sessions_user_id_idx ON sessions(user_id);
 CREATE UNIQUE INDEX sessions_token_idx ON sessions(token) WHERE token IS NOT NULL;
 CREATE INDEX sessions_expiration_idx ON sessions(expiration);
 
-insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, null, null, null);
+insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, true, null, null);

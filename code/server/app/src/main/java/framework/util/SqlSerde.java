@@ -66,7 +66,9 @@ public class SqlSerde {
                     }else if(field.getType().equals(String.class)) {
                         field.set(instance, rs.getString(name));
                     }else if(field.getType().equals(Long.class)){
-                        field.set(field.getType(), rs.getLong(name));
+                        field.set(instance, rs.getLong(name));
+                    }else if(field.getType().equals(Integer.class)){
+                        field.set(instance, rs.getInt(name));
                     }else if(field.getType().equals(JsonObject.class)){
                         var t = rs.getString(name);
                         field.set(instance, JsonParser.parseString(t==null?"{}":t).getAsJsonObject());

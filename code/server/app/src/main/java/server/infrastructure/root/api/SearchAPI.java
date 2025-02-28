@@ -57,12 +57,12 @@ public class SearchAPI {
             if (search.owning == null || !search.owning) {
                 whereClause.append("draft=false");
             } else {
-                whereClause.append("draft=false AND organizer_id=:organizer_id");
-                long_map.put(":organizer_id", session==null?0:session.organizer_id==null?0:session.organizer_id);
+                whereClause.append("draft=false AND owner_id=:owner_id");
+                long_map.put(":owner_id", session==null?0:session.user_id);
             }
         }else {
-            whereClause.append("draft=true AND organizer_id=:organizer_id");
-            long_map.put(":organizer_id", session==null?0:session.organizer_id==null?0:session.organizer_id);
+            whereClause.append("draft=true AND owner_id=:owner_id");
+            long_map.put(":owner_id", session==null?0:session.user_id);
         }
 
         if(search.tags!=null) {
@@ -104,11 +104,11 @@ public class SearchAPI {
             long_map.put(":min_duration", search.min_duration);
         }
         if(search.organizer_exact!=null){
-            whereClause.append(" AND (organizer_id=:organizer_exact)");
+            whereClause.append(" AND (owner_id=:organizer_exact)");
             long_map.put(":organizer_exact", search.organizer_exact);
         }
         if(search.organizer_fuzzy!=null){
-            whereClause.append(" AND organizer_id IN (select users.organizer_id from users where events.organizer_id=users.organizer_id AND users.name LIKE :organizer_name_fuzzy)");
+            whereClause.append(" AND owner_id IN (select users.id from users where events.owner_id=users.id AND users.name LIKE :organizer_name_fuzzy)");
             str_map.put(":organizer_name_fuzzy", search.organizer_fuzzy);
         }
         if(search.name_fuzzy!=null){

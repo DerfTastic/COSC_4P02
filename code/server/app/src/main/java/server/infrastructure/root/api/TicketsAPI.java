@@ -28,10 +28,10 @@ public class TicketsAPI {
 
     @Route("/create_ticket/<event_id>")
     public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
-        try (var stmt = trans.namedPreparedStatement("select organizer_id from events where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("select owner_id from events where id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
-            if (!rs.next() || rs.getLong("organizer_id") != session.organizer_id)
+            if (!rs.next() || rs.getLong("owner_id") != session.user_id)
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
@@ -45,13 +45,13 @@ public class TicketsAPI {
 
     @Route
     public static void update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, @Json @Body Ticket ticket, RwTransaction trans) throws SQLException, Unauthorized, BadRequest {
-        try (var stmt = trans.namedPreparedStatement("select organizer_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
+        try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket.id);
             var rs = stmt.executeQuery();
             if (!rs.next())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
-            var og_id = rs.getLong("organizer_id");
-            if(og_id != session.organizer_id)
+            var og_id = rs.getLong("owner_id");
+            if(og_id != session.user_id)
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
@@ -69,15 +69,15 @@ public class TicketsAPI {
 
     @Route("/get_tickets/<event_id>")
     public static @Json List<Ticket> get_tickets(@FromRequest(OptionalAuth.class)UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, Unauthorized, BadRequest {
-        try (var stmt = trans.namedPreparedStatement("select draft, organizer_id from events where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("select draft, owner_id from events where id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
 
             if (!rs.next())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
             var draft = rs.getBoolean("draft");
-            var og_id = rs.getLong("organizer_id");
-            if(draft&&og_id!=(session==null||session.organizer_id==null?0:session.organizer_id))
+            var og_id = rs.getLong("owner_id");
+            if(draft&&og_id!=(session==null?0:session.user_id))
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         List<Ticket> result;
@@ -91,10 +91,10 @@ public class TicketsAPI {
 
     @Route("/delete_ticket/<ticket_id>")
     public static void delete_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long ticket_id) throws SQLException, Unauthorized, BadRequest {
-        try (var stmt = trans.namedPreparedStatement("select organizer_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
+        try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();
-            if (!rs.next() || rs.getLong("organizer_id") != session.organizer_id)
+            if (!rs.next() || rs.getLong("owner_id") != session.user_id)
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;

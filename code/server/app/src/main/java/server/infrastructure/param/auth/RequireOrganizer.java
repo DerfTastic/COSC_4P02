@@ -8,7 +8,7 @@ public class RequireOrganizer extends RequireSession {
     @Override
     public UserSession construct(Request request) throws Exception {
         var auth = super.construct(request);
-        if(auth.organizer_id==null)
+        if(!auth.organizer)
             throw new Unauthorized("Organizer account needed");
         return auth;
     }

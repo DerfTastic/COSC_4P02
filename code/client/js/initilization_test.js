@@ -131,7 +131,10 @@ meows.push(async function() {
             var id = utility.get_id_from_session(session);
             await api.user.invalidate_session(id, session);
             api_calls += 1;
-        }   
+        } 
+        if(account.sessions.length <= 1){
+            break;
+        }  
     }
 });
 
@@ -299,7 +302,7 @@ meows.push(async function(){
     const event_id = getRandom(account.events);
     if(event_id==null)return;
     const event = new UpdateOrganizerEvent();
-    event.id = event_id;
+    event.id = event_id.id;
 
     event.name = chance.sentence({ words: 5 });
     event.description = chance.paragraph();
@@ -469,8 +472,12 @@ meows.push(async function(){
 
 
 function stuffy(){
-    for(let i = 0; i < 100; i ++){
-        (async() => {while(true)try{await getRandom(meows)()}catch(e){}})();
+    for(let i = 0; i < 5; i ++){
+        (async() => {while(true)try{
+            await new Promise(r => setTimeout(r, 10));
+            await getRandom(meows)();
+        }catch(e){
+        }})();
     }
 }
 
