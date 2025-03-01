@@ -44,6 +44,7 @@ public class Config {
                 CONFIG = new Config();
 
                 for(var field : Config.class.getFields()) {
+                    if(Modifier.isStatic(field.getModifiers())) continue; // Skip if static
                     properties.put(field.getName(), field.get(CONFIG).toString());
                 }
                 properties.store(new FileOutputStream("server.properties"), null);
