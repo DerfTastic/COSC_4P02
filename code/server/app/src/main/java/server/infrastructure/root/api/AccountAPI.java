@@ -33,9 +33,8 @@ public class AccountAPI {
             String name,
             String email,
             String bio,
-            Long organizer_id,
-            boolean admin,
-            Boolean has_analytics
+            boolean organizer,
+            boolean admin
     ){}
 
     @Route
@@ -49,9 +48,8 @@ public class AccountAPI {
                     rs.getString("name"),
                     auth.email,
                     rs.getString("bio"),
-                    auth.organizer_id,
-                    auth.admin,
-                    auth.has_analytics
+                    auth.organizer,
+                    auth.admin
             );
         }
 
@@ -111,7 +109,7 @@ public class AccountAPI {
     @Route
     public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, null, null, null)")){
+        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, false, null, null)")){
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);

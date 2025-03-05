@@ -60,7 +60,7 @@ public class NamedPreparedStatement implements AutoCloseable {
 
     public <T> void inputObjectParameters(T obj) throws SQLException{
         for(var f: (Iterable<Tuple<String, Object>>)SqlSerde.sqlParameterize(obj)::iterator){
-            stmt.setObject(getIndex(f.t1), f.t2);
+            stmt.setObject(getIndex(f.t1()), f.t2());
         }
     }
 

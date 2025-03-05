@@ -5,7 +5,6 @@ class AllUserInfo {
     /** @type{string} */name
     /** @type{string} */email
     /** @type{string} */bio
-    /** @type{number?} */organizer_id
     /** @type{boolean} */organizer
     /** @type{boolean} */admin
     /** @type{boolean} */has_analytics
@@ -44,7 +43,7 @@ class EventTicket {
 
 class OrganizerEvent {
     /** @type{number} */id
-    /** @type{number} */organizer_id
+    /** @type{number} */owner_id
     /** @type{string} */name
     /** @type{string} */description
     /** @type{number} */picture
@@ -180,7 +179,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<integer>}
          */
-        create_ticket: async function(event_id, session){
+        create_ticket: async function(event_id, session = cookies.getSession()){
             return await (await api.api_call(
                 `/create_ticket/${event_id}`,
                 {
@@ -197,7 +196,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise}
          */
-        update_ticket: async function(ticket, session){
+        update_ticket: async function(ticket, session = cookies.getSession()){
             await api.api_call(
                 `/update_ticket`,
                 {
@@ -215,7 +214,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise}
          */
-        delete_ticket: async function(ticket_id, session){
+        delete_ticket: async function(ticket_id, session = cookies.getSession()){
             await api.api_call(
                 `/delete_ticket/${ticket_id}`,
                 {
@@ -232,7 +231,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<EventTicket[]>}
          */
-        get_tickets: async function(event_id, session){
+        get_tickets: async function(event_id, session = cookies.getSession()){
             return await (await api.api_call(
                 `/get_tickets/${event_id}`,
                 {
@@ -252,7 +251,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<string>}
          */
-        execute_sql: async function (sql, session) {
+        execute_sql: async function (sql, session = cookies.getSession()) {
             return await (await api.api_call(
                 `/execute_sql`,
                 {
@@ -270,7 +269,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<Log[]>}
          */
-        get_server_logs: async function (session) {
+        get_server_logs: async function (session = cookies.getSession()) {
             return await (await api.api_call(
                 `/get_server_logs`,
                 {
@@ -288,7 +287,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<ServerStatistics>}
          */
-        get_server_statistics: async function(session) {
+        get_server_statistics: async function(session = cookies.getSession()) {
             return await (await api.api_call(
                 `/get_server_statistics`,
                 {
@@ -307,7 +306,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        delete_other_account: async function(email, session) {
+        delete_other_account: async function(email, session = cookies.getSession()) {
             await api.api_call(
                 `/delete_other_account/${encodeURI(email)}`,
                 {
@@ -327,7 +326,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        set_account_admin: async function(admin, email, session) {
+        set_account_admin: async function(admin, email, session = cookies.getSession()) {
             await api.api_call(
                 `/set_account_admin/${encodeURI(admin)}/${encodeURI(email)}`,
                 {
@@ -346,7 +345,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        set_log_level: async function(level, session) {
+        set_log_level: async function(level, session = cookies.getSession()) {
             await api.api_call(
                 `/set_log_level/${encodeURI(level)}`,
                 {
@@ -364,7 +363,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<string>}
          */
-        get_log_level: async function(session) {
+        get_log_level: async function(session = cookies.getSession()) {
             return await (await api.api_call(
                 `/get_log_level`,
                 {
@@ -382,7 +381,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<string[]>}
          */
-        get_log_levels: async function(session) {
+        get_log_levels: async function(session = cookies.getSession()) {
             return await (await api.api_call(
                 `/get_log_levels`,
                 {
@@ -402,7 +401,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<number>}
          */
-        create_event: async function (session) {
+        create_event: async function (session = cookies.getSession()) {
             return await (await api.api_call(
                 '/create_event',
                 {
@@ -421,7 +420,7 @@ const api = {
          * @param {Session?} session 
          * @returns {Promise<AllOrganizerEvent>}
          */
-        get_event: async function(id, session){
+        get_event: async function(id, session = cookies.getSession()){
             return await (await api.api_call(
                 `/get_event/${encodeURI(id)}`,
                 {
@@ -440,7 +439,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        update_event: async function(update, session){
+        update_event: async function(update, session = cookies.getSession()){
             await api.api_call(
                 '/update_event',
                 {
@@ -460,7 +459,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        delete_event: async function(id, session){
+        delete_event: async function(id, session = cookies.getSession()){
             await api.api_call(
                 `/delete_event/${encodeURI(id)}`,
                 {
@@ -481,7 +480,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        add_event_tag: async function(id, tag, category, session){
+        add_event_tag: async function(id, tag, category, session = cookies.getSession()){
             await api.api_call(
                 `/add_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
                 {
@@ -502,7 +501,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        delete_event_tag: async function(id, tag, category, session){
+        delete_event_tag: async function(id, tag, category, session = cookies.getSession()){
             await api.api_call(
                 `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
                 {
@@ -522,7 +521,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        set_draft: async function(id, draft, session){
+        set_draft: async function(id, draft, session = cookies.getSession()){
             await api.api_call(
                 `/set_draft/${encodeURI(id)}/${encodeURI(draft)}`,
                 {
@@ -542,7 +541,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        set_picture: async function(id, data, session){
+        set_picture: async function(id, data, session = cookies.getSession()){
             await api.api_call(
                 `/set_picture/${encodeURI(id)}/`,
                 {
@@ -565,7 +564,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<AllOrganizerEvent[]>}
          */
-        search_events: async function(search, session){
+        search_events: async function(search, session = cookies.getSession()){
             return await (await api.api_call(
                 '/search_events',
                 {
@@ -586,7 +585,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        convert_to_organizer_account: async function (session) {
+        convert_to_organizer_account: async function (session = cookies.getSession()) {
             await api.api_call(
                 '/convert_to_organizer_account',
                 {
@@ -605,16 +604,16 @@ const api = {
          * @param {Search} search 
          * @returns {Promise<AllOrganizerEvent[]>}
          */
-        get_drafts: async function (session) {
-            return await api.search.search_events({draft: true}, session)
+        get_drafts: async function (session = cookies.getSession()) {
+            return await api.search.search_events({draft: true}, session = cookies.getSession())
         },
 
         /**
          * @param {Search} search 
          * @returns {Promise<AllOrganizerEvent[]>}
          */
-        get_events: async function (session) {
-            return await api.search.search_events({draft: false, owning: true}, session)
+        get_events: async function (session = cookies.getSession()) {
+            return await api.search.search_events({draft: false, owning: true}, session = cookies.getSession())
         }
     },
 
@@ -623,7 +622,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function (session) {
+        all_userinfo: async function (session = cookies.getSession()) {
             const result = await (await api.api_call(
                 `/all_userinfo`,
                 {
@@ -635,7 +634,6 @@ const api = {
                 },
                 "An error occured while fetching userinfo"
             )).json();
-            result.organizer = Object.hasOwn(result, "organizer_id")&&result.organizer_id>0;
             return result;
         },
 
@@ -683,7 +681,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<Session[]>}
          */
-        list_sessions: async function (session) {
+        list_sessions: async function (session = cookies.getSession()) {
             return await (await api.api_call(
                 `/list_sessions`,
                 {
@@ -699,7 +697,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise}
          */
-        invalidate_session: async function (sessionId, session) {
+        invalidate_session: async function (sessionId, session = cookies.getSession()) {
             await api.api_call(
                 `/invalidate_session/${sessionId}`,
                 {
@@ -716,7 +714,7 @@ const api = {
          * @param {Session} session 
          * @returns {Promise}
          */
-        delete_account: async function (email, password, session) {
+        delete_account: async function (email, password, session = cookies.getSession()) {
             await api.api_call(
                 `/delete_account`,
                 {
@@ -787,7 +785,7 @@ const utility = {
      * @param {string} session 
      * @returns {number|null}
      */
-    get_id_from_session: function (session) {
+    get_id_from_session: function (session = cookies.getSession()) {
         if (cookies.getSession() == null || cookies.getSession().length == 0) return null;
         const curr_id = session.substring(session.length - 8, session.length);
         return parseInt(curr_id, 16);

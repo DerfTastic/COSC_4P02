@@ -37,7 +37,7 @@ public class SqlSerde {
             throw new SQLException("Expected a single result got none");
         if(res.size() > 1)
             throw new SQLException("Expected single result got more");
-        return res.get(0);
+        return res.getFirst();
     }
 
     public static <T> ArrayList<T> sqlList(ResultSet rs, Class<T> clazz) throws SQLException {
@@ -47,33 +47,39 @@ public class SqlSerde {
             var fields = clazz.getFields();
             while(rs.next()){
                 var instance = constructor.newInstance();
-                for(var field : fields){
+                for(var field : fields) {
                     var name = field.getName();
-                    if(field.getType().equals(int.class)){
-                        field.setInt(instance, rs.getInt(name));
-                    }else if(field.getType().equals(float.class)){
-                        field.setFloat(instance, rs.getFloat(name));
-                    }else if(field.getType().equals(boolean.class)){
-                        field.setBoolean(instance, rs.getBoolean(name));
-                    }else if(field.getType().equals(short.class)){
-                        field.setShort(instance, rs.getShort(name));
-                    }else if(field.getType().equals(long.class)){
-                        field.setLong(instance, rs.getLong(name));
-                    }else if(field.getType().equals(byte.class)){
-                        field.setByte(instance, rs.getByte(name));
-                    }else if(field.getType().equals(double.class)){
-                        field.setDouble(instance, rs.getDouble(name));
-                    }else if(field.getType().equals(String.class)) {
-                        field.set(instance, rs.getString(name));
-                    }else if(field.getType().equals(Long.class)){
-                        field.set(field.getType(), rs.getLong(name));
-                    }else if(field.getType().equals(JsonObject.class)){
-                        var t = rs.getString(name);
-                        field.set(instance, JsonParser.parseString(t==null?"{}":t).getAsJsonObject());
-                    }else if(field.getType().equals(JsonArray.class)){
-                        var t = rs.getString(name);
-                        field.set(instance, JsonParser.parseString(t==null?"[]":t).getAsJsonArray());
-                    }else throw new RuntimeException("Invalid field type: " + field);
+                    switch (field.getType()) {
+                        case Class<?> cl when cl == byte.class -> field.setByte(instance, rs.getByte(name));
+                        case Class<?> cl when cl == short.class -> field.setShort(instance, rs.getShort(name));
+                        case Class<?> cl when cl == int.class -> field.setInt(instance, rs.getInt(name));
+                        case Class<?> cl when cl == long.class -> field.setLong(instance, rs.getLong(name));
+                        case Class<?> cl when cl == float.class -> field.setFloat(instance, rs.getFloat(name));
+                        case Class<?> cl when cl == double.class -> field.setDouble(instance, rs.getDouble(name));
+                        case Class<?> cl when cl == boolean.class -> field.setBoolean(instance, rs.getBoolean(name));
+
+                        case Class<?> cl when cl == Byte.class -> field.set(instance, rs.getByte(name));
+                        case Class<?> cl when cl == Short.class -> field.set(instance, rs.getShort(name));
+                        case Class<?> cl when cl == Integer.class -> field.set(instance, rs.getInt(name));
+                        case Class<?> cl when cl == Long.class -> field.set(instance, rs.getLong(name));
+                        case Class<?> cl when cl == Float.class -> field.set(instance, rs.getFloat(name));
+                        case Class<?> cl when cl == Double.class -> field.set(instance, rs.getDouble(name));
+                        case Class<?> cl when cl == Boolean.class -> field.set(instance, rs.getBoolean(name));
+
+                        case Class<?> cl when cl == String.class -> field.set(instance, rs.getString(name));
+
+                        case Class<?> cl when cl == JsonObject.class -> {
+                            var t = rs.getString(name);
+                            var o = JsonParser.parseString(t == null ? "{}" : t);
+                            field.set(instance, o.getAsJsonObject());
+                        }
+                        case Class<?> cl when cl == JsonArray.class -> {
+                            var t = rs.getString(name);
+                            var o = JsonParser.parseString(t == null ? "[]" : t);
+                            field.set(instance, o.getAsJsonArray());
+                        }
+                        default -> throw new RuntimeException("Invalid field type: " + field);
+                    }
                 }
                 list.add(instance);
             }

@@ -23,8 +23,8 @@ public class EventAPI {
     @Route
     public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
         long result;
-        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :organizer_id, '', '', null, null, null, null, null, true, null, null, null) returning id")){
-            stmt.setLong(":organizer_id", session.organizer_id);
+        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, null, null, null, true, null, null, null) returning id")){
+            stmt.setLong(":owner_id", session.user_id);
             result = stmt.executeQuery().getLong("id");
         }
         trans.commit();
@@ -33,7 +33,7 @@ public class EventAPI {
 
     public static class Event{
             public long id;
-            public long organizer_id;
+            public long owner_id;
             public String name;
             public String description;
             public long start;
@@ -68,10 +68,10 @@ public class EventAPI {
     @Route("/get_event/<id>")
     public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, BadRequest {
         Event event;
-        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:id AND draft=false) OR (id=:id AND organizer_id=:organizer_id)")){
+        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:id AND draft=false) OR (id=:id AND owner_id=:owner_id)")){
             stmt.setLong(":id", id);
-            if(session!=null&&session.organizer_id!=null)
-                stmt.setLong(":organizer_id", session.organizer_id);
+            if(session!=null)
+                stmt.setLong(":owner_id", session.user_id);
             var result = SqlSerde.sqlList(stmt.executeQuery(), Event.class);
             if(result.isEmpty())
                 throw new BadRequest("Event doesn't exist or you do not have permission to view it");
@@ -94,31 +94,40 @@ public class EventAPI {
             long id,
             String name,
             String description,
-            long start,
-            long duration,
             JsonObject metadata,
-            int available_total_tickets,
+
+            Long start,
+            Long duration,
+
+            Integer available_total_tickets,
 
             String location_name,
-            double location_lat,
-            double location_long
+            Double location_lat,
+            Double location_long
     ){}
 
     @Route
     public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Body @Json UpdateEvent update) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND organizer_id=:organizer_id")){
+        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", update.id);
-            stmt.setLong(":organizer_id", session.organizer_id);
+            stmt.setLong(":owner_id", session.user_id);
 
             stmt.setString(":name", update.name);
             stmt.setString(":description", update.description);
-            stmt.setLong(":start", update.start);
-            stmt.setLong(":duration", update.duration);
-            stmt.setString(":metadata", update.metadata.toString());
-            stmt.setInt(":available_total_tickets", update.available_total_tickets);
-            stmt.setString(":location_name", update.location_name);
-            stmt.setDouble(":location_lat", update.location_lat);
-            stmt.setDouble(":location_long", update.location_long);
+            if(update.start!=null)
+                stmt.setLong(":start", update.start);
+            if(update.duration!=null)
+                stmt.setLong(":duration", update.duration);
+            if(update.metadata!=null)
+                stmt.setString(":metadata", update.metadata.toString());
+            if(update.available_total_tickets!=null)
+                stmt.setInt(":available_total_tickets", update.available_total_tickets);
+            if(update.location_name!=null)
+                stmt.setString(":location_name", update.location_name);
+            if(update.location_lat!=null)
+                stmt.setDouble(":location_lat", update.location_lat);
+            if(update.location_long!=null)
+                stmt.setDouble(":location_long", update.location_long);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to update event");
         }
@@ -127,9 +136,9 @@ public class EventAPI {
 
     @Route("/delete_event/<id>")
     public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND organizer_id=:organizer_id")){
+        try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", id);
-            stmt.setLong(":organizer_id", session.organizer_id);
+            stmt.setLong(":owner_id", session.user_id);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Could not delete event. Event doesn't exist or you don't own event");
         }
@@ -167,9 +176,9 @@ public class EventAPI {
 
     @Route("/set_draft/<id>/<draft>")
     public static void set_draft(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND organizer_id=:organizer_id")){
+        try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", id);
-            stmt.setLong(":organizer_id", session.organizer_id);
+            stmt.setLong(":owner_id", session.user_id);
             stmt.setBoolean(":draft", draft);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Couldn't update the specified event. Either the event doesn't exist, or you don't control this event");
@@ -187,15 +196,15 @@ public class EventAPI {
         var media_id = handler.add(data);
         long old_media = 0;
         try{
-            try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND organizer_id=:organizer_id")){
+            try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND owner_id=:owner_id")){
                 stmt.setLong(":id", id);
-                stmt.setLong(":organizer_id", session.organizer_id);
+                stmt.setLong(":owner_id", session.user_id);
                 old_media = stmt.executeQuery().getLong(1);
             }
 
-            try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND organizer_id=:organizer_id")){
+            try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND owner_id=:owner_id")){
                 stmt.setLong(":id", id);
-                stmt.setLong(":organizer_id", session.organizer_id);
+                stmt.setLong(":owner_id", session.user_id);
                 stmt.setLong(":picture", media_id);
                 if(stmt.executeUpdate()!=1)
                     throw new BadRequest("Failed to add picture to event. Event doesn't exit or you don't own event");

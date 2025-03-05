@@ -246,7 +246,7 @@ public abstract class DbManager implements AutoCloseable{
             return stmt;
         }
         var res = parsePreparedFields(sql);
-        stmt = new NamedPreparedStatement(conn.conn.prepareStatement(res.t1), sql, res.t1, res.t2);
+        stmt = new NamedPreparedStatement(conn.conn.prepareStatement(res.t1()), sql, res.t1(), res.t2());
         stmt.setConn(conn);
         return stmt;
     }

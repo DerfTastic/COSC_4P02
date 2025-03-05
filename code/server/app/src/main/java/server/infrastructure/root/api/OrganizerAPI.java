@@ -16,22 +16,15 @@ public class OrganizerAPI {
 
     @Route
     public static void convert_to_organizer_account(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("select organizer_id from users where id=:user_id")){
+        try(var stmt = trans.namedPreparedStatement("select organizer from users where id=:user_id")){
             stmt.setLong(":user_id", session.user_id);
-            if(stmt.executeQuery().getInt("organizer_id")!=0)
+            if(stmt.executeQuery().getBoolean("organizer"))
                 throw new BadRequest("Account already an organizer");
         }
-
-        long organizer_id;
-        try(var stmt = trans.namedPreparedStatement("insert into organizers values(null, false) returning id")){
-            organizer_id = stmt.executeQuery().getInt("id");
-        }
-
-        try(var stmt = trans.namedPreparedStatement("update users set organizer_id=:organizer_id where id=:user_id")){
-            stmt.setLong(":organizer_id", organizer_id);
+        try(var stmt = trans.namedPreparedStatement("update users set organizer=true where id=:user_id")){
             stmt.setLong(":user_id", session.user_id);
             if(stmt.executeUpdate()!=1)
-                throw new BadRequest("Failed to make account an organizer");
+                throw new BadRequest("Failed to set user organizer");
         }
         trans.commit();
     }

@@ -58,7 +58,6 @@ jar {
 tasks.register('fatJar', Jar) {
     manifest.from jar.manifest
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    classifier = 'all'
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     } {
@@ -67,10 +66,4 @@ tasks.register('fatJar', Jar) {
         exclude "META-INF/*.RSA"
     }
     with jar
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
 }
