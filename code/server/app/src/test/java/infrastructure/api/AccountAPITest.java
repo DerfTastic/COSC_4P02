@@ -7,9 +7,10 @@ import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
+import server.infrastructure.DbManagerImpl;
 import server.infrastructure.param.auth.UserSession;
 import server.infrastructure.root.api.AccountAPI;
-import framework.web.mail.MailServer;
+import server.mail.MailServer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,7 +27,7 @@ public class AccountAPITest {
     @BeforeAll
     public static void setup() {
         try{
-            db = new DbManager("account_api_test", true, true, true);
+            db = new DbManagerImpl("account_api_test", true, true, true);
             mail = configurator -> {};
         }catch (Exception e){
             throw new RuntimeException(e);

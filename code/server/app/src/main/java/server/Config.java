@@ -18,6 +18,8 @@ public class Config {
     public final String hostname = initialize("localhost");
     public final Integer port = initialize(80);
 
+    public final Integer backlog = initialize(0);
+
     public final String db_path = initialize("db/database.db");
     public final String dynamic_media_path = initialize("media");
     public final Long dynamic_media_cache_size = initialize(1L<<30);
@@ -31,6 +33,8 @@ public class Config {
 
     public final Boolean create_paths = initialize(true);
 
+    public final Boolean send_mail = initialize(false);
+
     // Creates default values inside server properties file
     static {
         outer:
@@ -40,6 +44,7 @@ public class Config {
                 CONFIG = new Config();
 
                 for(var field : Config.class.getFields()) {
+                    if(Modifier.isStatic(field.getModifiers())) continue; // Skip if static
                     properties.put(field.getName(), field.get(CONFIG).toString());
                 }
                 properties.store(new FileOutputStream("server.properties"), null);

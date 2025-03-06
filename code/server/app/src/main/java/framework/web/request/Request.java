@@ -69,18 +69,9 @@ public class Request {
         sendResponse(code(), content);
     }
 
-    public <T> void sendResponse(T content) throws IOException{
-        sendResponse(code(), content);
-    }
-
     public void sendResponse(int code, String content) throws IOException{
         sendResponse(code, content.getBytes());
     }
-
-    public <T> void sendResponse(int code, T message) throws IOException{
-        sendResponse(code, new Gson().toJson(message));
-    }
-
 
     public List<String> getQueryParam(String param) {
         return getQueryMap().get(param);

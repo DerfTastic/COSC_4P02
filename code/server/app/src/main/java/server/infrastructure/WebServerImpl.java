@@ -7,8 +7,8 @@ import server.Secrets;
 import framework.db.DbManager;
 import framework.web.TimedEvents;
 import framework.web.WebServer;
-import framework.web.mail.MailServer;
-import framework.web.mail.SmtpMailServer;
+import server.mail.MailServer;
+import server.mail.SmtpMailServer;
 import server.ServerStatistics;
 
 import java.net.InetSocketAddress;
@@ -28,14 +28,14 @@ public class WebServerImpl extends WebServer {
         // Create a socket address using "Config.CONFIG.hostname" as the respective hostname and
         // "Config.CONFIG.port" as the port.
         // Currently, localhost 80
-        super(new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port));
+        super(new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port), Config.CONFIG.backlog);
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
 
 
         addManagedState(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
         addManagedState(new DynamicMediaHandler()); //
         try{
-            addManagedState(new DbManager(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true));
+            addManagedState(new DbManagerImpl(), DbManager.class);
         }catch (Exception e){
             this.close();
             throw e;

@@ -1,5 +1,6 @@
 package server.infrastructure.root.api;
 
+import com.google.gson.Gson;
 import framework.db.RwTransaction;
 import framework.web.annotations.*;
 import server.infrastructure.param.auth.RequireSession;
@@ -17,6 +18,10 @@ import server.infrastructure.param.auth.UserSession;
 @Routes
 public class PaymentAPI {
 
+    sealed interface PaymentKind permits AccountOrganizerUpgrade, Ticket{}
+    record AccountOrganizerUpgrade() implements PaymentKind{}
+    record Ticket(long id) implements PaymentKind{}
+
     /**
      * Creates an order from a list of tickets the user wants to purchase
      * Note: this doesn't reserve the tickets and they can be purchased after this
@@ -26,6 +31,11 @@ public class PaymentAPI {
     @Route
     public static String createOrder(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans, @Body @Json int[] tickets){
         return "";
+
+    }
+
+    public static void main(String... args){
+        System.out.println(new Gson().toJson(new Ticket(12)));
     }
 
     /**

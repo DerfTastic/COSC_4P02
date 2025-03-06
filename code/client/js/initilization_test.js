@@ -4,213 +4,494 @@ function assert(condition, message) {
     }
 }
 
+class MyEvent{
+    /** @type{integer} */ id
+    /** @type{integer[]} */ tickets
+}
+
 class Account{
-    /** @type{string} */ name
     /** @type{string} */ email
     /** @type{string} */ password
-    /** @type{Session} */ session
-}
-
-function log(e){
-    console.log(e);
-    if(typeof e == "object")
-        document.getElementById("console").innerText += JSON.stringify(e, null, 2)+"\n";
-    else
-        document.getElementById("console").innerText += e+"\n";
-}
-
-var time = {};
-
-function timeStart(e){
-    time[e] = new Date();
-    log("Started: " + e);
-}
-
-function timeEnd(e){
-    const start = time[e];
-    const end = new Date();
-    log("Ended: " + e + " Took: " + (end.getTime()-start.getTime()) + "ms");
-}
-
-document.addEventListener("DOMContentLoaded", e => run_all());
-
-async function run_all(){  
-    const pre_stats = await api.admin.get_server_statistics(await api.user.login("admin@localhost", "admin"));
-    timeStart("");
-    const start = new Date();
-
-    const user_count = 500;
-    const organizer_count = 100;
-    const admin_count = 5;  
-    const event_count = 700;
-    // test_register_1();
-    // test_register_2();
-    // test_default_admin_account();
-
-    timeStart("Creating Admin Users");
-    const admins = await Promise.all(generate_users(admin_count).values());
-    timeEnd("Creating Admin Users");
-
-
-    timeStart("Creating Regular Users");
-    const users = await Promise.all(generate_users(user_count).values());
-    timeEnd("Creating Regular Users");
     
-    timeStart("Creating Organizer Users");
-    const organizers = await Promise.all(generate_users(organizer_count).map(async e => {
-        const user = await e;
-        await api.organizer.convert_to_organizer_account(user.session);
-        return user;
-    }).values());
-    timeEnd("Creating Organizer Users");
+    /** @type{string[]} */ sessions = []
 
-    
-    timeStart("Creating Events");
-    const meows = [];
-    for(let i = 0; i < event_count; i ++){
-        var session = organizers[chance.integer({ min: 0, max: organizers.length-1 })].session;
-        meows.push(create_example_event(session, i));
-    }
-    await Promise.all(meows.values());
-    timeEnd("Creating Events");
+    /** @type{MyEvent[]} */ events = []
+}
 
+/** @type{Account[]} */
+const admin_accounts = [];
+/** @type{Account[]} */
+const organizer_accounts = [];
+/** @type{Array<Account>} */
+const accounts = [];
 
-    const end = new Date();
-    const diff = (end.getTime()-start.getTime())/1000.0;
-    console.log(end.getTime());
-    console.log(start.getTime());
-    console.log(diff);
-    timeEnd("");
-    const post_stats = await api.admin.get_server_statistics(await api.user.login("admin@localhost", "admin"));
-    log("Requests Made: " + (post_stats.total_requests_handled-pre_stats.total_requests_handled));
-    log("Requests Per Second: " + (post_stats.total_requests_handled-pre_stats.total_requests_handled)/diff);
-    log("Db Queries Made: " + (post_stats.total_db_statements_executed-pre_stats.total_db_statements_executed));
-    log("Db Queries Per Second: " + (post_stats.total_db_statements_executed-pre_stats.total_db_statements_executed)/diff);
-    log("Pre Test Statistics");
-    log(pre_stats);
-    log("Post Test Statistics");
-    log(post_stats);
+/**
+ * @type{(function (): Promis<void>)[]}
+ */
+const meows = [];
+
+let api_calls = 0;
+/**
+ * @template T
+ * @param {T[]} param 
+ * @param {number} index 
+ * @returns {T}
+ */
+function remove(param, index){
+    return param.splice(index, 1)[0];
+};
+
+/**
+ * @template T
+ * @param {T[]} param  
+ * @returns {T}
+ */
+function removeRandom(param){
+    if(param.length==0)return null;
+    return remove(param, Math.floor(Math.random()*param.length));
 }
 
 /**
- * @param {Account} account 
+ * @param {T[]} param  
+ * @returns {T}
+ * @template T
  */
-async function make_organizer(account){
-    const session = await api.user.login(account.email, account.password);
+function getRandom(param){
+    if(param.length==0)return null;
+    const index = Math.floor(Math.random()*param.length);
+    return param[index];
+}
+
+/**
+ * @param {T[]} param  
+ * @param {function(T): Promise<R>} cb
+ * @template T
+ * @template R
+ * @returns R
+ */
+async function withRandom(param, cb){
+    var random = removeRandom(param);
+    if(random===null)return;
+    const ret = await cb(random);
+    param.push(random);
+    return ret;
+}
+
+/**
+ * @param {Account[]} list
+ * @param {function(Account, string): Promise} cb 
+ * @returns {Promise}
+ */
+async function withRandomSession(list, cb){
+    await withRandom(list, async account => {
+        await withRandom(account.sessions, async session => {
+            await cb(account, session);
+        });
+    });
+}
+
+
+async function withRandomAccountSession(cb){
+    withRandomSession(accounts, cb);
+}
+
+async function withRandomOrganizerSession(cb){
+    withRandomSession(organizer_accounts, cb);
+}
+
+async function withRandomAdminSession(cb){
+    withRandomSession(admin_accounts, cb);
+}
+
+meows.push(async function() {
+    let account = getRandom(accounts);
+    if(account==null)return;
+    account.sessions.push(await api.user.login(account.email, account.password));
+    api_calls += 1;
+});
+meows.push(async function() {
+    let account = getRandom(admin_accounts);
+    if(account==null)return;
+    account.sessions.push(await api.user.login(account.email, account.password));
+    api_calls += 1;
+});
+meows.push(async function() {
+    let account = getRandom(organizer_accounts);
+    if(account==null)return;
+    account.sessions.push(await api.user.login(account.email, account.password));
+    api_calls += 1;
+});
+
+meows.push(async function() {
+    while(true){
+        let account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
+        if(account==null)return;
+        while(account.sessions.length > 1){
+            var session = removeRandom(account.sessions);
+            var id = utility.get_id_from_session(session);
+            await api.user.invalidate_session(id, session);
+            api_calls += 1;
+        } 
+        if(account.sessions.length <= 1){
+            break;
+        }  
+    }
+});
+
+meows.push(async function() {
+    const account = new Account();
+    account.name = chance.name();
+    account.email = chance.email();
+    account.password = chance.string();
+    account.events = [];
+    account.sessions = [];
+    for(var j = 0; j < 10; j ++){
+        try{
+            await api.user.register(account.name, account.email, account.password);
+            break;
+        }catch(e){}
+        email = chance.email();
+        api_calls += 1;
+    }
+    account.sessions.push(await api.user.login(account.email, account.password)); 
+    accounts.push(account);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
+    if(account==null)return;
+    await withRandom(account.sessions, async session => {
+        await api.user.list_sessions(session);    
+        api_calls += 1;
+    });
+});
+
+meows.push(async function(){
+    const list = getRandom([accounts, admin_accounts, organizer_accounts]);
+    if(list.length<=1)return;
+    const account = removeRandom(list);
+    if(account==null)return;
+    if(account.email==="admin@localhost"){
+        list.push(account);
+        return;
+    }
+    const session = getRandom(account.sessions);
+    await api.user.delete_account(account.email, account.password, session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    await api.user.all_userinfo(session);
+    api_calls += 1;
+});
+
+// organizer stuff
+meows.push(async function(){
+    const account = removeRandom(accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
     await api.organizer.convert_to_organizer_account(session);
-}
+    organizer_accounts.push(account);
+    api_calls += 1;
+});
 
-/**
- * 
- * @param {number} count 
- * @returns {Promise<Account>[]}
- */
-function generate_users(count){
-    var users = []
-    for(let i = 0; i < count; i++){
-        const fut = (async _ => {
-            const name = chance.name();
-            let email = chance.email();
-            const password = chance.string();
-            for(var j = 0; j < 10; j ++){
-                try{
-                    await api.user.register(name, email, password);
-                    break;
-                }catch(e){}
-                email = chance.email();
-            }
-            const session = await api.user.login(email, password); 
-            return {
-                name,
-                email,
-                password,
-                session,
-            }
-        })();
-        users.push(fut);
+// search
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const search = new Search();
+    search.owning = chance.bool();
+    search.draft = chance.bool();
+    for(let i = 0; i < 4 && chance.bool(); i ++){
+        search.tags.push({
+            category: chance.bool(),
+            tag: getRandom(["loud", "edm"])
+        })
     }
-    return users;
-}
+    search.location_lat = chance.longitude();
+    search.location_long = chance.latitude();
+    if(chance.bool())
+        search.date_end = chance.timestamp()*1000;
+    if(chance.bool())
+        search.date_start = chance.timestamp()*1000;
 
-async function test_register_1(){
-    await api.user.register("Yui", "yui@gmail.com", "password");
-    const _ = await api.user.login("yui@gmail.com", "password");
-    const yui_session = await api.user.login("yui@gmail.com", "password");
-    const yui_sessions = await api.user.list_sessions(yui_session);
-    assert(yui_sessions.length == 2);
-    const yui_info = await api.user.all_userinfo(yui_session);
-    assert(yui_info.admin == false);
-    assert(yui_info.name == "Yui");
-    assert(yui_info.email == "yui@gmail.com");
-}
-
-async function test_register_2(){
-    await api.user.register("Leo", "leo@gmail.com", "supersecret");
-    const leo_session = await api.user.login("leo@gmail.com", "supersecret");
-    const leo_sessions = await api.user.list_sessions(leo_session);
-    assert(leo_sessions.length == 1);
-    const leo_info = await api.user.all_userinfo(leo_session);
-    assert(leo_info.admin == false);
-    assert(leo_info.name == "Leo");
-    assert(leo_info.email == "leo@gmail.com");
-}
-
-async function test_default_admin_account(){
-    const admin_session = await api.user.login("admin@localhost", "admin");
-    const admin_info = await api.user.all_userinfo(admin_session);
-    assert(admin_info.admin == true);
-    await api.admin.get_server_logs(admin_session);
-}
-
-async function create_example_event(org_session, iteration){
-    // const picture_promise = (async () => await (await fetch(`https://picsum.photos/200?random=${iteration}`)).blob())();
-
-    const event_id = await api.events.create_event(org_session);
-
-    const categories = ["concert", "sports", "fundraiser"];
-    const tags = ["fun", "thrilling", "outdoors", "indoors", "nature", "rock", "loud", "quiet", "cats", "dogs", "educational", "calm", "intense"];
-
-    const category = categories[chance.integer({ min: 0, max: categories.length-1 })];
-    await api.events.add_event_tag(event_id, category, true, org_session);
-
-    for(let i = 0; i < tags.length; i ++){
-        if(chance.bool())
-            await api.events.add_event_tag(event_id, tags[i], false, org_session);
-    }
-
-    const data = {
-        id: event_id,
-        name: chance.sentence({ words: 5 }),
-        description: chance.paragraph() ,
-        metadata: {background: chance.color({format: 'hex'})},
+    if(chance.bool())
+        search.max_duration = chance.integer({min: 15*60*1000, min: 12*60*60*1000});
+    if(chance.bool())
+        search.min_duration = chance.integer({min: 15*60*1000, min: 12*60*60*1000});
     
-        available_total_tickets: chance.bool()?undefined:chance.integer({ min: 50, max: 200 }),
-        
-        location_name: chance.address(),
-        location_long: chance.longitude(),
-        location_lat: chance.latitude()
-    };
-    await api.events.update_event(data, org_session);
+    if(Math.random()<.2)
+        search.min_duration = chance.integer({min: 1, min: 500});
 
-    // const picture =  await picture_promise;
-    // await api.events.set_picture(event_id, picture, org_session);
+    if(Math.random()<.2)
+        search.organizer_fuzzy = `%${chance.character()}%`;
+
+    if(Math.random()<.2)
+        search.name_fuzzy = `%${chance.character()}%`;
+
+    if(Math.random()<.2)
+        search.location = `%${chance.character()}%`;
+
+    if(Math.random()<.1)
+        search.distance = Math.random()*10000-5000;
+
+    if(chance.bool()){
+        search.sort_by = getRandom(["MinPrice", "MaxPrice", "TicketsAvailable", "Closest", "StartTime", "MinDuration", "MaxDuration"]);
+    }
+    
+    await api.search.search_events(search, session);
+    api_calls += 1;
+});
+
+// events
+meows.push(async function(){
+    //TODO set picture
+});
+
+const tags = ["bannana", "meow", "nya", "bwaaaaaa", "edm", "loud", "test"];
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.events.add_event_tag(event.id, getRandom(tags), chance.bool(), session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.events.delete_event_tag(event.id, getRandom(tags), chance.bool(), session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.events.set_draft(event.id, chance.bool(), session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = removeRandom(account.events);
+    if(event==null)return;
+    await api.events.delete_event(event.id, session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event_id = getRandom(account.events);
+    if(event_id==null)return;
+    const event = new UpdateOrganizerEvent();
+    event.id = event_id.id;
+
+    event.name = chance.sentence({ words: 5 });
+    event.description = chance.paragraph();
+    event.metadata = {background: chance.color({format: 'hex'})};
+
+    event.available_total_tickets = chance.bool()?undefined:chance.integer({ min: 50, max: 200 });
+    
+    event.location_name = chance.address();
+    event.location_long = chance.longitude();
+    event.location_lat = chance.latitude();
+
+    event.start = chance.bool()?undefined:chance.timestamp()*1000;
+    event.duration = chance.bool()?undefined:chance.integer({min: 15*60*1000, min: 12*60*60*1000});
+
+    await api.events.update_event(event, session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = new MyEvent();
+    event.tickets = [];
+    event.id = await api.events.create_event(session);
+    account.events.push(event);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.events.get_event(event.id, session);
+    api_calls += 1;
+});
+
+// admin
+meows.push(async function(){
+    const account = getRandom(admin_accounts);
+    const session = getRandom(account.sessions);
+    await api.admin.get_log_level(session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(admin_accounts);
+    const session = getRandom(account.sessions);
+    await api.admin.get_log_level(session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(admin_accounts);
+    const session = getRandom(account.sessions);
+    var level = await api.admin.get_log_level(session);
+    await api.admin.set_log_level(level, session);
+    api_calls += 2;
+});
+
+meows.push(async function(){
+    const account = getRandom(admin_accounts);
+    const session = getRandom(account.sessions);
+    await api.admin.get_server_statistics(session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(admin_accounts);
+    const session = getRandom(account.sessions);
+    await api.admin.get_server_logs(session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const admin = getRandom(admin_accounts);
+    if(accounts.length<=1)return;
+    const account = removeRandom(accounts);
+    const session = getRandom(admin.sessions);
+    await api.admin.set_account_admin(true, account.email, session);
+    admin_accounts.push(account);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    if(admin_accounts.length<=1)return;
+    const account = removeRandom(admin_accounts);
+    if(account.email==="admin@localhost"){
+        admin_accounts.push(account);
+        return;
+    }
+    const session = getRandom(account.sessions);
+    await api.admin.set_account_admin(false, account.email, session);
+    accounts.push(account);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const list = getRandom([accounts, admin_accounts, organizer_accounts]);
+    if(list.length<=1)return;
+    const account = removeRandom(list);
+    if(account.email==="admin@localhost"){
+        list.push(account);
+        return;
+    }
+    const admin = getRandom(admin_accounts);
+    const session = getRandom(admin.sessions);
+    await api.admin.delete_other_account(account.email, session);
+    accounts.push(account);
+    api_calls += 1;
+});
+
+//tickets
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    const ticket_id = await api.tickets.create_ticket(event.id, session);
+    event.tickets.push(ticket_id);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    await api.tickets.get_tickets(event.id, session);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    const ticket_id = getRandom(event.tickets);
+    if(ticket_id==null)return;
+    const ticket = new EventTicket();
+    ticket.id = ticket_id;
+    ticket.available_tickets = chance.bool()?undefined:chance.integer({min:10, max:500});
+    ticket.name = chance.sentence({ words: 5 });
+    ticket.price = chance.integer({min: 0, max: 20}); 
+    await api.tickets.update_ticket(ticket, session);
+    event.tickets.push(ticket_id);
+    api_calls += 1;
+});
+
+meows.push(async function(){
+    const account = getRandom(organizer_accounts);
+    if(account==null)return;
+    const session = getRandom(account.sessions);
+    const event = getRandom(account.events);
+    if(event==null)return;
+    const ticket_id = getRandom(event.tickets);
+    if(ticket_id==null)return;
+    await api.tickets.delete_ticket(ticket_id, session);
+    event.tickets.push(ticket_id);
+    api_calls += 1;
+});
 
 
-    // getting the event with a session that we own should work;
-    // await api.events.get_event(event_id, org_session);
-
-    // not publically accessable
-    // let failed = false;
-    // try{
-    //     await api.events.get_event(event_id);
-    // }catch(e){
-    //     failed = true;
-    // }
-    // assert(failed);
-
-    await api.events.set_draft(event_id, false, org_session);
-
-    // now that the event isn't a draft its public so anyone (even without an account) can view it
-    const result = await api.events.get_event(event_id);
-
+function stuffy(){
+    for(let i = 0; i < 5; i ++){
+        (async() => {while(true)try{
+            await new Promise(r => setTimeout(r, 10));
+            await getRandom(meows)();
+        }catch(e){
+        }})();
+    }
 }
+
+async function start(){
+    const account = new Account();
+    account.email = "admin@localhost";
+    account.password = "admin";
+    account.events = [];
+    account.sessions = [];
+    account.sessions.push(await api.user.login(account.email, account.password));
+    admin_accounts.push(account);
+    api_calls += 1;
+
+    stuffy();
+}
+
+start();
