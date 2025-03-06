@@ -4,17 +4,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterForm = document.getElementById("filterForm");
     
     let events = [
-        { title: "Live Concert", location: "New York", category: "Concert", type: "Music", price: 50, date: "2024-06-15", image: "/images/concert.jpg" },
-        { title: "Broadway Show", location: "Los Angeles", category: "Theater", type: "Drama", price: 75, date: "2024-07-20", image: "/images/theater.jpg" },
-        { title: "Comedy Night", location: "Chicago", category: "Comedy", type: "Stand-up", price: 30, date: "2024-08-10", image: "/images/comedy.jpg" },
-        { title: "Food Festival", location: "San Francisco", category: "Festival", type: "Food", price: 20, date: "2024-09-05", image: "/images/food.jpg" },
-        { title: "Tech Conference", location: "Seattle", category: "Conference", type: "Technology", price: 100, date: "2024-10-12", image: "/images/tech.jpg" },
-        { title: "Art Exhibition", location: "Miami", category: "Exhibition", type: "Art", price: 25, date: "2024-11-18", image: "/images/art.jpg" },
-        { title: "Jazz Festival", location: "New Orleans", category: "Festival", type: "Music", price: 60, date: "2024-12-22", image: "/images/jazz.jpg" },
-        { title: "Book Fair", location: "Boston", category: "Fair", type: "Books", price: 15, date: "2025-01-08", image: "/images/book.jpg" },
-        { title: "Gaming Expo", location: "Las Vegas", category: "Expo", type: "Gaming", price: 90, date: "2025-02-20", image: "/images/gaming.jpg" },
-        { title: "Opera Night", location: "Washington D.C.", category: "Theater", type: "Opera", price: 80, date: "2025-03-14", image: "/images/opera.jpg" },
-        { title: "Wine Tasting", location: "Napa Valley", category: "Festival", type: "Wine", price: 40, date: "2025-04-10", image: "/images/wine.jpg" }
+        { title: "Live Concert", location: "New York", category: "Concert", tags: ["Music", "Live"], price: 50, date: "2024-06-15", image: "/images/concert.jpg" },
+        { title: "Broadway Show", location: "Los Angeles", category: "Theater", tags: ["Drama", "Performance"], price: 75, date: "2024-07-20", image: "/images/theater.jpg" },
+        { title: "Comedy Night", location: "Chicago", category: "Comedy", tags: ["Stand-up", "Entertainment"], price: 30, date: "2024-08-10", image: "/images/comedy.jpg" },
+        { title: "Food Festival", location: "San Francisco", category: "Festival", tags: ["Food", "Tasting"], price: 20, date: "2024-09-05", image: "/images/food.jpg" },
+        { title: "Tech Conference", location: "Seattle", category: "Conference", tags: ["Technology", "Networking"], price: 100, date: "2024-10-12", image: "/images/tech.jpg" },
+        { title: "Art Exhibition", location: "Miami", category: "Exhibition", tags: ["Art", "Gallery"], price: 25, date: "2024-11-18", image: "/images/art.jpg" },
+        { title: "Jazz Festival", location: "New Orleans", category: "Festival", tags: ["Music", "Jazz"], price: 60, date: "2024-12-22", image: "/images/jazz.jpg" },
+        { title: "Book Fair", location: "Boston", category: "Fair", tags: ["Books", "Reading"], price: 15, date: "2025-01-08", image: "/images/book.jpg" },
+        { title: "Gaming Expo", location: "Las Vegas", category: "Expo", tags: ["Gaming", "Tech"], price: 90, date: "2025-02-20", image: "/images/gaming.jpg" },
+        { title: "Opera Night", location: "Washington D.C.", category: "Theater", tags: ["Opera", "Performance"], price: 80, date: "2025-03-14", image: "/images/opera.jpg" },
+        { title: "Wine Tasting", location: "Napa Valley", category: "Festival", tags: ["Wine", "Luxury"], price: 40, date: "2025-04-10", image: "/images/wine.jpg" }
     ];
 
     let displayedEvents = 0;
@@ -26,19 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const eventBox = document.createElement("div");
             eventBox.classList.add("event-box");
-            eventBox.style.backgroundImage = `url('/images/ticket.png')`; // Set image as background
+            eventBox.style.backgroundImage = `url('/images/ticket.png')`;
             eventBox.style.backgroundSize = "cover";
             eventBox.style.backgroundPosition = "center";
-            eventBox.style.width = "100%"; // Ensure it takes full width
-            eventBox.style.height = "250px"; // Adjust height as needed
-            eventBox.style.position = "relative"; // Ensure text can overlay
+            eventBox.style.width = "100%";
+            eventBox.style.height = "250px";
+            eventBox.style.position = "relative";
     
             eventBox.innerHTML = `
                 <div class="event-overlay">
                     <h3>${event.title}</h3>
                     <p><strong>Location:</strong> ${event.location}</p>
                     <p><strong>Category:</strong> ${event.category}</p>
-                    <p><strong>Type:</strong> ${event.type}</p>
+                    <p><strong>Tags:</strong> ${event.tags.join(", ")}</p>
                     <p><strong>Price:</strong> $${event.price}</p>
                     <p><strong>Date:</strong> ${event.date}</p>
                 </div>
@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     
-
     function loadMoreEvents() {
         const newEvents = filteredEvents.slice(0, displayedEvents + eventsPerPage);
         renderEvents(newEvents);
@@ -57,14 +56,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function filterAndSortEvents() {
         filteredEvents = [...events];
-        displayedEvents = 0; // Reset displayed count when filtering/sorting
+        displayedEvents = 0;
         
         const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
         const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
-        const typeFilter = document.getElementById("filterType").value.toLowerCase();
         const tagFilter = document.getElementById("filterTag").value.toLowerCase();
-        const minPrice = parseInt(document.getElementById("minPrice").value) || 0;
-        const maxPrice = parseInt(document.getElementById("maxPrice").value) || 200;
+        const minPrice = document.getElementById("minPrice").value ? parseInt(document.getElementById("minPrice").value) : 0;
+        const maxPrice = document.getElementById("maxPrice").value ? parseInt(document.getElementById("maxPrice").value) : 300;
         const startDate = document.getElementById("startDate").value;
         const endDate = document.getElementById("endDate").value;
         const sortBy = document.getElementById("sort").value;
@@ -73,8 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         filteredEvents = filteredEvents.filter(event => {
             return (!locationFilter || event.location.toLowerCase().includes(locationFilter)) &&
                    (!categoryFilter || event.category.toLowerCase().includes(categoryFilter)) &&
-                   (!typeFilter || event.type.toLowerCase().includes(typeFilter)) &&
-                   (!tagFilter || event.title.toLowerCase().includes(tagFilter)) &&
+                   (!tagFilter || event.tags.some(tag => tag.toLowerCase().includes(tagFilter))) &&
                    (event.price >= minPrice && event.price <= maxPrice) &&
                    (!startDate || new Date(event.date) >= new Date(startDate)) &&
                    (!endDate || new Date(event.date) <= new Date(endDate));
