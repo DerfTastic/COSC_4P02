@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const eventsContainer = document.getElementById("eventsContainer");
     const loadMoreButton = document.getElementById("loadMore");
     const filterForm = document.getElementById("filterForm");
-    
+
     let events = [
         { title: "Live Concert", location: "New York", category: "Concert", tags: ["Music", "Live"], price: 50, date: "2024-06-15" },
         { title: "Broadway Show", location: "Los Angeles", category: "Theater", tags: ["Drama", "Stage"], price: 75, date: "2024-07-20" },
@@ -13,19 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
         { title: "Jazz Festival", location: "New Orleans", category: "Festival", tags: ["Music", "Jazz"], price: 60, date: "2024-12-22" },
         { title: "Book Fair", location: "Boston", category: "Fair", tags: ["Books", "Literature"], price: 15, date: "2025-01-08" },
         { title: "Gaming Expo", location: "Las Vegas", category: "Expo", tags: ["Gaming", "Esports"], price: 90, date: "2025-02-20" },
-        { title: "Opera Night", location: "Washington D.C.", category: "Theater", tags: ["Opera", "Classical"], price: 80, date: "2025-03-14" },
-        { title: "Wine Tasting", location: "Napa Valley", category: "Festival", tags: ["Wine", "Food"], price: 40, date: "2025-04-10" },
-        { title: "Hip Hop Battle", location: "Atlanta", category: "Music", tags: ["Rap", "Dance"], price: 35, date: "2025-05-18" },
-        { title: "Car Show", location: "Detroit", category: "Exhibition", tags: ["Automobiles", "Luxury"], price: 45, date: "2025-06-21" },
-        { title: "Marathon", location: "Boston", category: "Sports", tags: ["Running", "Endurance"], price: 55, date: "2025-07-10" },
-        { title: "Film Festival", location: "Los Angeles", category: "Festival", tags: ["Movies", "Indie"], price: 60, date: "2025-08-25" },
-        { title: "Science Fair", location: "Houston", category: "Expo", tags: ["Innovation", "Technology"], price: 20, date: "2025-09-14" },
-        { title: "Halloween Party", location: "Salem", category: "Holiday", tags: ["Costume", "Fun"], price: 25, date: "2025-10-31" },
-        { title: "New Year's Eve Gala", location: "New York", category: "Celebration", tags: ["Party", "Luxury"], price: 100, date: "2025-12-31" },
-        { title: "Fashion Week", location: "Paris", category: "Exhibition", tags: ["Fashion", "Design"], price: 120, date: "2026-02-10" },
-        { title: "Robotics Challenge", location: "San Jose", category: "Competition", tags: ["Robots", "Engineering"], price: 70, date: "2026-03-20" }
+        { title: "Opera Night", location: "Washington D.C.", category: "Theater", tags: ["Opera", "Classical"], price: 80, date: "2025-03-14" }
     ];
-    
 
     let displayedEvents = 0;
     const eventsPerPage = 10;
@@ -36,17 +25,53 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const ticketSVG = document.createElement("div");
             ticketSVG.innerHTML = `
-                <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <svg width="600" height="300" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0,40 Q20,40 20,20 H380 Q380,40 400,40 V80 Q380,80 380,100 Q380,120 400,120 V160 Q380,160 380,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
                           fill="white" stroke="#ccc" stroke-width="2"/>
                     <text x="40" y="60" font-size="22" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
                     <text x="40" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
                     <text x="40" y="130" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="40" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
+                    <text x="40" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
+                    <text x="40" y="180" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
+                    <text x="40" y="200" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
                 </svg>
             `;
             eventsContainer.appendChild(ticketSVG);
         });
+    }
+
+    function applyFilters() {
+        const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
+        const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
+        const tagFilter = document.getElementById("filterTag").value.toLowerCase();
+        const minPrice = parseFloat(document.getElementById("minPrice").value) || 0;
+        const maxPrice = parseFloat(document.getElementById("maxPrice").value) || Infinity;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const sortBy = document.getElementById("sort").value;
+        const sortOrder = document.getElementById("order").value;
+
+        filteredEvents = events.filter(event => {
+            return (
+                (locationFilter === "" || event.location.toLowerCase().includes(locationFilter)) &&
+                (categoryFilter === "" || event.category.toLowerCase().includes(categoryFilter)) &&
+                (tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter))) &&
+                (event.price >= minPrice && event.price <= maxPrice) &&
+                (startDate === "" || new Date(event.date) >= new Date(startDate)) &&
+                (endDate === "" || new Date(event.date) <= new Date(endDate))
+            );
+        });
+
+        // Sorting
+        filteredEvents.sort((a, b) => {
+            if (sortBy === "price") return sortOrder === "asc" ? a.price - b.price : b.price - a.price;
+            if (sortBy === "date") return sortOrder === "asc" ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date);
+            if (sortBy === "location") return sortOrder === "asc" ? a.location.localeCompare(b.location) : b.location.localeCompare(a.location);
+            if (sortBy === "category") return sortOrder === "asc" ? a.category.localeCompare(b.category) : b.category.localeCompare(a.category);
+        });
+
+        displayedEvents = 0;
+        loadMoreEvents();
     }
 
     function loadMoreEvents() {
@@ -56,11 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
         loadMoreButton.style.display = displayedEvents >= filteredEvents.length ? "none" : "block";
     }
 
-    filterForm.addEventListener("input", function () {
-        displayedEvents = 0;
-        loadMoreEvents();
-    });
+    filterForm.addEventListener("input", applyFilters);
     loadMoreButton.addEventListener("click", loadMoreEvents);
-    
+
     loadMoreEvents();
 });
