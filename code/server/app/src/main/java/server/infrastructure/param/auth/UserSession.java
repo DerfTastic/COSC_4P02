@@ -12,9 +12,7 @@ public class UserSession {
     public long session_id;
     public String email;
 
-    public Long organizer_id;
-    public Boolean has_analytics;
-
+    public boolean organizer;
     public boolean admin;
 
     private UserSession(){}
@@ -22,7 +20,7 @@ public class UserSession {
     public static UserSession create(String token, RoConn conn) throws SQLException, Unauthorized {
         Logger.getGlobal().log(Level.FINER, "Authenticating with sessions: " + token);
 
-        try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {
+        try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id where sessions.token=:token")) {
             stmt.setString(":token", token);
             try(var result = stmt.executeQuery()){
                 if (result == null || !result.next())
@@ -35,9 +33,7 @@ public class UserSession {
                 auth.user_id = result.getLong("user_id");
                 auth.email = result.getString("email");
                 auth.admin = result.getBoolean("admin");
-
-                auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
-                auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
+                auth.organizer = result.getBoolean("organizer");
 
                 return auth;
             }
@@ -49,7 +45,7 @@ public class UserSession {
 
         if (token == null) return null;
         if(token.isEmpty()) return null;
-        try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id left join organizers on users.organizer_id=organizers.id where sessions.token=:token")) {
+        try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id where sessions.token=:token")) {
             stmt.setString(":token", token);
             try(var result = stmt.executeQuery()){
                 if (result == null || !result.next()) return null;
@@ -60,9 +56,7 @@ public class UserSession {
                 auth.user_id = result.getInt("user_id");
                 auth.email = result.getString("email");
                 auth.admin = result.getBoolean("admin");
-
-                auth.organizer_id = result.getString("organizer_id")==null?null:result.getLong("organizer_id");
-                auth.has_analytics = result.getString("has_analytics")==null?null:result.getBoolean("has_analytics");
+                auth.organizer = result.getBoolean("organizer");
                 return auth;
             }
         }

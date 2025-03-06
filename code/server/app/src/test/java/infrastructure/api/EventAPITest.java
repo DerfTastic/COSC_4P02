@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import framework.db.DbManager;
+import server.infrastructure.DbManagerImpl;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventAPITest {
@@ -18,7 +19,7 @@ public class EventAPITest {
     @BeforeAll
     public static void setup() {
         try{
-            db = new DbManager("event_api_test", true, true, true);
+            db = new DbManagerImpl("event_api_test", true, true, true);
         }catch (Exception e){
             throw new RuntimeException(e);
         }

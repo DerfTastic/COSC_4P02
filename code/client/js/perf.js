@@ -82,7 +82,7 @@ class Dataset{
 function update(){
     const now = new Date();
     // gets all of the stats from 30 seconds ago to now
-    const earlierTime = 0;//now.getTime()-1000*30;
+    const earlierTime = now.getTime()-1000*60;
     const list = stats.getRange(earlierTime, now.getTime());
 
     if (list.length < 2) return;

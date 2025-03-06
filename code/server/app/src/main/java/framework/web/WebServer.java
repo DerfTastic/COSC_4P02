@@ -35,11 +35,11 @@ public class WebServer {
      * Constructor for WebServer.
      * @throws Exception for
      */
-    public WebServer(InetSocketAddress address) throws Exception {
+    public WebServer(InetSocketAddress address, int backlog) throws Exception {
         // on program exit try to do a graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
         this.address = address;
-        server = HttpServer.create(address, 0); // Create HTTPServer at 'address' with no backlog
+        server = HttpServer.create(address, backlog);
 
         addManagedState(server); // Add HTTP Server to managed resources
     }
@@ -126,7 +126,7 @@ public class WebServer {
 
     @SuppressWarnings("unchecked")
     public void mount(RequestsBuilder builder, String parentPath, String classPath){
-        try{
+        try {
             for(var clazz : findAllClassesInPackage(classPath).toList()){
                 var pack = clazz.getPackage().getName()+"/";
                 var path = parentPath+pack.substring(classPath.length()+1).replace(".", "/");

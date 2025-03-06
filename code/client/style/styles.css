@@ -14,7 +14,7 @@ body {
 
 html {
     scroll-behavior: smooth;
-  }
+}
   
 .content{
     margin: auto;
@@ -22,15 +22,14 @@ html {
     padding: 10px;
 }
 
-
 h1 {
+    font-family: "Black Ops One", serif;
+    font-weight: 400;
+    font-size: 45px;
+    font-style: normal;
     color: #eeeef0;
-    font-family: "Georgia", serif;
-    font-weight: 700;
-    font-size: 36px;
-    text-transform: uppercase;
-}
-
+  }
+  
 footer {
     justify-self: center;
     width: 100%;
@@ -43,8 +42,6 @@ footer {
     text-align: center;
     font-size: 18px;
 }
-
-
 
 header {
     width: 100%;
@@ -60,9 +57,8 @@ header {
     align-items: center;
     z-index:2;
     box-sizing: border-box;
-    padding: 0 20px;
+    padding: 0 10px;
 }
-
 
 nav  {
     display: flex;
@@ -90,42 +86,51 @@ header .logo {
     text-decoration: none;
 }
 
-
  .search-bar {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
     width: 300px;
     margin: auto;
     padding: 0;
     height: 40px;
-    border: none;
-    outline: none;
-    gap: 10px;
-}
-
-
-
- .search-bar input {
-    font-size: 15px;
-    display: flex;
-    justify-content: center;
-    padding-left: 10px;
-    border:none;
     outline: none;
     background: rgba(238, 238, 240, 0.15); 
     backdrop-filter: blur(15px); 
     border: 1px solid rgba(238, 238, 240, 0.2); 
-    color: #eeeef0;
     border-radius: 25px;
+    gap: 0;
+}
+
+ .search-bar input {
+    font-size: 17px;
+    padding-left: 10px;
+    border:none;
+    outline: none;
+    background: transparent;
+    border-radius: 25px;
+    color: #eeeef0;
     width: 100%;
     height: 100%;
+    padding-right: 45px;
 }
+
+.search-bar input:focus{
+    background-color: #415a77;
+}
+
+.search-bar input:-webkit-autofill {
+    -webkit-text-fill-color: #eeeef0 !important; 
+    box-shadow: 0 0 0px 1000px #778da9 inset !important;
+}
+
 .search-bar input::placeholder{
     color: #eeeef09a;
 }
 
+.search-bar input::selection {
+    background-color: #1b263b; 
+}
 
 .search-bar button {
     position: absolute;
@@ -137,6 +142,7 @@ header .logo {
     background: rgba(238, 238, 240, 0.3); 
     cursor: pointer;
     transition: background-color 0.3s ease;
+    z-index: 10;
 }
 
 .search-bar button:hover {
@@ -149,8 +155,6 @@ header .logo {
     margin: auto;
     color: #eeeef0;
 }
-
-
 
 nav  a, .cart {
     text-decoration: none;
@@ -264,9 +268,6 @@ nav  a:hover, .cart:hover {
     margin: 0;
 }
 
-
-
-
 .carousel {
     position: relative;
     width: 100%;
@@ -275,7 +276,6 @@ nav  a:hover, .cart:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     
 }
-
 
 .arrow {
     position: absolute;
@@ -322,6 +322,7 @@ nav  a:hover, .cart:hover {
 .heading a:hover {
     color: #778da9;
 }
+
 .container{ 
     display: flex;
     margin: 0;
@@ -330,6 +331,7 @@ nav  a:hover, .cart:hover {
     min-height: 70vh;
     background-color: transparent;
 }
+
 .login-container,.register-container {
     display: flex;
     justify-content: center;
@@ -380,8 +382,8 @@ nav  a:hover, .cart:hover {
     outline: none;
     transition: box-shadow 0.3s ease;
 }
-.form-group input::placeholder
-{
+
+.form-group input::placeholder {
     color: #eeeef09a;
 }
 
@@ -392,12 +394,12 @@ nav  a:hover, .cart:hover {
     font-size: 16px;
     font-family: "Times New Roman", Times, serif;
     transition: all 0.3s ease;
-  }
+}
 
-  .form-group input:focus,.form-group textarea:focus {
+.form-group input:focus,.form-group textarea:focus {
     border-color: #778da9;
     box-shadow: 0 0 5px #778da9; 
-  }
+}
 
 .btn-login, .btn-register {
     width: 100%;
@@ -446,13 +448,10 @@ nav  a:hover, .cart:hover {
     transform: translateY(-3px); 
 }
 
-
-
 .create-event-container button:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(85, 110, 224, 0.8); 
 }
-
 
 .top-section { 
     grid-area: top-section; 
@@ -556,7 +555,6 @@ nav  a:hover, .cart:hover {
     object-fit: contain;
     display: none;
 }
-
       
 @keyframes fadeIn {
     from {
@@ -673,7 +671,6 @@ nav  a:hover, .cart:hover {
     height: auto;               
     border-radius: 8px;          
 }
-
 
 @media (max-width: 768px) {
 

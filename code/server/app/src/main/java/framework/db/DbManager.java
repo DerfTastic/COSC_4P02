@@ -1,23 +1,21 @@
 package framework.db;
 
+import framework.util.Tuple;
 
-import org.sqlite.SQLiteConfig;
-import org.sqlite.SQLiteConnection;
-
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DbManager implements AutoCloseable{
-    private final static HashMap<String, String> resources = new HashMap<>();
+public abstract class DbManager implements AutoCloseable{
+    private final static ConcurrentHashMap<Connection, ConcurrentHashMap<String, ConcurrentLinkedQueue<NamedPreparedStatement>>> preparedCache = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, Tuple<String, HashMap<String, Integer>>> preparedFieldMapCache = new ConcurrentHashMap<>();
+
 
     private final LinkedList<Connection> writableAvailable = new LinkedList<>();
     private final LinkedList<Connection> readOnlyAvailable = new LinkedList<>();
@@ -28,28 +26,21 @@ public class DbManager implements AutoCloseable{
     private int sequenceBefore = 0;
     private int sequenceCurr = 0;
 
-    private final String url;
+    protected String url;
     private final int maxReadOnly;
     private final int maxWritable;
     private final boolean canWriteAndReadCoexist;
 
     private final DbStatistics tracker = new DbStatistics();
 
-    public DbManager(String path, boolean inMemory, boolean alwaysInitialize, boolean cacheShared) throws SQLException {
+    public DbManager(boolean canWriteAndReadCoexist, int maxReadOnly, int maxWritable) throws SQLException {
+        this.canWriteAndReadCoexist = canWriteAndReadCoexist;
+        this.maxReadOnly = maxReadOnly;
+        this.maxWritable = maxWritable;
+    }
 
-        boolean initialized;
-
-
-        canWriteAndReadCoexist = false;
-        maxReadOnly = 0;
-        maxWritable = 1;
-        if(inMemory) {
-            initialized = false;
-            url = "jdbc:sqlite:file:"+path+"?mode=memory"+(cacheShared?"&cache=shared":"");
-        }else {
-            url = "jdbc:sqlite:file:"+path+(cacheShared?"?cache=shared":"");
-            initialized = new File(path).exists();
-        }
+    protected synchronized void initialize(String url) throws SQLException{
+        this.url = url;
         Logger.getGlobal().log(Level.CONFIG, "DB url: " + url);
 
         try(var conn = rw_conn(">initialization")){
@@ -59,73 +50,42 @@ public class DbManager implements AutoCloseable{
             var v = conn.getConn().getMetaData().getDatabaseProductVersion();
             Logger.getGlobal().log(Level.INFO, "Connected to DB " + major + "." + minor + " " + name + "("+v+")");
         }
-
-        if(!initialized || alwaysInitialize){
-            try(var conn = rw_conn(">initialization")){
-                Logger.getGlobal().log(Level.FINE, "Initializing DB");
-
-                try(var stmt = conn.createStatement()){
-                    for(var sql : sql("creation").split(";")){
-                        try{
-                            stmt.execute(sql);
-                        }catch (SQLException e){
-                            Logger.getGlobal().log(Level.WARNING, sql);
-                            throw e;
-                        }
-                    }
-                }catch (SQLException e){
-                    Logger.getGlobal().log(Level.SEVERE, "Failed to initialize DB", e);
-                    throw e;
-                }
-                conn.commit();
-                Logger.getGlobal().log(Level.CONFIG, "Initialized DB");
-            }
-        }
     }
+    protected abstract Connection openConnection(boolean readOnly) throws SQLException;
 
     public DbStatistics getTracker(){
         return this.tracker;
-    }
-
-    public synchronized static String sql(String id){
-        var existing = resources.get(id);
-        if(existing != null) return existing;
-        String resourcePath = "/sql/"+id+".sql";
-        try (var resourceStream = DbManager.class.getResourceAsStream(resourcePath)) {
-            var resourceData = Objects.requireNonNull(resourceStream).readAllBytes();
-            var resource = new String(resourceData);
-            resources.put(id, resource);
-            return resource;
-        }catch (IOException e){
-            Logger.getGlobal().log(Level.SEVERE, "Failed to load resource", e);
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public synchronized void close() {
         for(var conn : readOnlyAvailable){
             try{
-                conn.close();
+                closeConnection(conn);
             }catch (Exception ignore){}
         }
+        readOnlyAvailable.clear();
         for(var conn : writableAvailable){
             try{
-                conn.close();
+                closeConnection(conn);
             }catch (Exception ignore){}
         }
+        writableAvailable.clear();
         for(var conn : inUse){
             try{
-                conn.close();
+                closeConnection(conn);
             }catch (Exception ignore){}
         }
+        inUse.clear();
     }
 
     protected synchronized void rePool(RwConn conn) throws SQLException {
         if(conn.conn==null)return;
         owning.remove(Thread.currentThread());
         if(inUse.remove(conn.conn)){
-            if(!conn.conn.isClosed())
+            if(conn.conn.isClosed())
+                closeConnection(conn.conn);
+            else
                 writableAvailable.addLast(conn.conn);
             inUseWritable--;
             this.notifyAll();
@@ -135,11 +95,26 @@ public class DbManager implements AutoCloseable{
         tracker.db_release(conn.id, true, System.nanoTime()-conn.acquired);
     }
 
+    private void closeConnection(Connection conn) {
+        try{
+            conn.close();
+        }catch (SQLException ignore){}
+        for(var stmts : preparedCache.remove(conn).values()){
+            for(var stmt : stmts){
+                try{
+                    stmt.stmt.close();
+                }catch (SQLException ignore){}
+            }
+        }
+    }
+
     protected synchronized void rePool(RoConn conn) throws SQLException {
         if(conn.conn==null)return;
         owning.remove(Thread.currentThread());
         if(inUse.remove(conn.conn)){
-            if(!conn.conn.isClosed())
+            if(conn.conn.isClosed())
+                closeConnection(conn.conn);
+            else
                 readOnlyAvailable.addLast(conn.conn);
             inUseReadOnly--;
             this.notifyAll();
@@ -147,24 +122,6 @@ public class DbManager implements AutoCloseable{
             Logger.getGlobal().log(Level.SEVERE, "Tried to re pool connection that wasn't in use??");
         }
         tracker.db_release(conn.id, false, System.nanoTime()-conn.acquired);
-    }
-
-    private SQLiteConnection initialize(boolean readOnly) throws SQLException{
-        var config = new SQLiteConfig();
-        config.setReadOnly(readOnly);
-        config.setPragma(SQLiteConfig.Pragma.SHARED_CACHE, "true");
-        config.setPragma(SQLiteConfig.Pragma.JOURNAL_MODE, SQLiteConfig.JournalMode.WAL.getValue());
-        config.setPragma(SQLiteConfig.Pragma.READ_UNCOMMITTED, "true");
-        config.setPragma(SQLiteConfig.Pragma.FOREIGN_KEYS, "true");
-        config.setPragma(SQLiteConfig.Pragma.RECURSIVE_TRIGGERS, "true");
-        config.setPragma(SQLiteConfig.Pragma.SYNCHRONOUS, "normal");
-        config.setPragma(SQLiteConfig.Pragma.JOURNAL_SIZE_LIMIT, "6144000");
-        var connection = (SQLiteConnection)DriverManager.getConnection(url, config.toProperties());
-        connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
-        connection.setAutoCommit(false);
-
-        Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
-        return connection;
     }
 
     public RwTransaction rw_transaction(String id) throws SQLException {
@@ -208,7 +165,7 @@ public class DbManager implements AutoCloseable{
         inUseWritable++;
         Connection con;
         if(writableAvailable.isEmpty()){
-            con = initialize(false);
+            con = openConnection(false);
         }else{
             con = writableAvailable.pollFirst();
         }
@@ -242,12 +199,61 @@ public class DbManager implements AutoCloseable{
         inUseReadOnly++;
         Connection con;
         if(readOnlyAvailable.isEmpty()){
-            con = initialize(true);
+            con = openConnection(true);
         }else{
             con = readOnlyAvailable.pollFirst();
         }
         inUse.add(con);
         owning.add(Thread.currentThread());
         return con;
+    }
+
+
+    private static Tuple<String, HashMap<String, Integer>> parsePreparedFields(String sqlO){
+        return preparedFieldMapCache.computeIfAbsent(sqlO, sql -> {
+            int pos;
+            int index = 1;
+            final HashMap<String, Integer> fieldMap = new HashMap<>();
+            while((pos = sql.indexOf(":")) != -1) {
+                var start = pos;
+                pos++;
+                while(pos < sql.length() && validChar(sql.charAt(pos)))pos++;
+
+                int idx;
+                if(fieldMap.containsKey(sql.substring(start,pos))){
+                    idx = fieldMap.get(sql.substring(start,pos));
+                }else{
+                    fieldMap.put(sql.substring(start,pos), index);
+                    idx = index;
+                    index += 1;
+                }
+                sql = sql.substring(0, start) + "?" + idx + sql.substring(pos);
+            }
+            return new Tuple<>(sql, fieldMap);
+        });
+    }
+
+    private static boolean validChar(char c) {
+        return Character.isAlphabetic(c) || Character.isDigit(c) || c == '_';
+    }
+
+    protected NamedPreparedStatement namedPreparedStatement(Conn conn, String sql) throws SQLException{
+        var stmt = preparedCache.computeIfAbsent(conn.getConn(), connection -> new ConcurrentHashMap<>())
+                .computeIfAbsent(sql, s -> new ConcurrentLinkedQueue<>())
+                .poll();
+        if(stmt != null){
+            stmt.setConn(conn);
+            return stmt;
+        }
+        var res = parsePreparedFields(sql);
+        stmt = new NamedPreparedStatement(conn.conn.prepareStatement(res.t1()), sql, res.t1(), res.t2());
+        stmt.setConn(conn);
+        return stmt;
+    }
+
+    public void namedPreparedStatementClose(NamedPreparedStatement namedPreparedStatement) throws SQLException {
+        preparedCache.get(namedPreparedStatement.conn.getConn())
+                .get(namedPreparedStatement.originalSql)
+                .add(namedPreparedStatement);
     }
 }
