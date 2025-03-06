@@ -43,7 +43,7 @@ public class AccountAPITest {
         account.password = "password";
         try(var trans = db.rw_transaction("")){
             AccountAPI.register(mail, trans, account);
-            trans.commit();
+            trans.tryCommit();
         }
     }
 
@@ -55,7 +55,7 @@ public class AccountAPITest {
         account.password = "password";
         try(var trans = db.rw_transaction("")){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
-            trans.commit();
+            trans.tryCommit();
         }
     }
 
@@ -71,7 +71,7 @@ public class AccountAPITest {
             da.email = "yui@gmail.com";
             da.password = "password";
             AccountAPI.delete_account(session, trans, da);
-            trans.commit();
+            trans.tryCommit();
         }
     }
 
@@ -83,6 +83,7 @@ public class AccountAPITest {
         account.password = "password";
         try(var trans = db.rw_transaction("")){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            trans.tryCommit();
             Assertions.fail();
         }catch (Unauthorized e){
             Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
