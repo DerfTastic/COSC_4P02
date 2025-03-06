@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { title: "Book Fair", location: "Boston", category: "Fair", tags: ["Books", "Literature"], price: 15, date: "2025-01-08" },
         { title: "Gaming Expo", location: "Las Vegas", category: "Expo", tags: ["Gaming", "Esports"], price: 90, date: "2025-02-20" },
         { title: "Opera Night", location: "Washington D.C.", category: "Theater", tags: ["Opera", "Classical"], price: 80, date: "2025-03-14" }
+        { title: "Jazz Under the Stars", location: "New York City", category: "Music", tags: ["Jazz", "Outdoor"], price: 50, date: "2025-04-01" }
     ];
 
     let displayedEvents = 0;
