@@ -7,14 +7,19 @@ create table users(
     admin BOOLEAN not null,
     organizer BOOLEAN not null,
     bio TEXT,
-    picture INTEGER
+    disp_phone_number TEXT,
+    disp_email TEXT,
+    picture INTEGER,
+    banner INTEGER
 );
 
 CREATE UNIQUE INDEX user_email_idx ON users(email);
+CREATE INDEX user_name_idx ON users(name);
 CREATE INDEX user_pass_idx ON users(pass);
 CREATE INDEX user_admin_idx ON users(admin);
-CREATE INDEX user_name_idx ON users(name);
 CREATE INDEX user_organizer_idx ON users(organizer);
+CREATE INDEX user_disp_phone_number_idx ON users(disp_phone_number);
+CREATE INDEX user_disp_email_idx ON users(disp_email);
 
 create table events(
     id INTEGER primary key not null,
@@ -140,4 +145,4 @@ CREATE INDEX sessions_user_id_idx ON sessions(user_id);
 CREATE UNIQUE INDEX sessions_token_idx ON sessions(token) WHERE token IS NOT NULL;
 CREATE INDEX sessions_expiration_idx ON sessions(expiration);
 
-insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, true, null, null);
+insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, true, null, null, null, null, null);

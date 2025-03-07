@@ -619,12 +619,15 @@ const api = {
 
     user: {
         /**
+         * @param {number} id
          * @param {Session} session 
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function (session = cookies.getSession()) {
+        userinfo: async function (id, session = cookies.getSession()) {
+            if(id==undefined||id==null)
+                id=""
             const result = await (await api.api_call(
-                `/all_userinfo`,
+                `/userinfo/${id}`,
                 {
                     method: 'POST',
                     headers: {
@@ -842,9 +845,9 @@ const page = {
         /**
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function () {
+        userinfo: async function () {
             try {
-                return await api.user.all_userinfo(cookies.getSession());
+                return await api.user.userinfo(null, cookies.getSession());
             } catch ({ error, code }) {
                 if (code == 401) {
                     utility.logout();

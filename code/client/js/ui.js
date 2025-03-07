@@ -4,8 +4,6 @@ function getItemsPerView() {
     return 4; 
 }
 
-// (await api.user.all_userinfo()).admin
-
 document.querySelectorAll('.carousel').forEach((carousel) => {
     let currentIndex = 0;
     const productContainer = carousel.querySelector('.product-container');

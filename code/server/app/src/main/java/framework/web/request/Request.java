@@ -130,6 +130,8 @@ public class Request {
 
     public String getPathPart(int index) {
         getPathSectionLen();
+        if(pathParts.length<=index)
+            return null;
         return pathParts[index];
     }
 

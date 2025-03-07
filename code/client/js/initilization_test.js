@@ -185,7 +185,7 @@ meows.push(async function(){
     const account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
     if(account==null)return;
     const session = getRandom(account.sessions);
-    await api.user.all_userinfo(session);
+    await api.user.userinfo(null, session);
     api_calls += 1;
 });
 

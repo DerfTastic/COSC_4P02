@@ -1,12 +1,14 @@
 package server.infrastructure.root.api;
 
 import framework.web.annotations.*;
+import framework.web.annotations.url.Nullable;
 import org.sqlite.SQLiteException;
 import framework.db.RoConn;
 import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
+import server.infrastructure.param.auth.OptionalAuth;
 import server.mail.MailServer;
 import framework.web.Util;
 import framework.web.annotations.url.Path;
@@ -28,29 +30,73 @@ import java.util.logging.Logger;
 @Routes
 public class AccountAPI {
 
-    public record UserInfo(
-            long id,
-            String name,
-            String email,
-            String bio,
-            boolean organizer,
-            boolean admin
-    ){}
+    public sealed interface UserInfo permits PrivateUserInfo, PublicUserInfo {}
 
-    @Route
-    public static @Json UserInfo all_userinfo(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans) throws SQLException {
+    public record PublicUserInfo(
+        long id,
+        String name,
+        boolean organizer,
+        String bio,
+        String disp_email,
+        String disp_phone_number,
+        long picture,
+        long banner
+    ) implements UserInfo {}
+
+    public record PrivateUserInfo(
+        long id,
+        String name,
+        String email,
+        boolean organizer,
+        boolean admin,
+        String bio,
+        String disp_email,
+        String disp_phone_number,
+        long picture,
+        long banner
+    ) implements UserInfo {}
+
+    @Route("/userinfo/<id>")
+    public static @Json UserInfo userinfo(@FromRequest(OptionalAuth.class) UserSession auth, @Path @Nullable Long id, RoTransaction trans) throws SQLException, BadRequest {
         UserInfo result;
-        try(trans; var stmt = trans.namedPreparedStatement("select name, bio from users where id=:id")){
-            stmt.setLong(":id", auth.user_id);
-            var rs = stmt.executeQuery();
-            result = new UserInfo(
-                    auth.user_id,
-                    rs.getString("name"),
-                    auth.email,
-                    rs.getString("bio"),
-                    auth.organizer,
-                    auth.admin
-            );
+        if(auth==null || (id!=null && auth.user_id!=id)){
+            if(id==null)
+                throw new BadRequest("No identification present");
+            try(trans; var stmt = trans.namedPreparedStatement("select name, email, bio, organizer, disp_email, disp_phone_number, picture, banner from users where id=:id")){
+                stmt.setLong(":id", id);
+                var rs = stmt.executeQuery();
+                var organizer = rs.getBoolean("organizer");
+                var disp_email = rs.getString("disp_email");
+                if(disp_email==null && organizer)
+                    disp_email = rs.getString("email");
+                result = new PublicUserInfo(
+                        id,
+                        rs.getString("name"),
+                        organizer,
+                        rs.getString("bio"),
+                        rs.getString("disp_phone_number"),
+                        disp_email,
+                        rs.getLong("picture"),
+                        rs.getLong("banner")
+                );
+            }
+        }else{
+            try(trans; var stmt = trans.namedPreparedStatement("select name, bio, disp_email, disp_phone_number, picture, banner from users where id=:id")){
+                stmt.setLong(":id", auth.user_id);
+                var rs = stmt.executeQuery();
+                result = new PrivateUserInfo(
+                        auth.user_id,
+                        rs.getString("name"),
+                        auth.email,
+                        auth.organizer,
+                        auth.admin,
+                        rs.getString("bio"),
+                        rs.getString("disp_phone_number"),
+                        rs.getString("disp_email"),
+                        rs.getLong("picture"),
+                        rs.getLong("banner")
+                );
+            }
         }
 
         return result;
@@ -109,7 +155,7 @@ public class AccountAPI {
     @Route
     public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, false, null, null)")){
+        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, false, null, null, null, null, null)")){
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);

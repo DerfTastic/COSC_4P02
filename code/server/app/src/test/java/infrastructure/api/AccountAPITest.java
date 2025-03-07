@@ -41,7 +41,7 @@ public class AccountAPITest {
         account.name = "Parker";
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.rw_transaction("")){
+        try(var trans = db.rw_transaction("testAccountRegistration")){
             AccountAPI.register(mail, trans, account);
             trans.tryCommit();
         }
@@ -53,7 +53,7 @@ public class AccountAPITest {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.rw_transaction("")){
+        try(var trans = db.rw_transaction("testAccountLogin")){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
             trans.tryCommit();
         }
@@ -63,10 +63,10 @@ public class AccountAPITest {
     @Order(51)
     public void testDeleteAccount() throws SQLException, Unauthorized {
         UserSession session;
-        try(var conn = db.ro_conn("")){
+        try(var conn = db.ro_conn("testDeleteAccount")){
             session = UserSession.create(AccountAPITest.session, conn);
         }
-        try(var trans = db.rw_transaction("")){
+        try(var trans = db.rw_transaction("testDeleteAccount")){
             var da = new AccountAPI.DeleteAccount();
             da.email = "yui@gmail.com";
             da.password = "password";
@@ -81,7 +81,7 @@ public class AccountAPITest {
         var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.rw_transaction("")){
+        try(var trans = db.rw_transaction("testAccountDeleted")){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
             trans.tryCommit();
             Assertions.fail();
