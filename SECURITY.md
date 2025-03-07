@@ -1,11 +1,5 @@
 # Security Policy
 
-## Supported Versions
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.0   | :white_check_mark: |
-
 ## Reporting Security Vulnerabilities
 
 ### Responsible Disclosure
@@ -20,105 +14,70 @@ We take security vulnerabilities seriously and appreciate the efforts of securit
    - Potential impact
    - Any suggested mitigation or fix if available
 
-### Response Timeline
-
-- We will acknowledge receipt of your vulnerability report within 48 hours.
-- We aim to validate and respond to all reports within 5 business days.
-- We will maintain communication with you about the progress of resolving the issue.
-- After fixing the vulnerability, we will publicly acknowledge your contribution (unless you prefer to remain anonymous).
-
 ## Security Requirements
 
 ### Authentication and Authorization
 
-- All system access requires authentication with strong, unique credentials.
-- Multi-factor authentication (MFA) is required for all administrator accounts.
-- Access to sensitive resources follows the principle of least privilege.
-- Regular access reviews must be conducted quarterly.
-- Inactive accounts must be disabled after 90 days of inactivity.
+- All passwords are stored internally in a SHA256 hash.
 
 ### Data Protection
 
-- Sensitive data must be encrypted both in transit and at rest.
-- Personal data handling must comply with relevant privacy regulations (GDPR, CCPA, etc.).
-- Data classification guidelines must be followed to ensure appropriate protection levels.
-- Data retention periods must be defined and enforced.
-- Secure deletion procedures must be implemented for data disposal.
+- We do not guarantee any privacy or protection over any personal data entered into the website.
 
 ### Code Security
 
-- All code must undergo security review before being merged into the main branch.
-- Static code analysis tools must be integrated into the CI/CD pipeline.
-- Dependencies must be regularly scanned for vulnerabilities.
-- Security testing (SAST, DAST) must be performed before major releases.
-- No secrets, credentials, or sensitive configuration should be stored in the code repository.
-
-### Infrastructure Security
-
-- Systems must be regularly updated with security patches.
-- Firewalls must be configured to restrict access based on the principle of least privilege.
-- Network traffic must be monitored for suspicious activities.
-- Regular security scans and penetration tests must be conducted.
-- Backup and disaster recovery procedures must be documented and tested.
+- We cannot legally guarantee any security of our code. So do not use this code in important applications. 
 
 ## Incident Response
 
 ### Preparation
 
-- A security incident response team must be established.
-- Incident response procedures must be documented and regularly reviewed.
-- Contact information for all relevant stakeholders must be maintained.
+- A security incident response team should be established.
+- Incident response procedures should be documented and regularly reviewed.
+- Contact information for all relevant stakeholders should be maintained.
 
 ### Detection and Analysis
 
-- Security monitoring systems must be implemented to detect potential incidents.
-- All security alerts must be logged and investigated.
+- Security alerts should be logged and investigated.
 - Threat intelligence sources should be utilized to identify potential threats.
-
-### Containment, Eradication, and Recovery
-
-- Procedures for isolating affected systems must be documented.
-- Root cause analysis must be performed for all security incidents.
-- Recovery procedures must be tested regularly.
 
 ### Post-Incident Activity
 
-- Lessons learned must be documented and shared with relevant stakeholders.
-- Security controls must be updated based on incident findings.
-- Training must be provided to address any knowledge gaps identified.
+- Lessons learned should be documented and shared with relevant stakeholders.
+- Security controls should be updated based on incident findings.
+- Training should be provided to address any knowledge gaps identified.
 
 ## Compliance and Governance
 
 ### Regulatory Compliance
 
-- All applicable laws, regulations, and standards must be identified and documented.
-- Compliance requirements must be integrated into security controls.
-- Regular compliance assessments must be conducted.
+- All applicable laws, regulations, and standards should be identified and documented.
+- Compliance requirements should be integrated into security controls.
+- Regular compliance assessments should be conducted.
 
 ### Risk Management
 
-- Security risks must be identified, assessed, and documented.
-- Risk treatment plans must be developed for significant risks.
-- Risk assessments must be updated annually or when significant changes occur.
+- Security risks should be identified, assessed, and documented.
+- Risk treatment plans should be developed for significant risks.
+- Risk assessments should be updated annually or when significant changes occur.
 
 ### Training and Awareness
 
 - All team members must complete security awareness training annually.
-- Role-specific security training must be provided for technical staff.
-- Security policies and procedures must be easily accessible to all team members.
+- Role-specific security training should be provided for technical staff.
+- Security policies and procedures should be easily accessible to all team members.
 
 ## Third-Party Security
 
-- Security requirements must be included in contracts with third-party providers.
+- Security requirements should be included in contracts with third-party providers.
 - Third-party services with access to sensitive data must undergo security assessment.
-- Third-party access must be limited to the minimum necessary resources.
-- Third-party breaches affecting our data must be reported immediately.
+- Third-party access should be limited to the minimum necessary resources.
+- Third-party breaches affecting our data should be reported immediately.
 
 ## Physical Security
 
-- Physical access to server rooms and sensitive areas must be restricted.
-- Visitor access must be logged and monitored.
-- Equipment removal procedures must be documented and enforced.
+- Visitor access should be logged and monitored.
+- Equipment removal procedures should be documented and enforced.
 
 ## Policy Management
 
