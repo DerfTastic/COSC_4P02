@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DbStatistics {
 
-    public final Stats global = new Stats();
-    public final ConcurrentHashMap<String, Stats> individual = new ConcurrentHashMap<>();
+    private final Stats global = new Stats();
+    private final ConcurrentHashMap<String, Stats> individual = new ConcurrentHashMap<>();
 
     private Stats get_individual(String id){
         return individual.computeIfAbsent(id, s -> new Stats());
@@ -79,25 +79,25 @@ public class DbStatistics {
     }
 
     public static class Stats{
-        public final AtomicLong rw_statements_executed = new AtomicLong(0);
-        public final AtomicLong ro_statements_executed = new AtomicLong(0);
+        private final AtomicLong rw_statements_executed = new AtomicLong(0);
+        private final AtomicLong ro_statements_executed = new AtomicLong(0);
 
-        public final AtomicLong rw_prepared_statements_executed = new AtomicLong(0);
-        public final AtomicLong ro_prepared_statements_executed = new AtomicLong(0);
+        private final AtomicLong rw_prepared_statements_executed = new AtomicLong(0);
+        private final AtomicLong ro_prepared_statements_executed = new AtomicLong(0);
 
-        public final AtomicLong rw_db_acquires = new AtomicLong(0);
-        public final AtomicLong ro_db_acquires = new AtomicLong(0);
+        private final AtomicLong rw_db_acquires = new AtomicLong(0);
+        private final AtomicLong ro_db_acquires = new AtomicLong(0);
 
-        public final AtomicLong rw_db_releases = new AtomicLong(0);
-        public final AtomicLong ro_db_releases = new AtomicLong(0);
+        private final AtomicLong rw_db_releases = new AtomicLong(0);
+        private final AtomicLong ro_db_releases = new AtomicLong(0);
 
-        public final AtomicLong rw_db_lock_waited = new AtomicLong(0);
-        public final AtomicLong ro_db_lock_waited = new AtomicLong(0);
+        private final AtomicLong rw_db_lock_waited = new AtomicLong(0);
+        private final AtomicLong ro_db_lock_waited = new AtomicLong(0);
 
-        public final AtomicLong rw_db_lock_waited_ns = new AtomicLong(0);
-        public final AtomicLong ro_db_lock_waited_ns = new AtomicLong(0);
+        private final AtomicLong rw_db_lock_waited_ns = new AtomicLong(0);
+        private final AtomicLong ro_db_lock_waited_ns = new AtomicLong(0);
 
-        public final AtomicLong rw_db_lock_held_ns = new AtomicLong(0);
-        public final AtomicLong ro_db_lock_held_ns = new AtomicLong(0);
+        private final AtomicLong rw_db_lock_held_ns = new AtomicLong(0);
+        private final AtomicLong ro_db_lock_held_ns = new AtomicLong(0);
     }
 }

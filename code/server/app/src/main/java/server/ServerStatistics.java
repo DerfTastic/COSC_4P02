@@ -2,22 +2,21 @@ package server;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
-import com.alibaba.fastjson2.annotation.JSONField;
 import framework.db.DbStatistics;
 
 import java.util.HashMap;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class ServerStatistics {
-    public final HashMap<String, RouteStats> route_stats = new HashMap<>();
-    public long total_requests_handled = 0;
+    private final HashMap<String, RouteStats> route_stats = new HashMap<>();
+    private long total_requests_handled = 0;
 
-    public final DbStatistics db_stats;
+    private final DbStatistics db_stats;
 
-    public long curr_time_ms;
-    public long max_mem;
-    public long total_mem;
-    public long free_mem;
+    private long curr_time_ms;
+    private long max_mem;
+    private long total_mem;
+    private long free_mem;
 
     public ServerStatistics(DbStatistics db_stats){
         this.db_stats = db_stats;
@@ -47,6 +46,6 @@ public class ServerStatistics {
         max_mem = Runtime.getRuntime().maxMemory();
         total_mem = Runtime.getRuntime().totalMemory();
         free_mem = Runtime.getRuntime().freeMemory();
-        return JSON.toJSONString(this, JSONWriter.Feature.WriteNonStringKeyAsString).getBytes();
+        return JSON.toJSONString(this, JSONWriter.Feature.WriteNonStringKeyAsString, JSONWriter.Feature.FieldBased).getBytes();
     }
 }
