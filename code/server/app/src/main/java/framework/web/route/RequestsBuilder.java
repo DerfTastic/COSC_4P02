@@ -1,6 +1,6 @@
 package framework.web.route;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson2.JSON;
 import com.sun.net.httpserver.HttpExchange;
 import framework.util.func.Function1;
 import framework.web.annotations.Body;
@@ -165,9 +165,7 @@ public class RequestsBuilder {
 
     private StringsAdapter<?> getParameterStringAdapter(Parameter param) {
         if(param.getAnnotation(Json.class) != null){
-            var gson = new Gson();
-            //TODO a bunch of CPU time is spent here, consider using a faster json serializer?
-            return (StringSingleNullableAdapter<?>) str -> gson.fromJson(str, param.getType());
+            return (StringSingleNullableAdapter<?>) str -> JSON.parseObject(str, param.getType());
         }else{
             return getParameterStringAdapter(param.getType(), param.getAnnotation(Nullable.class)!=null);
         }
@@ -175,8 +173,7 @@ public class RequestsBuilder {
 
     protected RouteReturn<?> getReturnHandler(RouteImpl route, Method method) throws Throwable{
         if(method.isAnnotationPresent(Json.class)){
-            var gson = new Gson();
-            return (request, data) -> request.sendResponse(gson.toJson(data));
+            return (request, data) -> request.sendResponse(JSON.toJSONBytes(data));
         }
         if(method.getReturnType().equals(void.class))
             return (request, data) -> request.sendResponse("");

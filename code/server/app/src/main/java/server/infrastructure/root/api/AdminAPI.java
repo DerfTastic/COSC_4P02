@@ -139,7 +139,7 @@ public class AdminAPI {
     }
 
     @Route
-    public static String get_server_statistics(@FromRequest(RequireAdmin.class) UserSession auth, ServerStatistics tracker){
+    public static byte[] get_server_statistics(@FromRequest(RequireAdmin.class) UserSession auth, ServerStatistics tracker){
         return tracker.json();
     }
 

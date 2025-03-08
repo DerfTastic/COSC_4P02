@@ -1,6 +1,6 @@
 package server.infrastructure.root.api;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson2.JSON;
 import framework.db.RwTransaction;
 import framework.web.annotations.*;
 import server.infrastructure.param.auth.RequireSession;
@@ -35,7 +35,7 @@ public class PaymentAPI {
     }
 
     public static void main(String... args){
-        System.out.println(new Gson().toJson(new Ticket(12)));
+        System.out.println(JSON.toJSONString(new Ticket(12)));
     }
 
     /**

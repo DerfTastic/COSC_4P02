@@ -1,8 +1,9 @@
 package framework.util;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -68,15 +69,15 @@ public class SqlSerde {
 
                         case Class<?> cl when cl == String.class -> field.set(instance, rs.getString(name));
 
-                        case Class<?> cl when cl == JsonObject.class -> {
+                        case Class<?> cl when cl == JSONObject.class -> {
                             var t = rs.getString(name);
-                            var o = JsonParser.parseString(t == null ? "{}" : t);
-                            field.set(instance, o.getAsJsonObject());
+                            var o = JSON.parseObject(t == null ? "{}" : t);
+                            field.set(instance, o);
                         }
-                        case Class<?> cl when cl == JsonArray.class -> {
+                        case Class<?> cl when cl == JSONArray.class -> {
                             var t = rs.getString(name);
-                            var o = JsonParser.parseString(t == null ? "[]" : t);
-                            field.set(instance, o.getAsJsonArray());
+                            var o = JSON.parseArray(t == null ? "[]" : t);
+                            field.set(instance, o);
                         }
                         default -> throw new RuntimeException("Invalid field type: " + field);
                     }

@@ -1,6 +1,6 @@
 package server.infrastructure.root.api;
 
-import com.google.gson.JsonObject;
+import com.alibaba.fastjson2.JSONObject;
 import framework.web.annotations.*;
 import framework.web.error.BadRequest;
 import server.infrastructure.DynamicMediaHandler;
@@ -14,8 +14,6 @@ import framework.util.SqlSerde;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 @Routes
@@ -39,7 +37,7 @@ public class EventAPI {
             public long start;
             public long duration;
             public long picture;
-            public JsonObject metadata;
+            public JSONObject metadata;
             public int available_total_tickets;
             public boolean draft;
 
@@ -94,7 +92,7 @@ public class EventAPI {
             long id,
             String name,
             String description,
-            JsonObject metadata,
+            JSONObject metadata,
 
             Long start,
             Long duration,
@@ -119,7 +117,7 @@ public class EventAPI {
             if(update.duration!=null)
                 stmt.setLong(":duration", update.duration);
             if(update.metadata!=null)
-                stmt.setString(":metadata", update.metadata.toString());
+                stmt.setString(":metadata", update.metadata.toJSONString());
             if(update.available_total_tickets!=null)
                 stmt.setInt(":available_total_tickets", update.available_total_tickets);
             if(update.location_name!=null)

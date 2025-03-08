@@ -1,18 +1,14 @@
 package framework.web;
 
-import com.google.gson.Gson;
-import com.sun.net.httpserver.HttpExchange;
+
+import com.alibaba.fastjson2.JSON;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -67,7 +63,7 @@ public class Util {
                         new InputStreamReader(
                                 yc.getInputStream()));
         ){
-            return new Gson().fromJson(in.readLine(), LocationQuery.class);
+            return JSON.parseObject(in.readLine(), LocationQuery.class);
         }
     }
 }
