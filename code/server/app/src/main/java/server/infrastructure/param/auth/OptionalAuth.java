@@ -11,7 +11,7 @@ public class OptionalAuth implements RouteParameter<UserSession> {
             if (token == null) return null;
             if(token.isEmpty()) return null;
             try (var conn = request.getServer().getManagedState(DbManager.class).ro_conn(request.mountedPath())) {
-                return UserSession.optional(token, conn);
+                return UserSession.optional(token, conn, request.getServer().getManagedState(SessionCache.class));
             }
         }
     }

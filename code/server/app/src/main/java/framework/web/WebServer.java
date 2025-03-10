@@ -4,6 +4,7 @@ import com.google.common.reflect.ClassPath;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import framework.web.annotations.OnMount;
 import server.ServerLogger;
 import framework.web.request.Request;
 import framework.web.request.RequestHandler;
@@ -12,10 +13,10 @@ import framework.web.annotations.Route;
 import framework.web.annotations.Routes;
 import framework.web.route.RequestsBuilder;
 import framework.web.route.RouteImpl;
-import server.ServerStatistics;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -117,8 +118,10 @@ public class WebServer {
     private static Stream<Class<?>> findAllClassesInPackage(String packageName) {
         try {
             return ClassPath.from(RequestsBuilder.class.getClassLoader())
-                    .getTopLevelClassesRecursive(packageName)
-                    .stream().map(ClassPath.ClassInfo::load);
+                    .getAllClasses()
+                    .stream()
+                    .filter(classInfo -> classInfo.getPackageName().startsWith(packageName))
+                    .map(ClassPath.ClassInfo::load);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -146,6 +149,7 @@ public class WebServer {
         HttpHandler handler = exchange -> instance.handle(new Request(this, exchange, parentPath));
         attachHandler(parentPath, handler);
         Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
+        onMount(handlerClass, instance);
     }
 
     private void attachRoutes(RequestsBuilder builder, String parentPath, Class<?> routeClass) {
@@ -155,6 +159,33 @@ public class WebServer {
             attachHandler(route.path, route.handler(this));
 
             Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + route.path + "' -> "+route.sourceMethod);
+        }
+        onMount(routeClass, null);
+    }
+
+    private void onMount(Class<?> clazz, Object instance){
+        for(var method : clazz.getDeclaredMethods()){
+            if(!method.isAnnotationPresent(OnMount.class))
+                continue;
+            if(!Modifier.isStatic(method.getModifiers()) && instance==null){
+                Logger.getGlobal().log(Level.SEVERE, "On mount declared non static, but no instance available " + method);
+                return;
+            }
+            var paramTypes = method.getParameterTypes();
+            var params = new Object[paramTypes.length];
+            for(int i = 0; i < paramTypes.length; i ++){
+                if(paramTypes[i].isInstance(this)){
+                    params[i] = this;
+                }else{
+                    Logger.getGlobal().log(Level.SEVERE, "On mount cannot resolve parameter " + method.getParameters()[i]);
+                }
+            }
+            try {
+                method.invoke(instance, params);
+                Logger.getGlobal().log(Level.CONFIG, "Completed on mount " + method);
+            } catch (Exception e) {
+                Logger.getGlobal().log(Level.SEVERE, "Failed to run on mount " + method);
+            }
         }
     }
 

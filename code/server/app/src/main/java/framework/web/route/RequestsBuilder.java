@@ -164,8 +164,9 @@ public class RequestsBuilder {
     }
 
     private StringsAdapter<?> getParameterStringAdapter(Parameter param) {
-        if(param.getAnnotation(Json.class) != null){
-            return (StringSingleNullableAdapter<?>) str -> JSON.parseObject(str, param.getType());
+        if(param.isAnnotationPresent(Json.class)){
+            Json json = param.getAnnotation(Json.class);
+            return (StringSingleNullableAdapter<?>) str -> JSON.parseObject(str, param.getType(), json.read());
         }else{
             return getParameterStringAdapter(param.getType(), param.getAnnotation(Nullable.class)!=null);
         }
@@ -173,7 +174,8 @@ public class RequestsBuilder {
 
     protected RouteReturn<?> getReturnHandler(RouteImpl route, Method method) throws Throwable{
         if(method.isAnnotationPresent(Json.class)){
-            return (request, data) -> request.sendResponse(JSON.toJSONBytes(data));
+            Json json = method.getAnnotation(Json.class);
+            return (request, data) -> request.sendResponse(JSON.toJSONBytes(data, json.write()));
         }
         if(method.getReturnType().equals(void.class))
             return (request, data) -> request.sendResponse("");
