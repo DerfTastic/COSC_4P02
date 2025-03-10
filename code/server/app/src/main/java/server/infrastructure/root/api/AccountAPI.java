@@ -4,6 +4,7 @@ import framework.db.DbManager;
 import framework.web.TimedEvents;
 import framework.web.WebServer;
 import framework.web.annotations.*;
+import framework.web.annotations.http.Delete;
 import framework.web.annotations.url.Nullable;
 import org.sqlite.SQLiteException;
 import framework.db.RoConn;
@@ -254,6 +255,7 @@ public class AccountAPI {
         }
 
         @Route("/invalidate_session/<session_id>")
+        @Delete
         public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
             try(var stmt = trans.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
                 stmt.setLong(":session_id", session_id);

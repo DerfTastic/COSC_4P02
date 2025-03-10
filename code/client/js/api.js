@@ -789,7 +789,7 @@ const utility = {
      * @returns {number|null}
      */
     get_id_from_session: function (session = cookies.getSession()) {
-        if (cookies.getSession() == null || cookies.getSession().length == 0) return null;
+        if (session == null || session.length == 0) return null;
         const curr_id = session.substring(session.length - 8, session.length);
         return parseInt(curr_id, 16);
     },

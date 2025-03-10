@@ -15,8 +15,8 @@ public class UserSession{
     public final boolean admin;
 
     public UserSession(long userId, long sessionId, String email, boolean organizer, boolean admin) {
-        user_id = userId;
-        session_id = sessionId;
+        this.user_id = userId;
+        this.session_id = sessionId;
         this.email = email;
         this.organizer = organizer;
         this.admin = admin;
@@ -36,8 +36,8 @@ public class UserSession{
                     throw new Unauthorized("No valid session");
 
                 var session = new UserSession(
-                        result.getLong("id"),
                         result.getLong("user_id"),
+                        result.getLong("id"),
                         result.getString("email"),
                         result.getBoolean("admin"),
                         result.getBoolean("organizer")
@@ -63,11 +63,11 @@ public class UserSession{
                 if (result == null || !result.next()) return null;
 
                 var session = new UserSession(
-                        result.getLong("id"),
                         result.getLong("user_id"),
+                        result.getLong("id"),
                         result.getString("email"),
-                        result.getBoolean("admin"),
-                        result.getBoolean("organizer")
+                        result.getBoolean("organizer"),
+                        result.getBoolean("admin")
                 );
                 if(cache!=null)cache.add(token, session);
                 return session;

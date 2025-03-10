@@ -129,11 +129,18 @@ public class AdminAPI {
 
     @Route("/set_account_admin/<admin>/<email>")
     public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwTransaction trans, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update users set admin=:admin where email=:email")){
+        long id;
+        try(var stmt = trans.namedPreparedStatement("update users set admin=:admin where email=:email returning id")){
             stmt.setString(":email", email);
             stmt.setBoolean(":admin", admin);
-            if(stmt.executeUpdate() != 1)
+            var rs = stmt.executeQuery();
+            if(!rs.next())
                 throw new BadRequest("Account with the specified email does not exist");
+            id = rs.getLong("id");
+        }
+        try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:id")){
+            stmt.setLong(":id", id);
+            stmt.execute();
         }
         trans.commit();
     }

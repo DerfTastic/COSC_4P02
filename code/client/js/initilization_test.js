@@ -123,18 +123,14 @@ meows.push(async function() {
 });
 
 meows.push(async function() {
-    while(true){
-        let account = getRandom(getRandom([accounts, admin_accounts, organizer_accounts]));
-        if(account==null)return;
-        while(account.sessions.length > 1){
+    let accountss = getRandom([accounts, admin_accounts, organizer_accounts]);
+    for(const account of accountss){
+        while(account.sessions.length > 2){
             var session = removeRandom(account.sessions);
             var id = utility.get_id_from_session(session);
             await api.user.invalidate_session(id, session);
             api_calls += 1;
         } 
-        if(account.sessions.length <= 1){
-            break;
-        }  
     }
 });
 
@@ -385,6 +381,7 @@ meows.push(async function(){
     const account = removeRandom(accounts);
     const session = getRandom(admin.sessions);
     await api.admin.set_account_admin(true, account.email, session);
+    account.sessions = [];
     admin_accounts.push(account);
     api_calls += 1;
 });
@@ -398,6 +395,7 @@ meows.push(async function(){
     }
     const session = getRandom(account.sessions);
     await api.admin.set_account_admin(false, account.email, session);
+    account.sessions = [];
     accounts.push(account);
     api_calls += 1;
 });
