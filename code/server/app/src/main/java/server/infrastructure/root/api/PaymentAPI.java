@@ -47,8 +47,6 @@ public class PaymentAPI {
     @JSONType(typeName = "Ticket")
     public record Ticket(long id) implements Item {}
 
-    public record ticket(long id, long price, long event_id, String name, long available_tickets){}
-
     public static List<Ticket> verify_purchase_viability(UserSession session, RwTransaction trans, Item[] items) throws SQLException, BadRequest {
         final boolean[] upgrade = {false};
         JSONArray ticket_ids = new JSONArray();
