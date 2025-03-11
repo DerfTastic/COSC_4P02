@@ -1,6 +1,5 @@
 package server.mail;
 
-import framework.db.Conn;
 import server.Config;
 
 import javax.mail.*;

@@ -12,7 +12,7 @@ public class RequireSession implements RouteParameter<UserSession> {
         var token = request.exchange.getRequestHeaders().getFirst("X-UserAPIToken");
         if (token == null) throw new Unauthorized("No valid session");
         try (var conn = request.getServer().getManagedState(DbManager.class).ro_conn(request.mountedPath())) {
-            return UserSession.create(token, conn);
+            return UserSession.create(token, conn, request.getServer().getManagedState(SessionCache.class));
         }
     }
 }

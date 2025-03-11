@@ -41,21 +41,21 @@ public class AccountAPITest {
         account.name = "Parker";
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.rw_transaction("")){
+        try(var trans = db.rw_transaction("testAccountRegistration")){
             AccountAPI.register(mail, trans, account);
-            trans.commit();
+            trans.tryCommit();
         }
     }
 
     @Test
     @Order(2)
     public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException {
-        var account = new AccountAPI.Login();
+        var account = new AccountAPI.SessionModifiers.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.rw_transaction("")){
-            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
-            trans.commit();
+        try(var trans = db.rw_transaction("testAccountLogin")){
+            session = AccountAPI.SessionModifiers.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            trans.tryCommit();
         }
     }
 
@@ -63,26 +63,27 @@ public class AccountAPITest {
     @Order(51)
     public void testDeleteAccount() throws SQLException, Unauthorized {
         UserSession session;
-        try(var conn = db.ro_conn("")){
-            session = UserSession.create(AccountAPITest.session, conn);
+        try(var conn = db.ro_conn("testDeleteAccount")){
+            session = UserSession.create(AccountAPITest.session, conn, null);
         }
-        try(var trans = db.rw_transaction("")){
-            var da = new AccountAPI.DeleteAccount();
+        try(var trans = db.rw_transaction("testDeleteAccount")){
+            var da = new AccountAPI.SessionModifiers.DeleteAccount();
             da.email = "yui@gmail.com";
             da.password = "password";
-            AccountAPI.delete_account(session, trans, da);
-            trans.commit();
+            AccountAPI.SessionModifiers.delete_account(session, trans, da);
+            trans.tryCommit();
         }
     }
 
     @Test
     @Order(52)
     public void testAccountDeleted() throws SQLException, UnknownHostException {
-        var account = new AccountAPI.Login();
+        var account = new AccountAPI.SessionModifiers.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
-        try(var trans = db.rw_transaction("")){
-            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+        try(var trans = db.rw_transaction("testAccountDeleted")){
+            session = AccountAPI.SessionModifiers.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            trans.tryCommit();
             Assertions.fail();
         }catch (Unauthorized e){
             Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());

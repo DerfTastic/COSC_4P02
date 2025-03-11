@@ -1,6 +1,6 @@
 package server.infrastructure.root.api;
 
-import com.google.gson.JsonObject;
+import com.alibaba.fastjson2.JSONObject;
 import framework.web.annotations.*;
 import framework.web.error.BadRequest;
 import server.infrastructure.DynamicMediaHandler;
@@ -14,8 +14,6 @@ import framework.util.SqlSerde;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 @Routes
@@ -38,8 +36,10 @@ public class EventAPI {
             public String description;
             public long start;
             public long duration;
+            public String category;
+            public String type;
             public long picture;
-            public JsonObject metadata;
+            public JSONObject metadata;
             public int available_total_tickets;
             public boolean draft;
 
@@ -50,13 +50,11 @@ public class EventAPI {
 
     public static class EventTag{
         public String tag;
-        public boolean category;
 
         public EventTag(){}
 
-        public EventTag(String tag, boolean category) {
+        public EventTag(String tag) {
             this.tag = tag;
-            this.category = category;
         }
     }
 
@@ -94,7 +92,10 @@ public class EventAPI {
             long id,
             String name,
             String description,
-            JsonObject metadata,
+            JSONObject metadata,
+
+            String type,
+            String category,
 
             Long start,
             Long duration,
@@ -108,18 +109,22 @@ public class EventAPI {
 
     @Route
     public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Body @Json UpdateEvent update) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND owner_id=:owner_id")){
+        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, type=:type, category=:category, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", update.id);
             stmt.setLong(":owner_id", session.user_id);
 
             stmt.setString(":name", update.name);
             stmt.setString(":description", update.description);
+            if(update.category!=null)
+                stmt.setString(":category", update.category);
+            if(update.type!=null)
+                stmt.setString(":type", update.type);
             if(update.start!=null)
                 stmt.setLong(":start", update.start);
             if(update.duration!=null)
                 stmt.setLong(":duration", update.duration);
             if(update.metadata!=null)
-                stmt.setString(":metadata", update.metadata.toString());
+                stmt.setString(":metadata", update.metadata.toJSONString());
             if(update.available_total_tickets!=null)
                 stmt.setInt(":available_total_tickets", update.available_total_tickets);
             if(update.location_name!=null)

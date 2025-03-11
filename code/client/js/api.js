@@ -30,7 +30,6 @@ class EventTagKind{
 
 class OrganizerEventTag {
     /** @type{string} */tag
-    /** @type{boolean} */category
 }
 
 class EventTicket {
@@ -46,6 +45,8 @@ class OrganizerEvent {
     /** @type{number} */owner_id
     /** @type{string} */name
     /** @type{string} */description
+    /** @type{string} */type
+    /** @type{string} */category
     /** @type{number} */picture
     /** @type{object} */metadata
     /** @type{boolean} */draft
@@ -71,6 +72,9 @@ class UpdateOrganizerEvent{
 
     /** @type{number?} */start
     /** @type{number?} */duration
+
+    /** @type{string?} */type
+    /** @type{string?} */category
     
     /** @type{number?} */available_total_tickets
 
@@ -131,6 +135,8 @@ class Search{
     /** @type{number?} */ max_duration
     /** @type{number?} */ min_duration
     /** @type{OrganizerEventTag[]?} */ tags
+    /** @type{string} */type_fuzzy
+    /** @type{string} */category_fuzzy
     /** @type{string?} */ organizer_fuzzy
     /** @type{string?} */ name_fuzzy
     /** @type{number?} */ organizer_exact
@@ -619,12 +625,15 @@ const api = {
 
     user: {
         /**
+         * @param {number} id
          * @param {Session} session 
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function (session = cookies.getSession()) {
+        userinfo: async function (id, session = cookies.getSession()) {
+            if(id==undefined||id==null)
+                id=""
             const result = await (await api.api_call(
-                `/all_userinfo`,
+                `/userinfo/${id}`,
                 {
                     method: 'POST',
                     headers: {
@@ -786,7 +795,7 @@ const utility = {
      * @returns {number|null}
      */
     get_id_from_session: function (session = cookies.getSession()) {
-        if (cookies.getSession() == null || cookies.getSession().length == 0) return null;
+        if (session == null || session.length == 0) return null;
         const curr_id = session.substring(session.length - 8, session.length);
         return parseInt(curr_id, 16);
     },
@@ -842,9 +851,9 @@ const page = {
         /**
          * @returns {Promise<AllUserInfo>}
          */
-        all_userinfo: async function () {
+        userinfo: async function () {
             try {
-                return await api.user.all_userinfo(cookies.getSession());
+                return await api.user.userinfo(null, cookies.getSession());
             } catch ({ error, code }) {
                 if (code == 401) {
                     utility.logout();
