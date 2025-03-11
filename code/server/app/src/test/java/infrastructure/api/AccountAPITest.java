@@ -50,11 +50,11 @@ public class AccountAPITest {
     @Test
     @Order(2)
     public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException {
-        var account = new AccountAPI.SessionModifiers.Login();
+        var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
         try(var trans = db.rw_transaction("testAccountLogin")){
-            session = AccountAPI.SessionModifiers.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
             trans.tryCommit();
         }
     }
@@ -67,10 +67,10 @@ public class AccountAPITest {
             session = UserSession.create(AccountAPITest.session, conn, null);
         }
         try(var trans = db.rw_transaction("testDeleteAccount")){
-            var da = new AccountAPI.SessionModifiers.DeleteAccount();
+            var da = new AccountAPI.DeleteAccount();
             da.email = "yui@gmail.com";
             da.password = "password";
-            AccountAPI.SessionModifiers.delete_account(session, trans, da);
+            AccountAPI.delete_account(session, trans, da, null);
             trans.tryCommit();
         }
     }
@@ -78,11 +78,11 @@ public class AccountAPITest {
     @Test
     @Order(52)
     public void testAccountDeleted() throws SQLException, UnknownHostException {
-        var account = new AccountAPI.SessionModifiers.Login();
+        var account = new AccountAPI.Login();
         account.email = "yui@gmail.com";
         account.password = "password";
         try(var trans = db.rw_transaction("testAccountDeleted")){
-            session = AccountAPI.SessionModifiers.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
             trans.tryCommit();
             Assertions.fail();
         }catch (Unauthorized e){

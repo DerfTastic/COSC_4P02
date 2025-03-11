@@ -140,14 +140,22 @@ public class EventAPI {
     }
 
     @Route("/delete_event/<id>")
-    public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND owner_id=:owner_id")){
+    public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, DynamicMediaHandler media) throws SQLException, BadRequest {
+        long picture;
+        try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND owner_id=:owner_id returning picture")){
             stmt.setLong(":id", id);
             stmt.setLong(":owner_id", session.user_id);
-            if(stmt.executeUpdate()!=1)
+            var rs = stmt.executeQuery();
+            if(!rs.next())
                 throw new BadRequest("Could not delete event. Event doesn't exist or you don't own event");
+            picture = rs.getLong("picture");
+            if(rs.next())
+                throw new BadRequest("Multiple events with the same id????? uhhh");
         }
         trans.commit();
+
+        if(picture!=0)
+            media.delete(picture);
     }
 
 

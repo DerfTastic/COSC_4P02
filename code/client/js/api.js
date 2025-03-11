@@ -545,10 +545,10 @@ const api = {
          * @param {number|string} id 
          * @param {Blob} data 
          * @param {Session} session 
-         * @returns {Promise<>}
+         * @returns {Promise<number>}
          */
         set_picture: async function(id, data, session = cookies.getSession()){
-            await api.api_call(
+            return await (await api.api_call(
                 `/set_picture/${encodeURI(id)}/`,
                 {
                     method: "POST",
@@ -559,7 +559,7 @@ const api = {
                     body: data,
                 },
                 "An error occured while setting event picture"
-            );
+            )).json();
         }
     },
 
