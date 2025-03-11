@@ -21,7 +21,7 @@ public class EventAPI {
     @Route
     public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
         long result;
-        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, null, null, null, true, null, null, null) returning id")){
+        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, '', '', null, null, null, true, null, null, null) returning id")){
             stmt.setLong(":owner_id", session.user_id);
             result = stmt.executeQuery().getLong("id");
         }
