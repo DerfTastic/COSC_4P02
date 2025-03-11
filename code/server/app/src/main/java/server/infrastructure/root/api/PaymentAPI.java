@@ -19,6 +19,17 @@ import java.util.List;
 @Routes
 public class PaymentAPI {
 
+    public sealed interface OrderItem permits TicketItem, AccountUpgrade{}
+    public record TicketItem(String name, long ticket_id, long price) implements OrderItem{}
+    public record AccountUpgrade(long user_id, long price) implements OrderItem{}
+    public record Order(
+            List<OrderItem> items,
+            long sub_total,
+            long usage_fee,
+            long tax,
+            long total
+    ){}
+
     private static class PaymentState{}
 
     @OnMount

@@ -36,6 +36,8 @@ public class EventAPI {
             public String description;
             public long start;
             public long duration;
+            public String category;
+            public String type;
             public long picture;
             public JSONObject metadata;
             public int available_total_tickets;
@@ -48,13 +50,11 @@ public class EventAPI {
 
     public static class EventTag{
         public String tag;
-        public boolean category;
 
         public EventTag(){}
 
-        public EventTag(String tag, boolean category) {
+        public EventTag(String tag) {
             this.tag = tag;
-            this.category = category;
         }
     }
 
@@ -94,6 +94,9 @@ public class EventAPI {
             String description,
             JSONObject metadata,
 
+            String type,
+            String category,
+
             Long start,
             Long duration,
 
@@ -106,12 +109,16 @@ public class EventAPI {
 
     @Route
     public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Body @Json UpdateEvent update) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND owner_id=:owner_id")){
+        try(var stmt = trans.namedPreparedStatement("update events set name=:name, description=:description, type=:type, category=:category, start=:start, duration=:duration, metadata=:metadata, available_total_tickets=:available_total_tickets, location_name=:location_name, location_lat=:location_lat, location_long=:location_long where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", update.id);
             stmt.setLong(":owner_id", session.user_id);
 
             stmt.setString(":name", update.name);
             stmt.setString(":description", update.description);
+            if(update.category!=null)
+                stmt.setString(":category", update.category);
+            if(update.type!=null)
+                stmt.setString(":type", update.type);
             if(update.start!=null)
                 stmt.setLong(":start", update.start);
             if(update.duration!=null)

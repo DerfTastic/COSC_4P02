@@ -30,7 +30,6 @@ class EventTagKind{
 
 class OrganizerEventTag {
     /** @type{string} */tag
-    /** @type{boolean} */category
 }
 
 class EventTicket {
@@ -46,6 +45,8 @@ class OrganizerEvent {
     /** @type{number} */owner_id
     /** @type{string} */name
     /** @type{string} */description
+    /** @type{string} */type
+    /** @type{string} */category
     /** @type{number} */picture
     /** @type{object} */metadata
     /** @type{boolean} */draft
@@ -71,6 +72,9 @@ class UpdateOrganizerEvent{
 
     /** @type{number?} */start
     /** @type{number?} */duration
+
+    /** @type{string?} */type
+    /** @type{string?} */category
     
     /** @type{number?} */available_total_tickets
 
@@ -131,6 +135,8 @@ class Search{
     /** @type{number?} */ max_duration
     /** @type{number?} */ min_duration
     /** @type{OrganizerEventTag[]?} */ tags
+    /** @type{string} */type_fuzzy
+    /** @type{string} */category_fuzzy
     /** @type{string?} */ organizer_fuzzy
     /** @type{string?} */ name_fuzzy
     /** @type{number?} */ organizer_exact
