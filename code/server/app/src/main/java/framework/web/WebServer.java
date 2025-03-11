@@ -129,7 +129,7 @@ public class WebServer {
 
     @SuppressWarnings("unchecked")
     public void mount(RequestsBuilder builder, String parentPath, String classPath){
-        try{
+        try {
             for(var clazz : findAllClassesInPackage(classPath).toList()){
                 var pack = clazz.getPackage().getName()+"/";
                 var path = parentPath+pack.substring(classPath.length()+1).replace(".", "/");

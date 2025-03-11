@@ -35,7 +35,7 @@ public class Config {
 
     public final Boolean send_mail = initialize(false);
 
-    // Creates default values inside server properties file
+    // Creates default values inside server properties file.
     static {
         outer:
         try {

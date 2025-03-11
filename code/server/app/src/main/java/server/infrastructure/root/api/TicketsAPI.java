@@ -26,6 +26,9 @@ public class TicketsAPI {
         public Integer available_tickets;
     }
 
+    /**
+     *
+     */
     @Route("/create_ticket/<event_id>")
     public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
         try (var stmt = trans.namedPreparedStatement("select owner_id from events where id=:id")) {

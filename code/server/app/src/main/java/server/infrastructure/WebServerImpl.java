@@ -25,10 +25,11 @@ public class WebServerImpl extends WebServer {
         super(new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port), Config.CONFIG.backlog);
         server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
 
-        addManagedState(new TimedEvents());
+
+        addManagedState(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
+        addManagedState(new DynamicMediaHandler()); //
         try{
-            addManagedState(new DbManagerImpl());
-            addManagedState(getManagedState(DbManagerImpl.class), DbManager.class);
+            addManagedState(new DbManagerImpl(), DbManager.class);
         }catch (Exception e){
             this.close();
             throw e;

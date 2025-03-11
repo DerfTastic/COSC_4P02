@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Config.init();
+        Config.init(); // initialize fundamental directories
         ServerLogger.initialize(Level.CONFIG);
         Logger.getGlobal().log(Level.INFO, "Max Heap Size: " + Runtime.getRuntime().maxMemory());
         try{
