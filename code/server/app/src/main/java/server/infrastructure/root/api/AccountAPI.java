@@ -1,7 +1,6 @@
 package server.infrastructure.root.api;
 
 import com.alibaba.fastjson2.JSONReader;
-import framework.util.Tuple;
 import framework.web.TimedEvents;
 import framework.web.WebServer;
 import framework.web.annotations.*;
@@ -25,15 +24,14 @@ import framework.web.annotations.url.Path;
 import framework.web.param.misc.IpHandler;
 import framework.web.param.misc.UserAgentHandler;
 import framework.util.SqlSerde;
-import server.mail.MessageConfigurator;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import java.net.InetAddress;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -119,7 +117,7 @@ public class AccountAPI {
         trans.commit();
 
 
-        if(Config.CONFIG.send_mail_on_register)
+        if(Config.CONFIG.send_mail_on_login)
             mail.sendMail(message -> {
                 Util.LocationQuery res = null;
                 try{
@@ -490,13 +488,18 @@ public class AccountAPI {
 
     public record UserId(String email, long id){}
     public static class PasswordResetManager{
-        private HashMap<String, UserId> h1;
-        private HashMap<String, UserId> h2;
+        private HashMap<String, UserId> h1 = new HashMap<>();
+        private HashMap<String, UserId> h2 = new HashMap<>();
 
-        public synchronized UserId get(String token){
-            var res = h1.get(token);
+        public synchronized UserId remove(String token){
+            var res = h1.remove(token);
             if(res!=null)return res;
-            return h2.get(token);
+            return h2.remove(token);
+        }
+        public synchronized boolean put(String token, UserId id){
+            if(h1.containsKey(token) || h2.containsKey(token))return false;
+            h1.put(token, id);
+            return true;
         }
 
         public synchronized void tick(){
@@ -515,22 +518,52 @@ public class AccountAPI {
         timer.addMinutely(prm::tick);
     }
 
-    @Route("/reset_password/<token>")
-    public static void reset_password(MailServer mail, @Path @Nullable String token, PasswordResetManager prm){
+    public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm) throws SQLException {
+        long id;
+        try(var stmt = trans.namedPreparedStatement("select id from users where email=:email")){
+            stmt.setString(":email", email);
+            id = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getLong("id"));
+        }
+        trans.close();
 
-
-        if(token!=null){
+        var userId = new UserId(email, id);
+        String rngStr;
+        do{
             var rng = new byte[16];
             new SecureRandom().nextBytes(rng);
-            String rngStr = Util.base64Str(rng);
+            rngStr = Util.base64Str(rng);
+        }while(!prm.put(rngStr, userId));
 
-            mail.sendMail(message -> {
-//                message.set
-            });
-        }else{
-            var rng = new byte[12];
-            new SecureRandom().nextBytes(rng);
-            String rngStr = Util.base64Str(rng);
+        String finalRngStr = rngStr;
+        mail.sendMail(message -> {
+            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(email));
+            message.setSubject("Do you want to reset your password \uD83E\uDD28");
+            message.setContent("click this link if you are sure you really really want to reset your password! <a href=\""+Config.CONFIG.url_root+"/account/reset_password?token="+ URLEncoder.encode(finalRngStr, StandardCharsets.UTF_8) +"\">RESET</a>", "text/html");
+        });
+    }
+
+    public record PasswordReset(String token, String email, String password){}
+
+    @Route
+    public static void do_reset_password(MailServer mail, RwTransaction trans, @Body @Json PasswordReset reset, PasswordResetManager prm) throws SQLException, BadRequest {
+        var id = prm.remove(reset.token);
+        if(id==null)
+            throw new BadRequest("Link has expired");
+        if(!id.email.equals(reset.email))
+            throw new BadRequest("Email incorrect");
+
+        var password = Util.hashy((reset.password+"\0\0\0\0"+id.email).getBytes());
+        try(var stmt = trans.namedPreparedStatement("update users set pass=:pass where id=:id AND email=:email")){
+            stmt.setString(":pass", password);
+            stmt.setLong(":id", id.id);
+            stmt.setString(":email", id.email);
+            if(stmt.executeUpdate()!=1)
+                throw new BadRequest("Failed to actually reset password");
         }
+        try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:user_id")){
+            stmt.setLong(":user_id", id.id);
+            stmt.execute();
+        }
+        trans.commit();
     }
 }

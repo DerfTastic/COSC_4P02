@@ -37,6 +37,8 @@ public class Config {
     public final Boolean send_mail_on_register = initialize(false);
     public final Boolean send_mail_on_login = initialize(false);
 
+    public final String url_root = initialize("http://localhost:80");
+
     // Creates default values inside server properties file.
     static {
         outer:

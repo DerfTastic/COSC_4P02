@@ -823,6 +823,39 @@ const api = {
                 "An error occured while invalidating session"
             );
         },
+        /**
+         * Sends a password reset email to this email
+         * @param {string} email 
+         * @returns {Promise}
+         */
+        reset_password: async function (email) {
+            await api.api_call(
+                `/reset_password`,
+                {
+                    method: 'POST',
+                    body: email
+                },
+                "An error occured while sending reset password email"
+            );
+        },
+        /**
+         * Actually reset the password
+         * @param {string} email 
+         * @param {string} password 
+         * @param {string} token 
+         * @returns {Promise}
+         */
+        do_reset_password: async function (email, password, token) {
+            await api.api_call(
+                `/do_reset_password`,
+                {
+                    method: 'POST',
+                    headers: { 'X-UserAPIToken': session },
+                    body: JSON.stringify({ email, password, token })
+                },
+                "An error occured while resetting password"
+            );
+        },
     },
 }
 

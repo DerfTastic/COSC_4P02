@@ -114,9 +114,9 @@ public class Request {
 
     public int getPathSectionLen() {
         if (pathParts == null) {
-            pathParts = exchange.getRequestURI().getPath().split("/");
+            pathParts = exchange.getRequestURI().getRawPath().split("/");
             for (int i = 0; i < pathParts.length; i++)
-                pathParts[0] = URLDecoder.decode(pathParts[0], StandardCharsets.UTF_8);
+                pathParts[i] = URLDecoder.decode(pathParts[i], StandardCharsets.UTF_8);
         }
         return pathParts.length;
     }
