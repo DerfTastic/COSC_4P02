@@ -523,7 +523,10 @@ public class AccountAPI {
         long id;
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email")){
             stmt.setString(":email", email);
-            id = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getLong("id"));
+            var ids = SqlSerde.sqlList(stmt.executeQuery(), rs -> rs.getLong("id"));
+            if(ids.isEmpty())
+                return;
+            id = ids.getFirst();
         }
         trans.close();
 

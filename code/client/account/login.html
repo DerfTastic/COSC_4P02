@@ -41,21 +41,16 @@
         <script>
             // Prompt user for username when clicking "Forgot your Password?"
             async function promptUsername() {
-                var username = prompt("Please enter your email to reset your password:");
-                if (username) {
-                    try {
-                        const response = await api.user.reset_password(username);
-        
-                        if (response.success) {
-                            alert("An email has been sent with a password reset link.");
-                        } else {
-                            alert("No email found for the given username or the password reset could not be completed.");
-                        }
-                    } catch (error) {
-                        alert("An error occurred: " + error.message);
+                var email = prompt("Please enter your email to reset your password:");
+                if (email) {
+                    try{
+                        await api.user.reset_password(email);
+                        alert("An email has been sent with a password reset link.");
+                    }catch({error, code}){
+                        alert('Error resetting password: ' + error);
                     }
                 } else {
-                    alert("Username is required to reset your password.");
+                    alert("Email is required to reset your password.");
                 }
             }
         </script>
