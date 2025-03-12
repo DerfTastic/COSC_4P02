@@ -268,12 +268,11 @@ public class EventAPI {
     }
 
 
-    @Route("/add_event_tag/<id>/<tag>/<category>")
-    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag, @Path boolean category) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :category, :id)")){
+    @Route("/add_event_tag/<id>/<tag>")
+    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :id)")){
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
-            stmt.setBoolean(":category", category);
             try{
                 if(stmt.executeUpdate()!=1)
                     throw new BadRequest("Could not add tag. Tag already exists or you do now own event");

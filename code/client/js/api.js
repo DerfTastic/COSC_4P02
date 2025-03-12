@@ -76,9 +76,8 @@ class AllOrganizerEvent{
 }
 
 class UpdateOrganizerEvent{
-    /** @type{number} */id
-    /** @type{string} */name
-    /** @type{string} */description
+    /** @type{string?} */name
+    /** @type{string?} */description
     /** @type{object?} */metadata
 
     /** @type{number?} */start
@@ -498,9 +497,9 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        add_event_tag: async function(id, tag, category, session = cookies.getSession()){
+        add_event_tag: async function(id, tag, session = cookies.getSession()){
             await api.api_call(
-                `/add_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
+                `/add_event_tag/${encodeURI(id)}/${encodeURI(tag)}`,
                 {
                     method: "POST",
                     headers: {
