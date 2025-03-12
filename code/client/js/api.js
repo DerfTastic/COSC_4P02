@@ -833,6 +833,7 @@ const api = {
                 `/reset_password`,
                 {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: email
                 },
                 "An error occured while sending reset password email"
@@ -850,7 +851,7 @@ const api = {
                 `/do_reset_password`,
                 {
                     method: 'POST',
-                    headers: { 'X-UserAPIToken': session },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, token })
                 },
                 "An error occured while resetting password"

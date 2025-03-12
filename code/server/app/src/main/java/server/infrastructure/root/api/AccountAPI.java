@@ -518,6 +518,7 @@ public class AccountAPI {
         timer.addMinutely(prm::tick);
     }
 
+    @Route
     public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm) throws SQLException {
         long id;
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email")){
