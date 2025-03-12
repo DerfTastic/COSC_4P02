@@ -452,13 +452,14 @@ const api = {
         },
 
         /**
+         * @param {number} id
          * @param {UpdateOrganizerEvent} update 
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        update_event: async function(update, session = cookies.getSession()){
+        update_event: async function(id, update, session = cookies.getSession()){
             await api.api_call(
-                '/update_event',
+                `/update_event/${encodeURI(id)}`,
                 {
                     method: "POST",
                     headers: {

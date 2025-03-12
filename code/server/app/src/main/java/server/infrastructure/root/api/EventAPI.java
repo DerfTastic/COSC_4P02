@@ -94,8 +94,6 @@ public class EventAPI {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class UpdateEvent{
-
-        long id;
         Optional<String> name;
         Optional<String> description;
         Optional<JSONObject> metadata;
@@ -111,13 +109,6 @@ public class EventAPI {
         Optional<String> location_name;
         Optional<Double> location_lat;
         Optional<Double> location_long;
-
-        private static long requireInt64(JSONReader reader){
-            if(reader.isNumber())
-                return reader.readInt64Value();
-            else
-                throw new RuntimeException("Expected int64 value");
-        }
 
         private static Optional<String> optionalString(JSONReader reader){
             if(reader.nextIfNull())
@@ -165,7 +156,6 @@ public class EventAPI {
                 if(!reader.nextIfMatch(':'))
                     throw new BadRequest("Expected colon");
                 switch(field_name){
-                    case "id" -> this.id = requireInt64(reader);
                     case "name" -> this.name = optionalString(reader);
                     case "description" -> this.description = optionalString(reader);
                     case "metadata" -> this.metadata = optionalObject(reader);
@@ -194,8 +184,8 @@ public class EventAPI {
 
 
     @SuppressWarnings("OptionalAssignedToNull")
-    @Route
-    public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @FromRequest(UpdateEventFromRequest.class) UpdateEvent update) throws SQLException, BadRequest {
+    @Route("/update_event/<id>")
+    public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @FromRequest(UpdateEventFromRequest.class) UpdateEvent update) throws SQLException, BadRequest {
         var str = new StringBuilder().append("update events set ");
 
         if(update.name!=null)
@@ -226,7 +216,7 @@ public class EventAPI {
         str.append(" where id=:id AND owner_id=:owner_id");
 
         try(var stmt = trans.namedPreparedStatement(str.toString())){
-            stmt.setLong(":id", update.id);
+            stmt.setLong(":id", id);
             stmt.setLong(":owner_id", session.user_id);
 
             if(update.name!=null&&update.name.isPresent())
