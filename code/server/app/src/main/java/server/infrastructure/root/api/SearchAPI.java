@@ -152,7 +152,7 @@ public class SearchAPI {
         long_map.put(":limit", limit);
 
         List<EventAPI.Event> events_partial;
-        try(var stmt = trans.namedPreparedStatement("select * from events " + clauses)){
+        try(var stmt = trans.namedPreparedStatement("SELECT * FROM events " + clauses)){
             for(var es : str_map.entrySet()){
                 stmt.setString(es.getKey(), es.getValue());
             }
@@ -170,7 +170,7 @@ public class SearchAPI {
             events.add(new EventAPI.AllEvent(event, new ArrayList<>()));
         }
 
-        try(var stmt = trans.namedPreparedStatement("select id, tag, category from events left join event_tags on id=event_id " + clauses)){
+        try(var stmt = trans.namedPreparedStatement("SELECT id, tag, category FROM events LEFT JOIN event_tags ON id=event_id " + clauses)){
             for(var es : str_map.entrySet()){
                 stmt.setString(es.getKey(), es.getValue());
             }

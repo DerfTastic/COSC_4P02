@@ -29,7 +29,7 @@ public class UserSession{
             var res = cache.validate(token);
             if(res!=null)return res;
         }
-        try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id where sessions.token=:token")) {
+        try (var stmt = conn.namedPreparedStatement("SELECT * FROM sessions LEFT JOIN users ON sessions.user_id=users.id WHERE sessions.token=:token")) {
             stmt.setString(":token", token);
             try(var result = stmt.executeQuery()){
                 if (result == null || !result.next())
@@ -57,7 +57,7 @@ public class UserSession{
             var res = cache.validate(token);
             if(res!=null)return res;
         }
-        try (var stmt = conn.namedPreparedStatement("select * from sessions left join users on sessions.user_id=users.id where sessions.token=:token")) {
+        try (var stmt = conn.namedPreparedStatement("SELECT * FROM sessions LEFT JOIN users ON sessions.user_id=users.id WHERE sessions.token=:token")) {
             stmt.setString(":token", token);
             try(var result = stmt.executeQuery()){
                 if (result == null || !result.next()) return null;

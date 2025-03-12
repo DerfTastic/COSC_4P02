@@ -58,7 +58,7 @@ public class AccountAPI {
         var timer = server.getManagedState(TimedEvents.class);
         timer.addMinutely(() -> {
             try(var trans = db.rw_transaction(">session_timer")){
-                try(var stmt = trans.namedPreparedStatement("delete from sessions where expiration<:now")){
+                try(var stmt = trans.namedPreparedStatement("DELETE FROM sessions WHERE expiration<:now")){
                     stmt.setLong(":now", new Date().getTime());
                     stmt.execute();
                 }
@@ -80,7 +80,7 @@ public class AccountAPI {
     public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, Unauthorized {
         long user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
+        try(var stmt = trans.namedPreparedStatement("SELECT id FROM users WHERE email=:email AND pass=:pass")){
             stmt.setString(":email", login.email);
             stmt.setString(":pass", login.password);
             try(var res = stmt.executeQuery()){
@@ -95,7 +95,7 @@ public class AccountAPI {
         }
 
         long session_id;
-        try(var stmt = trans.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
+        try(var stmt = trans.namedPreparedStatement("INSERT INTO sessions values(null, null, :user_id, :exp, :agent, :ip) RETURNING id")){
             stmt.setLong(":user_id", user_id);
             stmt.setLong(":exp", new Date().getTime() + 2628000000L);
             stmt.setString(":agent", agent);
@@ -108,7 +108,7 @@ public class AccountAPI {
         var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id + "\0\0\0\0" + System.nanoTime()).getBytes());
         var token = String.format("%s%08X", hash, session_id);
 
-        try(var stmt = trans.namedPreparedStatement("update sessions set token=:token where id=:id")){
+        try(var stmt = trans.namedPreparedStatement("UPDATE sessions SET token=:token WHERE id=:id")){
             stmt.setString(":token", token);
             stmt.setLong(":id", session_id);
             stmt.execute();
@@ -144,7 +144,7 @@ public class AccountAPI {
     @Route
     public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
         List<Session> result;
-        try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
+        try(var stmt = conn.namedPreparedStatement("SELECT * FROM sessions WHERE user_id=:id")){
             stmt.setLong(":id", auth.user_id);
             result = SqlSerde.sqlList(stmt.executeQuery(), Session.class);
         }
@@ -155,7 +155,7 @@ public class AccountAPI {
     @Route("/invalidate_session/<session_id>")
     @Delete
     public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
+        try(var stmt = trans.namedPreparedStatement("DELETE FROM sessions WHERE id=:session_id AND user_id=:user_id")){
             stmt.setLong(":session_id", session_id);
             stmt.setLong(":user_id", auth.user_id);
             if(stmt.executeUpdate() != 1)
@@ -178,7 +178,7 @@ public class AccountAPI {
         account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
 
         DeleteResult res;
-        try(var stmt = trans.namedPreparedStatement("delete from users where email=:email AND pass=:pass returning picture, banner")){
+        try(var stmt = trans.namedPreparedStatement("DELETE FROM users WHERE email=:email AND pass=:pass RETURNING picture, banner")){
             stmt.setString(":email", auth.email);
             stmt.setString(":pass", account.password);
             res = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> new DeleteResult(rs.getLong("picture"), rs.getLong("picture")));
@@ -207,7 +207,7 @@ public class AccountAPI {
 
         ca.old_password = Util.hashy((ca.old_password+"\0\0\0\0"+ca.old_email).getBytes());
         ca.new_password = Util.hashy((ca.new_password+"\0\0\0\0"+ca.new_email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("update users set password=:new_password, email=:new_email where email=:old_email AND password=:old_password AND id=:id")){
+        try(var stmt = trans.namedPreparedStatement("UPDATE users SET password=:new_password, email=:new_email WHERE email=:old_email AND password=:old_password AND id=:id")){
             stmt.setString(":old_email", ca.old_email);
             stmt.setString(":new_email", ca.new_email);
             stmt.setLong(":id", auth.user_id);
@@ -216,7 +216,7 @@ public class AccountAPI {
             stmt.execute();
         }
 
-        try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:id")){
+        try(var stmt = trans.namedPreparedStatement("DELETE FROM sessions WHERE user_id=:id")){
             stmt.setLong(":id", auth.user_id);
             stmt.execute();
         }
@@ -343,7 +343,7 @@ public class AccountAPI {
         if(auth==null || (id!=null && auth.user_id!=id)){
             if(id==null)
                 throw new Unauthorized("No identification present");
-            try(trans; var stmt = trans.namedPreparedStatement("select name, email, bio, organizer, disp_email, disp_phone_number, picture, banner from users where id=:id")){
+            try(trans; var stmt = trans.namedPreparedStatement("SELECT name, email, bio, organizer, disp_email, disp_phone_number, picture, banner FROM users WHERE id=:id")){
                 stmt.setLong(":id", id);
                 var rs = stmt.executeQuery();
                 var organizer = rs.getBoolean("organizer");
@@ -362,7 +362,7 @@ public class AccountAPI {
                 );
             }
         }else{
-            try(trans; var stmt = trans.namedPreparedStatement("select name, bio, disp_email, disp_phone_number, picture, banner from users where id=:id")){
+            try(trans; var stmt = trans.namedPreparedStatement("SELECT name, bio, disp_email, disp_phone_number, picture, banner FROM users WHERE id=:id")){
                 stmt.setLong(":id", auth.user_id);
                 var rs = stmt.executeQuery();
                 result = new PrivateUserInfo(
@@ -392,7 +392,7 @@ public class AccountAPI {
     @Route
     public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, false, null, null, null, null, null)")){
+        try(var stmt = trans.namedPreparedStatement("INSERT INTO users values(null, :name, :email, :pass, false, false, null, null, null, null, null)")){
             stmt.setString(":name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);
@@ -425,12 +425,12 @@ public class AccountAPI {
         var media_id = handler.add(data);
         long old_media = 0;
         try{
-            try(var stmt = trans.namedPreparedStatement("select picture from users where id=:id")){
+            try(var stmt = trans.namedPreparedStatement("SELECT picture FROM users WHERE id=:id")){
                 stmt.setLong(":id", session.user_id);
                 old_media = stmt.executeQuery().getLong(1);
             }
 
-            try(var stmt = trans.namedPreparedStatement("update users set picture=:picture where id=:id")){
+            try(var stmt = trans.namedPreparedStatement("UPDATE users SET picture=:picture WHERE id=:id")){
                 stmt.setLong(":id", session.user_id);
                 stmt.setLong(":picture", media_id);
                 if(stmt.executeUpdate()!=1)
@@ -460,12 +460,12 @@ public class AccountAPI {
         var media_id = handler.add(data);
         long old_media = 0;
         try{
-            try(var stmt = trans.namedPreparedStatement("select banner from users where id=:id")){
+            try(var stmt = trans.namedPreparedStatement("SELECT banner FROM users WHERE id=:id")){
                 stmt.setLong(":id", session.user_id);
                 old_media = stmt.executeQuery().getLong("banner");
             }
 
-            try(var stmt = trans.namedPreparedStatement("update users set banner=:banner where id=:id")){
+            try(var stmt = trans.namedPreparedStatement("UPDATE users SET banner=:banner WHERE id=:id")){
                 stmt.setLong(":id", session.user_id);
                 stmt.setLong(":banner", media_id);
                 if(stmt.executeUpdate()!=1)
@@ -521,7 +521,7 @@ public class AccountAPI {
     @Route
     public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm) throws SQLException {
         long id;
-        try(var stmt = trans.namedPreparedStatement("select id from users where email=:email")){
+        try(var stmt = trans.namedPreparedStatement("SELECT id FROM users WHERE email=:email")){
             stmt.setString(":email", email);
             id = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getLong("id"));
         }
@@ -554,14 +554,14 @@ public class AccountAPI {
             throw new BadRequest("Email incorrect");
 
         var password = Util.hashy((reset.password+"\0\0\0\0"+id.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("update users set pass=:pass where id=:id AND email=:email")){
+        try(var stmt = trans.namedPreparedStatement("UPDATE users SET pass=:pass WHERE id=:id AND email=:email")){
             stmt.setString(":pass", password);
             stmt.setLong(":id", id.id);
             stmt.setString(":email", id.email);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to actually reset password");
         }
-        try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:user_id")){
+        try(var stmt = trans.namedPreparedStatement("DELETE FROM sessions WHERE user_id=:user_id")){
             stmt.setLong(":user_id", id.id);
             stmt.execute();
         }
