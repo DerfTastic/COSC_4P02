@@ -1,6 +1,7 @@
 package server.infrastructure.root.api;
 
 import com.alibaba.fastjson2.JSONReader;
+import framework.util.Tuple;
 import framework.web.TimedEvents;
 import framework.web.WebServer;
 import framework.web.annotations.*;
@@ -14,6 +15,7 @@ import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
+import server.Config;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.DynamicMediaHandler;
 import server.infrastructure.param.auth.*;
@@ -23,13 +25,15 @@ import framework.web.annotations.url.Path;
 import framework.web.param.misc.IpHandler;
 import framework.web.param.misc.UserAgentHandler;
 import framework.util.SqlSerde;
+import server.mail.MessageConfigurator;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import java.net.InetAddress;
+import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -114,16 +118,18 @@ public class AccountAPI {
 
         trans.commit();
 
-        mail.sendMail(message -> {
-            Util.LocationQuery res = null;
-            try{
-                res = Util.queryLocation(ip);
-            }catch (Exception ignore){}
-            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(login.email));
-            message.setSubject("Warning");
 
-            message.setContent("Someone logged into your account <br/>IP: " + ip + "<br/>User Agent: " + agent, "text/html");
-        });
+        if(Config.CONFIG.send_mail_on_register)
+            mail.sendMail(message -> {
+                Util.LocationQuery res = null;
+                try{
+                    res = Util.queryLocation(ip);
+                }catch (Exception ignore){}
+                message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(login.email));
+                message.setSubject("Warning");
+
+                message.setContent("Someone logged into your account <br/>IP: " + ip + "<br/>User Agent: " + agent, "text/html");
+            });
 
         Logger.getGlobal().log(Level.FINER, "User: " + login.email + " Logged in with session: " + token);
 
@@ -402,11 +408,12 @@ public class AccountAPI {
         }
         trans.commit();
 
-        mail.sendMail(message -> {
-            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
-            message.setSubject("Welcome!");
-            message.setContent("Thank you for registering for an account " + register.name, "text/html");
-        });
+        if(Config.CONFIG.send_mail_on_register)
+            mail.sendMail(message -> {
+                message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
+                message.setSubject("Welcome!");
+                message.setContent("Thank you for registering for an account " + register.name, "text/html");
+            });
     }
 
 
@@ -478,5 +485,52 @@ public class AccountAPI {
         }
 
         return media_id;
+    }
+
+
+    public record UserId(String email, long id){}
+    public static class PasswordResetManager{
+        private HashMap<String, UserId> h1;
+        private HashMap<String, UserId> h2;
+
+        public synchronized UserId get(String token){
+            var res = h1.get(token);
+            if(res!=null)return res;
+            return h2.get(token);
+        }
+
+        public synchronized void tick(){
+            h2.clear();
+            var tmp = h2;
+            h2 = h1;
+            h1 = tmp;
+        }
+    }
+
+    @OnMount
+    public static void init_reset_password_token_store(WebServer server){
+        var timer = server.getManagedState(TimedEvents.class);
+        var prm = new PasswordResetManager();
+        server.addManagedState(prm);
+        timer.addMinutely(prm::tick);
+    }
+
+    @Route("/reset_password/<token>")
+    public static void reset_password(MailServer mail, @Path @Nullable String token, PasswordResetManager prm){
+
+
+        if(token!=null){
+            var rng = new byte[16];
+            new SecureRandom().nextBytes(rng);
+            String rngStr = Util.base64Str(rng);
+
+            mail.sendMail(message -> {
+//                message.set
+            });
+        }else{
+            var rng = new byte[12];
+            new SecureRandom().nextBytes(rng);
+            String rngStr = Util.base64Str(rng);
+        }
     }
 }
