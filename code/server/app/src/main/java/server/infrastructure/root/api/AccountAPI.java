@@ -1,10 +1,13 @@
 package server.infrastructure.root.api;
 
+import com.alibaba.fastjson2.JSONReader;
 import framework.web.TimedEvents;
 import framework.web.WebServer;
 import framework.web.annotations.*;
 import framework.web.annotations.http.Delete;
 import framework.web.annotations.url.Nullable;
+import framework.web.request.Request;
+import framework.web.route.RouteParameter;
 import org.sqlite.SQLiteException;
 import framework.db.RoConn;
 import framework.db.RoTransaction;
@@ -29,6 +32,7 @@ import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -185,27 +189,123 @@ public class AccountAPI {
             media.delete(res.banner);
     }
 
-    public static class ChangePassword{
-        public String email;
+    public static class ChangeAuth {
+        public String old_email;
+        public String new_email;
         public String old_password;
         public String new_password;
     }
 
     @Route
-    public static void change_password(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json ChangePassword cp) throws SQLException {
-        cp.old_password = Util.hashy((cp.old_password+"\0\0\0\0"+cp.email).getBytes());
-        cp.new_password = Util.hashy((cp.new_password+"\0\0\0\0"+cp.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("update users set password=:new_password where email=:email AND password=:old_password AND id=:id")){
-            stmt.setString(":email", cp.email);
+    public static void change_auth(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json ChangeAuth ca) throws SQLException, BadRequest {
+        if(ca.new_password==null&&ca.new_email==null)
+            throw new BadRequest("Nothing to change");
+
+        if(ca.new_password==null)ca.new_password = ca.old_password;
+        if(ca.new_email==null)ca.new_email = ca.old_email;
+
+        ca.old_password = Util.hashy((ca.old_password+"\0\0\0\0"+ca.old_email).getBytes());
+        ca.new_password = Util.hashy((ca.new_password+"\0\0\0\0"+ca.new_email).getBytes());
+        try(var stmt = trans.namedPreparedStatement("update users set password=:new_password, email=:new_email where email=:old_email AND password=:old_password AND id=:id")){
+            stmt.setString(":old_email", ca.old_email);
+            stmt.setString(":new_email", ca.new_email);
             stmt.setLong(":id", auth.user_id);
-            stmt.setString(":old_password", cp.old_password);
-            stmt.setString(":new_password", cp.new_password);
+            stmt.setString(":old_password", ca.old_password);
+            stmt.setString(":new_password", ca.new_password);
             stmt.execute();
         }
 
         try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:id")){
             stmt.setLong(":id", auth.user_id);
             stmt.execute();
+        }
+        trans.commit();
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static class UpdateUser{
+        String name;
+        Optional<String> bio;
+        Optional<String> disp_phone_number;
+        Optional<String> disp_email;
+
+        private static String requireString(JSONReader reader){
+            if(reader.isString())
+                return reader.readString();
+            else
+                throw new RuntimeException("Expected String value");
+        }
+
+        private static Optional<String> optionalString(JSONReader reader){
+            if(reader.nextIfNull())
+                return Optional.empty();
+            if(reader.isString())
+                return Optional.of(reader.readString());
+            else
+                throw new RuntimeException("Expected String value");
+        }
+
+        public UpdateUser(JSONReader reader) throws BadRequest {
+            if(!reader.nextIfObjectStart())
+                throw new BadRequest("Expected an object");
+            while(!reader.nextIfObjectEnd()){
+                if(!reader.isString())
+                    throw new BadRequest("Expected field");
+                var field_name = reader.readString();
+                if(!reader.nextIfMatch(':'))
+                    throw new BadRequest("Expected colon");
+                switch(field_name){
+                    case "name" -> this.name = requireString(reader);
+                    case "bio" -> this.bio = optionalString(reader);
+                    case "disp_phone_number" -> this.disp_phone_number = optionalString(reader);
+                    case "disp_email" -> this.disp_email = optionalString(reader);
+                    default -> throw new BadRequest("Unknown field: " + field_name);
+                }
+            }
+        }
+    }
+
+    public static class UpdateUserFromRequest implements RouteParameter<UpdateUser> {
+        @Override
+        public UpdateUser construct(Request request) throws Exception {
+            try(var reader = JSONReader.of(request.exchange.getRequestBody().readAllBytes())){
+                return new UpdateUser(reader);
+            }
+        }
+    }
+
+    @SuppressWarnings("OptionalAssignedToNull")
+    @Route
+    public static void update_user(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @FromRequest(UpdateUserFromRequest.class) UpdateUser update) throws SQLException, BadRequest {
+        var str = new StringBuilder().append("update users set ");
+
+        if(update.name!=null)
+            str.append("name=:name,");
+        if(update.bio!=null)
+            str.append("bio=:bio,");
+        if(update.disp_email!=null)
+            str.append("disp_email=:disp_email,");
+        if(update.disp_phone_number!=null)
+            str.append("disp_phone_number=:disp_phone_number,");
+
+        if(str.charAt(str.length()-1)!=',') return;
+        str.deleteCharAt(str.length()-1);
+        str.append(" where id=:id");
+
+        try(var stmt = trans.namedPreparedStatement(str.toString())){
+            stmt.setLong(":id", auth.user_id);
+
+            if(update.name!=null)
+                stmt.setString(":name", update.name);
+            if(update.bio!=null&&update.bio.isPresent())
+                stmt.setString(":bio", update.bio.get());
+            if(update.disp_email!=null&&update.disp_email.isPresent())
+                stmt.setString(":disp_email", update.disp_email.get());
+            if(update.disp_phone_number!=null&&update.disp_phone_number.isPresent())
+                stmt.setString(":disp_phone_number", update.disp_phone_number.get());
+
+            if(stmt.executeUpdate()!=1)
+                throw new BadRequest("Failed to update user");
         }
         trans.commit();
     }

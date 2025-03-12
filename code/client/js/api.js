@@ -1,13 +1,30 @@
 const apiRoot = "/api";
 
-class AllUserInfo {
+class UserInfo {
     /** @type{number} */id
     /** @type{string} */name
     /** @type{string} */email
-    /** @type{string} */bio
+    /** @type{string?} */bio
+    /** @type{string?} */disp_email
+    /** @type{string?} */disp_phone_number
     /** @type{boolean} */organizer
     /** @type{boolean} */admin
-    /** @type{boolean} */has_analytics
+    /** @type{number} */picture
+    /** @type{number} */banner
+}
+
+class UpdateUserInfo{
+    /** @type{string?} */name
+    /** @type{string?} */bio
+    /** @type{string?} */disp_email
+    /** @type{string?} */disp_phone_number
+}
+
+class ChangeUserAuth{
+    /** @type{string} */old_email
+    /** @type{string} */old_password
+    /** @type{string?} */new_email
+    /** @type{string?} */new_password
 }
 
 class Log {
@@ -19,12 +36,6 @@ class Log {
     /** @type{string} */sourceClassName
     /** @type{string} */sourceMethodName
     /** @type{string} */thrown
-}
-
-class EventTagKind{
-    static Tag = "Tag";
-    static Category = "Category";
-    static Type = "Type";
 }
 
 
@@ -627,7 +638,7 @@ const api = {
         /**
          * @param {number} id
          * @param {Session} session 
-         * @returns {Promise<AllUserInfo>}
+         * @returns {Promise<UserInfo>}
          */
         userinfo: async function (id, session = cookies.getSession()) {
             if(id==undefined||id==null)
@@ -644,6 +655,45 @@ const api = {
                 "An error occured while fetching userinfo"
             )).json();
             return result;
+        },
+        /**
+         * @param {UpdateUserInfo} update
+         * @param {Session} session 
+         * @returns {Promise<UserInfo>}
+         */
+        update_user: async function (update, session = cookies.getSession()) {
+            await api.api_call(
+                `/update_user`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(update)
+                },
+                "An error occured while updating user info"
+            )
+        },
+
+        /**
+         * @param {ChangeUserAuth} update
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        change_auth: async function (update, session = cookies.getSession()) {
+            await api.api_call(
+                `/change_auth`,
+                {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(update)
+                },
+                "An error occured while updating the user auth"
+            );
         },
 
         /**
@@ -849,7 +899,7 @@ const page = {
 
     account: {
         /**
-         * @returns {Promise<AllUserInfo>}
+         * @returns {Promise<UserInfo>}
          */
         userinfo: async function () {
             try {
