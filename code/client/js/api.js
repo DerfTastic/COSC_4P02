@@ -560,7 +560,7 @@ const api = {
          */
         set_picture: async function(id, data, session = cookies.getSession()){
             return await (await api.api_call(
-                `/set_picture/${encodeURI(id)}/`,
+                `/set_event_picture/${encodeURI(id)}/`,
                 {
                     method: "POST",
                     headers: {
@@ -674,6 +674,45 @@ const api = {
                 },
                 "An error occured while updating user info"
             )
+        },
+
+        /**
+         * @param {Blob} data 
+         * @param {Session} session 
+         * @returns {Promise<number>}
+         */
+        set_user_picture: async function(data, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/set_user_picture`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: data,
+                },
+                "An error occured while setting profile picture"
+            )).json();
+        },
+        /**
+         * @param {Blob} data 
+         * @param {Session} session 
+         * @returns {Promise<number>}
+         */
+        set_user_banner_picture: async function(data, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/set_user_banner_picture`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: data,
+                },
+                "An error occured while setting profile picture"
+            )).json();
         },
 
         /**

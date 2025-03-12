@@ -16,14 +16,11 @@ import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.DynamicMediaHandler;
-import server.infrastructure.param.auth.OptionalAuth;
-import server.infrastructure.param.auth.SessionCache;
+import server.infrastructure.param.auth.*;
 import server.mail.MailServer;
 import framework.web.Util;
 import framework.web.annotations.url.Path;
 import framework.web.param.misc.IpHandler;
-import server.infrastructure.param.auth.RequireSession;
-import server.infrastructure.param.auth.UserSession;
 import framework.web.param.misc.UserAgentHandler;
 import framework.util.SqlSerde;
 
@@ -410,5 +407,76 @@ public class AccountAPI {
             message.setSubject("Welcome!");
             message.setContent("Thank you for registering for an account " + register.name, "text/html");
         });
+    }
+
+
+    @Route
+    public static long set_user_picture(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
+        // 10 MiB
+        if(data.length > (1<<20)*10){
+            throw new BadRequest("File too large, maximum file size is 10 MiB");
+        }
+
+        var media_id = handler.add(data);
+        long old_media = 0;
+        try{
+            try(var stmt = trans.namedPreparedStatement("select picture from users where id=:id")){
+                stmt.setLong(":id", session.user_id);
+                old_media = stmt.executeQuery().getLong(1);
+            }
+
+            try(var stmt = trans.namedPreparedStatement("update users set picture=:picture where id=:id")){
+                stmt.setLong(":id", session.user_id);
+                stmt.setLong(":picture", media_id);
+                if(stmt.executeUpdate()!=1)
+                    throw new BadRequest("Failed to set picture for user");
+            }
+            trans.commit();
+        }catch (Exception e){
+            trans.commit();
+            if(media_id!=0){
+                handler.delete(media_id);
+            }
+        }
+        if(old_media!=0){
+            handler.delete(old_media);
+        }
+
+        return media_id;
+    }
+
+    @Route
+    public static long set_user_banner_picture(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
+        // 10 MiB
+        if(data.length > (1<<20)*10){
+            throw new BadRequest("File too large, maximum file size is 10 MiB");
+        }
+
+        var media_id = handler.add(data);
+        long old_media = 0;
+        try{
+            try(var stmt = trans.namedPreparedStatement("select banner from users where id=:id")){
+                stmt.setLong(":id", session.user_id);
+                old_media = stmt.executeQuery().getLong("banner");
+            }
+
+            try(var stmt = trans.namedPreparedStatement("update users set banner=:banner where id=:id")){
+                stmt.setLong(":id", session.user_id);
+                stmt.setLong(":banner", media_id);
+                if(stmt.executeUpdate()!=1)
+                    throw new BadRequest("Failed to set banner picture for user");
+            }
+            trans.commit();
+        }catch (Exception e){
+            trans.commit();
+            if(media_id!=0){
+                handler.delete(media_id);
+            }
+        }
+        if(old_media!=0){
+            handler.delete(old_media);
+        }
+
+        return media_id;
     }
 }

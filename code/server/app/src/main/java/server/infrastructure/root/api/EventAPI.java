@@ -318,8 +318,8 @@ public class EventAPI {
         trans.commit();
     }
 
-    @Route("/set_picture/<id>")
-    public static long set_picture(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, BadRequest {
+    @Route("/set_event_picture/<id>")
+    public static long set_event_picture(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
         if(data.length > (1<<20)*10){
             throw new BadRequest("File too large, maximum file size is 10 MiB");
