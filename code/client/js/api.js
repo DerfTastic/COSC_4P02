@@ -518,9 +518,9 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        delete_event_tag: async function(id, tag, category, session = cookies.getSession()){
+        delete_event_tag: async function(id, tag, session = cookies.getSession()){
             await api.api_call(
-                `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
+                `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}`,
                 {
                     method: "POST",
                     headers: {

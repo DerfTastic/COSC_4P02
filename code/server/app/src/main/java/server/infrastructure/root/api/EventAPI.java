@@ -283,12 +283,11 @@ public class EventAPI {
         trans.commit();
     }
 
-    @Route("/remove_event_tag/<id>/<tag>/<category>")
-    public static void remove_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag, @Path boolean category) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("delete from event_tags where tag=:tag AND event_id=:event_id AND category=:category")){
+    @Route("/delete_event_tag/<id>/<tag>")
+    public static void delete_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("delete from event_tags where tag=:tag AND event_id=:event_id")){
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
-            stmt.setBoolean(":category", category);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Could not remove tag. Tag does not exist or you do now own event");
         }
