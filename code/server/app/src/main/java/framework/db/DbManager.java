@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +53,12 @@ public abstract class DbManager implements AutoCloseable{
         }
     }
     protected abstract Connection openConnection(boolean readOnly) throws SQLException;
+
+    protected synchronized void forEachExisting(Consumer<Connection> consumer){
+        writableAvailable.forEach(consumer);
+        readOnlyAvailable.forEach(consumer);
+        inUse.forEach(consumer);
+    }
 
     public DbStatistics getTracker(){
         return this.tracker;
@@ -205,6 +212,7 @@ public abstract class DbManager implements AutoCloseable{
         }
         inUse.add(con);
         owning.add(Thread.currentThread());
+
         return con;
     }
 
@@ -251,7 +259,7 @@ public abstract class DbManager implements AutoCloseable{
         return stmt;
     }
 
-    public void namedPreparedStatementClose(NamedPreparedStatement namedPreparedStatement) throws SQLException {
+    protected void namedPreparedStatementClose(NamedPreparedStatement namedPreparedStatement) throws SQLException {
         preparedCache.get(namedPreparedStatement.conn.getConn())
                 .get(namedPreparedStatement.originalSql)
                 .add(namedPreparedStatement);

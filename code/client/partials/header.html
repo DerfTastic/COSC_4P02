@@ -67,7 +67,7 @@
                 }, 2000);
             };
             try {
-                const userInfo = await page.account.all_userinfo();
+                const userInfo = await page.account.userinfo();
                 if (userInfo && userInfo.admin) {
                     searchLink.style.display = 'none';
                     createLink.style.display = 'none';

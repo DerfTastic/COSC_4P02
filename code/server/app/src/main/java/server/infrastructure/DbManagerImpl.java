@@ -3,6 +3,7 @@ package server.infrastructure;
 import framework.db.DbManager;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
+import org.sqlite.SQLiteUpdateListener;
 import server.Config;
 
 import java.io.File;
@@ -10,13 +11,24 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DbManagerImpl extends DbManager {
+    private final List<SQLiteUpdateListener> listeners = new ArrayList<>();
+
     public DbManagerImpl() throws SQLException {
         this(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true);
+    }
+
+    public synchronized void addUpdateHook(SQLiteUpdateListener listener){
+        listeners.add(listener);
+        super.forEachExisting(conn -> {
+            ((SQLiteConnection) conn).addUpdateListener(listener);
+        });
     }
 
     public DbManagerImpl(String path, boolean inMemory, boolean alwaysInitialize, boolean cacheShared) throws SQLException {
@@ -79,6 +91,13 @@ public class DbManagerImpl extends DbManager {
         var connection = (SQLiteConnection) DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
         connection.setAutoCommit(false);
+
+        synchronized (this){
+            for(var listener : listeners){
+                connection.addUpdateListener(listener);
+            }
+        }
+
 
         Logger.getGlobal().log(Level.FINE, "New Database Connection Initialized");
         return connection;

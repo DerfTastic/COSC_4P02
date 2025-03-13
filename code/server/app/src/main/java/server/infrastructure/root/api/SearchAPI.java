@@ -32,6 +32,8 @@ public class SearchAPI {
             Long max_duration,
             Long min_duration,
             List<EventAPI.EventTag> tags,
+            String category_fuzzy,
+            String type_fuzzy,
             String organizer_fuzzy,
             String name_fuzzy,
             Long organizer_exact,
@@ -68,14 +70,19 @@ public class SearchAPI {
         if(search.tags!=null) {
             int index = 0;
             for (var item : search.tags) {
-                String category = ":tag_category_" + index;
                 String id = ":tag_id_" + index;
-                whereClause.append(" AND (events.id IN (select event_id from event_tags where category=")
-                        .append(category).append(" AND tag='").append(id).append("'))");
-                long_map.put(category, item.category?1L:0L);
+                whereClause.append(" AND (events.id IN (select event_id from event_tags where tag=").append(id).append("'))");
                 str_map.put(id, item.tag);
                 index ++;
             }
+        }
+        if(search.type_fuzzy!=null){
+            whereClause.append(" AND type LIKE :type_fuzzy");
+            str_map.put(":type_fuzzy", search.type_fuzzy);
+        }
+        if(search.category_fuzzy!=null){
+            whereClause.append(" AND category LIKE :category_fuzzy");
+            str_map.put(":category_fuzzy", search.category_fuzzy);
         }
         if(search.distance!=null && search.location_lat!=null && search.location_long!=null){
             whereClause.append(" AND (location_lat BETWEEN :lat_lower AND :lat_upper)");
@@ -179,9 +186,8 @@ public class SearchAPI {
             while(rs.next()){
                 var id = rs.getLong("id");
                 var tag = rs.getString("tag");
-                var category = rs.getBoolean("category");
                 while(events.get(index).event().id!=id)index++;
-                events.get(index).tags().add(new EventAPI.EventTag(tag, category));
+                events.get(index).tags().add(new EventAPI.EventTag(tag));
             }
         }
         trans.commit();

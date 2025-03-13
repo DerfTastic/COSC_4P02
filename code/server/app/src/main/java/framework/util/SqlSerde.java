@@ -1,9 +1,9 @@
 package framework.util;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -31,6 +31,19 @@ public class SqlSerde {
         });
     }
 
+    public interface Map<T>{
+        T call(ResultSet rs) throws SQLException;
+    }
+
+    public static <T> T sqlSingle(ResultSet rs, Map<T> func) throws SQLException {
+        var res = sqlList(rs, func);
+        if(res.isEmpty())
+            throw new SQLException("Expected a single result got none");
+        if(res.size() > 1)
+            throw new SQLException("Expected single result got more");
+        return res.getFirst();
+    }
+
     public static <T> T sqlSingle(ResultSet rs, Class<T> clazz) throws SQLException{
         var res = sqlList(rs, clazz);
         if(res.isEmpty())
@@ -38,6 +51,14 @@ public class SqlSerde {
         if(res.size() > 1)
             throw new SQLException("Expected single result got more");
         return res.getFirst();
+    }
+
+    public static <T> ArrayList<T> sqlList(ResultSet rs, Map<T> func) throws SQLException {
+        var list = new ArrayList<T>();
+        while(rs.next()){
+            list.add(func.call(rs));
+        }
+        return list;
     }
 
     public static <T> ArrayList<T> sqlList(ResultSet rs, Class<T> clazz) throws SQLException {
@@ -68,15 +89,15 @@ public class SqlSerde {
 
                         case Class<?> cl when cl == String.class -> field.set(instance, rs.getString(name));
 
-                        case Class<?> cl when cl == JsonObject.class -> {
+                        case Class<?> cl when cl == JSONObject.class -> {
                             var t = rs.getString(name);
-                            var o = JsonParser.parseString(t == null ? "{}" : t);
-                            field.set(instance, o.getAsJsonObject());
+                            var o = JSON.parseObject(t == null ? "{}" : t);
+                            field.set(instance, o);
                         }
-                        case Class<?> cl when cl == JsonArray.class -> {
+                        case Class<?> cl when cl == JSONArray.class -> {
                             var t = rs.getString(name);
-                            var o = JsonParser.parseString(t == null ? "[]" : t);
-                            field.set(instance, o.getAsJsonArray());
+                            var o = JSON.parseArray(t == null ? "[]" : t);
+                            field.set(instance, o);
                         }
                         default -> throw new RuntimeException("Invalid field type: " + field);
                     }

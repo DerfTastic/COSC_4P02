@@ -1,6 +1,5 @@
 package server.mail;
 
-import framework.db.Conn;
 import server.Config;
 
 import javax.mail.*;
@@ -76,6 +75,7 @@ public class SmtpMailServer implements Closeable, MailServer {
                     message.setFrom(new InternetAddress(username));
                     configurator.config(message);
                     transport.get().sendMessage(message, message.getAllRecipients());
+                    configurator.completed();
                 }catch (MessagingException e){
                     Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
                 }

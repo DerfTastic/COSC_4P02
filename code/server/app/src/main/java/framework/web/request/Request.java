@@ -1,8 +1,5 @@
 package framework.web.request;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import framework.web.WebServer;
 import framework.web.error.ClientError;
@@ -103,9 +100,9 @@ public class Request {
             map.get(name).add(split.length == 2 ? split[1] : null);
         }
         for (var entry : map.entrySet()) {
-            entry.setValue(ImmutableList.copyOf(entry.getValue()));
+            entry.setValue(entry.getValue());
         }
-        return ImmutableMap.copyOf(map);
+        return map;
     }
 
     private static String[] splitQueryParameter(String it) {
@@ -117,9 +114,9 @@ public class Request {
 
     public int getPathSectionLen() {
         if (pathParts == null) {
-            pathParts = exchange.getRequestURI().getPath().split("/");
+            pathParts = exchange.getRequestURI().getRawPath().split("/");
             for (int i = 0; i < pathParts.length; i++)
-                pathParts[0] = URLDecoder.decode(pathParts[0], StandardCharsets.UTF_8);
+                pathParts[i] = URLDecoder.decode(pathParts[i], StandardCharsets.UTF_8);
         }
         return pathParts.length;
     }
@@ -130,6 +127,8 @@ public class Request {
 
     public String getPathPart(int index) {
         getPathSectionLen();
+        if(pathParts.length<=index)
+            return null;
         return pathParts[index];
     }
 

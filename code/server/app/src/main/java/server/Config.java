@@ -34,8 +34,12 @@ public class Config {
     public final Boolean create_paths = initialize(true);
 
     public final Boolean send_mail = initialize(false);
+    public final Boolean send_mail_on_register = initialize(false);
+    public final Boolean send_mail_on_login = initialize(false);
 
-    // Creates default values inside server properties file
+    public final String url_root = initialize("http://localhost:80");
+
+    // Creates default values inside server properties file.
     static {
         outer:
         try {

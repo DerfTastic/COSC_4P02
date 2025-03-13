@@ -1,11 +1,12 @@
 package server;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import framework.db.DbStatistics;
 
 import java.util.HashMap;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class ServerStatistics {
     private final HashMap<String, RouteStats> route_stats = new HashMap<>();
     private long total_requests_handled = 0;
@@ -40,11 +41,11 @@ public class ServerStatistics {
         }
     }
 
-    public synchronized String json(){
+    public synchronized byte[] json(){
         curr_time_ms = System.currentTimeMillis();
         max_mem = Runtime.getRuntime().maxMemory();
         total_mem = Runtime.getRuntime().totalMemory();
         free_mem = Runtime.getRuntime().freeMemory();
-        return new Gson().toJson(this);
+        return JSON.toJSONString(this, JSONWriter.Feature.WriteNonStringKeyAsString, JSONWriter.Feature.FieldBased).getBytes();
     }
 }

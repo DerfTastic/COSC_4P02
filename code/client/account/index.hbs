@@ -36,13 +36,15 @@
 
 <body>
     <div src="/partials/header.html" type="text/x-html-template"></div>
-    <script src="page.account.all_userinfo()" type="text/x-handlebars-template">
+    <script src="page.account.userinfo()" type="text/x-handlebars-template">
         <article class="entry">
             <h1>{{name}}</h1>
             <div class="body">name: {{name}}</div>
             <div class="body">email: {{email}}</div>
             <div class="body">bio: {{bio}}</div>
             <div class="body">user_id: {{email}}</div>
+            <img src="/media/{{picture}}"></img>
+            <img src="/media/{{banner}}"></img>
             <!-- <div class="body">organizer_id: {{organizer_id}}</div> -->
             <div class="body">max_events: {{max_events}}</div>
             <div class="body">has_analytics: {{has_analytics}}</div>

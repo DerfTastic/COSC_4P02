@@ -1,13 +1,30 @@
 const apiRoot = "/api";
 
-class AllUserInfo {
+class UserInfo {
     /** @type{number} */id
     /** @type{string} */name
     /** @type{string} */email
-    /** @type{string} */bio
+    /** @type{string?} */bio
+    /** @type{string?} */disp_email
+    /** @type{string?} */disp_phone_number
     /** @type{boolean} */organizer
     /** @type{boolean} */admin
-    /** @type{boolean} */has_analytics
+    /** @type{number} */picture
+    /** @type{number} */banner
+}
+
+class UpdateUserInfo{
+    /** @type{string?} */name
+    /** @type{string?} */bio
+    /** @type{string?} */disp_email
+    /** @type{string?} */disp_phone_number
+}
+
+class ChangeUserAuth{
+    /** @type{string} */old_email
+    /** @type{string} */old_password
+    /** @type{string?} */new_email
+    /** @type{string?} */new_password
 }
 
 class Log {
@@ -21,16 +38,9 @@ class Log {
     /** @type{string} */thrown
 }
 
-class EventTagKind{
-    static Tag = "Tag";
-    static Category = "Category";
-    static Type = "Type";
-}
-
 
 class OrganizerEventTag {
     /** @type{string} */tag
-    /** @type{boolean} */category
 }
 
 class EventTicket {
@@ -46,6 +56,8 @@ class OrganizerEvent {
     /** @type{number} */owner_id
     /** @type{string} */name
     /** @type{string} */description
+    /** @type{string} */type
+    /** @type{string} */category
     /** @type{number} */picture
     /** @type{object} */metadata
     /** @type{boolean} */draft
@@ -64,13 +76,15 @@ class AllOrganizerEvent{
 }
 
 class UpdateOrganizerEvent{
-    /** @type{number} */id
-    /** @type{string} */name
-    /** @type{string} */description
+    /** @type{string?} */name
+    /** @type{string?} */description
     /** @type{object?} */metadata
 
     /** @type{number?} */start
     /** @type{number?} */duration
+
+    /** @type{string?} */type
+    /** @type{string?} */category
     
     /** @type{number?} */available_total_tickets
 
@@ -131,6 +145,8 @@ class Search{
     /** @type{number?} */ max_duration
     /** @type{number?} */ min_duration
     /** @type{OrganizerEventTag[]?} */ tags
+    /** @type{string} */type_fuzzy
+    /** @type{string} */category_fuzzy
     /** @type{string?} */ organizer_fuzzy
     /** @type{string?} */ name_fuzzy
     /** @type{number?} */ organizer_exact
@@ -435,13 +451,14 @@ const api = {
         },
 
         /**
+         * @param {number} id
          * @param {UpdateOrganizerEvent} update 
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        update_event: async function(update, session = cookies.getSession()){
+        update_event: async function(id, update, session = cookies.getSession()){
             await api.api_call(
-                '/update_event',
+                `/update_event/${encodeURI(id)}`,
                 {
                     method: "POST",
                     headers: {
@@ -480,9 +497,9 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        add_event_tag: async function(id, tag, category, session = cookies.getSession()){
+        add_event_tag: async function(id, tag, session = cookies.getSession()){
             await api.api_call(
-                `/add_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
+                `/add_event_tag/${encodeURI(id)}/${encodeURI(tag)}`,
                 {
                     method: "POST",
                     headers: {
@@ -501,9 +518,9 @@ const api = {
          * @param {Session} session 
          * @returns {Promise<>}
          */
-        delete_event_tag: async function(id, tag, category, session = cookies.getSession()){
+        delete_event_tag: async function(id, tag, session = cookies.getSession()){
             await api.api_call(
-                `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}/${encodeURI(category)}`,
+                `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}`,
                 {
                     method: "POST",
                     headers: {
@@ -539,11 +556,11 @@ const api = {
          * @param {number|string} id 
          * @param {Blob} data 
          * @param {Session} session 
-         * @returns {Promise<>}
+         * @returns {Promise<number>}
          */
         set_picture: async function(id, data, session = cookies.getSession()){
-            await api.api_call(
-                `/set_picture/${encodeURI(id)}/`,
+            return await (await api.api_call(
+                `/set_event_picture/${encodeURI(id)}/`,
                 {
                     method: "POST",
                     headers: {
@@ -553,7 +570,7 @@ const api = {
                     body: data,
                 },
                 "An error occured while setting event picture"
-            );
+            )).json();
         }
     },
 
@@ -619,12 +636,15 @@ const api = {
 
     user: {
         /**
+         * @param {number} id
          * @param {Session} session 
-         * @returns {Promise<AllUserInfo>}
+         * @returns {Promise<UserInfo>}
          */
-        all_userinfo: async function (session = cookies.getSession()) {
+        userinfo: async function (id, session = cookies.getSession()) {
+            if(id==undefined||id==null)
+                id=""
             const result = await (await api.api_call(
-                `/all_userinfo`,
+                `/userinfo/${id}`,
                 {
                     method: 'POST',
                     headers: {
@@ -635,6 +655,84 @@ const api = {
                 "An error occured while fetching userinfo"
             )).json();
             return result;
+        },
+        /**
+         * @param {UpdateUserInfo} update
+         * @param {Session} session 
+         * @returns {Promise<UserInfo>}
+         */
+        update_user: async function (update, session = cookies.getSession()) {
+            await api.api_call(
+                `/update_user`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(update)
+                },
+                "An error occured while updating user info"
+            )
+        },
+
+        /**
+         * @param {Blob} data 
+         * @param {Session} session 
+         * @returns {Promise<number>}
+         */
+        set_user_picture: async function(data, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/set_user_picture`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: data,
+                },
+                "An error occured while setting profile picture"
+            )).json();
+        },
+        /**
+         * @param {Blob} data 
+         * @param {Session} session 
+         * @returns {Promise<number>}
+         */
+        set_user_banner_picture: async function(data, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/set_user_banner_picture`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: data,
+                },
+                "An error occured while setting profile picture"
+            )).json();
+        },
+
+        /**
+         * @param {ChangeUserAuth} update
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        change_auth: async function (update, session = cookies.getSession()) {
+            await api.api_call(
+                `/change_auth`,
+                {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(update)
+                },
+                "An error occured while updating the user auth"
+            );
         },
 
         /**
@@ -725,6 +823,40 @@ const api = {
                 "An error occured while invalidating session"
             );
         },
+        /**
+         * Sends a password reset email to this email
+         * @param {string} email 
+         * @returns {Promise}
+         */
+        reset_password: async function (email) {
+            await api.api_call(
+                `/reset_password`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: email
+                },
+                "An error occured while sending reset password email"
+            );
+        },
+        /**
+         * Actually reset the password
+         * @param {string} email 
+         * @param {string} password 
+         * @param {string} token 
+         * @returns {Promise}
+         */
+        do_reset_password: async function (email, password, token) {
+            await api.api_call(
+                `/do_reset_password`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, token })
+                },
+                "An error occured while resetting password"
+            );
+        },
     },
 }
 
@@ -786,7 +918,7 @@ const utility = {
      * @returns {number|null}
      */
     get_id_from_session: function (session = cookies.getSession()) {
-        if (cookies.getSession() == null || cookies.getSession().length == 0) return null;
+        if (session == null || session.length == 0) return null;
         const curr_id = session.substring(session.length - 8, session.length);
         return parseInt(curr_id, 16);
     },
@@ -840,11 +972,11 @@ const page = {
 
     account: {
         /**
-         * @returns {Promise<AllUserInfo>}
+         * @returns {Promise<UserInfo>}
          */
-        all_userinfo: async function () {
+        userinfo: async function () {
             try {
-                return await api.user.all_userinfo(cookies.getSession());
+                return await api.user.userinfo(null, cookies.getSession());
             } catch ({ error, code }) {
                 if (code == 401) {
                     utility.logout();

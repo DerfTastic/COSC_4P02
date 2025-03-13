@@ -7,14 +7,19 @@ create table users(
     admin BOOLEAN not null,
     organizer BOOLEAN not null,
     bio TEXT,
-    picture INTEGER
+    disp_phone_number TEXT,
+    disp_email TEXT,
+    picture INTEGER,
+    banner INTEGER
 );
 
 CREATE UNIQUE INDEX user_email_idx ON users(email);
+CREATE INDEX user_name_idx ON users(name);
 CREATE INDEX user_pass_idx ON users(pass);
 CREATE INDEX user_admin_idx ON users(admin);
-CREATE INDEX user_name_idx ON users(name);
 CREATE INDEX user_organizer_idx ON users(organizer);
+CREATE INDEX user_disp_phone_number_idx ON users(disp_phone_number);
+CREATE INDEX user_disp_email_idx ON users(disp_email);
 
 create table events(
     id INTEGER primary key not null,
@@ -23,6 +28,8 @@ create table events(
     description TEXT not null,
     start INTEGER,
     duration INTEGER,
+    category TEXT not null,
+    type TEXT not null,
     picture INTEGER,
     metadata TEXT,
     available_total_tickets INTEGER,
@@ -40,6 +47,8 @@ create table events(
 
 CREATE INDEX event_organizer_id_idx ON events(owner_id);
 CREATE INDEX event_name_idx ON events(name);
+CREATE INDEX event_category_idx ON events(category);
+CREATE INDEX event_type_idx ON events(type);
 CREATE INDEX event_location_name_idx ON events(location_name) WHERE location_name IS NOT NULL;
 CREATE INDEX event_location_lat_idx ON events(location_lat) WHERE location_lat IS NOT NULL;
 CREATE INDEX event_location_long_idx ON events(location_long) WHERE location_long IS NOT NULL;
@@ -49,9 +58,8 @@ CREATE INDEX event_duration_idx ON events(duration) WHERE duration IS NOT NULL;
 
 create table event_tags(
     tag TEXT not null,
-    category BOOLEAN not null,
     event_id INTEGER not null,
-    PRIMARY KEY(tag, category, event_id),
+    PRIMARY KEY(tag, event_id),
     FOREIGN KEY (event_id)
        REFERENCES events (id)
           ON DELETE CASCADE
@@ -140,4 +148,4 @@ CREATE INDEX sessions_user_id_idx ON sessions(user_id);
 CREATE UNIQUE INDEX sessions_token_idx ON sessions(token) WHERE token IS NOT NULL;
 CREATE INDEX sessions_expiration_idx ON sessions(expiration);
 
-insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, true, null, null);
+insert into users values(null, 'Admin', 'admin@localhost', 'ff8edf427da86f50c08fc4ad89396b358c266e4b3966ddf56b540a2f8e470b40', true, true, null, null, null, null, null);
