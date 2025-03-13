@@ -10,17 +10,15 @@
     <link rel="stylesheet" href="/style/styles.css">
 
     <style>
-        body {
-            display: flex;
-        }
-
         .sidebar {
             width: 250px;
             background: rgba(238, 238, 240, 0.1);
             padding: 10px;
             position: fixed;
-            height: 85vh;
+            height: 90vh;
             overflow-y: auto;
+            gap: 10px;
+            z-index: 2;
         }
 
         .sidebar h3 {
@@ -38,13 +36,14 @@
             border-radius: 4px;
         }
 
-        .main-content {
-            margin-left: 260px;
-            flex-grow: 1;
+        .content {
             padding: 20px;
+            position: relative;
+            left: 250px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: flex-start;
         }
 
         .event-box {
@@ -122,17 +121,14 @@
         </form>
     </div>
 
-    <div class="main-content">
+    <div class="content">
+        <h3>List of Events</h3>
+        <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
 
-        <div class="content">
-            <h3>List of Events</h3>
-            <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
-
-            <div class="events-container" id="eventsContainer"></div>
-            <div class="pagination-container" id="pagination"></div>
-        </div>
-
+        <div class="events-container" id="eventsContainer"></div>
+        <div class="pagination-container" id="pagination"></div>
     </div>
+
     <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 
