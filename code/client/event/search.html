@@ -69,25 +69,20 @@
             border-radius: 5px;
             text-align: right;
         }
-
-        .load-more-container {
+        .pagination-container {
             text-align: center;
             margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
-        .load-more {
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        .page-btn {
+            padding: 5px 10px;
+            margin: 2px;
+            border: 1px solid #007bff;
+            background: white;
             cursor: pointer;
         }
-        .load-more:hover {
-            background: #0056b3;
+        .page-btn.active {
+            background: #007bff;
+            color: white;
         }
     </style>
 </head>
@@ -137,10 +132,7 @@
             <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
 
             <div class="events-container" id="eventsContainer"></div>
-
-            <div class="load-more-container">
-                <button class="load-more" id="loadMore">Load More Events</button>
-            </div>
+            <div class="pagination-container" id="pagination"></div>
         </div>
 
         <div src="/partials/footer.html" type="text/x-html-template"></div>
