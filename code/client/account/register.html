@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="/style/styles.css">
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link
-                href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
-                rel="stylesheet">
-                <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
-                <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
-        <title> Register</title>    
-    </head>
-        <body>
-           
-            <div class="container">
-            <div class="register-container">
-                <form class="register-form" action="javascript:page.register.register(account_name.value, email.value, password.value)" method="POST">
-                    <h2>Register</h2>
-                    <div class="form-group">
-                        <label for="account_name">Name</label>
-                        <input type="text" id="account_name" name="account_name" placeholder="Enter your full name" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required />
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn-register">Register</button>
-                    </div>
-                    <p class="form-footer">
-                        Already have an account? <a href="/account/login">Login</a>
-                    </p>
-                </form>
-            </div>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
+        rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+    <title> Register</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="register-container">
+            <form class="register-form"
+                action="javascript:page.register.register(account_name.value, email.value, password.value)"
+                method="POST">
+                <h2>Register</h2>
+                <div class="form-group">
+                    <label for="account_name">Name</label>
+                    <input type="text" id="account_name" name="account_name" placeholder="Enter your full name"
+                        required />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required />
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn-register">Register</button>
+                </div>
+                <p class="form-footer">
+                    Already have an account? <a href="/account/login">Login</a>
+                </p>
+            </form>
         </div>
-            
-            
+    </div>
 
+    <div src="/partials/header.html" type="text/x-html-template"></div>
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
+    <script src="/js/api.js"></script>
+</body>
 
-            <div src="/partials/header.html" type="text/x-html-template"></div>
-            <div src="/partials/footer.html" type="text/x-html-template"></div>
-            <script src="/js/api.js"></script>
-        </body>
 </html>
