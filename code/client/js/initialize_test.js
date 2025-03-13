@@ -1,4 +1,28 @@
 /** @type{Organizer[]}*/
+const taylor = [
+]
+
+/** @type{Organizer[]}*/
+const jacob = [
+]
+
+/** @type{Organizer[]}*/
+const sinatra = [
+]
+
+/** @type{Organizer[]}*/
+const joycelyn = [
+]
+
+/** @type{Organizer[]}*/
+const parker = [
+]
+
+/** @type{Organizer[]}*/
+const ben = [
+]
+
+/** @type{Organizer[]}*/
 const everything = [
     {
         name: "Hockey Rink",
@@ -42,7 +66,7 @@ const everything = [
                         available_tickets: 10
                     }
                 ]
-            }
+            }, 
         ]
     }
 ]
@@ -85,6 +109,12 @@ class Organizer{
     /** @type{OurEvent[]} */events
 }
 
+create_organizers(jacob);
+create_organizers(joycelyn);
+create_organizers(taylor);
+create_organizers(sinatra);
+create_organizers(ben);
+create_organizers(parker);
 create_organizers(everything);
 
 /**
