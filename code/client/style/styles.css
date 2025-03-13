@@ -15,45 +15,26 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Custom scrollbar styles with Glassmorphism */
 ::-webkit-scrollbar {
-    width: 12px;
-    /* Width of the scrollbar */
-    height: 12px;
-    /* Height of the horizontal scrollbar */
+    width: 15px;
     transition: opacity 0.3s ease;
-    /* Smooth transition when visible */
-}
-
-::-webkit-scrollbar-track {
-    background: linear-gradient(135deg, #1b263b 0%, #2a3e59 40%, #415a77 75%, #778da9 100%);
-    ;
-    /* Lighter frosted background */
+    background-color: #f4f4f9;
 }
 
 ::-webkit-scrollbar-thumb {
     background: rgba(65, 90, 119, 0.7);
-    /* Semi-transparent thumb */
     backdrop-filter: blur(10px);
-    /* Blur effect for thumb */
 }
 
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-corner {
     background: rgba(42, 62, 89, 0.9);
-    /* Slightly darker when hovered */
-}
-
-/* Show the scrollbar when the user hovers over the page */
-body:hover::-webkit-scrollbar {
-    opacity: 1;
-    /* Show the scrollbar when hovered */
 }
 
 .content {
     margin: auto;
     justify-content: center;
     padding: 10px;
-    min-height:70vh;
 }
 
 h1 {
