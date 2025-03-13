@@ -3,468 +3,935 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create An Event</title>
+    <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
-        rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
-    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+    <style>
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    <title>Create an Event</title>    
-    <body>
-    
-        <div class="content">
-            <h1>Create an Event</h1>
-        
-            <div class="create-event-container">
-                <!-- Top Section (Image Upload and Preview) -->
-                <div class="top-section">
-                    <div class="upload-container" id="uploadBox" onclick="document.getElementById('eventImage').click();">
-                        <span class="upload-text" id="uploadText">Click to upload an image/video. Uploaded 0/5</span>
-                        <input type="file" id="eventImage" accept="image/*,video/*" onchange="handleFileUpload()" multiple>
-                        <img id="uploadPreviewImage" class="upload-preview" style="display: none;">
-                        <video id="uploadPreviewVideo" class="upload-preview" controls style="display: none;"></video>
+        .container h1 {
+            padding: 10px;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            align-items: center;
+            margin: 0;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+
+            width: 60%;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(238, 238, 240, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #eeeef0;
+            margin: 0;
+            height: auto;
+        }
+
+        .form-outer {
+            height: auto;
+            position: relative;
+            padding: 0;
+            margin-top: 0;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .form-outer button {
+            font-size: 16px;
+            display: inline-block;
+            justify-content: center;
+            align-items: center;
+            margin-left: 50px;
+            padding: auto;
+        }
+
+        .form-outer p,
+        .form p {
+            padding: 10px;
+        }
+
+        .form {
+            width: 400%;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: stretch;
+            margin: 0;
+            height: 100%;
+        }
+
+        .form-page {
+            position: relative;
+            border: 2px solid black;
+            width: 100%;
+            height: auto;
+            color: #eeeef0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .form-page .title {
+            margin: 10px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .fields-wrapper {
+            position: relative;
+            margin: 30px;
+            height: auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            overflow: visible;
+        }
+
+        .fields-wrapper>* {
+            flex: 1 1 45%;
+            /* Each child takes about 45% width */
+            min-width: 300px;
+            /* Prevents items from shrinking too much */
+        }
+
+        .fields-wrapper>*:has(textarea),
+        .fields-wrapper .field:has(#reviewEventDescription),
+        .fields-wrapper .field:has(#eventTags),
+        .fields-wrapper .field:has(#reviewEventImage) {
+            flex: 1 1 100%;
+        }
+
+        .fields-wrapper textarea {
+            min-width: 100%;
+            max-width: 100%;
+            resize: vertical;
+        }
+
+        .btn-container {
+            margin: 10px 10px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .btn-container button {
+            width: 20%;
+            margin: 0;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid #eeeef0;
+            border-radius: 5px;
+            color: #eeeef0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-container button:hover {
+            background: #1b263b;
+        }
+
+
+        .progress-bar {
+            position: relative;
+            display: flex;
+            justify-self: center;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            margin: 10px 0;
+            width: 50%;
+            gap: 40px;
+        }
+
+        .progress-bar .step {
+            text-align: center;
+            min-width: 25%;
+            position: relative;
+        }
+
+        .progress-bar .step p {
+            font-weight: 500;
+            font-size: 25px;
+            color: #eeeef0;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar .step .bullet {
+            height: 50px;
+            width: 50px;
+            border: 2px solid #eeeef0;
+            display: inline-block;
+            border-radius: 50%;
+            position: relative;
+            transition: 0.2s;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 45px;
+        }
+
+        .progress-bar .step .bullet.active {
+            border-color: #1b263b;
+            background: #1b263b;
+        }
+
+        .progress-bar .step .bullet span {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #eeeef0;
+            font-size: larger;
+        }
+
+
+        .progress-bar .step .bullet:before,
+        .progress-bar .step .bullet:after {
+            position: absolute;
+            content: '';
+            bottom: 16px;
+            right: -85px;
+            height: 4px;
+            width: 70px;
+            background: #eeeef0;
+        }
+
+        .progress-bar .step .bullet.active:after {
+            background: #1b263b;
+            border-color: #1b263b;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: animate 0.3s linear forwards;
+        }
+
+        @keyframes animate {
+            100% {
+                transform: scaleX(1);
+            }
+        }
+
+        .progress-bar .step:last-child .bullet:before,
+        .progress-bar .step:last-child .bullet:after {
+            display: none;
+        }
+
+        .progress-bar .step p.active {
+            color: #eeeef0;
+            transition: 0.2s linear;
+        }
+
+        .progress-bar .step .check {
+            position: absolute;
+            left: 50%;
+            top: 70%;
+            font-size: 15px;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .progress-bar .step .check.active {
+            display: block;
+            color: transparent;
+        }
+
+        .ticket-type {
+            position: relative;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .ticket-type button {
+            margin: 0;
+            width: 30%;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid #eeeef0;
+            border-radius: 5px;
+            color: #eeeef0;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input,
+        textarea {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(238, 238, 240, 0.2);
+            font-size: 16px;
+            font-family: "Times New Roman", Times, serif;
+            transition: all 0.3s ease;
+        }
+
+        .upload-create-container {
+            position: relative;
+            border: 2px solid #ccc;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            height: 300px;
+            margin-top: 10px;
+        }
+
+        #smallPreviewContainer {
+            position: relative;
+            margin-top: 10px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        #smallPreviewContainer img {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<div src="/partials/header.html" type="text/x-html-template"></div>
+
+<body>
+    <div class="content">
+        <div class=container>
+            <h1>
+                Create an Event
+            </h1>
+            <div class=form-outer>
+                <div class="progress-bar">
+                    <div class="step">
+                        <p>Info</p>
+                        <div class="bullet">
+                            <span>1</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                    <div class="step">
+                        <p>Media</p>
+                        <div class="bullet">
+                            <span>2</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                    <div class="step">
+                        <p>Tickets</p>
+                        <div class="bullet">
+                            <span>3</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                    <div class="step">
+                        <p>Review</p>
+                        <div class="bullet">
+                            <span>4</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
                     </div>
                 </div>
-        
-                <!-- Media Preview Below Top Section -->
-                <div class="media-preview" id="mediaPreview">
-                    <span id="uploadStatus">Uploaded 0/5</span>
-                </div>
-        
-                <!-- Left Section (Event Details) -->
-                <div class="left-section">
-                    <label for="eventTitle">Event Title:</label>
-                    <input type="text" id="eventTitle" placeholder="Enter Event Title" class="input-field"><br><br>
-        
-                    <label for="eventType">Event Type:</label>
-                    <select id="eventType" class="select-field">
-                        <option value="" selected disabled>Select Event Type</option>
-                        <option value="concert">Concert</option>
-                        <option value="conference">Conference</option>
-                        <option value="workshop">Workshop</option>
-                        <option value="festival">Festival</option>
-                        <option value="webinar">Webinar</option>
-                        <option value="seminar">Seminar</option>
-                        <option value="networking-event">Networking Event</option>
-                        <option value="trade-show">Trade Show</option>
-                        <!-- <option value="other">Other (Specify)</option> -->
-                    </select>
-                    <!-- <input type="text" id="customEventType" placeholder="Specify event type" style="display:none;" class="input-field"> -->
-        
-                    <label for="eventCategory">Event Category:</label>
-                    <select id="eventCategory" class="select-field">
-                        <option value="" selected disabled>Select Event Category</option>
-                        <option value="music">Music</option>
-                        <option value="technology">Technology</option>
-                        <option value="education">Education</option>
-                        <option value="art">Art</option>
-                        <option value="food">Food</option>
-                        <option value="sports">Sports</option>
-                        <!-- <option value="other">Other (Specify)</option> -->
-                    </select><br><br>
-                    <!-- <input type="text" id="customEventCategory" placeholder="Specify category" style="display:none;" class="input-field"><br><br> -->
+                <div class=form>
 
-                    <label for="eventVenue">Venue:</label>
-                    <input type="text" id="eventVenue" placeholder="Enter Venue" class="input-field"><br><br>
-        
-                
-                    <label for="eventStartDate">Start Date:</label>
-                    <input type="date" id="eventStartDate" class="input-field">
-        
-                    <label for="eventEndDate">End Date:</label>
-                    <input type="date" id="eventEndDate" class="input-field"><br><br>
-        
-                    <label for="eventStartTime">Start Time:</label>
-                    <input type="time" id="eventStartTime" class="input-field">
-        
-                    <label for="eventEndTime">End Time:</label>
-                    <input type="time" id="eventEndTime" class="input-field"><br><br>
-        
-                    <label for="eventDescription">Event Description:</label><br>
-                    <textarea id="eventDescription" rows="4" cols="50" class="input-field"></textarea><br><br>
-        
-                    <label for="eventTags">Event Tags:</label>
-                    <input type="text" id="eventTags" placeholder="Enter tags, comma separated" class="input-field"><br><br>
-        
-                    <h3>Tickets & Pricing</h3>
-        
-                    <label for="totalTickets">Total Number of Tickets:</label>
-                    <input type="number" id="totalTickets" oninput="updateTicketTypes()" placeholder="Enter total tickets" class="input-field"><br><br>
-        
-                    <div id="ticketTypesContainer">
-                        <label for="ticketTypeSelect">Ticket Type:</label>
-                        <select id="ticketTypeSelect" onchange="addTicketType()" class="select-field">
-                            <option value="" selected disabled>Select Ticket Type</option>
-                            <option value="free">Free</option>
-                            <option value="vip">VIP</option>
-                            <option value="general">General Admission</option>
-                            <option value="other">Other</option>
-                        </select><br><br>
-
-                        <div id="freeTicketFields" style="display: none;">
-                            <label for="freeQuantity">Free Tickets Quantity:</label>
-                            <input type="number" id="freeQuantity" class="input-field"><br><br>
+                    <div class=form-page>
+                        <div class="title">Event Details:</div>
+                        <!-- Input Fields for Event Info -->
+                        <div class="fields-wrapper">
+                            <div class="field">
+                                <div class="label">Event Title</div>
+                                <input type="text" id="eventTitle" placeholder="Enter Event Title" class="input-field"
+                                    required>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Description</div>
+                                <textarea id="eventDescription" placeholder="Describe your event" class="input-field"
+                                    required></textarea>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Location</div>
+                                <input type="text" id="eventLocation" placeholder="Enter Event Location"
+                                    class="input-field" required>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Date & Time</div>
+                                <input type="datetime-local" id="eventStartDate" class="input-field" required><br><br>
+                                <input type="datetime-local" id="eventEndDate" class="input-field" required>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Type</div>
+                                <select id="eventType" class="select-field">
+                                    <option value="" disabled selected>Select Event Type</option>
+                                    <option value="concert">Concert</option>
+                                    <option value="conference">Conference</option>
+                                    <option value="workshop">Workshop</option>
+                                    <option value="festival">Festival</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Category</div>
+                                <select id="eventCategory" class="select-field">
+                                    <option value="" disabled selected>Select Event Category</option>
+                                    <option value="music">Music</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="education">Education</option>
+                                    <option value="art">Art</option>
+                                </select>
+                            </div>
                         </div>
-                        
-                        <div id="vipTicketFields" style="display: none;">
-                            <label for="vipQuantity">VIP Tickets Quantity:</label>
-                            <input type="number" id="vipQuantity" class="input-field">
-                            <label for="vipPrice">VIP Ticket Price:</label>
-                            <input type="number" id="vipPrice" class="input-field"><br><br>
-                        </div>
-                        
-                        <div id="generalTicketFields" style="display: none;">
-                            <label for="generalQuantity">General Admission Quantity:</label>
-                            <input type="number" id="generalQuantity" class="input-field">
-                            <label for="generalPrice">General Admission Price:</label>
-                            <input type="number" id="generalPrice" class="input-field"><br><br>
-                        </div>
-                        
-                        <div id="otherTicketFields" style="display: none;">
-                            <label for="otherTicketName">Other Ticket Type:</label>
-                            <input type="text" id="otherTicketName" class="input-field">
-                            <label for="otherQuantity">Quantity:</label>
-                            <input type="number" id="otherQuantity" class="input-field">
-                            <label for="otherPrice">Price:</label>
-                            <input type="number" id="otherPrice" class="input-field"><br><br>
-                        </div>
-                        
-                    <button id="calculateAllocationButton" onclick="calculateAllocation()" class="button">Calculate Allocation</button><br><br>
                     </div>
-        
-                    <button onclick="updatePreview()" class="button">Preview</button>
-                    <button oncick = "createEvent()" class = "button">Create Event</button>
+                    <div class=form-page>
+                        <div class="title">Media Upload:</div>
+                        <!-- Input Fields for Media -->
+                        <div class="fields-wrapper">
+                            <div class="field">
+                                <div class="label">Upload Image</div>
+                                <div class="upload-create-container create-container" id="uploadBox"
+                                    onclick="document.getElementById('eventImage').click();">
+                                    <span id="uploadText">Click to upload an image</span>
+                                    <input type="file" id="eventImage" accept="image/*" onchange="handleFileUpload()"
+                                        class="input-field" style="display: none;">
+                                </div>
+
+                                <!-- Small preview container -->
+                                <div id="smallPreviewContainer" style="display: none;">
+                                    <img id="smallPreviewImage" src="" alt="Image Preview"
+                                        style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ccc;">
+                                    <button id="removeImageBtn" onclick="removeImage()"
+                                        style="position: absolute; top: 0; right: 0; background: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 5px;">X</button>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Tags</div>
+                                <input type="text" id="eventTags" placeholder="Enter tags (comma separated)"
+                                    class="input-field">
+                            </div>
+                        </div>
+                    </div>
+                    <div class=form-page>
+                        <div class="title">Tickets & Pricing:</div>
+                        <div class="fields-wrapper">
+                            <div class="field">
+                                <div class="label">Ticket Type</div>
+                                <select id="ticketTypeSelect" class="select-field">
+                                    <option value="" selected disabled>Select Ticket Type</option>
+                                    <option value="free">Free</option>
+                                    <option value="vip">VIP</option>
+                                    <option value="general">General Admission</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <!-- Container for dynamically added ticket types -->
+                            <div id="ticketTypesContainer">
+                                <!-- Dynamically added ticket types will appear here -->
+                            </div>
+                            <div class="field">
+                                <div class="label">Total Tickets Allotted</div>
+                                <span id="totalTicketsAllotted">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=form-page>
+                        <div class="title">Review Your Event Details:</div>
+                        <div class="fields-wrapper">
+                            <div class="field">
+                                <div class="label">Event Title:</div>
+                                <div id="reviewEventTitle"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Image:</div>
+                                <div id="reviewEventImage"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Tags:</div>
+                                <div id="reviewEventTags"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Description:</div>
+                                <div id="reviewEventDescription"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Location:</div>
+                                <div id="reviewEventLocation"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Date & Time:</div>
+                                <div id="reviewEventDate"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Type:</div>
+                                <div id="reviewEventType"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Event Category:</div>
+                                <div id="reviewEventCategory"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Total Tickets:</div>
+                                <div id="reviewTotalTickets"></div>
+                            </div>
+                            <div class="field">
+                                <div class="label">Tickets:</div>
+                                <div id="reviewTicketType"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-        
-                <!-- Right Section (Styling Options) -->
-                <div class="right-section">
-                    <label for="eventColor">Background Color:</label>
-                    <input type="color" id="eventColor" class="color-picker">
-        
-                    <label for="textColor">Text Color:</label>
-                    <input type="color" id="textColor" class="color-picker"><br><br>
-        
-                    <label for="eventFont">Font:</label>
-                    <select id="eventFont" class="select-field">
-                        <option value="Arial, sans-serif">Arial</option>
-                        <option value="'Courier New', monospace">Courier New</option>
-                        <option value="'Georgia', serif">Georgia</option>
-                        <option value="'Times New Roman', serif">Times New Roman</option>
-                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
-                    </select><br><br>
-        
-                    <label for="textAlign">Text Alignment:</label>
-                    <select id="textAlign" class="select-field">
-                        <option value="left">Left</option>
-                        <option value="center">Center</option>
-                        <option value="right">Right</option>
-                    </select><br><br>
-        
-                    <label for="borderStyle">Border Style:</label>
-                    <select id="borderStyle" class="select-field">
-                        <option value="solid">Solid</option>
-                        <option value="dashed">Dashed</option>
-                        <option value="dotted">Dotted</option>
-                        <option value="double">Double</option>
-                    </select><br><br>
-        
-                    <label for="borderRadius">Border Radius:</label>
-                    <input type="range" id="borderRadius" min="0" max="50" value="10" class="range-slider"> px<br><br>
-        
-                    <label for="animationEffect">Animation Effect:</label>
-                    <select id="animationEffect" class="select-field">
-                        <option value="">None</option>
-                        <option value="fade-in">Fade In</option>
-                        <option value="slide-in">Slide In</option>
-                        <option value="zoom-in">Zoom In</option>
-                    </select><br><br>
+                <div class="btn-container">
+                    <button class="previous" style="display: none;">
+                        Previous
+                    </button>
+                    <button class="next">
+                        Next
+                    </button>
+                    <button id="saveButton" onclick="handleSave()">Save</button>
+                    <button id="submitButton" onclick="handleSubmit()" style="display: none;">Submit</button>
                 </div>
             </div>
         </div>
-            <script>
-                let mediaFiles = [];
-                let currentPreview = null; // To store the currently enlarged preview media
-    
-                function handleFileUpload() {
-                    const input = document.getElementById("eventImage");
-                    const files = Array.from(input.files);
-                    const previewContainer = document.getElementById("mediaPreview");
-                    const uploadText = document.getElementById("uploadText");
-    
-                    if (mediaFiles.length + files.length > 5) {
-                        alert("You can only upload up to 5 files.");
-                        return;
-                    }
-    
-                    files.forEach(file => {
-                        if (mediaFiles.length >= 5) return;
-    
-                        mediaFiles.push(file);
-    
-                        const fileURL = URL.createObjectURL(file);
-                        const previewWrapper = document.createElement("div");
-                        previewWrapper.classList.add("preview-item");
-    
-                        let mediaElement;
-                        if (file.type.startsWith("image")) {
-                            mediaElement = document.createElement("img");
-                            mediaElement.classList.add("preview-item");
-                        } else if (file.type.startsWith("video")) {
-                            mediaElement = document.createElement("video");
-                            mediaElement.classList.add("preview-item");
-                            mediaElement.controls = true;
-                        }
-    
-                        mediaElement.src = fileURL;
-                        mediaElement.onclick = () => togglePreviewMedia(file, fileURL, file.type);
-    
-                        previewWrapper.appendChild(mediaElement);
-    
-                        const removeBtn = document.createElement("button");
-                        removeBtn.innerText = "X";
-                        removeBtn.classList.add("remove-btn");
-                        removeBtn.onclick = () => removeMedia(file, previewWrapper);
-    
-                        previewWrapper.appendChild(removeBtn);
-                        previewContainer.appendChild(previewWrapper);
-                    });
-    
-                    input.value = "";  // Reset input
-    
-                    // Update the upload text based on the number of files uploaded
-                    uploadText.innerText = `Click to upload an image/video. Uploaded ${mediaFiles.length}/5`;
-    
-                    // Update the status below directly inside media preview
-                    document.getElementById("uploadStatus").innerText = `Uploaded ${mediaFiles.length}/5`;
+    </div>
+
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Retrieve the eventId from localStorage
+            let eventId = localStorage.getItem('eventId');
+
+            // Check if eventId exists in localStorage (first-time visit check)
+            if (!eventId) {
+                // If the eventId doesn't exist, call the API to create a new event
+                eventId = await api.events.create_event();
+
+                // Save the newly created eventId to localStorage
+                localStorage.setItem('eventId', eventId);
+
+                console.log('New event created with ID:', eventId);
+            } else {
+                console.log('Event ID retrieved from localStorage:', eventId);
+            }
+        });
+
+        const formPages = document.querySelectorAll(".form-page");
+        const nbtn = document.querySelector(".next"); // Next button
+        const pbtn = document.querySelector(".previous"); // Previous button
+        const sbtn = document.getElementById('submitButton');
+        const bullets = document.querySelectorAll(".progress-bar .bullet");
+        const checks = document.querySelectorAll(".progress-bar .check");
+
+        let shiftValue = 0; // Track current shift position
+        let currentStep = 0; // Track current step for progress bar
+
+        // Function to update progress bar
+        function updateProgressBar() {
+            bullets.forEach((bullet, index) => {
+                if (index < currentStep) {
+                    bullet.classList.add("active"); // Mark previous steps as active
+                    if (checks[index]) checks[index].classList.add("active"); // Show checkmark
+                } else {
+                    bullet.classList.remove("active"); // Remove active class from upcoming steps
+                    if (checks[index]) checks[index].classList.remove("active"); // Hide checkmark
                 }
-    
-                function removeMedia(file, wrapper) {
-                    // Remove media from the preview container
-                    mediaFiles = mediaFiles.filter(f => f !== file);
-                    wrapper.remove();
-    
-                    const uploadText = document.getElementById("uploadText");
-    
-                    // Update the upload text after a file is removed
-                    uploadText.innerText = `Click to upload an image/video. Uploaded ${mediaFiles.length}/5`;
-                    uploadStatus.innerText = `Uploaded ${mediaFiles.length}/5`;
-    
-                    // If the removed media was the enlarged one, remove it from the upload container
-                    if (currentPreview === file) {
-                        hidePreview();
-                    }
-                }
-    
-                function togglePreviewMedia(file, fileURL, type) {
-                    const uploadPreviewImage = document.getElementById("uploadPreviewImage");
-                    const uploadPreviewVideo = document.getElementById("uploadPreviewVideo");
-                    const uploadText = document.getElementById("uploadText");
-    
-                    // If the clicked media is already being previewed, hide it
-                    if (currentPreview === file) {
-                        hidePreview();
-                        return;
-                    }
-    
-                    // Hide both initially
-                    uploadPreviewImage.style.display = "none";
-                    uploadPreviewVideo.style.display = "none";
-    
-                    if (type.startsWith("image")) {
-                        uploadPreviewImage.src = fileURL;
-                        uploadPreviewImage.style.display = "block";
-                    } else if (type.startsWith("video")) {
-                        uploadPreviewVideo.src = fileURL;
-                        uploadPreviewVideo.style.display = "block";
-                    }
-    
-                    uploadText.style.display = "none";
-    
-                    currentPreview = file;
-                }
-    
-                function hidePreview() {
-                    document.getElementById("uploadPreviewImage").style.display = "none";
-                    document.getElementById("uploadPreviewVideo").style.display = "none";
-    
-                    document.getElementById("uploadText").style.display = "block";
-    
-                    currentPreview = null;
-                }
-
-let totalTickets = 0;
-let ticketsAdded = 0;
-let ticketCategories = {};
-
-// Function to update the total tickets
-function updateTicketTypes() {
-    totalTickets = parseInt(document.getElementById("totalTickets").value) || 0;
-    ticketsAdded = 0; 
-    ticketCategories = {}; 
-
-}
-
-// Show/hide ticket fields based on selection
-function addTicketType() {
-    let ticketTypeSelect = document.getElementById("ticketTypeSelect");
-    let selectedType = ticketTypeSelect.value;
-
-    if (selectedType in ticketCategories) {
-        alert("This ticket category has already been added!");
-        return;
-    }
-
-    // Show selected ticket category fields
-    if (selectedType === "free") {
-        document.getElementById("freeTicketFields").style.display = "block";
-    } else if (selectedType === "vip") {
-        document.getElementById("vipTicketFields").style.display = "block";
-    } else if (selectedType === "general") {
-        document.getElementById("generalTicketFields").style.display = "block";
-    } else if (selectedType === "other") {
-        document.getElementById("otherTicketFields").style.display = "block";
-    }
-
-    ticketCategories[selectedType] = { quantity: 0, price: 0 };
-}
-
-// Calculate allocation and show summary
-function calculateAllocation() {
-    let totalAllocated = 0;
-    let ticketSummary = [];
-
-    for (let type in ticketCategories) {
-        let quantity = parseInt(document.getElementById(`${type}Quantity`).value) || 0;
-        let price = type !== "free" ? parseFloat(document.getElementById(`${type}Price`).value) || 0 : 0;
-
-        if (quantity > 0) {
-            ticketSummary.push({ type, quantity, price });
-            totalAllocated += quantity;
-        }
-    }
-
-    if (totalAllocated > totalTickets) {
-        alert("The total number of allocated tickets exceeds the available tickets!");
-    } else {
-        alert(`Ticket Allocation Successful: ${totalAllocated} tickets allocated.`);
-        console.log(ticketSummary); // Log allocation details
-    }
-}
-
-
-    let eventData = {
-            id: 0,
-    title: "",
-    venue: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    startTime: "",
-    endTime: "",
-    tags: [],
-    tickets: [], // This will store the ticket categories with their quantities and prices
-    mediaFiles: [], // Store media files for the event (images, videos)
-    styling: {
-        bgColor: "",
-        textColor: "",
-        font: "",
-        textAlign: "",
-        borderStyle: "",
-        borderRadius: 0,
-        animationEffect: ""
-    }
-};
-function convertToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
-function updatePreview() {
-    // Gather the event details
-    eventData.id = 0;
-    eventData.title = document.getElementById("eventTitle").value;
-    eventData.venue = document.getElementById("eventVenue").value;
-    eventData.description = document.getElementById("eventDescription").value;
-    eventData.startDate = document.getElementById("eventStartDate").value;
-    eventData.startTime = document.getElementById("eventStartTime").value;
-    eventData.endDate = document.getElementById("eventEndDate").value;
-    eventData.endTime = document.getElementById("eventEndTime").value;
-    eventData.tags = document.getElementById("eventTags").value
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag !== "");
-
-    // Gather ticket information
-    eventData.tickets = [];
-    Object.entries(ticketCategories).forEach(([type, ticketCategory]) => {
-        const quantity = parseInt(document.getElementById(`${type}Quantity`).value) || 0;
-        const price = type !== "free" ? parseFloat(document.getElementById(`${type}Price`).value) || 0 : 0;
-
-        if (quantity > 0) {
-            eventData.tickets.push({
-                type,
-                quantity,
-                price
             });
+
+            // Ensure the current step is highlighted but not checked
+            if (bullets[currentStep]) {
+                bullets[currentStep].classList.add("active");
+                if (checks[currentStep]) checks[currentStep].classList.remove("active");
+            }
         }
-    });
 
-    // Gather media files and convert them to Base64
-    eventData.mediaFiles = [];
-    if (typeof mediaFiles !== "undefined") {
-        const mediaPromises = Array.from(mediaFiles).map(async (file) => {
-            const base64 = await convertToBase64(file);
+        // Function to handle button visibility
+        function updateButtonVisibility() {
+            if (shiftValue === 0) {
+                pbtn.style.display = 'none'; // Hide previous button at the start
+                nbtn.style.display = 'inline-block';
+                sbtn.style.display = 'none';
+            } else if (shiftValue === 300) {
+                pbtn.style.display = 'inline-block';
+                nbtn.style.display = 'none';
+                populateReviewSection();
+                sbtn.style.display = 'inline-block';
+            } else {
+                pbtn.style.display = 'inline-block';
+                nbtn.style.display = 'inline-block';
+                sbtn.style.display = 'none';
+            }
+        }
+
+        // Handle "Next" button click
+        nbtn.addEventListener("click", () => {
+            if (shiftValue < 300) {
+                shiftValue += 100;
+                currentStep++; // Move progress forward
+
+                formPages.forEach(page => {
+                    page.style.transform = `translateX(-${shiftValue}%)`;
+                });
+
+                updateProgressBar();
+                updateButtonVisibility();
+            }
+        });
+
+        // Handle "Previous" button click
+        pbtn.addEventListener("click", () => {
+            if (shiftValue > 0) {
+                shiftValue -= 100;
+                currentStep--; // Move progress backward
+
+                formPages.forEach(page => {
+                    page.style.transform = `translateX(-${shiftValue}%)`;
+                });
+
+                updateProgressBar();
+                updateButtonVisibility();
+            }
+        });
+
+        // Initialize progress bar
+        updateProgressBar();
+
+        let addedTicketTypes = [];
+
+        // Add ticket type row with quantity and price input
+        function addTicketType() {
+            const ticketTypeSelect = document.getElementById("ticketTypeSelect");
+            const selectedTicketType = ticketTypeSelect.value;
+
+            if (!selectedTicketType) return; // Ensure a ticket type is selected
+            if (addedTicketTypes.includes(selectedTicketType)) return; // Prevent duplicate ticket types
+
+            // Add the selected ticket type to the array of added types
+            addedTicketTypes.push(selectedTicketType);
+
+            const container = document.getElementById('ticketTypesContainer');
+
+            // Create a new ticket row
+            const newTicketType = document.createElement('div');
+            newTicketType.classList.add('ticket-type');
+            newTicketType.innerHTML = `
+        <div class="field">
+            <div class="label">Ticket Type: ${selectedTicketType.charAt(0).toUpperCase() + selectedTicketType.slice(1)}</div>
+            <input type="number" class="ticketQuantity" placeholder="Quantity" onchange="updateTotalTickets()" required>
+        </div>
+        <div class="field">
+            <div class="label">Price</div>
+            <input type="number" class="ticketPrice" placeholder="Price" onchange="updateTotalTickets()" required>
+        </div>
+        <button type="button" class="removeTicketType" onclick="removeTicketType(this)">Remove</button>
+    `;
+
+            container.appendChild(newTicketType);
+            updateTotalTickets();
+        }
+
+        // Remove ticket type row
+        function removeTicketType(button) {
+            const ticketType = button.parentElement;
+            const ticketTypeName = ticketType.querySelector('.label').textContent.replace('Ticket Type: ', '').toLowerCase();
+
+            // Remove ticket type from the addedTicketTypes array
+            addedTicketTypes = addedTicketTypes.filter(type => type !== ticketTypeName);
+
+            ticketType.remove();
+            updateTotalTickets();
+        }
+        let totalTickets;
+        // Update total tickets allotted by summing all quantities
+        function updateTotalTickets() {
+            totalTickets = 0;
+            const quantities = document.querySelectorAll('.ticketQuantity');
+
+            quantities.forEach(input => {
+                totalTickets += parseInt(input.value) || 0;
+            });
+
+            document.getElementById('totalTicketsAllotted').textContent = totalTickets;
+        }
+
+        // Listen for "add ticket" action
+        document.getElementById('ticketTypeSelect').addEventListener('change', addTicketType);
+
+        function getEventDetails() {
             return {
-                name: file.name,
-                type: file.type,
-                url: base64 // Store Base64 instead of Object URL
+                eventTitle: document.getElementById('eventTitle').value,
+                eventDescription: document.getElementById('eventDescription').value,
+                eventLocation: document.getElementById('eventLocation').value,
+                eventStartDate: document.getElementById('eventStartDate').value,
+                eventEndDate: document.getElementById('eventEndDate').value,
+                eventType: document.getElementById('eventType').value,
+                eventCategory: document.getElementById('eventCategory').value,
+                eventTags: document.getElementById('eventTags').value,
             };
+        }
+
+        // Function to populate review section
+        function populateReviewSection() {
+
+            const { eventTitle, eventDescription, eventLocation, eventStartDate, eventEndDate, eventType, eventCategory, eventTags } = getEventDetails();
+
+            // Get ticket details
+            let ticketDetails = '';
+            const ticketTypes = document.querySelectorAll('.ticket-type');
+            ticketTypes.forEach(ticket => {
+                const ticketTypeName = ticket.querySelector('.label').textContent.replace('Ticket Type: ', '');
+                const ticketQuantity = ticket.querySelector('.ticketQuantity').value;
+                const ticketPrice = ticket.querySelector('.ticketPrice').value;
+
+                const formattedPrice = `$${ticketPrice}`;
+
+                ticketDetails += `<div><strong>${ticketTypeName.charAt(0).toUpperCase() + ticketTypeName.slice(1)}:</strong> Quantity: ${ticketQuantity}, Price: ${formattedPrice}</div>`;
+            });
+
+            // Update review section with event details
+            document.getElementById('reviewEventTitle').textContent = eventTitle || 'N/A';
+            document.getElementById('reviewEventDescription').textContent = eventDescription || 'N/A';
+            document.getElementById('reviewEventLocation').textContent = eventLocation || 'N/A';
+            document.getElementById('reviewEventDate').textContent =
+                eventStartDate && eventEndDate
+                    ? `${new Date(eventStartDate).toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    })} - ${new Date(eventEndDate).toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    })}`
+                    : 'N/A';
+            document.getElementById('reviewEventType').textContent = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1) : 'N/A';
+            document.getElementById('reviewEventCategory').textContent = eventCategory ? eventCategory.charAt(0).toUpperCase() + eventCategory.slice(1) : 'N/A';
+            document.getElementById('reviewEventTags').textContent = eventTags || 'N/A'; // Add event tags to review section
+            document.getElementById('reviewTotalTickets').textContent = document.getElementById('totalTicketsAllotted').textContent;
+
+            // Insert ticket details into the review section
+            const ticketDetailsContainer = document.getElementById('reviewTicketType');
+            ticketDetailsContainer.innerHTML = ticketDetails || 'No tickets added yet.';
+
+            // Insert uploaded image into the review section
+            const reviewImageContainer = document.getElementById('reviewEventImage');
+            if (uploadedImageUrl) {
+                reviewImageContainer.innerHTML = `<img src="${uploadedImageUrl}" alt="Event Image" style="width: 100%; height: auto;">`;
+            } else {
+                reviewImageContainer.innerHTML = 'No image uploaded';
+            }
+        }
+
+        let uploadedImageUrl = '';
+        let uploadedFile;
+
+        // Function to handle file upload
+        function handleFileUpload() {
+            const fileInput = document.getElementById('eventImage');
+            const fileList = fileInput.files;
+            const uploadBox = document.getElementById('uploadBox');
+            const uploadText = document.getElementById('uploadText');
+            const smallPreviewContainer = document.getElementById('smallPreviewContainer');
+            const smallPreviewImage = document.getElementById('smallPreviewImage');
+
+            // Limit to only 1 file
+            if (fileList.length > 1) {
+                alert('You can only upload 1 image.');
+                return;
+            }
+
+            if (fileList.length > 0) {
+                const file = fileList[0];
+                uploadedFile = file;
+
+                // Update the upload text and hide the upload box
+                uploadText.textContent = 'Image uploaded';
+                //uploadBox.style.display = 'none'; // Hide upload button after upload
+
+                // Show small preview container
+                smallPreviewContainer.style.display = 'block';
+
+                // Check if the file is an image
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        smallPreviewImage.src = event.target.result; // Set the preview source to the uploaded image
+                        uploadedImageUrl = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please upload an image file.');
+                }
+            }
+        }
+
+        // Function to remove image and show the upload button again
+        function removeImage() {
+            const fileInput = document.getElementById('eventImage');
+            const uploadBox = document.getElementById('uploadBox');
+            const smallPreviewContainer = document.getElementById('smallPreviewContainer');
+            const smallPreviewImage = document.getElementById('smallPreviewImage');
+
+            // Reset the input and hide preview
+            fileInput.value = '';
+            uploadBox.style.display = 'block'; // Show upload button again
+            smallPreviewContainer.style.display = 'none'; // Hide small preview
+            smallPreviewImage.src = ''; // Clear preview image
+        }
+
+        // Expand image on click to fill the upload container
+        document.getElementById('smallPreviewImage').addEventListener('click', function () {
+            const uploadBox = document.getElementById('uploadBox');
+            const smallPreviewImage = document.getElementById('smallPreviewImage');
+
+            // Toggle the expanded preview
+            if (uploadBox.style.display === 'none') {
+                uploadBox.style.display = 'block'; // Show upload button again
+                smallPreviewImage.style.width = '100px'; // Reset small size
+                smallPreviewImage.style.height = '100px';
+            } else {
+                smallPreviewImage.style.width = '100%'; // Expand preview to full size
+                smallPreviewImage.style.height = 'auto';
+                uploadBox.style.display = 'none'; // Hide upload button
+            }
         });
 
-        // Wait for all media to be processed before proceeding
-        Promise.all(mediaPromises).then(results => {
-            eventData.mediaFiles = results;
-            localStorage.setItem(`event-${eventData.id}`, JSON.stringify(eventData));
+        async function createEvent(action) {
+            const { eventTitle, eventDescription, eventLocation, eventStartDate, eventEndDate, eventType, eventCategory, eventTags } = getEventDetails();
+
+            // Get event details   
+            const updateEvent = new UpdateOrganizerEvent();
+            eventId = parseInt(localStorage.getItem('eventId')?.trim(), 10);
+            console.log(eventId);
+            updateEvent.name = eventTitle;
+            updateEvent.description = eventDescription;
+            updateEvent.start = new Date(eventStartDate).getTime();
+            updateEvent.duration = new Date(eventEndDate).getTime() - new Date(eventStartDate).getTime();
+            updateEvent.available_total_tickets = totalTickets || 0;
+            updateEvent.location_name = eventLocation;
+            updateEvent.category = eventCategory;
+            updateEvent.type = eventType;
+
+            console.log(updateEvent);
+            await api.events.update_event(eventId, updateEvent);
+            const eTags = eventTags.split(',').map(tag => tag.trim()); // Removing extra spaces from each tag
+
+
+            // Iterate over the eventTags array and add each tag using the add_event_tag API
+            for (let tag of eTags) {
+                try {
+                    await api.events.add_event_tag(eventId, tag);
+                } catch (error) {
+                    console.error(`Failed to add tag ${tag}:`, error);  // Log the error for debugging purposes
+                    continue;  // Skip to the next tag
+                }
+            }
+
+            await api.events.set_picture(eventId, uploadedFile);
+
+            // After event is created, reset button text and enable the button
+            if (action === 'save') {
+                updateButtonState('saveButton', 'Saved', true);
+                updateButtonState('saveButton', 'Save');
+                await api.events.set_draft(eventId, true);
+            } else {
+                updateButtonState('submitButton', 'Submitted', false);
+                await api.events.set_draft(eventId, false);
+            }
+        }
+
+
+        // Function for handling "Save" button click
+        function handleSave() {
+            updateButtonState('saveButton', 'Saving...', true);  // Change button text and disable
+            createEvent('save');  // Create event and set it as a draft
+        }
+
+        // Function for handling "Submit" button click
+        function handleSubmit() {
+            event.preventDefault();  // Prevent form submission
+
+            // Get all required fields
+            const requiredFields = document.querySelectorAll("input[required], textarea[required], select[required]");
+
+            // Check if any required field is empty
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    alert('Please fill all required fields');
+                    return;  // Stop the function if a required field is empty
+                }
+            }
+            updateButtonState('submitButton', 'Submitting...', true);  // Change button text and disable
+            createEvent('submit');  // Create event and publish it
+            // localStorage.clear();
+            // window.location.reload();
+        }
+
+        // Function to update button text and disable/enable it
+        function updateButtonState(buttonId, text, disable) {
+            const button = document.getElementById(buttonId);
+            button.innerText = text;
+            button.disabled = disable;
+        }
+
+        // Save form values to localStorage on input change
+        document.querySelectorAll("input, textarea, select").forEach((input) => {
+            // Skip file inputs
+            if (input.type !== "file") {
+                input.addEventListener("input", () => {
+                    localStorage.setItem(input.id, input.value);
+                });
+            }
         });
-    }
 
-    // Gather styling preferences
-    eventData.styling = {
-        bgColor: document.getElementById("eventColor")?.value || "",
-        textColor: document.getElementById("textColor")?.value || "",
-        font: document.getElementById("eventFont")?.value || "",
-        textAlign: document.getElementById("textAlign")?.value || "",
-        borderStyle: document.getElementById("borderStyle")?.value || "",
-        borderRadius: document.getElementById("borderRadius")?.value || "",
-        animationEffect: document.getElementById("animationEffect")?.value || ""
-    };
+        // On page load, restore values from localStorage
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("input, textarea, select").forEach((input) => {
+                const savedValue = localStorage.getItem(input.id);
+                if (savedValue && input.type !== "file") {  // Skip restoring file inputs
+                    input.value = savedValue;
+                }
+            });
 
-    // Store the data in local storage
-    localStorage.setItem(`event-${eventData.id}`, JSON.stringify(eventData));
+            // Optional: handle file inputs (display file name as a preview, if needed)
+            document.querySelectorAll("input[type='file']").forEach((fileInput) => {
+                const fileName = localStorage.getItem(fileInput.id);
+                if (fileName) {
+                    // For displaying the filename or a preview image (you cannot store file itself in localStorage)
+                    const previewContainer = document.getElementById(fileInput.id + "-preview");
+                    if (previewContainer) {
+                        previewContainer.textContent = fileName;
+                    }
+                }
+            });
+        });
 
-    // Redirect to eventPage.html with the event ID
-    window.location.href = `eventPage.html?id=${encodeURIComponent(eventData.id)}`;
-}
-
-</script>
-    
-
-<div src="/partials/header.html" type="text/x-html-template"></div>
-<div src="/partials/footer.html" type="text/x-html-template"></div>
-
-<script src="/js/api.js"></script>
-<script src="/js/ui.js"></script>
-
-
+    </script>
+    <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script>
 </body>
-</html>
 
-        
+</html>

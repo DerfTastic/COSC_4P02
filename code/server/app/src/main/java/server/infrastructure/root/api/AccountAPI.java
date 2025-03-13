@@ -515,7 +515,7 @@ public class AccountAPI {
         var timer = server.getManagedState(TimedEvents.class);
         var prm = new PasswordResetManager();
         server.addManagedState(prm);
-        timer.addMinutely(prm::tick);
+        timer.addAtRate(prm::tick, 15*60*1000);
     }
 
     @Route
@@ -533,7 +533,7 @@ public class AccountAPI {
         var userId = new UserId(email, id);
         String rngStr;
         do{
-            var rng = new byte[16];
+            var rng = new byte[32];
             new SecureRandom().nextBytes(rng);
             rngStr = Util.base64Str(rng);
         }while(!prm.put(rngStr, userId));

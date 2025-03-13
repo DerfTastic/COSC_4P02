@@ -1,11 +1,12 @@
-<html>
-    
-<head><link rel="preconnect" href="https://fonts.googleapis.com">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Black+Ops+One&family=Caesar+Dressing&display=swap" rel="stylesheet"> </head>
+    <link href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Black+Ops+One&family=Caesar+Dressing&display=swap" rel="stylesheet"> 
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
+</head>
 
 <header>
-    
         <div class="hamburger" onclick="toggleMenu()" aria-label="Toggle Navigation">
             <span></span>
             <span></span>
@@ -28,20 +29,20 @@
             </button>
         </form>
         
+
         <nav>
             <a href="/event/search" id ="search-event-link">Browse Events</a>
             <a href="/event/create" id="create-event-link">Create Events</a>
             <a href="/account/login" id="login-link">Login</a>
             <a href="/account/register" id="signup-link">Signup</a>
             <a href="#" id="logout-link" style="display: none;">Logout</a>
-
+        
         <button id = "cart" class="cart" aria-label="View Cart">
             <!-- <i class="fa badge fa-lg">&#xf07a;</i> -->
             <i class="fa  fa-lg">&#xf07a;</i>
         </button>
-    </nav>
+        </nav>
 </header>
-
 
 <script>
     async function updateAuthLinks() {
@@ -93,4 +94,3 @@
     }
     updateAuthLinks();
 </script>
-</html>
