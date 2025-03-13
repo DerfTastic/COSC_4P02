@@ -41,16 +41,19 @@
             margin-left: 260px;
             flex-grow: 1;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .event-box {
-            width: 100%;
-            height: 250px;
+            width: 80%;
+            max-width: 600px;
+            height: auto;
             border-radius: 10px;
-            position: relative;
-            text-align: right;
             padding: 15px;
             margin-bottom: 15px;
-            overflow: hidden;
+            border: 1px solid #ccc;
+            text-align: center;
         }
         .events-container {
             display: flex;
@@ -58,16 +61,6 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-        }
-        .event-overlay {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            padding: 10px;
-            color: black;
-            border-radius: 5px;
-            text-align: right;
         }
         .pagination-container {
             text-align: center;
