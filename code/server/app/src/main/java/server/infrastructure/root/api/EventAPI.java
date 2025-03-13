@@ -25,7 +25,7 @@ public class EventAPI {
     @Route
     public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
         long result;
-        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, '', '', null, null, null, true, null, null, null) returning id")){
+        try(var stmt = trans.namedPreparedStatement("INSERT INTO events values(null, :owner_id, '', '', null, null, '', '', null, null, null, true, null, null, null) RETURNING id")){
             stmt.setLong(":owner_id", session.user_id);
             result = stmt.executeQuery().getLong("id");
         }
@@ -70,7 +70,7 @@ public class EventAPI {
     @Route("/get_event/<id>")
     public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, BadRequest {
         Event event;
-        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:id AND draft=false) OR (id=:id AND owner_id=:owner_id)")){
+        try(var stmt = trans.namedPreparedStatement("SELECT * FROM events WHERE (id=:id AND draft=false) OR (id=:id AND owner_id=:owner_id)")){
             stmt.setLong(":id", id);
             if(session!=null)
                 stmt.setLong(":owner_id", session.user_id);
@@ -83,7 +83,7 @@ public class EventAPI {
         }
 
         List<EventTag> tags;
-        try(var stmt = trans.namedPreparedStatement("select * from event_tags where event_id=:event_id")){
+        try(var stmt = trans.namedPreparedStatement("SELECT * FROM event_tags WHERE event_id=:event_id")){
             stmt.setLong(":event_id", event.id);
             tags = SqlSerde.sqlList(stmt.executeQuery(), EventTag.class);
         }
@@ -251,7 +251,7 @@ public class EventAPI {
     @Route("/delete_event/<id>")
     public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, DynamicMediaHandler media) throws SQLException, BadRequest {
         long picture;
-        try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND owner_id=:owner_id returning picture")){
+        try(var stmt = trans.namedPreparedStatement("DELETE FROM events WHERE id=:id AND owner_id=:owner_id RETURNING picture")){
             stmt.setLong(":id", id);
             stmt.setLong(":owner_id", session.user_id);
             var rs = stmt.executeQuery();
@@ -270,7 +270,7 @@ public class EventAPI {
 
     @Route("/add_event_tag/<id>/<tag>")
     public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :id)")){
+        try(var stmt = trans.namedPreparedStatement("INSERT INTO event_tags values(:tag, :id)")){
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
             try{
@@ -285,7 +285,7 @@ public class EventAPI {
 
     @Route("/delete_event_tag/<id>/<tag>")
     public static void delete_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("delete from event_tags where tag=:tag AND event_id=:event_id")){
+        try(var stmt = trans.namedPreparedStatement("DELETE FROM event_tags WHERE tag=:tag AND event_id=:event_id")){
             stmt.setLong(":id", id);
             stmt.setString(":tag", tag);
             if(stmt.executeUpdate()!=1)
@@ -296,7 +296,7 @@ public class EventAPI {
 
     @Route("/set_draft/<id>/<draft>")
     public static void set_draft(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND owner_id=:owner_id")){
+        try(var stmt = trans.namedPreparedStatement("UPDATE events SET draft=:draft WHERE id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", id);
             stmt.setLong(":owner_id", session.user_id);
             stmt.setBoolean(":draft", draft);
@@ -316,13 +316,13 @@ public class EventAPI {
         var media_id = handler.add(data);
         long old_media = 0;
         try{
-            try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND owner_id=:owner_id")){
+            try(var stmt = trans.namedPreparedStatement("SELECT picture FROM events WHERE id=:id AND owner_id=:owner_id")){
                 stmt.setLong(":id", id);
                 stmt.setLong(":owner_id", session.user_id);
                 old_media = stmt.executeQuery().getLong(1);
             }
 
-            try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND owner_id=:owner_id")){
+            try(var stmt = trans.namedPreparedStatement("UPDATE events SET picture=:picture WHERE id=:id AND owner_id=:owner_id")){
                 stmt.setLong(":id", id);
                 stmt.setLong(":owner_id", session.user_id);
                 stmt.setLong(":picture", media_id);

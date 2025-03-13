@@ -31,14 +31,14 @@ public class TicketsAPI {
      */
     @Route("/create_ticket/<event_id>")
     public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
-        try (var stmt = trans.namedPreparedStatement("select owner_id from events where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("SELECT owner_id FROM events WHERE id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
             if (!rs.next() || rs.getLong("owner_id") != session.user_id)
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
-        try (var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")) {
+        try (var stmt = trans.namedPreparedStatement("INSERT INTO tickets VALUES (null, :event_id, '', 0, null) RETURNING id")) {
             stmt.setLong(":event_id", event_id);
             result = stmt.executeQuery().getLong("id");
         }
@@ -48,7 +48,7 @@ public class TicketsAPI {
 
     @Route
     public static void update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, @Json @Body Ticket ticket, RwTransaction trans) throws SQLException, Unauthorized, BadRequest {
-        try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
+        try (var stmt = trans.namedPreparedStatement("SELECT owner_id FROM tickets INNER JOIN events ON tickets.event_id=events.id WHERE tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket.id);
             var rs = stmt.executeQuery();
             if (!rs.next())
@@ -58,7 +58,7 @@ public class TicketsAPI {
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
-        try (var stmt = trans.namedPreparedStatement("update tickets set name=:name, price=:price, available_tickets=:available_tickets where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("UPDATE tickets SET name=:name, price=:price, available_tickets=:available_tickets WHERE id=:id")) {
             stmt.setString(":name", ticket.name);
             stmt.setLong(":price", ticket.price);
             if(ticket.available_tickets!=null)
@@ -72,7 +72,7 @@ public class TicketsAPI {
 
     @Route("/get_tickets/<event_id>")
     public static @Json List<Ticket> get_tickets(@FromRequest(OptionalAuth.class)UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, Unauthorized, BadRequest {
-        try (var stmt = trans.namedPreparedStatement("select draft, owner_id from events where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("SELECT draft, owner_id FROM events WHERE id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
 
@@ -84,7 +84,7 @@ public class TicketsAPI {
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         List<Ticket> result;
-        try (var stmt = trans.namedPreparedStatement("select * from tickets where event_id=:event_id")) {
+        try (var stmt = trans.namedPreparedStatement("SELECT * FROM tickets WHERE event_id=:event_id")) {
             stmt.setLong(":event_id", event_id);
             result = SqlSerde.sqlList(stmt.executeQuery(), Ticket.class);
         }
@@ -94,14 +94,14 @@ public class TicketsAPI {
 
     @Route("/delete_ticket/<ticket_id>")
     public static void delete_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long ticket_id) throws SQLException, Unauthorized, BadRequest {
-        try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
+        try (var stmt = trans.namedPreparedStatement("SELECT owner_id FROM tickets INNER JOIN events ON tickets.event_id=events.id WHERE tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();
             if (!rs.next() || rs.getLong("owner_id") != session.user_id)
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
-        try (var stmt = trans.namedPreparedStatement("delete from tickets where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("DELETE FROM tickets WHERE id=:id")) {
             stmt.setLong(":id", ticket_id);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to update ticket");

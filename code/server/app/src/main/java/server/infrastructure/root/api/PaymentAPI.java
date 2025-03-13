@@ -61,7 +61,7 @@ public class PaymentAPI {
             throw new BadRequest("Cannot purchase account organizer upgrade, account is already organizer");
 
         List<Ticket> tickets;
-        try(var stmt = trans.namedPreparedStatement("select * from users join json_each(:tickets) on users.id=json_each.value")){
+        try(var stmt = trans.namedPreparedStatement("SELECT * FROM users JOIN json_each(:tickets) ON users.id=json_each.value")){
             stmt.setString(":tickets", ticket_ids.toJSONString());
             tickets = SqlSerde.sqlList(stmt.executeQuery(), Ticket.class);
         }
