@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const eventsContainer = document.getElementById("eventsContainer");
-    const loadMoreButton = document.getElementById("loadMore");
+    const paginationContainer = document.getElementById("pagination");
     const filterForm = document.getElementById("filterForm");
 
     let events = [
@@ -17,16 +17,17 @@ document.addEventListener("DOMContentLoaded", function () {
         { title: "Jazz Under the Stars", location: "New York City", category: "Music", tags: ["Jazz", "Outdoor"], price: 50, date: "2025-04-01" }
     ];
 
-    let displayedEvents = 0;
-    const eventsPerPage = 10;
+    let currentPage = 1;
+    const eventsPerPage = 5;
     let filteredEvents = [...events];
 
     function renderEvents(eventList) {
         eventsContainer.innerHTML = "";
         eventList.forEach(event => {
             const ticketSVG = document.createElement("div");
+            ticketSVG.classList.add("event-box");
             ticketSVG.innerHTML = `
-                <svg width="600" height="300" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <svg width="600" height="300" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
                     <!-- Ticket Shape -->
                     <path d="M0,40 Q20,40 20,20 H380 Q380,40 400,40 V80 Q380,80 380,100 Q380,120 400,120 V160 Q380,160 380,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
                           fill="white" stroke="#ccc" stroke-width="2"/>
@@ -47,49 +48,57 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function renderPagination() {
+        paginationContainer.innerHTML = "";
+        const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+        
+        if (totalPages <= 1) return;
+
+        const createButton = (text, page) => {
+            const btn = document.createElement("button");
+            btn.textContent = text;
+            btn.classList.add("page-btn");
+            if (page === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => changePage(page));
+            return btn;
+        };
+
+        paginationContainer.appendChild(createButton("⏮", 1));
+        paginationContainer.appendChild(createButton("◀", Math.max(1, currentPage - 1)));
+        
+        for (let i = 1; i <= totalPages; i++) {
+            paginationContainer.appendChild(createButton(i, i));
+        }
+        
+        paginationContainer.appendChild(createButton("▶", Math.min(totalPages, currentPage + 1)));
+        paginationContainer.appendChild(createButton("⏭", totalPages));
+    }
+
+    function changePage(page) {
+        const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        const start = (currentPage - 1) * eventsPerPage;
+        const end = start + eventsPerPage;
+        renderEvents(filteredEvents.slice(start, end));
+        renderPagination();
+    }
+
     function applyFilters() {
         const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
         const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
         const tagFilter = document.getElementById("filterTag").value.toLowerCase();
-        const minPrice = parseFloat(document.getElementById("minPrice").value) || 0;
-        const maxPrice = parseFloat(document.getElementById("maxPrice").value) || Infinity;
-        const startDate = document.getElementById("startDate").value;
-        const endDate = document.getElementById("endDate").value;
-        const sortBy = document.getElementById("sort").value;
-        const sortOrder = document.getElementById("order").value;
 
-        filteredEvents = events.filter(event => {
-            return (
-                (locationFilter === "" || event.location.toLowerCase().includes(locationFilter)) &&
-                (categoryFilter === "" || event.category.toLowerCase().includes(categoryFilter)) &&
-                (tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter))) &&
-                (event.price >= minPrice && event.price <= maxPrice) &&
-                (startDate === "" || new Date(event.date) >= new Date(startDate)) &&
-                (endDate === "" || new Date(event.date) <= new Date(endDate))
-            );
-        });
+        filteredEvents = events.filter(event =>
+            (locationFilter === "" || event.location.toLowerCase().includes(locationFilter)) &&
+            (categoryFilter === "" || event.category.toLowerCase().includes(categoryFilter)) &&
+            (tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter)))
+        );
 
-        // Sorting
-        filteredEvents.sort((a, b) => {
-            if (sortBy === "price") return sortOrder === "asc" ? a.price - b.price : b.price - a.price;
-            if (sortBy === "date") return sortOrder === "asc" ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date);
-            if (sortBy === "location") return sortOrder === "asc" ? a.location.localeCompare(b.location) : b.location.localeCompare(a.location);
-            if (sortBy === "category") return sortOrder === "asc" ? a.category.localeCompare(b.category) : b.category.localeCompare(a.category);
-        });
-
-        displayedEvents = 0;
-        loadMoreEvents();
-    }
-
-    function loadMoreEvents() {
-        const newEvents = filteredEvents.slice(0, displayedEvents + eventsPerPage);
-        renderEvents(newEvents);
-        displayedEvents = newEvents.length;
-        loadMoreButton.style.display = displayedEvents >= filteredEvents.length ? "none" : "block";
+        currentPage = 1;
+        changePage(1);
     }
 
     filterForm.addEventListener("input", applyFilters);
-    loadMoreButton.addEventListener("click", loadMoreEvents);
-
-    loadMoreEvents();
+    changePage(1);
 });
