@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <!-- Event Details -->
                     <text x="190" y="50" font-size="22" font-family="Arial, sans-serif" font-weight="bold" fill="#333">
-                        <tspan x="170" dy="0">${event.title}</tspan>
+                        <tspan x="190" dy="0">${event.title}</tspan>
                     </text>
                     <text x="190" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
                     <text x="190" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
