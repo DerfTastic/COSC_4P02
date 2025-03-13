@@ -35,6 +35,10 @@ public class SqlSerde {
         T call(ResultSet rs) throws SQLException;
     }
 
+    public interface Consume{
+        void call(ResultSet rs) throws SQLException;
+    }
+
     public static <T> T sqlSingle(ResultSet rs, Map<T> func) throws SQLException {
         var res = sqlList(rs, func);
         if(res.isEmpty())
@@ -51,6 +55,12 @@ public class SqlSerde {
         if(res.size() > 1)
             throw new SQLException("Expected single result got more");
         return res.getFirst();
+    }
+
+    public static <T> void sqlForEach(ResultSet rs, Consume func) throws SQLException {
+        while(rs.next()){
+            func.call(rs);
+        }
     }
 
     public static <T> ArrayList<T> sqlList(ResultSet rs, Map<T> func) throws SQLException {
