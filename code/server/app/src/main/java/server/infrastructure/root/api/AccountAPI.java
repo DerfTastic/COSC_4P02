@@ -515,7 +515,7 @@ public class AccountAPI {
         var timer = server.getManagedState(TimedEvents.class);
         var prm = new PasswordResetManager();
         server.addManagedState(prm);
-        timer.addAtRate(prm::tick, 5000);
+        timer.addAtRate(prm::tick, 15*60*1000);
     }
 
     @Route

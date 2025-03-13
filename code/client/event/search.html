@@ -3,19 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
     <script src="/js/api.js"></script>
-    <script src="/js/event_list.js"></script>
-    <link rel="stylesheet" href="/style/styles.css"> 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
-    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
-    <title>Ticket Express</title>
+    <link rel="stylesheet" href="/style/styles.css">
+
     <style>
         body {
             display: flex;
         }
+
         .sidebar {
             width: 250px;
             background: rgba(238, 238, 240, 0.1);
@@ -24,10 +21,12 @@
             height: 85vh;
             overflow-y: auto;
         }
+
         .sidebar h3 {
             margin-top: 0;
         }
-        .sidebar label, 
+
+        .sidebar label,
         .sidebar input {
             display: block;
             width: 100%;
@@ -37,6 +36,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         .main-content {
             margin-left: 260px;
             flex-grow: 1;
@@ -45,12 +45,14 @@
             flex-direction: column;
             align-items: center;
         }
+
         .event-box {
             width: 80%;
             max-width: 600px;
             height: 200px;
             text-align: center;
         }
+
         .events-container {
             display: flex;
             flex-direction: column;
@@ -58,12 +60,14 @@
             justify-content: center;
             width: 100%;
         }
+
         .pagination-container {
-            
+
             text-align: center;
             margin: 20px 0;
             margin-top: 100px;
         }
+
         .page-btn {
             padding: 5px 10px;
             margin: 2px;
@@ -71,12 +75,14 @@
             background: white;
             cursor: pointer;
         }
+
         .page-btn.active {
             background: #007bff;
             color: white;
         }
     </style>
 </head>
+<div src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
     <div class="sidebar">
@@ -116,7 +122,6 @@
     </div>
 
     <div class="main-content">
-        <div src="/partials/header.html" type="text/x-html-template"></div>
 
         <div class="content">
             <h3>List of Events</h3>
@@ -126,8 +131,8 @@
             <div class="pagination-container" id="pagination"></div>
         </div>
 
-        <div src="/partials/footer.html" type="text/x-html-template"></div>
     </div>
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 
 </html>
