@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const ticketSVG = document.createElement("div");
             ticketSVG.innerHTML = `
-                <svg width="600" height="300" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                <svg width="600" height="300" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
                     <!-- Ticket Shape -->
                     <path d="M0,40 Q20,40 20,20 H380 Q380,40 400,40 V80 Q380,80 380,100 Q380,120 400,120 V160 Q380,160 380,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
                           fill="white" stroke="#ccc" stroke-width="2"/>
                     <!-- Placeholder Image -->
-                    <rect x="20" y="25" width="150" height="150" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="60" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666">Image</text>
+                    <rect x="30" y="40" width="120" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
+                    <text x="70" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
 
                     <!-- Event Details -->
                     <text x="190" y="50" font-size="22" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
