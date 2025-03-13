@@ -26,6 +26,15 @@ public class TimedEvents implements Closeable {
         minutely.add(runnable);
     }
 
+    public void addAtRate(Runnable runnable, long period_ms){
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }, 0, period_ms);
+    }
+
     @Override
     public void close() {
         timer.cancel();
