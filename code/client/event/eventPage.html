@@ -7,132 +7,204 @@
     <link rel="stylesheet" href="/style/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
+        rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
-
     <title>Ticket Express</title>
-    
+    <style>
+        .eventPage {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .img-container {
+            align-self: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            border-radius: 20px;
+            box-sizing: border-box;
+            background: rgba(238, 238, 240, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #eventImage {
+            position: relative;
+            align-self: center;
+            width: auto;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+
+        .left-column,
+        .right-column {
+            flex: 2;
+            border-radius: 15px;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        .right-column {
+            flex: 1;
+        }
+
+        .left-column,
+        .right-column {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .left-column:hover,
+        .right-column:hover {
+            /* transform: scale(1.00); */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            background: rgba(238, 238, 240, 0.2);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .left-column,
+        .right-column {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .left-column:hover,
+        .right-column:hover {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+
+        #eventTime,
+        #eventDate,
+        h2 {
+            margin: 0;
+        }
+
+        #eventTime,
+        #eventDate {
+            font-size: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <div class="content">
-        <div id="eventPage" style="display: none;">
-            <h1 id="eventTitleDisplay"></h1>
-            <p id="eventVenueDisplay"></p>
-            
-            <p id="eventDateDisplay"></p>
-            <p id="eventTimeDisplay"></p>
-            <p id="eventDescriptionDisplay"></p>
-            
-            <h2>Tags:</h2>
-            <div id="eventTagsDisplay"></div>
-    
-            <h2>Tickets:</h2>
-            <ul id="eventTicketsDisplay"></ul>
-            
-            <h2>Media:</h2>
-            <div id="eventMediaDisplay"></div>
+        <div class="eventPage">
+            <div class="img-container">
+                <img id="eventImage" src="" alt="Event Picture" />
+            </div>
+
+            <div class="flex-container">
+                <div class="left-column">
+                    <p id="eventDate">
+                    <p id="eventTime"></p>
+                    </p>
+                    <h2 class="eventTitle" id="eventTitle"></h2>
+                    <p>Event Location: <span id="eventLocation"></span></p>
+                    <p>Event Duration: <span id="eventDuration"></span></p>
+                    <p id="eventDescription"></p>
+                    <h2>Tags:</h2>
+                    <div id="eventTags"></div>
+                </div>
+
+                <div class="right-column">
+                    <h2>Tickets:</h2>
+                    <ul id="eventTicketsDisplay"></ul>
+                </div>
+            </div>
         </div>
+
+
     </div>
-<script>
-    window.onload = function () {
-        // Retrieve the event ID from the URL query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const eventId = urlParams.get('id');  
-
-        // Check if event ID is provided
-        if (!eventId) {
-            console.log("No event ID found.");
-            return;
-        }
-
-        const storedData = JSON.parse(localStorage.getItem(`event-${eventId}`));
-        
-        if (!storedData) {
-            alert("Event data not found.");
-            return;
-        }
-
-        console.log("Loaded Event Data:", storedData);
-
-        // Populate the event details
-        const eventPage = document.getElementById("eventPage");
-
-        eventPage.querySelector("#eventTitleDisplay").textContent = storedData.title || "Untitled Event";
-        eventPage.querySelector("#eventVenueDisplay").textContent = `Venue: ${storedData.venue || "Not specified"}`;
-        eventPage.querySelector("#eventDescriptionDisplay").textContent = storedData.description || "No description provided.";
-        eventPage.querySelector("#eventDateDisplay").textContent = `Date: ${storedData.startDate || "N/A"} - ${storedData.endDate || "N/A"}`;
-        eventPage.querySelector("#eventTimeDisplay").textContent = `Time: ${storedData.startTime || "N/A"} - ${storedData.endTime || "N/A"}`;
-
-        // Tags
-        const tagContainer = document.getElementById("eventTagsDisplay");
-        tagContainer.innerHTML = "";
-        (storedData.tags || []).forEach(tag => {
-            const tagElement = document.createElement("span");
-            tagElement.textContent = `#${tag}`;
-            tagElement.classList.add("event-tag");
-            tagContainer.appendChild(tagElement);
-        });
-
-        // Tickets
-        const ticketsList = document.getElementById("eventTicketsDisplay");
-        ticketsList.innerHTML = "";
-        (storedData.tickets || []).forEach(ticket => {
-            const ticketItem = document.createElement("li");
-            ticketItem.textContent = `${ticket.type.charAt(0).toUpperCase() + ticket.type.slice(1)}: ${ticket.quantity} tickets @ $${ticket.price} each`;
-            ticketsList.appendChild(ticketItem);
-        });
-
-        // Media
-        const mediaContainer = document.getElementById("eventMediaDisplay");
-        mediaContainer.innerHTML = ""; 
-
-        storedData.mediaFiles.forEach(file => {
-            let mediaElement;
-            if (file.type.startsWith("image")) {
-                mediaElement = document.createElement("img");
-                mediaElement.src = file.url; // Use stored Base64 URL
-                mediaElement.alt = "Event Image";
-            } else if (file.type.startsWith("video")) {
-                mediaElement = document.createElement("video");
-                mediaElement.src = file.url;
-                mediaElement.controls = true;
+    <script>
+        window.onload = async function () {
+            // Retrieve the event ID from the URL query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('id');
+            // Check if event ID is provided
+            if (!eventId) {
+                console.log("No event ID found.");
+                return;
             }
-            mediaElement.classList.add("media-preview");
-            mediaContainer.appendChild(mediaElement);
-        });
+            try {
+                // Fetch event details
+                const get_event = await api.events.get_event(eventId);
+                const event = get_event.event;
+                const tags = get_event.tags;
 
-        // Apply styling
-        eventPage.style.backgroundColor = storedData.styling.bgColor || "#ffffff";
-        eventPage.style.color = storedData.styling.textColor || "#000000";
-        eventPage.style.fontFamily = storedData.styling.font || "Arial, sans-serif";
-        eventPage.style.textAlign = storedData.styling.textAlign || "left";
-        eventPage.style.border = `2px ${storedData.styling.borderStyle || "solid"} black`;
-        eventPage.style.borderRadius = `${storedData.styling.borderRadius || 0}px`;
+                // Set event details on the page
+                document.getElementById("eventTitle").textContent = event.name;
+                document.getElementById("eventLocation").textContent = event.location_name;
 
-        // Animation
-        if (storedData.styling.animationEffect) {
-            eventPage.classList.add(storedData.styling.animationEffect);
-        }
+                // Format event start date (assuming it's a timestamp)
+                const eventDate = new Date(event.start);  // Assuming 'start' is a timestamp
+                document.getElementById("eventTime").textContent = new Date(event.start).toLocaleTimeString();
+                document.getElementById("eventDate").textContent = new Date(event.start).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                // For the event duration (assuming it's in milliseconds)
+                const durationInHours = Math.floor(event.duration / (1000 * 60 * 60));  // Convert milliseconds to hours
+                const durationInMinutes = Math.floor((event.duration % (1000 * 60 * 60)) / (1000 * 60));  // Convert remaining milliseconds to minutes
 
-        // Edit button
-        const editButton = document.createElement("button");
-        editButton.textContent = "Edit Event";
-        editButton.classList.add("edit-btn");
-        editButton.onclick = () => history.back();
-        eventPage.appendChild(editButton);
+                // Display the duration in hours and minutes
+                document.getElementById("eventDuration").textContent = `${durationInHours} hours ${durationInMinutes} minutes`;
+                document.getElementById("eventDescription").textContent = event.description;
 
-        // Show the event page
-        eventPage.style.display = "block";
-    };
-</script>
-    
-        <div src="/partials/header.html" type="text/x-html-template"></div>
-        <div src="/partials/footer.html" type="text/x-html-template"></div>
-    
-        <script src="/js/api.js"></script>
-        <script src="/js/ui.js"></script>
-        
+                // Display tags
+                const eventTagsElement = document.getElementById("eventTags");
+                tags.forEach(tag => {
+                    // Access the 'tag' property to display the tag name
+                    const tagElement = document.createElement("span");
+                    tagElement.textContent = `#${tag.tag}`;  // Access the 'tag' property from the tag object
+                    tagElement.classList.add("event-tag");
+                    eventTagsElement.appendChild(tagElement);
+                });
+
+                if (event.picture) {
+                    console.log("Event picture:", event.picture);
+                    document.getElementById("eventImage").src = `/media/${event.picture}`;
+                } else {
+                    console.log("No event picture found.");
+                    document.getElementById("eventImage").src = '/media/default-image.jpg';  // Provide a fallback image
+                }
+            } catch (error) {
+                console.error("Error fetching event:", error);
+            }
+
+        };
+
+    </script>
+
+    <div src="/partials/header.html" type="text/x-html-template"></div>
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script>
+
 </body>
 
 </html>
