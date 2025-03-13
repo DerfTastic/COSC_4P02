@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link rel="stylesheet" href="/style/styles.css">
+    <title>Ticket Verification - Ticket Express</title>    
+</head>
+<body>
+    <div src="/header.html" type="text/x-html-template"></div>
+    <div src="/footer.html" type="text/x-html-template"></div>
+
+    <div class="content">
+        <label for="eventId">eventid:</label>
+        <input type="text" id="eventid" name="eventid"><br><br>
+        <button onclick="genQR()">Generate QR code for event</button>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script>
+
+    <script>
+        function genQR() {
+            var eventid = document.getElementById("eventid").value;
+            console.log(eventid);
+        }
+    </script>
+</body>

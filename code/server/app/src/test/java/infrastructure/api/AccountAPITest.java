@@ -3,6 +3,7 @@
  */
 package infrastructure.api;
 
+import framework.db.RoConn;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import framework.web.error.BadRequest;
@@ -83,6 +84,25 @@ public class AccountAPITest {
         account.password = "password";
         try(var trans = db.rw_transaction("testAccountDeleted")){
             session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            trans.tryCommit();
+            Assertions.fail();
+        }catch (Unauthorized e){
+            Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(53)
+    public void testListingAllSessions() throws SQLException, UnknownHostException {
+        UserSession session;
+        var account = new AccountAPI.Login();
+        try(var trans = db.rw_transaction("testListingAllSessions");
+                var conn = db.ro_conn("testListingAllSessions")){
+            AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account);
+            session = UserSession.create(AccountAPITest.session, conn, null);
+
+            System.out.println(AccountAPI.list_sessions(session, conn));
+
             trans.tryCommit();
             Assertions.fail();
         }catch (Unauthorized e){
