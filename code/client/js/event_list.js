@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         eventList.forEach(event => {
             const ticketSVG = document.createElement("div");
             ticketSVG.innerHTML = `
-                <svg width="600" height="300" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <svg width="800" height="300" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
                     <!-- Ticket Shape -->
                     <path d="M0,40 Q20,40 20,20 H380 Q380,40 400,40 V80 Q380,80 380,100 Q380,120 400,120 V160 Q380,160 380,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
                           fill="white" stroke="#ccc" stroke-width="2"/>
