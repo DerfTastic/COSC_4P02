@@ -35,6 +35,7 @@ html {
     margin: auto;
     justify-content: center;
     padding: 10px;
+    min-height: 70vh;
 }
 
 h1 {
