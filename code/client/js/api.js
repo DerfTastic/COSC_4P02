@@ -62,6 +62,9 @@ class OrganizerEvent {
     /** @type{object} */metadata
     /** @type{boolean} */draft
 
+    /** @type{number?} */start
+    /** @type{number?} */duration
+
     /** @type{number} */available_total_tickets
 
     /** @type{string} */location_name
