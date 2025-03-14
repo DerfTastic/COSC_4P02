@@ -46,6 +46,9 @@ public class WebServerImpl extends WebServer {
     public HttpContext attachHandler(String path, HttpHandler handler){
         return super.attachHandler(path, exchange -> {
             var start = System.nanoTime();
+            var header = exchange.getResponseHeaders();
+            header.add("Connection", "Keep-Alive");
+            header.add("Keep-Alive", "timeout=14 max=100");
             handler.handle(exchange);
             var code = exchange.getResponseCode();
             tracker.track_route(path, code, System.nanoTime()-start);

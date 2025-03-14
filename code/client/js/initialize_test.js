@@ -891,6 +891,7 @@ async function create_all_user_defined(){
         create_organizers(parker),
         create_organizers(everything)
     ]);
+    alert("Finished");
 }
 
 let tracker = 0;
@@ -971,6 +972,7 @@ async function create_random() {
     }
 
     await create_organizers(list);
+    alert("Finished");
 }
 
 /**
