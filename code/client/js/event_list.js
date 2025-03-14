@@ -27,21 +27,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const ticketSVG = document.createElement("div");
             ticketSVG.classList.add("event-box");
             ticketSVG.innerHTML = `
-                <svg width="600" height="300" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+                
+                <svg width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
                     <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H380 Q380,40 400,40 V80 Q380,80 380,100 Q380,120 400,120 V160 Q380,160 380,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
+                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
                           fill="white" stroke="#ccc" stroke-width="2"/>
                     <!-- Placeholder Image -->
-                    <rect x="30" y="40" width="120" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="70" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
+                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
+                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
+
+                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
 
                     <!-- Event Details -->
-                    <text x="190" y="50" font-size="22" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="190" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="190" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="190" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="190" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="190" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
+                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
+                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
+                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
+                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
+                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
+                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
                 </svg>
             `;
             eventsContainer.appendChild(ticketSVG);
@@ -51,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderPagination() {
         paginationContainer.innerHTML = "";
         const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-        
+
         if (totalPages <= 1) return;
 
         const createButton = (text, page) => {
@@ -65,11 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         paginationContainer.appendChild(createButton("⏮", 1));
         paginationContainer.appendChild(createButton("◀", Math.max(1, currentPage - 1)));
-        
+
         for (let i = 1; i <= totalPages; i++) {
             paginationContainer.appendChild(createButton(i, i));
         }
-        
+
         paginationContainer.appendChild(createButton("▶", Math.min(totalPages, currentPage + 1)));
         paginationContainer.appendChild(createButton("⏭", totalPages));
     }

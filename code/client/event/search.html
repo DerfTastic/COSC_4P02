@@ -47,13 +47,19 @@
         }
 
         .event-box {
-            width: 80%;
-            max-width: 600px;
-            height: 200px;
+            width: 90%;
+            height: 300px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
         }
 
         .events-container {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -122,8 +128,8 @@
     </div>
 
     <div class="content">
-        <h3>List of Events</h3>
-        <p>This is where the list of all currently available events are listed for you to RSVP to.</p>
+        <!-- <h3>List of Events</h3>
+        <p>This is where the list of all currently available events are listed for you to RSVP to.</p> -->
 
         <div class="events-container" id="eventsContainer"></div>
         <div class="pagination-container" id="pagination"></div>
