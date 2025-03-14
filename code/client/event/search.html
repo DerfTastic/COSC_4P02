@@ -68,24 +68,33 @@
         }
 
         .pagination-container {
-
+            display: flex;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            margin: 20px 0;
-            margin-top: 100px;
+            margin-top: 50px;
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 10px;
+            gap:10px;
         }
 
         .page-btn {
+            font-size: 17px;
+            font-weight: bold;
+            width: 60px;
             padding: 5px 10px;
             margin: 2px;
-            border: 1px solid #007bff;
-            background: white;
+            background: #eeeef0;
+            color: #2a3e59;
             cursor: pointer;
         }
 
         .page-btn.active {
-            background: #007bff;
-            color: white;
+            background: #2a3e59;
+            color: #eeeef0;
         }
+        
     </style>
 </head>
 <div src="/partials/header.html" type="text/x-html-template"></div>
