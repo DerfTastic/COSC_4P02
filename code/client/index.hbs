@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Express</title>
+    <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script>
+    <link rel="stylesheet" href="/style/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+</head>
+<div src="/partials/header.html" type="text/x-html-template"></div>
+
+<script>
+    async function get_events(...meow){
+        for(let i = 0; i < meow.length; i++){
+            const val = meow[i];
+            meow[i] = (async() => {
+                return {
+                    title: val + " Events",
+                    events: await api.search.search_events({category_fuzzy: val.toLowerCase()})
+                }
+            })();
+        }
+        return Promise.all(meow);
+    }
+</script>
+<body>
+
+    <div class="content">
+
+        <script src="get_events('Concert', 'Music', 'Art', 'Sports')" type="text/x-handlebars-template">
+            {{#each @root}}
+            <div class="carousel">
+                <div class="heading "><a href="">{{title}}</a></div>
+                <button class="arrow left" id="prev">&lt;</button>
+                <div class="product-container">
+                    {{#each events}}
+                    <div class="product-box" onclick="window.location.href = '/event?id={{event.id}}'">
+
+                        <img src="/media/{{event.picture}}" alt="{{event.name}}">
+                        <div class="caption">
+                            <h3>{{event.name}}</h3>
+                            <p>{{event.description}}</p>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <button class="arrow right" id="next">&gt;</button>
+            </div>
+            {{/each}}
+        </script>
+        <div></div>
+
+    </div>
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
+</body>
+
+</html>

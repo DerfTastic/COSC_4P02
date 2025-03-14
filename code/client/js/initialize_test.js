@@ -40,7 +40,7 @@ const everything = [
             {
                 name: "The Hockey Team Game",
                 description: "Come join us for this very exciting hokey game!!!",
-                category: "sport",
+                category: "sports",
                 type: "stadium",
                 tags: ["Hokey", "Indoors", "Hometown", "Sports", "Ice", "Hotdog"],
                 picture: "https://m.media-amazon.com/images/I/61lo8QevtJL._AC_UF894,1000_QL80_.jpg",

@@ -1053,57 +1053,44 @@ const page = {
     },
 
 
-    awaiting_handlebar_templates: 0,
-    awaiting_html_templates: 0,
-
-    check_for_handlers: function () {
-        if (this.awaiting_handlebar_templates == 0 && this.awaiting_html_templates == 0
-            || this.awaiting_handlebar_templates == 0 && this.awaiting_html_templates == -1
-            || this.awaiting_handlebar_templates == -1 && this.awaiting_html_templates == 0
-        ) {
-            document.dispatchEvent(new Event("dynamic_content_finished"));
-        }
-        if (this.awaiting_handlebar_templates == 0) {
-            this.awaiting_handlebar_templates = -1;
-            document.dispatchEvent(new Event("handlebar_templates_finished"))
-        }
-        if (this.awaiting_html_templates == 0) {
-            this.awaiting_html_templates = -1;
-            document.dispatchEvent(new Event("html_templates_finished"))
-        }
-    },
 
     /**
      * @param {Element} item 
+     * @returns {Promise}
      */
-    load_dynamic_content: function (item) {
+    load_dynamic_content: async function (item) {
         if (item == null) return;
-        for (let e of item.querySelectorAll("[type='text/x-html-template']")) {
-            this.awaiting_html_templates++;
-            (async _ => {
+        const promises = [];
+        for (const e of item.querySelectorAll("[type='text/x-html-template']")) {
+            promises.push((async _ => {
                 try {
-                    const result = await fetch(e.getAttribute("src"));
+                    const result = await fetch(e.getAttribute("src"), { cache: "force-cache" });
                     e.innerHTML = await result.text();
                 } catch (err) {
                     e.innerHTML = JSON.stringify(err);
                 }
                 nodeScriptReplace(e);
 
-                page.initialize_content(e.nextElementSibling);
-                page.load_dynamic_content(e.nextElementSibling);
-                this.awaiting_html_templates--;
-                page.check_for_handlers();
-            })();
+                await page.load_dynamic_content(e.nextElementSibling);
+            })());
         }
-        for (let e of item.querySelectorAll("script[type='text/x-handlebars-template']")) {
-            this.awaiting_handlebar_templates++;
-            (async _ => {
+        
+        for (const e of item.querySelectorAll("script[type='text/x-handlebars-template']")) {
+            promises.push((async _ => {
                 try {
+                    if(e.hasAttribute("partials"))
+                        for(const partial of eval(e.getAttribute("partials"))){
+                            if(partial in Handlebars.partials)continue;
+                            const result = await fetch("/partials/"+partial, { cache: "force-cache" });
+                            Handlebars.registerPartial(partial, await result.text());
+                        }
+                    const template = Handlebars.compile(e.innerHTML);
+                    e.nextElementSibling.innerHTML = template({});
                     if(e.hasAttributes("src")){
-                        const result = await eval(e.getAttribute("src"));
-                        var template = Handlebars.compile(e.innerHTML);
-                        var html = template(result);
-                        e.nextElementSibling.innerHTML = html;
+                        result = eval(e.getAttribute("src"));
+                        if(result instanceof Promise)
+                            result = await result;
+                        e.nextElementSibling.innerHTML = template(result);
                     }
                 } catch (err) {
                     console.log(e);
@@ -1111,36 +1098,11 @@ const page = {
                     e.nextElementSibling.innerHTML = "ERROR: " + JSON.stringify(err, 2, null);
                 }
 
-                page.initialize_content(e.nextElementSibling);
-                page.load_dynamic_content(e.nextElementSibling);
-                this.awaiting_handlebar_templates--;
-                page.check_for_handlers();
-            })();
+                await page.load_dynamic_content(e.nextElementSibling);
+            })());
         }
-        page.check_for_handlers();
+        await Promise.all(promises)
     },
-
-    /**
-     * @param {Element} item 
-     */
-    initialize_content: (item) => {
-        if (item == null) return;
-        for (let e of item.querySelectorAll("template[type='text/x-handlebars-template']")) {
-            try {
-                var template = Handlebars.compile(e.innerHTML);
-                var html = template({});
-                e.nextElementSibling.innerHTML = html;
-            } catch (err) {
-                e.nextElementSibling.innerHTML = JSON.stringify(err);
-            }
-        }
-
-        for (let e of item.querySelectorAll("div[onclick]")) {
-            e.addEventListener("click", ev => {
-                eval(e.getAttribute("onclick"));
-            })
-        }
-    }
 };
 
 function nodeScriptReplace(node) {
@@ -1168,22 +1130,13 @@ function nodeScriptClone(node){
     return script;
 }
 
-
-document.addEventListener('handlebar_templates_finished', () => {
-    console.log("Handlebar templates finished loading");
-});
-
-document.addEventListener('html_templates_finished', () => {
-    console.log("HTML templates finished loading");
-});
-
 document.addEventListener('dynamic_content_finished', () => {
     console.log("Dynamic content finished loading");
     document.body.style = "";
 });
 
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     document.body.style = "display:none";
     if (typeof Handlebars !== 'undefined') {
         Handlebars.registerHelper("raw-helper", function (options) {
@@ -1215,11 +1168,19 @@ document.addEventListener('DOMContentLoaded', () => {
         Handlebars.registerHelper('ne', function(a, b) {
             return (a !== b);
         });
+        Handlebars.registerHelper('json', function(context) {
+            return JSON.stringify(context);
+        });
         
     }
 
-    page.initialize_content(document);
-    page.load_dynamic_content(document);
+    await page.load_dynamic_content(document);
+    for (let e of document.querySelectorAll("div[onclick]")) {
+        e.addEventListener("click", ev => {
+            eval(e.getAttribute("onclick"));
+        })
+    }
+    document.dispatchEvent(new Event("dynamic_content_finished"));
 });
 
 function gen_qr(data, size=150){
