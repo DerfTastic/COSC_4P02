@@ -1064,7 +1064,7 @@ const page = {
         for (const e of item.querySelectorAll("[type='text/x-html-template']")) {
             promises.push((async _ => {
                 try {
-                    const result = await fetch(e.getAttribute("src"), { cache: "force-cache" });
+                    const result = await fetch(e.getAttribute("src") /*, { cache: "force-cache" } */);
                     e.innerHTML = await result.text();
                 } catch (err) {
                     e.innerHTML = JSON.stringify(err);
@@ -1081,7 +1081,7 @@ const page = {
                     if(e.hasAttribute("partials"))
                         for(const partial of eval(e.getAttribute("partials"))){
                             if(partial in Handlebars.partials)continue;
-                            const result = await fetch("/partials/"+partial, { cache: "force-cache" });
+                            const result = await fetch("/partials/"+partial/*, { cache: "force-cache" } */);
                             Handlebars.registerPartial(partial, await result.text());
                         }
                     const template = Handlebars.compile(e.innerHTML);
