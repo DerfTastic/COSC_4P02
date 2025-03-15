@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 public class DbManagerImpl extends DbManager {
     private final List<SQLiteUpdateListener> listeners = new ArrayList<>();
 
-    public DbManagerImpl() throws SQLException {
-        this(Config.CONFIG.db_path, Config.CONFIG.store_db_in_memory, Config.CONFIG.wipe_db_on_start, true);
+    public DbManagerImpl(Config config) throws SQLException {
+        this(config.db_path, config.store_db_in_memory, config.wipe_db_on_start, true);
     }
 
     public synchronized void addUpdateHook(SQLiteUpdateListener listener){

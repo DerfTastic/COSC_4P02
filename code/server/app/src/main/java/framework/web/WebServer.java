@@ -43,6 +43,8 @@ public class WebServer {
         server = HttpServer.create(address, backlog);
 
         addManagedState(server); // Add HTTP Server to managed resources
+        addManagedState(this, WebServer.class); // Add HTTP Server to managed resources
+        addManagedState(this); // Add HTTP Server to managed resources
     }
 
     public void start(){
@@ -141,11 +143,19 @@ public class WebServer {
             }
         }catch (Exception e){
             Logger.getGlobal().log(Level.SEVERE, "Failed to load routes", e);
+            throw new RuntimeException(e);
         }
     }
 
     private void attachRouteHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        var instance = handlerClass.getConstructor().newInstance();
+        var constructor = handlerClass.getConstructors()[0];
+        var paramsTy = constructor.getParameterTypes();
+        var params  = new Object[paramsTy.length];
+        for(int p = 0; p < params.length; p ++){
+            params[p] = this.getManagedState(paramsTy[p]);
+        }
+
+        var instance = (RequestHandler)constructor.newInstance(params);
         HttpHandler handler = exchange -> instance.handle(new Request(this, exchange, parentPath));
         attachHandler(parentPath, handler);
         Logger.getGlobal().log(Level.CONFIG, "Route mounted at: '" + parentPath + "' -> "+handlerClass);
@@ -174,17 +184,14 @@ public class WebServer {
             var paramTypes = method.getParameterTypes();
             var params = new Object[paramTypes.length];
             for(int i = 0; i < paramTypes.length; i ++){
-                if(paramTypes[i].isInstance(this)){
-                    params[i] = this;
-                }else{
-                    Logger.getGlobal().log(Level.SEVERE, "On mount cannot resolve parameter " + method.getParameters()[i]);
-                }
+                params[i] = getManagedState(paramTypes[i]);
             }
             try {
                 method.invoke(instance, params);
                 Logger.getGlobal().log(Level.CONFIG, "Completed on mount " + method);
             } catch (Exception e) {
                 Logger.getGlobal().log(Level.SEVERE, "Failed to run on mount " + method);
+                throw new RuntimeException(e);
             }
         }
     }

@@ -77,7 +77,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login) throws SQLException, Unauthorized {
+    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login, Config config) throws SQLException, Unauthorized {
         long user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
@@ -117,7 +117,7 @@ public class AccountAPI {
         trans.commit();
 
 
-        if(Config.CONFIG.send_mail_on_login)
+        if(config.send_mail_on_login)
             mail.sendMail(message -> {
                 Util.LocationQuery res = null;
                 try{
@@ -198,7 +198,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void change_auth(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json ChangeAuth ca) throws SQLException, BadRequest {
+    public static void change_auth(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json ChangeAuth ca) throws SQLException, BadRequest {
         if(ca.new_password==null&&ca.new_email==null)
             throw new BadRequest("Nothing to change");
 
@@ -207,7 +207,7 @@ public class AccountAPI {
 
         ca.old_password = Util.hashy((ca.old_password+"\0\0\0\0"+ca.old_email).getBytes());
         ca.new_password = Util.hashy((ca.new_password+"\0\0\0\0"+ca.new_email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("update users set password=:new_password, email=:new_email where email=:old_email AND password=:old_password AND id=:id")){
+        try(var stmt = trans.namedPreparedStatement("update users set pass=:new_password, email=:new_email where email=:old_email AND pass=:old_password AND id=:id")){
             stmt.setString(":old_email", ca.old_email);
             stmt.setString(":new_email", ca.new_email);
             stmt.setLong(":id", auth.user_id);
@@ -225,10 +225,10 @@ public class AccountAPI {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class UpdateUser{
-        String name;
-        Optional<String> bio;
-        Optional<String> disp_phone_number;
-        Optional<String> disp_email;
+        public String name;
+        public Optional<String> bio;
+        public Optional<String> disp_phone_number;
+        public Optional<String> disp_email;
 
         private static String requireString(JSONReader reader){
             if(reader.isString())
@@ -245,6 +245,8 @@ public class AccountAPI {
             else
                 throw new RuntimeException("Expected String value");
         }
+
+        public UpdateUser(){}
 
         public UpdateUser(JSONReader reader) throws BadRequest {
             if(!reader.nextIfObjectStart())
@@ -390,7 +392,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register) throws SQLException, BadRequest {
+    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register, Config config) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, false, null, null, null, null, null)")){
             stmt.setString(":name", register.name);
@@ -406,7 +408,7 @@ public class AccountAPI {
         }
         trans.commit();
 
-        if(Config.CONFIG.send_mail_on_register)
+        if(config.send_mail_on_register)
             mail.sendMail(message -> {
                 message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
                 message.setSubject("Welcome!");
@@ -519,7 +521,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm) throws SQLException {
+    public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm, Config config) throws SQLException {
         long id;
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email")){
             stmt.setString(":email", email);
@@ -542,7 +544,7 @@ public class AccountAPI {
         mail.sendMail(message -> {
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(email));
             message.setSubject("Do you want to reset your password \uD83E\uDD28");
-            message.setContent("click this link if you are sure you really really want to reset your password! <a href=\""+Config.CONFIG.url_root+"/account/reset_password?token="+ URLEncoder.encode(finalRngStr, StandardCharsets.UTF_8) +"\">RESET</a>", "text/html");
+            message.setContent("click this link if you are sure you really really want to reset your password! <a href=\""+config.url_root+"/account/reset_password?token="+ URLEncoder.encode(finalRngStr, StandardCharsets.UTF_8) +"\">RESET</a>", "text/html");
         });
     }
 

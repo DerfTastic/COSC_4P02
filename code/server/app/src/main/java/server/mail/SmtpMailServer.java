@@ -68,18 +68,16 @@ public class SmtpMailServer implements Closeable, MailServer {
 
     @Override
     public synchronized void sendMail(MessageConfigurator configurator) {
-        if(Config.CONFIG.send_mail){
-            executor.submit(() -> {
-                try{
-                    Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress(username));
-                    configurator.config(message);
-                    transport.get().sendMessage(message, message.getAllRecipients());
-                    configurator.completed();
-                }catch (MessagingException e){
-                    Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
-                }
-            });
-        }
+        executor.submit(() -> {
+            try{
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(username));
+                configurator.config(message);
+                transport.get().sendMessage(message, message.getAllRecipients());
+                configurator.completed();
+            }catch (MessagingException e){
+                Logger.getGlobal().log(Level.WARNING, "Failed to send email", e);
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@ import framework.db.DbManager;
 import framework.web.TimedEvents;
 import framework.web.WebServer;
 import server.mail.MailServer;
+import server.mail.MessageConfigurator;
 import server.mail.SmtpMailServer;
 import server.ServerStatistics;
 
@@ -21,20 +22,29 @@ public class WebServerImpl extends WebServer {
 
     public final ServerStatistics tracker;
 
-    public WebServerImpl() throws Exception {
-        super(new InetSocketAddress(Config.CONFIG.hostname, Config.CONFIG.port), Config.CONFIG.backlog);
-        server.setExecutor(Executors.newFixedThreadPool(Config.CONFIG.web_threads));
+    public WebServerImpl(Config config) throws Exception {
+        super(new InetSocketAddress(config.hostname, config.port), config.backlog);
+        server.setExecutor(Executors.newFixedThreadPool(config.web_threads));
 
+        addManagedState(config, Config.class);
 
-        addManagedState(new TimedEvents()); // See timed events at main/java/server/web/route/TimedEvents
-        addManagedState(new DynamicMediaHandler()); //
+        addManagedState(new TimedEvents());
+        addManagedState(new FileDynamicMediaHandler(config), DynamicMediaHandler.class);
         try{
-            addManagedState(new DbManagerImpl(), DbManager.class);
+            var db = new DbManagerImpl(config);
+            addManagedState(db, DbManager.class);
+            addManagedState(db);
         }catch (Exception e){
             this.close();
             throw e;
         }
-        addManagedState(new SmtpMailServer(Secrets.get("email_account"), Secrets.get("email_password")), MailServer.class);
+        var secrets = new Secrets(config);
+        MailServer mail;
+        if(config.send_mail)
+            mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"));
+        else
+            mail = configurator -> {};
+        addManagedState(mail, MailServer.class);
 
         tracker = new ServerStatistics(getManagedState(DbManager.class).getTracker());
         addManagedState(tracker);

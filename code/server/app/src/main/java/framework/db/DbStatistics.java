@@ -9,7 +9,7 @@ public class DbStatistics {
     private final ConcurrentHashMap<String, Stats> individual = new ConcurrentHashMap<>();
 
     private Stats get_individual(String id){
-        return individual.computeIfAbsent(id, s -> new Stats());
+        return individual.computeIfAbsent(id==null?"":id, s -> new Stats());
     }
 
     protected void statement_executed(String id, boolean rw){
