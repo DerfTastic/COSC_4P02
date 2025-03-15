@@ -340,7 +340,7 @@ public class AccountAPI {
     ) implements UserInfo {}
 
     @Route("/userinfo/<id>")
-    public static @Json UserInfo userinfo(@FromRequest(OptionalAuth.class) UserSession auth, @Path @Nullable Long id, RoTransaction trans) throws SQLException, Unauthorized {
+    public static @Json UserInfo userinfo(@FromRequest(OptionalAuth.class) UserSession auth, RoTransaction trans, @Path @Nullable Long id) throws SQLException, Unauthorized {
         UserInfo result;
         if(auth==null || (id!=null && auth.user_id!=id)){
             if(id==null)
@@ -357,8 +357,8 @@ public class AccountAPI {
                         rs.getString("name"),
                         organizer,
                         rs.getString("bio"),
-                        rs.getString("disp_phone_number"),
                         disp_email,
+                        rs.getString("disp_phone_number"),
                         rs.getLong("picture"),
                         rs.getLong("banner")
                 );
@@ -374,8 +374,8 @@ public class AccountAPI {
                         auth.organizer,
                         auth.admin,
                         rs.getString("bio"),
-                        rs.getString("disp_phone_number"),
                         rs.getString("disp_email"),
+                        rs.getString("disp_phone_number"),
                         rs.getLong("picture"),
                         rs.getLong("banner")
                 );

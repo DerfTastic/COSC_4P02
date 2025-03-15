@@ -12,6 +12,7 @@ import server.infrastructure.DbManagerImpl;
 import server.infrastructure.DynamicMediaHandler;
 import server.infrastructure.param.auth.UserSession;
 import server.infrastructure.root.api.AccountAPI;
+import server.infrastructure.root.api.OrganizerAPI;
 import server.mail.MailServer;
 
 import java.net.InetAddress;
@@ -23,12 +24,9 @@ import java.util.HashSet;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccountAPITest {
 
-    private String password = "password";
-    private String email = "yui@gmail.com";
     private DbManager db;
     private MailServer mail;
 
-    private String session;
     private final Config config = new Config(
             "send_mail", "true",
             "send_mail_on_register", "true",
@@ -36,6 +34,27 @@ public class AccountAPITest {
     );
     private final DynamicMediaHandler media = new DynamicMediaHandlerTest();
 
+    private static class User{
+        String name;
+        String email;
+        String password;
+        String bio;
+        String disp_email;
+        String disp_phone_number;
+
+        String session;
+
+        private User(String name, String email, String password){
+            this.name = name;
+            this.email = email;
+            this.password = password;
+        }
+    }
+
+    private final User u1 = new User("Yui", "yui@gmail.com", "saas");
+    private final User u2 = new User("Tui", "tui@gmail.com", "pass");
+    private final User o1 = new User("Gui", "gui@gmail.com", "saap");
+    private final User o2 = new User("Pui", "pui@gmail.com", "pssa");
 
     @BeforeAll
     public void setup() {
@@ -51,56 +70,85 @@ public class AccountAPITest {
     @Order(1)
     public void testAccountRegistration() throws BadRequest, SQLException {
         var account = new AccountAPI.Register();
-        account.name = "Yui";
-        account.email = email;
-        account.password = password;
-        try(var trans = db.rw_transaction(null)){
-            AccountAPI.register(mail, trans, account, config);
-            trans.tryCommit();
+        for(var user : new User[]{u1, u2, o1, o2}){
+            account.name = user.name;
+            account.email = user.email;
+            account.password = user.password;
+            try(var trans = db.rw_transaction(null)){
+                AccountAPI.register(mail, trans, account, config);
+                trans.tryCommit();
+            }
         }
     }
 
     @Test
     @Order(2)
-    public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException {
+    public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException, BadRequest {
         var account = new AccountAPI.Login();
-        account.email = email;
-        account.password = password;
-        try(var trans = db.rw_transaction(null)){
-            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
-            trans.tryCommit();
+        for(var user : new User[]{u1, u2, o1, o2}){
+            account.email = user.email;
+            account.password = user.password;
+            try(var trans = db.rw_transaction(null)){
+                user.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                trans.tryCommit();
+            }
+        }
+        // this is needed for later as we have some features which rely on users being organizers
+        for(var user : new User[]{o1, o2}){
+            UserSession auth;
+            try(var conn = db.ro_transaction(null)){
+                auth = UserSession.create(user.session, conn, null);
+                conn.tryCommit();
+            }
+            try(var trans = db.rw_transaction(null)){
+                OrganizerAPI.convert_to_organizer_account(auth, trans, null);
+                trans.tryCommit();
+            }
         }
     }
 
     @Test
     @Order(3)
     public void testListSessions() throws SQLException, Unauthorized {
-        try(var conn = db.ro_transaction(null)){
-            var auth = UserSession.create(session, conn, null);
-            var sessions = AccountAPI.list_sessions(auth, conn);
-            Assertions.assertEquals(1, sessions.size());
-            Assertions.assertEquals(Long.parseLong(session.substring(session.length()-8)), sessions.getFirst().id);
-            conn.tryCommit();
+        for(var user : new User[]{u1, u2, o1, o2}) {
+            try (var conn = db.ro_transaction(null)) {
+                var auth = UserSession.create(user.session, conn, null);
+                var sessions = AccountAPI.list_sessions(auth, conn);
+                Assertions.assertEquals(1, sessions.size());
+                var session_id = Long.parseLong(user.session.substring(user.session.length() - 8));
+                Assertions.assertEquals(session_id, sessions.getFirst().id);
+                conn.tryCommit();
+            }
         }
     }
 
     @Test
     @Order(4)
     public void testInvalidateSession() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
-        UserSession auth;
-        try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(session, conn, null);
-            conn.tryCommit();
-        }
-        try(var conn = db.rw_transaction(null)){
-            AccountAPI.invalidate_session(auth, conn, Long.parseLong(session.substring(session.length()-8)));
-            conn.tryCommit();
-        }
-        try(var conn = db.ro_transaction(null)){
-            var ignore = UserSession.create(session, conn, null);
-            Assertions.fail("Session should have been invalidated");
-        }catch(Unauthorized ignore){
-            testAccountLogin();
+
+        for(var user : new User[]{u1, u2, o1, o2}) {
+            UserSession auth;
+            try(var conn = db.ro_transaction(null)){
+                auth = UserSession.create(user.session, conn, null);
+                conn.tryCommit();
+            }
+            try(var conn = db.rw_transaction(null)){
+                var session_id = Long.parseLong(user.session.substring(user.session.length()-8));
+                AccountAPI.invalidate_session(auth, conn, session_id);
+                conn.tryCommit();
+            }
+            try(var conn = db.ro_transaction(null)){
+                var ignore = UserSession.create(user.session, conn, null);
+                Assertions.fail("Session should have been invalidated");
+            }catch(Unauthorized ignore){
+                var account = new AccountAPI.Login();
+                account.email = user.email;
+                account.password = user.password;
+                try(var trans = db.rw_transaction(null)){
+                    user.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                    trans.tryCommit();
+                }
+            }
         }
     }
 
@@ -109,23 +157,30 @@ public class AccountAPITest {
     public void testChangeAuthPassword() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
         UserSession auth;
         try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(session, conn, null);
+            auth = UserSession.create(u1.session, conn, null);
             conn.tryCommit();
         }
         try(var conn = db.rw_transaction(null)){
             var ca = new AccountAPI.ChangeAuth();
-            ca.old_password = password;
-            ca.old_email = email;
+            ca.old_password = u1.password;
+            ca.old_email = u1.email;
             ca.new_password = "new_password";
             AccountAPI.change_auth(auth, conn, ca);
             conn.tryCommit();
         }
         try(var conn = db.ro_transaction(null)){
-            var ignore = UserSession.create(session, conn, null);
+            var ignore = UserSession.create(u1.session, conn, null);
             Assertions.fail("Session should have been invalidated");
         }catch(Unauthorized ignore){
-            password = "new_password";
-            testAccountLogin();
+            u1.password = "new_password";
+
+            var account = new AccountAPI.Login();
+            account.email = u1.email;
+            account.password = u1.password;
+            try(var trans = db.rw_transaction(null)){
+                u1.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                trans.tryCommit();
+            }
         }
     }
 
@@ -134,23 +189,30 @@ public class AccountAPITest {
     public void testChangeAuthEmail() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
         UserSession auth;
         try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(session, conn, null);
+            auth = UserSession.create(u1.session, conn, null);
             conn.tryCommit();
         }
         try(var conn = db.rw_transaction(null)){
             var ca = new AccountAPI.ChangeAuth();
-            ca.old_password = password;
-            ca.old_email = email;
+            ca.old_password = u1.password;
+            ca.old_email = u1.email;
             ca.new_email = "new_yui@gmail.com";
             AccountAPI.change_auth(auth, conn, ca);
             conn.tryCommit();
         }
         try(var conn = db.ro_transaction(null)){
-            var ignore = UserSession.create(session, conn, null);
+            var ignore = UserSession.create(u1.session, conn, null);
             Assertions.fail("Session should have been invalidated");
         }catch(Unauthorized ignore){
-            email = "new_yui@gmail.com";
-            testAccountLogin();
+            u1.email = "new_yui@gmail.com";
+
+            var account = new AccountAPI.Login();
+            account.email = u1.email;
+            account.password = u1.password;
+            try(var trans = db.rw_transaction(null)){
+                u1.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                trans.tryCommit();
+            }
         }
     }
 
@@ -159,7 +221,7 @@ public class AccountAPITest {
     public void testUpdateUser() throws SQLException, Unauthorized, BadRequest {
         UserSession auth;
         try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(session, conn, null);
+            auth = UserSession.create(u1.session, conn, null);
             conn.tryCommit();
         }
         var update = new AccountAPI.UpdateUser();
@@ -182,7 +244,7 @@ public class AccountAPITest {
     public void testUpdateInfo() throws SQLException, Unauthorized, BadRequest {
         UserSession auth;
         try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(session, conn, null);
+            auth = UserSession.create(u1.session, conn, null);
             conn.tryCommit();
         }
         var update = new AccountAPI.UpdateUser();
@@ -190,10 +252,10 @@ public class AccountAPITest {
             AccountAPI.update_user(auth, conn, update);
             conn.tryCommit();
         }
-        update.name = "Meep";
-        update.bio = java.util.Optional.of("Important");
-        update.disp_phone_number = java.util.Optional.of("111-22-3333");
-        update.disp_email = java.util.Optional.of("meep@hotmail.com");
+        u1.name = update.name = "Meep";
+        update.bio = java.util.Optional.of(u1.bio = "Important");
+        update.disp_phone_number = java.util.Optional.of(u1.disp_phone_number = "111-22-3333");
+        update.disp_email = java.util.Optional.of(u1.disp_email = "meep@hotmail.com");
         try(var conn = db.rw_transaction(null)){
             AccountAPI.update_user(auth, conn, update);
             conn.tryCommit();
@@ -201,33 +263,84 @@ public class AccountAPITest {
     }
 
     @Test
+    @Order(9)
+    public void testUserInfo() throws SQLException, Unauthorized {
+        UserSession auth;
+        try(var conn = db.ro_transaction(null)){
+            auth = UserSession.create(u1.session, conn, null);
+            conn.tryCommit();
+        }
+        try(var conn = db.ro_transaction(null)){
+            var ignore = AccountAPI.userinfo(null, conn, null);
+            conn.tryCommit();
+            Assertions.fail("No user id present, should be unable to fetch anything");
+        }catch(Unauthorized e){
+            Assertions.assertEquals("No identification present", e.getMessage());
+        }
+        try(var conn = db.ro_transaction(null)){
+            var info = AccountAPI.userinfo(auth, conn, null);
+            switch(info){
+                case AccountAPI.PrivateUserInfo privateUserInfo -> {
+                    Assertions.assertEquals(privateUserInfo.name(), u1.name);
+                    Assertions.assertEquals(privateUserInfo.email(), u1.email);
+                    Assertions.assertEquals(privateUserInfo.bio(), u1.bio);
+                    Assertions.assertEquals(privateUserInfo.disp_email(), u1.disp_email);
+                    Assertions.assertEquals(privateUserInfo.disp_phone_number(), u1.disp_phone_number);
+                }
+                case AccountAPI.PublicUserInfo ignore ->
+                    Assertions.fail("Personal private user info should never be returned as public");
+            }
+            conn.tryCommit();
+        }
+
+    }
+
+    @Test
     @Order(51)
     public void testDeleteAccount() throws SQLException, Unauthorized {
-        UserSession auth;
-        try(var conn = db.ro_conn(null)){
-            auth = UserSession.create(session, conn, null);
-        }
-        try(var trans = db.rw_transaction(null)){
-            var da = new AccountAPI.DeleteAccount();
-            da.email = email;
-            da.password = password;
-            AccountAPI.delete_account(auth, trans, da, null);
-            trans.tryCommit();
+        for(var user : new User[]{u1, o1}) {
+            UserSession auth;
+            try(var conn = db.ro_conn(null)){
+                auth = UserSession.create(user.session, conn, null);
+            }
+            try(var trans = db.rw_transaction(null)){
+                var da = new AccountAPI.DeleteAccount();
+                da.email = user.email;
+                da.password = user.password;
+                AccountAPI.delete_account(auth, trans, da, null);
+                trans.tryCommit();
+            }
         }
     }
 
     @Test
     @Order(52)
     public void testAccountDeleted() throws SQLException, UnknownHostException {
-        var account = new AccountAPI.Login();
-        account.email = "yui@gmail.com";
-        account.password = "password";
-        try(var trans = db.rw_transaction(null)){
-            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
-            trans.tryCommit();
-            Assertions.fail();
-        }catch (Unauthorized e){
-            Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+        for(var user : new User[]{u1, o1}) {
+            var account = new AccountAPI.Login();
+            account.email = user.email;
+            account.password = user.password;
+            try (var trans = db.rw_transaction(null)) {
+                user.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                trans.tryCommit();
+                Assertions.fail();
+            } catch (Unauthorized e) {
+                Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    @Order(52)
+    public void testAccountNotDeleted() throws SQLException, UnknownHostException, Unauthorized {
+        for(var user : new User[]{u2, o2}) {
+            var account = new AccountAPI.Login();
+            account.email = user.email;
+            account.password = user.password;
+            try (var trans = db.rw_transaction(null)) {
+                user.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                trans.tryCommit();
+            }
         }
     }
 
