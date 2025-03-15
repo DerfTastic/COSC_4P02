@@ -52,6 +52,19 @@ public class Config {
     }
 
     public Config(){}
+
+    public static Properties config(String... args){
+        var properties = new Properties();
+        for(int i = 0; i < args.length; i ++){
+            properties.put(args[i++], args[i]);
+        }
+        return properties;
+    }
+
+    public Config(String... args){
+        this(config(args));
+
+    }
     public Config(Properties properties){
         try{
             for (var field : Config.class.getFields()) {
