@@ -1054,6 +1054,11 @@ async function create_events(events, session) {
 async function create_tickets(tickets, event_id, session) {
     if (tickets == undefined || tickets == null) return;
     await Promise.all(tickets.map(async(ticket) => {
-        //TODO
+        const id = await api.tickets.create_ticket(event_id, session);
+        await api.tickets.update_ticket(id, {
+              name: ticket.name,
+              price: ticket.price,
+              available_tickets: ticket.available_tickets
+        }, session);
     }));
 }

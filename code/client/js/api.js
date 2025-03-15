@@ -45,10 +45,15 @@ class OrganizerEventTag {
 
 class EventTicket {
     /** @type{number} */id
-    /** @type{number} */event_id
     /** @type{string} */name
     /** @type{number} */price
     /** @type{number} */available_tickets
+}
+
+class EventTicketUpdate {
+    /** @type{string?} */name
+    /** @type{number?} */price
+    /** @type{number?} */available_tickets
 }
 
 class OrganizerEvent {
@@ -211,13 +216,14 @@ const api = {
             )).json();
         },
         /**
-         * @param {EventTicket} ticket 
+         * @param {number} id
+         * @param {EventTicketUpdate} ticket 
          * @param {Session} session 
          * @returns {Promise}
          */
-        update_ticket: async function(ticket, session = cookies.getSession()){
+        update_ticket: async function(id, ticket, session = cookies.getSession()){
             await api.api_call(
-                `/update_ticket`,
+                `/update_ticket/${id}`,
                 {
                     method: 'POST',
                     headers: {

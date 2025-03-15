@@ -20,15 +20,11 @@ public class TicketsAPI {
 
     public static class Ticket{
         public long id;
-        public Long event_id;
         public String name;
         public long price;
         public Integer available_tickets;
     }
 
-    /**
-     *
-     */
     @Route("/create_ticket/<event_id>")
     public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
         try (var stmt = trans.namedPreparedStatement("select owner_id from events where id=:id")) {
@@ -46,10 +42,10 @@ public class TicketsAPI {
         return result;
     }
 
-    @Route
-    public static void update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, @Json @Body Ticket ticket, RwTransaction trans) throws SQLException, Unauthorized, BadRequest {
+    @Route("/update_ticket/<ticket_id>")
+    public static void update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, @Json @Body Ticket ticket, @Path long ticket_id, RwTransaction trans) throws SQLException, Unauthorized, BadRequest {
         try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
-            stmt.setLong(":ticket_id", ticket.id);
+            stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();
             if (!rs.next())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
@@ -63,7 +59,7 @@ public class TicketsAPI {
             stmt.setLong(":price", ticket.price);
             if(ticket.available_tickets!=null)
                 stmt.setLong(":available_tickets", ticket.available_tickets);
-            stmt.setLong(":id", ticket.id);
+            stmt.setLong(":id", ticket_id);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to update ticket");
         }
