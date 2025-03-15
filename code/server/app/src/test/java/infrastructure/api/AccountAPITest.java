@@ -9,30 +9,34 @@ import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import server.Config;
 import server.infrastructure.DbManagerImpl;
-import server.infrastructure.DynamicMediaHandler;
 import server.infrastructure.param.auth.UserSession;
 import server.infrastructure.root.api.AccountAPI;
 import server.infrastructure.root.api.OrganizerAPI;
 import server.mail.MailServer;
 
 import java.net.InetAddress;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccountAPITest {
 
     private DbManager db;
-    private MailServer mail;
+    private final MailServerTest mail = new MailServerTest();
+    private final AccountAPI.PasswordResetManager prm = new AccountAPI.PasswordResetManager();
 
     private final Config config = new Config(
             "send_mail", "true",
             "send_mail_on_register", "true",
             "send_mail_on_login", "true"
     );
-    private final DynamicMediaHandler media = new DynamicMediaHandlerTest();
+    private final DynamicMediaHandlerTest media = new DynamicMediaHandlerTest();
 
     private static class User{
         String name;
@@ -41,6 +45,9 @@ public class AccountAPITest {
         String bio;
         String disp_email;
         String disp_phone_number;
+
+        long picture;
+        long banner;
 
         String session;
 
@@ -60,7 +67,6 @@ public class AccountAPITest {
     public void setup() {
         try{
             db = new DbManagerImpl("account_api_test", true, true, true);
-            mail = configurator -> {};
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -78,6 +84,17 @@ public class AccountAPITest {
                 AccountAPI.register(mail, trans, account, config);
                 trans.tryCommit();
             }
+        }
+
+        account.name = u1.name;
+        account.email = u1.email;
+        account.password = u1.password;
+        try(var trans = db.rw_transaction(null)){
+            AccountAPI.register(mail, trans, account, config);
+            trans.tryCommit();
+            Assertions.fail("Shouldn't be able to register for an account whos email already exists");
+        }catch (BadRequest e){
+            Assertions.assertEquals("Account with that email already exists", e.getMessage());
         }
     }
 
@@ -218,47 +235,113 @@ public class AccountAPITest {
 
     @Test
     @Order(7)
-    public void testUpdateUser() throws SQLException, Unauthorized, BadRequest {
-        UserSession auth;
-        try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(u1.session, conn, null);
-            conn.tryCommit();
+    public void testResetPassword() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
+        {//reset password
+            try (var conn = db.ro_transaction(null)) {
+                AccountAPI.reset_password(mail, conn, u1.email, prm, config);
+            }
+            // shouldn't log us out yet
+            try (var conn = db.ro_transaction(null)) {
+                var ignore = UserSession.create(u1.session, conn, null);
+            }
+            Pattern r = Pattern.compile("(.*)token=(\\S+)\"(.*)");
+            Matcher m = r.matcher(mail.mail.getLast().message);
+            Assertions.assertTrue(m.find());
+            var token = URLDecoder.decode(m.group(2), StandardCharsets.UTF_8);
+            try (var conn = db.rw_transaction(null)) {
+                var reset = new AccountAPI.PasswordReset(token, u1.email, u1.password = "new_password");
+                AccountAPI.do_reset_password(mail, conn, reset, prm);
+            }
+            //should log us out
+            try (var conn = db.ro_transaction(null)) {
+                var ignore = UserSession.create(u1.session, conn, null);
+                Assertions.fail("Should have logged us out");
+            } catch (Unauthorized e) {
+                Assertions.assertEquals("No valid session", e.getMessage());
+            }
+            var account = new AccountAPI.Login();
+            account.email = u1.email;
+            account.password = u1.password;
+            try (var trans = db.rw_transaction(null)) {
+                u1.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                trans.tryCommit();
+            }
         }
-        var update = new AccountAPI.UpdateUser();
-        try(var conn = db.rw_transaction(null)){
-            AccountAPI.update_user(auth, conn, update);
-            conn.tryCommit();
+
+        {// bad token
+            try (var conn = db.rw_transaction(null)) {
+                var reset = new AccountAPI.PasswordReset("bad token", u1.email, u1.password = "new_password");
+                AccountAPI.do_reset_password(mail, conn, reset, prm);
+                Assertions.fail("Should reject token");
+            } catch (BadRequest e) {
+                Assertions.assertEquals("Link has expired", e.getMessage());
+            }
+            // should fail work
+            try (var conn = db.ro_transaction(null)) {
+                var ignore = UserSession.create(u1.session, conn, null);
+            }
         }
-        update.name = "Meep";
-        update.bio = java.util.Optional.of("Important");
-        update.disp_phone_number = java.util.Optional.of("111-22-3333");
-        update.disp_email = java.util.Optional.of("meep@hotmail.com");
-        try(var conn = db.rw_transaction(null)){
-            AccountAPI.update_user(auth, conn, update);
-            conn.tryCommit();
+
+        {//incorrect email
+            try(var conn = db.ro_transaction(null)){
+                AccountAPI.reset_password(mail, conn, u1.email, prm, config);
+            }
+            Pattern r = Pattern.compile("(.*)token=(\\S+)\"(.*)");
+            Matcher m = r.matcher(mail.mail.getLast().message);
+            Assertions.assertTrue(m.find());
+            var token = URLDecoder.decode(m.group(2), StandardCharsets.UTF_8);
+            try (var conn = db.rw_transaction(null)) {
+                var reset = new AccountAPI.PasswordReset(token, "bad email", u1.password = "new_password");
+                AccountAPI.do_reset_password(mail, conn, reset, prm);
+                Assertions.fail("Should reject reset because of bad email");
+            }catch (BadRequest e){
+                Assertions.assertEquals("Email incorrect", e.getMessage());
+            }
         }
     }
 
     @Test
     @Order(8)
     public void testUpdateInfo() throws SQLException, Unauthorized, BadRequest {
-        UserSession auth;
-        try(var conn = db.ro_transaction(null)){
-            auth = UserSession.create(u1.session, conn, null);
-            conn.tryCommit();
+        {
+            UserSession auth;
+            try (var conn = db.ro_transaction(null)) {
+                auth = UserSession.create(u1.session, conn, null);
+                conn.tryCommit();
+            }
+            var update = new AccountAPI.UpdateUser();
+            try (var conn = db.rw_transaction(null)) {
+                AccountAPI.update_user(auth, conn, update);
+                conn.tryCommit();
+            }
+            update.name = u1.name = "Meep";
+            update.bio = java.util.Optional.of(u1.bio = "Important");
+            update.disp_phone_number = java.util.Optional.of(u1.disp_phone_number = "111-22-3333");
+            update.disp_email = java.util.Optional.of(u1.disp_email = "meep@hotmail.com");
+            try (var conn = db.rw_transaction(null)) {
+                AccountAPI.update_user(auth, conn, update);
+                conn.tryCommit();
+            }
         }
-        var update = new AccountAPI.UpdateUser();
-        try(var conn = db.rw_transaction(null)){
-            AccountAPI.update_user(auth, conn, update);
-            conn.tryCommit();
-        }
-        u1.name = update.name = "Meep";
-        update.bio = java.util.Optional.of(u1.bio = "Important");
-        update.disp_phone_number = java.util.Optional.of(u1.disp_phone_number = "111-22-3333");
-        update.disp_email = java.util.Optional.of(u1.disp_email = "meep@hotmail.com");
-        try(var conn = db.rw_transaction(null)){
-            AccountAPI.update_user(auth, conn, update);
-            conn.tryCommit();
+        {
+            UserSession auth;
+            try (var conn = db.ro_transaction(null)) {
+                auth = UserSession.create(o1.session, conn, null);
+                conn.tryCommit();
+            }
+            var update = new AccountAPI.UpdateUser();
+            try (var conn = db.rw_transaction(null)) {
+                AccountAPI.update_user(auth, conn, update);
+                conn.tryCommit();
+            }
+            update.name = o1.name = "Myaaa";
+            update.bio = java.util.Optional.of(o1.bio = "weeeeeeee");
+            update.disp_phone_number = java.util.Optional.of(o1.disp_phone_number = "444-555-6666");
+            update.disp_email = java.util.Optional.of(o1.disp_email = "peep@meow.com");
+            try (var conn = db.rw_transaction(null)) {
+                AccountAPI.update_user(auth, conn, update);
+                conn.tryCommit();
+            }
         }
     }
 
@@ -280,19 +363,112 @@ public class AccountAPITest {
         try(var conn = db.ro_transaction(null)){
             var info = AccountAPI.userinfo(auth, conn, null);
             switch(info){
-                case AccountAPI.PrivateUserInfo privateUserInfo -> {
-                    Assertions.assertEquals(privateUserInfo.name(), u1.name);
-                    Assertions.assertEquals(privateUserInfo.email(), u1.email);
-                    Assertions.assertEquals(privateUserInfo.bio(), u1.bio);
-                    Assertions.assertEquals(privateUserInfo.disp_email(), u1.disp_email);
-                    Assertions.assertEquals(privateUserInfo.disp_phone_number(), u1.disp_phone_number);
+                case AccountAPI.PrivateUserInfo ifo -> {
+                    Assertions.assertEquals(u1.name, ifo.name());
+                    Assertions.assertEquals(u1.email, ifo.email());
+                    Assertions.assertEquals(u1.bio, ifo.bio());
+                    Assertions.assertEquals(u1.disp_email, ifo.disp_email());
+                    Assertions.assertEquals(u1.disp_phone_number, ifo.disp_phone_number());
                 }
                 case AccountAPI.PublicUserInfo ignore ->
                     Assertions.fail("Personal private user info should never be returned as public");
             }
             conn.tryCommit();
         }
+        try(var conn = db.ro_transaction(null)){
+            var info = AccountAPI.userinfo(auth, conn, 2L);
+            switch(info){
+                case AccountAPI.PrivateUserInfo ignore -> Assertions.fail("Requested info should always be public");
+                case AccountAPI.PublicUserInfo ifo ->{
+                    Assertions.assertEquals(u1.name, ifo.name());
+                    Assertions.assertEquals(u1.bio, ifo.bio());
+                    Assertions.assertEquals(u1.disp_email, ifo.disp_email());
+                    Assertions.assertEquals(u1.disp_phone_number, ifo.disp_phone_number());
+                }
+            }
+            conn.tryCommit();
+        }
+        try(var conn = db.ro_transaction(null)){
+            var info = AccountAPI.userinfo(auth, conn, 3L);
+            switch(info){
+                case AccountAPI.PrivateUserInfo ignore -> Assertions.fail("Requested info should always be public");
+                case AccountAPI.PublicUserInfo ifo ->{
+                    Assertions.assertEquals(u2.name, ifo.name());
+                    Assertions.assertEquals(u2.bio, ifo.bio());
+                    Assertions.assertEquals(u2.disp_email, ifo.disp_email());
+                    Assertions.assertEquals(u2.disp_phone_number, ifo.disp_phone_number());
+                }
+            }
+            conn.tryCommit();
+        }
+        try(var conn = db.ro_transaction(null)){
+            var info = AccountAPI.userinfo(auth, conn, 4L);
+            switch(info){
+                case AccountAPI.PrivateUserInfo ignore -> Assertions.fail("Requested info should always be public");
+                case AccountAPI.PublicUserInfo ifo ->{
+                    Assertions.assertEquals(o1.name, ifo.name());
+                    Assertions.assertEquals(o1.bio, ifo.bio());
+                    Assertions.assertEquals(o1.disp_email, ifo.disp_email());
+                    Assertions.assertEquals(o1.disp_phone_number, ifo.disp_phone_number());
+                }
+            }
+            conn.tryCommit();
+        }
+        // this organizer doesn't have a display email so their other email is used
+        try(var conn = db.ro_transaction(null)){
+            var info = AccountAPI.userinfo(auth, conn, 5L);
+            switch(info){
+                case AccountAPI.PrivateUserInfo ignore -> Assertions.fail("Requested info should always be public");
+                case AccountAPI.PublicUserInfo ifo ->{
+                    Assertions.assertEquals(o2.name, ifo.name());
+                    Assertions.assertEquals(o2.bio, ifo.bio());
+                    Assertions.assertEquals(o2.email, ifo.disp_email());
+                    Assertions.assertEquals(o2.disp_phone_number, ifo.disp_phone_number());
+                }
+            }
+            conn.tryCommit();
+        }
+    }
 
+    @Test
+    @Order(10)
+    public void testSetPictureBanner() throws SQLException, Unauthorized, BadRequest {
+        for(var user : new User[]{u1, o1}){
+            UserSession auth;
+            try(var conn = db.ro_conn(null)){
+                auth = UserSession.create(user.session, conn, null);
+            }
+            try(var trans = db.rw_transaction(null)){
+                user.picture = AccountAPI.set_user_picture(auth, trans, media, new byte[]{2});
+                trans.tryCommit();
+            }
+            try(var trans = db.rw_transaction(null)){
+                user.banner = AccountAPI.set_user_banner_picture(auth, trans, media, new byte[]{1});
+                trans.tryCommit();
+            }
+            Assertions.assertTrue(media.present(user.picture));
+            Assertions.assertTrue(media.present(user.banner));
+        }
+        for(var user : new User[]{u1, o1}){
+            UserSession auth;
+            try(var conn = db.ro_conn(null)){
+                auth = UserSession.create(user.session, conn, null);
+            }
+            long old_picture = user.picture;
+            long old_banner = user.banner;
+            try(var trans = db.rw_transaction(null)){
+                user.picture = AccountAPI.set_user_picture(auth, trans, media, new byte[]{3});
+                trans.tryCommit();
+            }
+            try(var trans = db.rw_transaction(null)){
+                user.banner = AccountAPI.set_user_banner_picture(auth, trans, media, new byte[]{4});
+                trans.tryCommit();
+            }
+            Assertions.assertTrue(media.present(user.picture));
+            Assertions.assertTrue(media.present(user.banner));
+            Assertions.assertFalse(media.present(old_picture));
+            Assertions.assertFalse(media.present(old_banner));
+        }
     }
 
     @Test
@@ -307,9 +483,11 @@ public class AccountAPITest {
                 var da = new AccountAPI.DeleteAccount();
                 da.email = user.email;
                 da.password = user.password;
-                AccountAPI.delete_account(auth, trans, da, null);
+                AccountAPI.delete_account(auth, trans, da, media);
                 trans.tryCommit();
             }
+            Assertions.assertFalse(media.present(user.picture));
+            Assertions.assertFalse(media.present(user.banner));
         }
     }
 
@@ -349,24 +527,4 @@ public class AccountAPITest {
         db.close();
     }
 
-    private static class DynamicMediaHandlerTest implements DynamicMediaHandler {
-        final HashSet<Long> present = new HashSet<>();
-        long id = 0;
-
-        @Override
-        public byte[] get(long id) {
-            throw new RuntimeException("No!");
-        }
-
-        @Override
-        public void delete(long id) {
-            present.remove(id);
-        }
-
-        @Override
-        public long add(byte[] data) {
-            present.add(++id);
-            return id;
-        }
-    }
 }

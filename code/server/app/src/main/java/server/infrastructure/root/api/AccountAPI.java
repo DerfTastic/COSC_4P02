@@ -181,7 +181,7 @@ public class AccountAPI {
         try(var stmt = trans.namedPreparedStatement("delete from users where email=:email AND pass=:pass returning picture, banner")){
             stmt.setString(":email", auth.email);
             stmt.setString(":pass", account.password);
-            res = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> new DeleteResult(rs.getLong("picture"), rs.getLong("picture")));
+            res = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> new DeleteResult(rs.getLong("picture"), rs.getLong("banner")));
         }
         trans.commit();
         if(res.picture!=0)
@@ -342,9 +342,7 @@ public class AccountAPI {
     @Route("/userinfo/<id>")
     public static @Json UserInfo userinfo(@FromRequest(OptionalAuth.class) UserSession auth, RoTransaction trans, @Path @Nullable Long id) throws SQLException, Unauthorized {
         UserInfo result;
-        if(auth==null || (id!=null && auth.user_id!=id)){
-            if(id==null)
-                throw new Unauthorized("No identification present");
+        if(id!=null){
             try(trans; var stmt = trans.namedPreparedStatement("select name, email, bio, organizer, disp_email, disp_phone_number, picture, banner from users where id=:id")){
                 stmt.setLong(":id", id);
                 var rs = stmt.executeQuery();
@@ -363,7 +361,7 @@ public class AccountAPI {
                         rs.getLong("banner")
                 );
             }
-        }else{
+        }else if(auth!=null){
             try(trans; var stmt = trans.namedPreparedStatement("select name, bio, disp_email, disp_phone_number, picture, banner from users where id=:id")){
                 stmt.setLong(":id", auth.user_id);
                 var rs = stmt.executeQuery();
@@ -380,7 +378,9 @@ public class AccountAPI {
                         rs.getLong("banner")
                 );
             }
-        }
+        }else
+            throw new Unauthorized("No identification present");
+
 
         return result;
     }
