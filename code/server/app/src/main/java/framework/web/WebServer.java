@@ -32,19 +32,20 @@ public class WebServer {
     private final HashMap<Class<?>, Object> managedState = new HashMap<>();
     private final InetSocketAddress address;
 
-    /**
-     * Constructor for WebServer.
-     * @throws Exception for
-     */
-    public WebServer(InetSocketAddress address, int backlog) throws Exception {
-        // on program exit try to do a graceful shutdown
-        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
-        this.address = address;
-        server = HttpServer.create(address, backlog);
 
-        addManagedState(server); // Add HTTP Server to managed resources
+    public WebServer(InetSocketAddress address, int backlog) throws Exception {
+        this(HttpServer.create(address, backlog));
+    }
+
+    public WebServer(HttpServer server){
+        this.address = server.getAddress();
+        this.server = server;
+
+        addManagedState(server, HttpServer.class); // Add HTTP Server to managed resources
         addManagedState(this, WebServer.class); // Add HTTP Server to managed resources
         addManagedState(this); // Add HTTP Server to managed resources
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
 
     public void start(){

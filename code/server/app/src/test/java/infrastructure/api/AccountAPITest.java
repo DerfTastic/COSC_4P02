@@ -5,16 +5,14 @@ package infrastructure.api;
 
 import infrastructure.DynamicMediaHandlerSkeleton;
 import infrastructure.MailServerSkeleton;
-import infrastructure.User;
+import infrastructure.TestingUser;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import server.Config;
 import server.infrastructure.DbManagerImpl;
-import server.infrastructure.param.auth.UserSession;
 import server.infrastructure.root.api.AccountAPI;
-import server.infrastructure.root.api.OrganizerAPI;
 
 import java.net.InetAddress;
 import java.net.URLDecoder;
@@ -39,24 +37,20 @@ public class AccountAPITest {
     );
     private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
 
-    private final User u1 = new User("Yui", "yui@gmail.com", "saas");
-    private final User u2 = new User("Tui", "tui@gmail.com", "pass");
-    private final User o1 = new User("Gui", "gui@gmail.com", "saap");
-    private final User o2 = new User("Pui", "pui@gmail.com", "pssa");
+    private final TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
+    private final TestingUser u2 = new TestingUser("Tui", "tui@gmail.com", "pass");
+    private final TestingUser o1 = new TestingUser("Gui", "gui@gmail.com", "saap");
+    private final TestingUser o2 = new TestingUser("Pui", "pui@gmail.com", "pssa");
 
     @BeforeAll
-    public void setup() {
-        try{
-            db = new DbManagerImpl("account_api_test", true, true, true);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+    public void setup() throws SQLException {
+        db = new DbManagerImpl("account_api_test", true, true, true);
     }
 
     @Test
     @Order(1)
     public void testAccountRegistration() throws BadRequest, SQLException {
-        for(var user : new User[]{u1, u2, o1, o2}){
+        for(var user : new TestingUser[]{u1, u2, o1, o2}){
             user.register(mail, db, config);
         }
 
@@ -71,11 +65,11 @@ public class AccountAPITest {
     @Test
     @Order(2)
     public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException, BadRequest {
-        for(var user : new User[]{u1, u2, o1, o2}){
+        for(var user : new TestingUser[]{u1, u2, o1, o2}){
             user.login(mail, db, config);
         }
         // this is needed for later as we have some features which rely on users being organizers
-        for(var user : new User[]{o1, o2}){
+        for(var user : new TestingUser[]{o1, o2}){
             user.makeOrganizer(db, null);
         }
     }
@@ -83,7 +77,7 @@ public class AccountAPITest {
     @Test
     @Order(3)
     public void testListSessions() throws SQLException, Unauthorized {
-        for(var user : new User[]{u1, u2, o1, o2}) {
+        for(var user : new TestingUser[]{u1, u2, o1, o2}) {
             var auth = user.userSession(db, null);
             try (var conn = db.ro_transaction(null)) {
                 var sessions = AccountAPI.list_sessions(auth, conn);
@@ -99,7 +93,7 @@ public class AccountAPITest {
     @Order(4)
     public void testInvalidateSession() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
 
-        for(var user : new User[]{u1, u2, o1, o2}) {
+        for(var user : new TestingUser[]{u1, u2, o1, o2}) {
             var auth = user.userSession(db, null);
             try(var conn = db.rw_transaction(null)){
                 var session_id = Long.parseLong(user.session.substring(user.session.length()-8));
@@ -343,7 +337,7 @@ public class AccountAPITest {
     @Test
     @Order(10)
     public void testSetPictureBanner() throws SQLException, Unauthorized, BadRequest {
-        for(var user : new User[]{u1, o1}){
+        for(var user : new TestingUser[]{u1, o1}){
             var auth = user.userSession(db, null);
             try(var trans = db.rw_transaction(null)){
                 user.picture = AccountAPI.set_user_picture(auth, trans, media, new byte[]{2});
@@ -356,7 +350,7 @@ public class AccountAPITest {
             Assertions.assertTrue(media.present(user.picture));
             Assertions.assertTrue(media.present(user.banner));
         }
-        for(var user : new User[]{u1, o1}){
+        for(var user : new TestingUser[]{u1, o1}){
             var auth = user.userSession(db, null);
             long old_picture = user.picture;
             long old_banner = user.banner;
@@ -378,7 +372,7 @@ public class AccountAPITest {
     @Test
     @Order(51)
     public void testDeleteAccount() throws SQLException, Unauthorized {
-        for(var user : new User[]{u1, o1}) {
+        for(var user : new TestingUser[]{u1, o1}) {
             var auth = user.userSession(db, null);
             try(var trans = db.rw_transaction(null)){
                 var da = new AccountAPI.DeleteAccount();
@@ -395,7 +389,7 @@ public class AccountAPITest {
     @Test
     @Order(52)
     public void testAccountDeleted() throws SQLException, UnknownHostException {
-        for(var user : new User[]{u1, o1}) {
+        for(var user : new TestingUser[]{u1, o1}) {
             try{
                 user.login(mail, db, config);
                 Assertions.fail("Account should have been deleted");
@@ -408,7 +402,7 @@ public class AccountAPITest {
     @Test
     @Order(52)
     public void testAccountNotDeleted() throws SQLException, UnknownHostException, Unauthorized {
-        for(var user : new User[]{u2, o2}) {
+        for(var user : new TestingUser[]{u2, o2}) {
             user.login(mail, db, config);
         }
     }

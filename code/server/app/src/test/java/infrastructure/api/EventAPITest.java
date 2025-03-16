@@ -3,30 +3,45 @@
  */
 package infrastructure.api;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
+import infrastructure.DynamicMediaHandlerSkeleton;
+import infrastructure.MailServerSkeleton;
+import infrastructure.TestingUser;
+import org.junit.jupiter.api.*;
 import framework.db.DbManager;
+import server.Config;
 import server.infrastructure.DbManagerImpl;
 
+import java.net.UnknownHostException;
+import java.sql.SQLException;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EventAPITest {
     private static DbManager db;
+    private final Config config = new Config(
+            "send_mail", "false"
+    );
+    private final MailServerSkeleton mail = new MailServerSkeleton();
+    private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
 
-    private static String session;
+    private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+    private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
 
     @BeforeAll
-    public static void setup() {
-        try{
-            db = new DbManagerImpl("event_api_test", true, true, true);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+    public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
+        db = new DbManagerImpl("event_api_test", true, true, true);
+        o1.register(mail, db, config);
+        o1.login(mail, db, config);
+        o1.makeOrganizer(db, null);
+
+        u1.register(mail, db, config);
+        u1.login(mail, db, config);
     }
 
     @AfterAll
-    public static void close() {
+    public void close() {
         db.close();
     }
 }
