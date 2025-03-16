@@ -79,7 +79,7 @@ public class EventAPI {
                 throw new BadRequest("Event doesn't exist or you do not have permission to view it");
             if(result.size()>1)
                 throw new SQLException("Expected single value found multiple");
-            event = result.get(0);
+            event = result.getFirst();
         }
 
         List<EventTag> tags;
@@ -145,6 +145,8 @@ public class EventAPI {
             else
                 throw new RuntimeException("Expected object value");
         }
+
+        public UpdateEvent(){}
 
         public UpdateEvent(JSONReader reader) throws BadRequest {
             if(!reader.nextIfObjectStart())

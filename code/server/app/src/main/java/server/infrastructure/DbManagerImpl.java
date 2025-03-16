@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,24 +49,106 @@ public class DbManagerImpl extends DbManager {
             try(var conn = rw_conn(">initialization")){
                 Logger.getGlobal().log(Level.FINE, "Initializing DB");
 
+
+                var error = new AtomicBoolean(false);
                 try(var stmt = conn.createStatement()){
-                    for(var sql : sql("creation").split(";")){
+                    sql_split(sql("creation"), statement -> {
                         try{
-                            stmt.execute(sql);
+                            stmt.execute(statement);
                         }catch (SQLException e){
-                            Logger.getGlobal().log(Level.WARNING, sql);
-                            throw e;
+                            Logger.getGlobal().log(Level.WARNING, statement, e);
+                            error.set(true);
                         }
-                    }
+                    });
                 }catch (SQLException e){
                     Logger.getGlobal().log(Level.SEVERE, "Failed to initialize DB", e);
                     throw e;
                 }
+                if(error.get())
+                    throw new RuntimeException();
                 conn.commit();
                 Logger.getGlobal().log(Level.CONFIG, "Initialized DB");
             }
         }
     }
+
+    /**
+     * Splits a large list of SQL statements into whole SQL statemets which can be executed
+     * takes into account begin and end blocks.
+     */
+    private static void sql_split(String sql, Consumer<String> consumer){
+        new Object(){
+            char[] chars = sql.toCharArray();
+            int index = 0;
+
+            int c(){
+                if(index < chars.length)
+                    return chars[index];
+                else
+                    return -1;
+            }
+            int c(int ahead){
+                if(index+ahead < chars.length)
+                    return chars[index+ahead];
+                else
+                    return -1;
+            }
+            boolean nextIs(String str){
+                var c = str.toCharArray();
+                for(int i = 0; i < c.length; i ++){
+                    if(c(i)!=c[i])
+                        return false;
+                }
+                return true;
+            }
+            {
+                int begins = 0;
+                StringBuilder builder = new StringBuilder();
+                while(index < chars.length){
+                    if(nextIs("--")){
+                        while(c()!='\n')index++;
+                        index++;
+                    }else if(nextIs("/*")){
+                        while(!nextIs("*/"))index++;
+                        index++;
+                        index++;
+                    }else if(c()=='"'||c()=='\''){
+                        var now = c();
+                        builder.append((char)now);
+                        index++;
+                        while(index < chars.length&&c()!=now){
+                            builder.append((char)c());
+                            if(c()=='\\'){
+                                index++;
+                                builder.append((char)c());
+                            }
+                            index++;
+                        }
+                        builder.append((char)c());
+                        index++;
+                    }else if(nextIs("begin")|nextIs("BEGIN")) {
+                        index+=5;
+                        begins++;
+                        builder.append("BEGIN");
+                    }else if(nextIs("end")|nextIs("END")) {
+                        index+=3;
+                        begins--;
+                        builder.append("END");
+                    }else if(nextIs(";")&&begins==0){
+                        var str = builder.toString();
+                        consumer.accept(str.trim());
+                        builder.delete(0, builder.length());
+                        index++;
+                    }else{
+                        builder.append((char)c());
+                        index++;
+                    }
+                }
+            }
+        };
+    }
+
+
 
     public synchronized static String sql(String id){
         String resourcePath = "/sql/"+id+".sql";
@@ -78,8 +162,9 @@ public class DbManagerImpl extends DbManager {
     }
 
     @Override
-    protected Connection openConnection(boolean readOnly) throws SQLException {
+    protected SQLiteConnection openConnection(boolean readOnly) throws SQLException {
         var config = new SQLiteConfig();
+
         config.setReadOnly(readOnly);
         config.setPragma(SQLiteConfig.Pragma.SHARED_CACHE, "true");
         config.setPragma(SQLiteConfig.Pragma.JOURNAL_MODE, SQLiteConfig.JournalMode.WAL.getValue());
@@ -91,6 +176,8 @@ public class DbManagerImpl extends DbManager {
         var connection = (SQLiteConnection) DriverManager.getConnection(url, config.toProperties());
         connection.setCurrentTransactionMode(SQLiteConfig.TransactionMode.DEFERRED);
         connection.setAutoCommit(false);
+
+
 
         synchronized (this){
             for(var listener : listeners){
