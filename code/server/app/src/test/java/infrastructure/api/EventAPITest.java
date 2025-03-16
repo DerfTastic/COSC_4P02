@@ -12,9 +12,11 @@ import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import server.Config;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.root.api.EventAPI;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -26,6 +28,7 @@ public class EventAPITest {
     private final MailServerSkeleton mail = new MailServerSkeleton();
     private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
 
+    ArrayList<Long> events;
     private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
     private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
 
@@ -38,6 +41,32 @@ public class EventAPITest {
 
         u1.register(mail, db, config);
         u1.login(mail, db, config);
+    }
+
+    @Test
+    @Order(1)
+    public void createEventTest() throws SQLException, Unauthorized {
+        var auth = o1.organizerSession(db, null);
+        events = new ArrayList<>();
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+
+        auth = u1.userSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+            Assertions.fail("A regular user cannot create an event");
+        }catch (SQLException ignore){}
     }
 
     @AfterAll

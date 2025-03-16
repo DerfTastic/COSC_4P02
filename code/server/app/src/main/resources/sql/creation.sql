@@ -45,6 +45,14 @@ create table events(
               ON UPDATE NO ACTION
 );
 
+CREATE TRIGGER event_owner_is_organizer
+BEFORE INSERT ON events
+BEGIN
+    SELECT RAISE(FAIL, "user is not organizer")
+    FROM users WHERE id = NEW.owner_id AND organizer=false;
+END;
+
+
 CREATE INDEX event_organizer_id_idx ON events(owner_id);
 CREATE INDEX event_name_idx ON events(name);
 CREATE INDEX event_category_idx ON events(category);
