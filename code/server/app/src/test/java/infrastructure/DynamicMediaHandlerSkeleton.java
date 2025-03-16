@@ -1,10 +1,10 @@
-package infrastructure.api;
+package infrastructure;
 
 import server.infrastructure.DynamicMediaHandler;
 
 import java.util.HashSet;
 
-public class DynamicMediaHandlerTest implements DynamicMediaHandler {
+public class DynamicMediaHandlerSkeleton implements DynamicMediaHandler {
     private final HashSet<Long> present = new HashSet<>();
     private long id = 0;
 

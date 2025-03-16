@@ -1,4 +1,4 @@
-package infrastructure.api;
+package infrastructure;
 
 import server.mail.MailServer;
 import server.mail.MessageConfigurator;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 
-public class MailServerTest implements MailServer {
+public class MailServerSkeleton implements MailServer {
     public final ArrayList<TestMail> mail = new ArrayList<>();
     @Override
     public void sendMail(MessageConfigurator configurator) {
