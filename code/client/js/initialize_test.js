@@ -48,15 +48,21 @@ async function delete_database_stuff(){
 }
 
 async function create_all_user_defined(){
-    await Promise.all([
-        create_organizers(JSON.parse(document.getElementById("json").value))
-        // create_organizers(joycelyn),
-        // create_organizers(taylor),
-        // create_organizers(sinatra),
-        // create_organizers(ben),
-        // create_organizers(parker),
-        // create_organizers(everything)
-    ]);
+    try{
+        const json = JSON.parse(document.getElementById("json").value);
+        await Promise.all([
+            create_organizers(json)
+            // create_organizers(joycelyn),
+            // create_organizers(taylor),
+            // create_organizers(sinatra),
+            // create_organizers(ben),
+            // create_organizers(parker),
+            // create_organizers(everything)
+        ]);
+    }catch(e){
+        console.log(e);
+        alert(e);
+    }
     alert("Finished");
 }
 
