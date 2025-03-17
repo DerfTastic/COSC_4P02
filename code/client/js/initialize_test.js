@@ -160,16 +160,12 @@ async function create_organizers(organizers) {
             disp_phone_number: organizer.disp_phone_number,
         }, session);
         if (organizer.picture != undefined && organizer.picture != null) {
-            try {
-                const pic = await (await fetch(organizer.picture)).blob();
-                await api.user.set_user_picture(pic, session);
-            } catch (e) { }
+            const pic = await (await fetch(organizer.picture)).blob();
+            await api.user.set_user_picture(pic, session);
         }
         if (organizer.banner != undefined && organizer.banner != null) {
-            try {
-                const pic = await (await fetch(organizer.banner)).blob();
-                await api.user.set_user_banner_picture(pic, session);
-            } catch (e) { }
+            const pic = await (await fetch(organizer.banner)).blob();
+            await api.user.set_user_banner_picture(pic, session);
         }
         await api.organizer.convert_to_organizer_account(session);
         await create_events(organizer.events, session);
@@ -199,18 +195,12 @@ async function create_events(events, session) {
         }, session);
 
         if (event.picture != undefined && event.picture != null) {
-            try {
-                const pic = await (await fetch(event.picture)).blob();
-                await api.events.set_picture(id, pic, session);
-            } catch (e) { }
+            const pic = await (await fetch(event.picture)).blob();
+            await api.events.set_picture(id, pic, session);
         }
         if (event.tags != undefined && event.tags != null)
             for (const tag of event.tags) {
-                try{
-                    await api.events.add_event_tag(id, tag, session);
-                }catch(e){
-                    console.log(event.tags);
-                }
+                await api.events.add_event_tag(id, tag, session);
             }
         await create_tickets(event.tickets, id, session);
         await api.events.set_draft(id, false, session);
