@@ -38,21 +38,12 @@ html {
     min-height: 70vh;
 }
 
-h1 {
-    font-family: "Black Ops One", serif;
-    font-weight: 400;
-    font-size: 45px;
-    font-style: normal;
-    color: #eeeef0;
-}
-
 footer {
     justify-self: center;
     width: 100%;
     padding: 10px;
     border-top: 1px solid rgba(238, 238, 240, 0.2);
     background: rgba(238, 238, 240, 0.1);
-    /* backdrop-filter: blur(20px); */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: #eeeef0;
     text-align: center;
@@ -61,8 +52,8 @@ footer {
 
 header {
     width: 100%;
-    background: rgba(238, 238, 240, 0.1);
-    backdrop-filter: blur(20px);
+    background: rgba(42, 62, 89, 0.3);
+    backdrop-filter: blur(15px);
     border-bottom: 1px solid rgba(238, 238, 240, 0.2);
     position: fixed;
     top: 0;
@@ -74,6 +65,12 @@ header {
     z-index: 2;
     box-sizing: border-box;
     padding: 0 10px;
+    gap: 5px;
+}
+
+header:hover {
+    backdrop-filter: none;
+    background-color: #2a3e59;
 }
 
 nav {
@@ -84,21 +81,40 @@ nav {
     margin: 0;
     transition: all 0.3s ease;
     gap: 10px;
-}
-
-header .logo {
-    width: 80px;
-    padding-top: 10px;
+    flex: 0.4;
 }
 
 .logo-and-title {
     display: flex;
+    align-self: center;
+    justify-self: center;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    width: fit-content;
+    flex: 0.5;
+    padding-right: 10px;
 }
 
-.logo-and-title a {
-    text-decoration: none;
+.logo-and-title h1 {
+    display: flex;
+    font-family: "Black Ops One", serif;
+    font-weight: 400;
+    font-size: clamp(25px, 3vw, 50px);
+    font-style: normal;
+    color: #eeeef0;
+    margin: 0;
+}
+
+.logo {
+    max-width: 80px;
+    padding-top: 10px;
+}
+
+.logo-and-title h1:hover,
+.logo-and-title .logo:hover {
+    cursor: pointer;
 }
 
 .search-bar {
@@ -111,10 +127,10 @@ header .logo {
     height: 40px;
     outline: none;
     background: rgba(238, 238, 240, 0.15);
-    /* backdrop-filter: blur(15px);  */
     border: 1px solid rgba(238, 238, 240, 0.2);
     border-radius: 25px;
     gap: 0;
+    flex: 0.3;
 }
 
 .search-bar input {
@@ -131,12 +147,12 @@ header .logo {
 }
 
 .search-bar input:focus {
-    background-color: #415a77;
+    background-color: #2a3e59;
 }
 
 .search-bar input:-webkit-autofill {
     -webkit-text-fill-color: #eeeef0 !important;
-    box-shadow: 0 0 0px 1000px #778da9 inset !important;
+    box-shadow: 0 0 0px 1000px #2a3e59 inset !important;
 }
 
 .search-bar input::placeholder {
@@ -253,7 +269,6 @@ nav a:hover,
     position: relative;
     transition: transform 0.3s ease;
     box-sizing: border-box;
-    /* backdrop-filter: blur(15px);   */
 }
 
 .product-box:hover {
@@ -723,11 +738,11 @@ nav a:hover,
 
     header {
         display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-        justify-content: center;
+        flex-wrap: nowrap;
+        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
-        height: auto;
+        height: fit-content;
         margin: 0;
         padding: 10px;
     }
@@ -738,6 +753,10 @@ nav a:hover,
         margin: 0;
         padding: 0;
         width: 100%;
+    }
+
+    .logo-and-title h1 {
+        font-size: clamp(40px, 2vw, 45px);
     }
 
     nav {
@@ -766,7 +785,7 @@ nav a:hover,
     .search-bar input {
         font-size: 20px;
         height: 30px;
-        max-width: 200px;
+        max-width: 100%;
     }
 
     .search-bar button {
@@ -807,7 +826,7 @@ nav a:hover,
 
     header {
         flex-wrap: wrap;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-between;
         height: min-content;
         margin: 0;
@@ -815,8 +834,7 @@ nav a:hover,
     }
 
     .logo-and-title h1 {
-        font-size: 20px;
-        white-space: nowrap;
+        font-size: clamp(25px, 2vw, 30px);
     }
 
     .logo-and-title img {
@@ -838,18 +856,20 @@ nav a:hover,
     }
 
     .search-bar {
-        gap: 5px;
+        flex-direction: row;
+        width: 100%;
+        max-width: 300px;
     }
 
     .search-bar input {
-        font-size: 12px;
-        height: 20px;
-        max-width: 150px;
+        font-size: 15px;
+        height: 30px;
+        width: 100%;
     }
 
     .search-bar button {
-        height: smaller;
-        width: smaller;
+        height: 30px;
+        width: 30px;
     }
 
     nav a,
