@@ -311,6 +311,55 @@
         #smallPreviewContainer img {
             cursor: pointer;
         }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90vw;
+            }
+
+            .progress-bar {
+                gap: 65px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 90vw;
+            }
+
+            .progress-bar .step .bullet {
+                height: 40px;
+                width: 40px;
+                border: 2px solid #eeeef0;
+                display: inline-block;
+                border-radius: 50%;
+                position: relative;
+                transition: 0.2s;
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 34px;
+            }
+
+            .progress-bar .step .bullet:before,
+            .progress-bar .step .bullet:after {
+                position: absolute;
+                content: '';
+                bottom: 16px;
+                right: -50px;
+                height: 4px;
+                width: 40px;
+                background: #eeeef0;
+            }
+
+            .progress-bar .step p {
+                font-size: 20px;
+
+            }
+
+            .progress-bar {
+                gap: 50px;
+            }
+        }
     </style>
 </head>
 <div src="/partials/header.html" type="text/x-html-template"></div>
