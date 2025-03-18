@@ -1,47 +1,42 @@
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Black+Ops+One&family=Caesar+Dressing&display=swap" rel="stylesheet"> 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Black+Ops+One&family=Caesar+Dressing&display=swap"
+        rel="stylesheet">
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
 </head>
 
 <header>
-        <div class="hamburger" onclick="toggleMenu()" aria-label="Toggle Navigation">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+    <div class="logo-and-title">
+        <img src="/images/logo.png" class="logo" alt="Logo" onclick="window.location.href='/'">
+        <h1 onclick="window.location.href='/'">TICKET EXPRESS</h1>
+    </div>
 
-        <div class="logo-and-title">
-            <a href="/">
-            <img src="/images/logo.png" class="logo" alt="Logo"></a>
-            <a href="/">
-            <h1>TICKET EXPRESS</h1></a>
-        </div>
+    <form class="search-bar" id="searchForm" method="GET" action="/event/search">
+        <input type="text" name="search" id="search" placeholder="Search events..." value="">
+        <button type="submit" aria-label="Search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16">
+                <path fill="currentcolor"
+                    d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+            </svg>
+        </button>
+    </form>
 
-        <form class="search-bar" id="searchForm" method="GET" action="/event/search">
-            <input type="text" name="search" id="search" placeholder="Search events..." value="">
-            <button type="submit" aria-label="Search">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16">
-                    <path fill="currentcolor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
-                </svg>
-            </button>
-        </form>
-        
 
-        <nav>
-            <a href="/event/search" id ="search-event-link">Browse Events</a>
-            <a href="/event/create" id="create-event-link">Create Events</a>
-            <a href="/account/login" id="login-link">Login</a>
-            <a href="/account/register" id="signup-link">Signup</a>
-            <a href="#" id="logout-link" style="display: none;">Logout</a>
-        
-        <button id = "cart" class="cart" aria-label="View Cart">
+    <nav>
+        <a href="/event/search" id="search-event-link">Browse Events</a>
+        <a href="/event/create" id="create-event-link" style="display: none;">Create Events</a>
+        <a href="/account/login" id="login-link">Login</a>
+        <a href="/account/register" id="signup-link">Signup</a>
+        <a href="#" id="logout-link" style="display: none;">Logout</a>
+
+        <button id="cart" class="cart" aria-label="View Cart">
             <!-- <i class="fa badge fa-lg">&#xf07a;</i> -->
             <i class="fa  fa-lg">&#xf07a;</i>
         </button>
-        </nav>
+    </nav>
 </header>
 
 <script>
@@ -59,11 +54,11 @@
             signupLink.style.display = 'none';
             logoutLink.style.display = 'inline';
 
-            signupLink.insertAdjacentHTML('afterend','<a href="/account">Account</a>');
+            signupLink.insertAdjacentHTML('afterend', '<a href="/account">Account</a>');
 
-            logoutLink.onclick = function() {
-                utility.logout(); 
-                setTimeout(function() {
+            logoutLink.onclick = function () {
+                utility.logout();
+                setTimeout(function () {
                     updateAuthLinks();
                 }, 2000);
             };
@@ -71,7 +66,6 @@
                 const userInfo = await page.account.userinfo();
                 if (userInfo && userInfo.admin) {
                     searchLink.style.display = 'none';
-                    createLink.style.display = 'none';
                     cart.style.display = 'none';
                     const adminLinksHTML = `
                         <a href="/admin/logs">Logs</a>
@@ -80,12 +74,15 @@
                     `;
                     loginLink.insertAdjacentHTML('afterend', adminLinksHTML);
                 }
+                else if (userInfo && userInfo.organiser) {
+                    createLink.style.display = "inline"
+                }
             } catch (error) {
                 console.error('Error fetching user info:', error);
             }
         } else {
             searchLink.style.display = 'inline';
-            createLink.style.display = 'inline';
+            createLink.style.display = 'none';
             loginLink.style.display = 'inline';
             signupLink.style.display = 'inline';
             logoutLink.style.display = 'none';
