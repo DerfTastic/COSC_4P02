@@ -67,11 +67,11 @@ public class EventAPI {
             List<EventTag> tags
     ){}
 
-    @Route("/get_event/<id>")
-    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long id) throws SQLException, BadRequest {
+    @Route("/get_event/<event_id>")
+    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, BadRequest {
         Event event;
-        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:id AND draft=false) OR (id=:id AND owner_id=:owner_id)")){
-            stmt.setLong(":id", id);
+        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:event_id AND draft=false) OR (id=:event_id AND owner_id=:owner_id)")){
+            stmt.setLong(":event_id", event_id);
             if(session!=null)
                 stmt.setLong(":owner_id", session.user_id);
             var result = SqlSerde.sqlList(stmt.executeQuery(), Event.class);
@@ -94,21 +94,21 @@ public class EventAPI {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class UpdateEvent{
-        Optional<String> name;
-        Optional<String> description;
-        Optional<JSONObject> metadata;
+        public Optional<String> name;
+        public Optional<String> description;
+        public Optional<JSONObject> metadata;
 
-        Optional<String> type;
-        Optional<String> category;
+        public Optional<String> type;
+        public Optional<String> category;
 
-        Optional<Long> start;
-        Optional<Long> duration;
+        public Optional<Long> start;
+        public Optional<Long> duration;
 
-        Optional<Long> available_total_tickets;
+        public Optional<Long> available_total_tickets;
 
-        Optional<String> location_name;
-        Optional<Double> location_lat;
-        Optional<Double> location_long;
+        public Optional<String> location_name;
+        public Optional<Double> location_lat;
+        public Optional<Double> location_long;
 
         private static Optional<String> optionalString(JSONReader reader){
             if(reader.nextIfNull())
@@ -270,10 +270,15 @@ public class EventAPI {
     }
 
 
-    @Route("/add_event_tag/<id>/<tag>")
-    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag) throws SQLException, BadRequest {
-        try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :id)")){
-            stmt.setLong(":id", id);
+    @Route("/add_event_tag/<event_id>/<tag>")
+    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
+            stmt.setLong(":event_id", event_id);
+            if(stmt.executeQuery().getLong("owner_id")!=session.user_id)
+                throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
+        }
+        try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :event_id)")){
+            stmt.setLong(":event_id", event_id);
             stmt.setString(":tag", tag);
             try{
                 if(stmt.executeUpdate()!=1)
@@ -285,10 +290,15 @@ public class EventAPI {
         trans.commit();
     }
 
-    @Route("/delete_event_tag/<id>/<tag>")
-    public static void delete_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path String tag) throws SQLException, BadRequest {
+    @Route("/delete_event_tag/<event_id>/<tag>")
+    public static void delete_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
+            stmt.setLong(":event_id", event_id);
+            if(stmt.executeQuery().getLong("owner_id")!=session.user_id)
+                throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
+        }
         try(var stmt = trans.namedPreparedStatement("delete from event_tags where tag=:tag AND event_id=:event_id")){
-            stmt.setLong(":id", id);
+            stmt.setLong(":event_id", event_id);
             stmt.setString(":tag", tag);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Could not remove tag. Tag does not exist or you do now own event");
@@ -337,6 +347,7 @@ public class EventAPI {
             if(media_id!=0){
                 handler.delete(media_id);
             }
+            throw e;
         }
         if(old_media!=0){
             handler.delete(old_media);

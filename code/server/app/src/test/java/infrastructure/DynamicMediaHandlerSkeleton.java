@@ -24,6 +24,14 @@ public class DynamicMediaHandlerSkeleton implements DynamicMediaHandler {
         return id;
     }
 
+    public int size(){
+        return present.size();
+    }
+
+    public HashSet<Long> present(){
+        return new HashSet<>(present);
+    }
+
     public boolean present(long id) {
         return present.contains(id);
     }
