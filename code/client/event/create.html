@@ -423,9 +423,15 @@
                                     class="input-field" required>
                             </div>
                             <div class="field">
-                                <div class="label">Event Date & Time</div>
+                                <!-- <div class="label">Event Date & Time</div>
                                 <input type="datetime-local" id="eventStartDate" class="input-field" required><br><br>
-                                <input type="datetime-local" id="eventEndDate" class="input-field" required>
+                                <input type="datetime-local" id="eventEndDate" class="input-field" required> -->
+                                <div class="label">Event Date</div>
+                                <input type="date" id="eventDate" class="input-field" required><br><br>
+
+                                <div class="label">Event Start and End Time</div>
+                                <input type="time" id="eventStartTime" class="input-field" required>
+                                <input type="time" id="eventEndTime" class="input-field" required>
                             </div>
                             <div class="field">
                                 <div class="label">Event Type</div>
@@ -727,8 +733,9 @@
                 eventTitle: document.getElementById('eventTitle').value,
                 eventDescription: document.getElementById('eventDescription').value,
                 eventLocation: document.getElementById('eventLocation').value,
-                eventStartDate: document.getElementById('eventStartDate').value,
-                eventEndDate: document.getElementById('eventEndDate').value,
+                eventDate: document.getElementById('eventDate').value,
+                eventStartTime: document.getElementById('eventStartTime').value,
+                eventEndTime: document.getElementById('eventEndTime').value,
                 eventType: document.getElementById('eventType').value,
                 eventCategory: document.getElementById('eventCategory').value,
                 eventTags: document.getElementById('eventTags').value,
@@ -738,7 +745,7 @@
         // Function to populate review section
         function populateReviewSection() {
 
-            const { eventTitle, eventDescription, eventLocation, eventStartDate, eventEndDate, eventType, eventCategory, eventTags } = getEventDetails();
+            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventType, eventCategory, eventTags } = getEventDetails();
 
             // Get ticket details
             let ticketDetails = '';
@@ -758,25 +765,23 @@
             document.getElementById('reviewEventDescription').textContent = eventDescription || 'N/A';
             document.getElementById('reviewEventLocation').textContent = eventLocation || 'N/A';
             document.getElementById('reviewEventDate').textContent =
-                eventStartDate && eventEndDate
-                    ? `${new Date(eventStartDate).toLocaleString('en-US', {
+                eventDate && eventStartTime && eventEndTime
+                    ? `${new Date(eventDate).toLocaleString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
+                    })} - ${new Date(`${eventDate}T${eventStartTime}`).toLocaleString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
-                    })} - ${new Date(eventEndDate).toLocaleString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
+                    })} to ${new Date(`${eventDate}T${eventEndTime}`).toLocaleString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
                     })}`
                     : 'N/A';
+
             document.getElementById('reviewEventType').textContent = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1) : 'N/A';
             document.getElementById('reviewEventCategory').textContent = eventCategory ? eventCategory.charAt(0).toUpperCase() + eventCategory.slice(1) : 'N/A';
             document.getElementById('reviewEventTags').textContent = eventTags || 'N/A'; // Add event tags to review section
@@ -870,7 +875,7 @@
         });
 
         async function createEvent(action) {
-            const { eventTitle, eventDescription, eventLocation, eventStartDate, eventEndDate, eventType, eventCategory, eventTags } = getEventDetails();
+            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventType, eventCategory, eventTags } = getEventDetails();
 
             // Get event details   
             const updateEvent = new UpdateOrganizerEvent();
@@ -878,8 +883,8 @@
             console.log(eventId);
             updateEvent.name = eventTitle;
             updateEvent.description = eventDescription;
-            updateEvent.start = new Date(eventStartDate).getTime();
-            updateEvent.duration = new Date(eventEndDate).getTime() - new Date(eventStartDate).getTime();
+            updateEvent.start = new Date(`${eventDate}T${eventStartTime}`).getTime();
+            updateEvent.duration = new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime();
             updateEvent.available_total_tickets = totalTickets || 0;
             updateEvent.location_name = eventLocation;
             updateEvent.category = eventCategory;
