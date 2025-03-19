@@ -453,6 +453,25 @@ const api = {
         },
 
         /**
+         * @param {number|string} id 
+         * @param {Session?} session 
+         * @returns {Promise<OrganizerEvent>}
+         */
+        get_event_with_owner: async function(id, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/get_event/${encodeURI(id)}?with_owner`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while getting event"
+            )).json();
+        },
+
+        /**
          * @param {number} id
          * @param {UpdateOrganizerEvent} update 
          * @param {Session} session 
@@ -586,6 +605,26 @@ const api = {
         search_events: async function(search, session = cookies.getSession()){
             return await (await api.api_call(
                 '/search_events',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(search),
+                },
+                "An error occured while searching"
+            )).json();
+        },
+
+        /**
+         * @param {Search} search 
+         * @param {Session} session 
+         * @returns {Promise<OrganizerEvent[]>}
+         */
+        search_events_with_owner: async function(search, session = cookies.getSession()){
+            return await (await api.api_call(
+                '/search_events?with_owner',
                 {
                     method: "POST",
                     headers: {

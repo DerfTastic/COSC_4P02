@@ -2,6 +2,7 @@ package server.infrastructure.root.api;
 
 import framework.db.RoTransaction;
 import framework.web.annotations.*;
+import framework.web.annotations.url.QueryFlag;
 import server.infrastructure.param.auth.OptionalAuth;
 import server.infrastructure.param.auth.UserSession;
 import framework.util.SqlSerde;
@@ -48,7 +49,7 @@ public class SearchAPI {
     ){}
 
     @Route
-    public static @Json List<EventAPI.Event> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search) throws SQLException {
+    public static @Json List<EventAPI.Event> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search, @QueryFlag boolean with_owner) throws SQLException {
         var long_map = new HashMap<String, Long>();
         var str_map = new HashMap<String, String>();
         var real_map = new HashMap<String, Double>();
@@ -150,8 +151,10 @@ public class SearchAPI {
         long_map.put(":offset", offset);
         long_map.put(":limit", limit);
 
+        var join = with_owner?"inner join users on users.id=events.owner_id ":"";
+
         List<EventAPI.Event> events;
-        try(var stmt = trans.namedPreparedStatement("select * from events inner join users on users.id=events.owner_id " + clauses)){
+        try(var stmt = trans.namedPreparedStatement("select * from events " + join + clauses)){
             for(var es : str_map.entrySet()){
                 stmt.setString(es.getKey(), es.getValue());
             }
@@ -162,7 +165,7 @@ public class SearchAPI {
                 stmt.setDouble(es.getKey(), es.getValue());
             }
             var rs = stmt.executeQuery();
-            events = SqlSerde.sqlList(rs, rs1 -> new EventAPI.Event(rs, false));
+            events = SqlSerde.sqlList(rs, rs1 -> new EventAPI.Event(rs, with_owner));
         }
 
         try(var stmt = trans.namedPreparedStatement("select id, tag, category from events left join event_tags on id=event_id " + clauses)){

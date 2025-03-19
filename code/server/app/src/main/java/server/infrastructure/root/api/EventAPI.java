@@ -81,15 +81,15 @@ public class EventAPI {
     }
 
     @Route("/get_event/<event_id>")
-    public static @Json Event get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id, @QueryFlag boolean include_user_info) throws SQLException, BadRequest {
+    public static @Json Event get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id, @QueryFlag boolean with_owner) throws SQLException, BadRequest {
         Event event;
         var sql = "select * from events";
-        if(include_user_info) sql += " inner join users on users.id=events.owner_id";
+        if(with_owner) sql += " inner join users on users.id=events.owner_id";
         sql += " where (events.id=:event_id AND events.draft=false) OR (events.id=:event_id AND events.owner_id=:owner_id)";
         try(var stmt = trans.namedPreparedStatement(sql)){
             stmt.setLong(":event_id", event_id);
             stmt.setLong(":owner_id", session!=null?session.user_id:0);
-            var result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Event(rs, include_user_info));
+            var result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Event(rs, with_owner));
             if(result.isEmpty())
                 throw new BadRequest("Event doesn't exist or you do not have permission to view it");
             if(result.size()>1)

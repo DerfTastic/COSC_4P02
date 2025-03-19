@@ -19,7 +19,7 @@
             meow[i] = (async() => {
                 return {
                     title: val + " Events",
-                    events: await api.search.search_events({category_fuzzy: val.toLowerCase()})
+                    events: await api.search.search_events_with_owner({category_fuzzy: val.toLowerCase()})
                 }
             })();
         }
@@ -44,7 +44,7 @@
                             <h2>{{name}}</h2>
                             <p><b>Event Time:</b> {{formatTime start}}</p>
                             <p><b>Event Location:</b> {{location_name}}</p>
-                            <p><b>Organizer:</b></p>
+                            <p><b>Organizer:</b>{{owner.name}}</p>
                         </div>
                     </div>
                     {{/each}}
