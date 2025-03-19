@@ -268,37 +268,37 @@ public class EventAPITest {
     public void getEventTest() throws SQLException, Unauthorized, BadRequest {
         var auth = o1.organizerSession(db, null);
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(auth, trans, events.get(0));
+            EventAPI.get_event(auth, trans, events.get(0), false);
         }
         auth = o2.organizerSession(db, null);
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(auth, trans, events.get(0));
+            EventAPI.get_event(auth, trans, events.get(0), true);
             Assertions.fail("Event is a draft only owner should have access");
         }catch (BadRequest ignore){}
         auth = u1.userSession(db, null);
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(auth, trans, events.get(0));
+            EventAPI.get_event(auth, trans, events.get(0), true);
             Assertions.fail("Event is a draft only owner should have access");
         }catch (BadRequest ignore){}
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(null, trans, events.get(0));
+            EventAPI.get_event(null, trans, events.get(0), false);
             Assertions.fail("Event is a draft only owner should have access");
         }catch (BadRequest ignore){}
 
         auth = o1.organizerSession(db, null);
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(auth, trans, events.get(1));
+            EventAPI.get_event(auth, trans, events.get(1), true);
         }
         auth = o2.organizerSession(db, null);
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(auth, trans, events.get(1));
+            EventAPI.get_event(auth, trans, events.get(1), true);
         }
         auth = u1.userSession(db, null);
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(auth, trans, events.get(1));
+            EventAPI.get_event(auth, trans, events.get(1), true);
         }
         try(var trans = db.ro_transaction(null)){
-            EventAPI.get_event(null, trans, events.get(1));
+            EventAPI.get_event(null, trans, events.get(1), true);
         }
     }
 

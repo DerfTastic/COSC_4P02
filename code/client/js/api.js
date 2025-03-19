@@ -73,7 +73,7 @@ class OrganizerEvent {
 
     /** @type{string[]} */tags
 
-    /** @type{UserInfo} */owner
+    /** @type{UserInfo?} */owner
 }
 
 class UpdateOrganizerEvent{

@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import framework.web.annotations.*;
+import framework.web.annotations.url.Nullable;
+import framework.web.annotations.url.QueryFlag;
 import framework.web.error.BadRequest;
 import framework.web.request.Request;
 import framework.web.route.RouteParameter;
@@ -79,13 +81,15 @@ public class EventAPI {
     }
 
     @Route("/get_event/<event_id>")
-    public static @Json Event get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, BadRequest {
+    public static @Json Event get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id, @QueryFlag boolean include_user_info) throws SQLException, BadRequest {
         Event event;
-        try(var stmt = trans.namedPreparedStatement("select * from events where (id=:event_id AND draft=false) OR (id=:event_id AND owner_id=:owner_id)")){
+        var sql = "select * from events";
+        if(include_user_info) sql += " inner join users on users.id=events.owner_id";
+        sql += " where (events.id=:event_id AND events.draft=false) OR (events.id=:event_id AND events.owner_id=:owner_id)";
+        try(var stmt = trans.namedPreparedStatement(sql)){
             stmt.setLong(":event_id", event_id);
-            if(session!=null)
-                stmt.setLong(":owner_id", session.user_id);
-            var result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Event(rs, false));
+            stmt.setLong(":owner_id", session!=null?session.user_id:0);
+            var result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Event(rs, include_user_info));
             if(result.isEmpty())
                 throw new BadRequest("Event doesn't exist or you do not have permission to view it");
             if(result.size()>1)
