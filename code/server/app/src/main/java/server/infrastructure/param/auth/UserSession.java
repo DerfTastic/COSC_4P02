@@ -39,8 +39,8 @@ public class UserSession{
                         result.getLong("user_id"),
                         result.getLong("id"),
                         result.getString("email"),
-                        result.getBoolean("admin"),
-                        result.getBoolean("organizer")
+                        result.getBoolean("organizer"),
+                        result.getBoolean("admin")
                 );
                 if(cache!=null)cache.add(token, session);
                 return session;

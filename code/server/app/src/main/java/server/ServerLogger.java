@@ -17,18 +17,31 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ServerLogger {
-    private static final FileHandler fh;
-    private static final MemHandler mh;
+    private static FileHandler fh;
+    private static MemHandler mh;
 
-    static {
+    public static void setLogLevel(Level level){
+        Logger.getGlobal().setLevel(level);
+        for (Handler handler : Logger.getGlobal().getParent().getHandlers()) {
+            handler.setLevel(level);
+        }
+    }
+
+    public static Level getLogLevel(){
+        return Logger.getGlobal().getLevel();
+    }
+
+    public static void initialize(Level level, Config config){
+        if(fh!=null||mh!=null)
+            throw new RuntimeException("Already initialized");
         try {
-            if(new File(Config.CONFIG.log_path+"/log").exists()){
-                var file = new File(Config.CONFIG.log_path+"/log");
+            if(new File(config.log_path+"/log").exists()){
+                var file = new File(config.log_path+"/log");
                 var log_attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                 var dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
                 var name = dateFormat.format(new Date(log_attributes.creationTime().toMillis()));
 
-                var out_file = new File(Config.CONFIG.log_path+"/" + name + ".zip");
+                var out_file = new File(config.log_path+"/" + name + ".zip");
                 ZipOutputStream out = new ZipOutputStream(new FileOutputStream(out_file));
                 ZipEntry e = new ZipEntry(name);
                 out.putNextEntry(e);
@@ -43,25 +56,12 @@ public class ServerLogger {
             Logger.getGlobal().log(Level.SEVERE, "Failed to zip older log file", e);
         }
         try{
-            fh = new FileHandler(Config.CONFIG.log_path+"/log");
+            fh = new FileHandler(config.log_path+"/log");
         }catch (Exception e){
             throw new RuntimeException(e);
         }
         mh = new MemHandler();
-    }
 
-    public static void setLogLevel(Level level){
-        Logger.getGlobal().setLevel(level);
-        for (Handler handler : Logger.getGlobal().getParent().getHandlers()) {
-            handler.setLevel(level);
-        }
-    }
-
-    public static Level getLogLevel(){
-        return Logger.getGlobal().getLevel();
-    }
-
-    public static void initialize(Level level){
         Logger.getGlobal().addHandler(fh);
         Logger.getGlobal().addHandler(mh);
 

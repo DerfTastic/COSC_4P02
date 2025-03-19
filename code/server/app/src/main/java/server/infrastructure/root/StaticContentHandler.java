@@ -22,6 +22,11 @@ public class StaticContentHandler implements RequestHandler {
     }
 
     private final HashMap<String, CachedItem> cache = new HashMap<>();
+    private final Config config;
+
+    public StaticContentHandler(Config config){
+        this.config = config;
+    }
 
     @Override
     public void handle(Request request) throws IOException {
@@ -50,15 +55,15 @@ public class StaticContentHandler implements RequestHandler {
             StringBuilder builder = new StringBuilder(requestedPath);
             if(builder.toString().endsWith("/"))
                 builder.append("index");
-            else if(Files.isDirectory(Path.of(Config.CONFIG.static_content_path+builder)))
+            else if(Files.isDirectory(Path.of(config.static_content_path+builder)))
                 builder.append("/index");
             if(!builder.toString().contains("."))
-                if(Files.exists(Path.of(Config.CONFIG.static_content_path + builder + ".html")))
+                if(Files.exists(Path.of(config.static_content_path + builder + ".html")))
                     builder.append(".html");
-                else if(Files.exists(Path.of(Config.CONFIG.static_content_path + builder +".hbs")))
+                else if(Files.exists(Path.of(config.static_content_path + builder +".hbs")))
                     builder.append(".hbs");
 
-            var path = Path.of(Config.CONFIG.static_content_path + builder);
+            var path = Path.of(config.static_content_path + builder);
 
             if(requestedPath.contains("..")){
                 request.sendResponse(400, "");
@@ -79,7 +84,7 @@ public class StaticContentHandler implements RequestHandler {
         }
 
         request.exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
-        if(Config.CONFIG.cache_static_content)
+        if(config.cache_static_content)
             request.exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
         request.sendResponse(200, cached.content);
     }

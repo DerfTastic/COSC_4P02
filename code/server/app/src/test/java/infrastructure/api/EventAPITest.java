@@ -3,30 +3,351 @@
  */
 package infrastructure.api;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
+import infrastructure.DynamicMediaHandlerSkeleton;
+import infrastructure.MailServerSkeleton;
+import infrastructure.TestingUser;
+import org.junit.jupiter.api.*;
 import framework.db.DbManager;
+import server.Config;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.root.api.EventAPI;
 
+import java.net.UnknownHostException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Optional;
+
+@SuppressWarnings("SequencedCollectionMethodCanBeUsed")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EventAPITest {
     private static DbManager db;
+    private final Config config = new Config(
+            "send_mail", "false"
+    );
+    private final MailServerSkeleton mail = new MailServerSkeleton();
+    private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
 
-    private static String session;
+    ArrayList<Long> events;
+    private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+    private final TestingUser o2 = new TestingUser("Organizer2", "organizer2@gmail.com", "password");
+    private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
 
     @BeforeAll
-    public static void setup() {
-        try{
-            db = new DbManagerImpl("event_api_test", true, true, true);
-        }catch (Exception e){
-            throw new RuntimeException(e);
+    public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
+        db = new DbManagerImpl("event_api_test", true, true, true);
+        o1.register(mail, db, config);
+        o1.login(mail, db, config);
+        o1.makeOrganizer(db, null);
+
+        o2.register(mail, db, config);
+        o2.login(mail, db, config);
+        o2.makeOrganizer(db, null);
+
+        u1.register(mail, db, config);
+        u1.login(mail, db, config);
+    }
+
+    @Test
+    @Order(1)
+    public void createEventTest() throws SQLException, Unauthorized {
+        var auth = o1.organizerSession(db, null);
+        events = new ArrayList<>();
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+
+        auth = u1.userSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+            Assertions.fail("A regular user cannot create an event");
+        }catch (SQLException ignore){}
+    }
+
+    @Test
+    @Order(2)
+    public void updateEventTest() throws SQLException, Unauthorized, BadRequest {
+        var auth = o1.organizerSession(db, null);
+        var update = new EventAPI.UpdateEvent();
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("Hello, World!");
+            update.description = Optional.of("hello world of events");
+            update.type = Optional.of("type");
+            update.category = Optional.of("category");
+            EventAPI.update_event(auth, trans, events.get(1), update);
+            trans.tryCommit();
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("1");
+            update.description = Optional.of("1");
+            update.type = Optional.of("1");
+            update.category = Optional.of("1");
+            update.start = Optional.of(1L);
+            EventAPI.update_event(auth, trans, events.get(0), update);
+            trans.tryCommit();
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.update_event(auth, trans, 7, update);
+            trans.tryCommit();
+            Assertions.fail("Event doesn't exist, should fail");
+        }catch (BadRequest ignore){}
+
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.empty();
+            EventAPI.update_event(auth, trans, 7, update);
+            trans.tryCommit();
+            Assertions.fail("Name can't be null, should fail");
+        }catch (BadRequest ignore){}
+
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            update = new EventAPI.UpdateEvent();
+            update.name = Optional.of("meow");
+            EventAPI.update_event(auth, trans, events.get(0), update);
+            trans.tryCommit();
+            Assertions.fail("Event cannot be modified by anyone but owner");
+        }catch (BadRequest ignore){}
+    }
+
+    @Test
+    @Order(3)
+    public void addDeleteEventTag() throws SQLException, Unauthorized, BadRequest {
+        var auth = o1.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, events.get(0), "tag1");
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, events.get(0), "tag2");
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, events.get(0), "tag3");
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, events.get(0), "tag3");
+            trans.tryCommit();
+            Assertions.fail("Cannot add duplicate tags");
+        } catch (BadRequest ignore) {}
+
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event_tag(auth, trans, events.get(0), "tag3");
+            trans.tryCommit();
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event_tag(auth, trans, events.get(0), "tag3");
+            trans.tryCommit();
+            Assertions.fail("Cannot remove tags which don't exist");
+        } catch (BadRequest ignore) {}
+
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, events.get(1), "tag4");
+            trans.tryCommit();
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, 3943987, "tag3");
+            trans.tryCommit();
+            Assertions.fail("Event doesn't exist should fail");
+        } catch (BadRequest ignore) {}
+
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.add_event_tag(auth, trans, events.get(0), "other");
+            trans.tryCommit();
+            Assertions.fail("Event cannot be modified by anyone but owner");
+        }catch (BadRequest ignore){}
+
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event_tag(auth, trans, events.get(0), "tag1");
+            trans.tryCommit();
+            Assertions.fail("Event cannot be modified by anyone but owner");
+        }catch (BadRequest ignore){}
+    }
+
+    @Test
+    @Order(4)
+    public void setDraftTest() throws SQLException, Unauthorized, BadRequest {
+        var auth = o1.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.get(0), true);
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.get(1), false);
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.get(2), false);
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, 43423, false);
+            trans.tryCommit();
+            Assertions.fail("This event doesn't exist, should not succeed");
+        }catch (BadRequest ignore){}
+
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.get(0), false);
+            trans.tryCommit();
+            Assertions.fail("Modified event when not owner");
+        }catch (BadRequest ignore){}
+    }
+
+    @Test
+    @Order(5)
+    public void testSetEventPicture() throws SQLException, Unauthorized, BadRequest {
+        var auth = o1.organizerSession(db, null);
+        long id;
+        try(var trans = db.rw_transaction(null)){
+            id = EventAPI.set_event_picture(auth, trans, media, events.get(0), new byte[]{});
+            Assertions.assertTrue(media.present(id));
+            trans.tryCommit();
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            var new_id = EventAPI.set_event_picture(auth, trans, media, events.get(0), new byte[]{});
+            Assertions.assertTrue(media.present(new_id));
+            Assertions.assertFalse(media.present(id));
+            trans.tryCommit();
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            id = EventAPI.set_event_picture(auth, trans, media, events.get(2), new byte[]{});
+            Assertions.assertTrue(media.present(id));
+            trans.tryCommit();
+        }
+
+        var before = media.present();
+        try(var trans = db.rw_transaction(null)){
+            id = EventAPI.set_event_picture(auth, trans, media, 3409823, new byte[]{});
+            trans.tryCommit();
+            Assertions.fail("Shouldn't succeed");
+        }catch (BadRequest ignore){
+            Assertions.assertEquals(before, media.present());
+        }
+
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(2), media);
+            Assertions.assertFalse(media.present(id));
+            trans.tryCommit();
+            events.remove(2);
+        }
+
+        auth = o2.organizerSession(db, null);
+        before = media.present();
+        try(var trans = db.rw_transaction(null)){
+            id = EventAPI.set_event_picture(auth, trans, media, events.get(0), new byte[]{});
+            trans.tryCommit();
+            Assertions.fail("Shouldn't succeed");
+        }catch (BadRequest ignore){
+            Assertions.assertEquals(before, media.present());
+        }
+    }
+
+    @Test
+    @Order(7)
+    public void getEventTest() throws SQLException, Unauthorized, BadRequest {
+        var auth = o1.organizerSession(db, null);
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(auth, trans, events.get(0), false);
+        }
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(auth, trans, events.get(0), true);
+            Assertions.fail("Event is a draft only owner should have access");
+        }catch (BadRequest ignore){}
+        auth = u1.userSession(db, null);
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(auth, trans, events.get(0), true);
+            Assertions.fail("Event is a draft only owner should have access");
+        }catch (BadRequest ignore){}
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(null, trans, events.get(0), false);
+            Assertions.fail("Event is a draft only owner should have access");
+        }catch (BadRequest ignore){}
+
+        auth = o1.organizerSession(db, null);
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(auth, trans, events.get(1), true);
+        }
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(auth, trans, events.get(1), true);
+        }
+        auth = u1.userSession(db, null);
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(auth, trans, events.get(1), true);
+        }
+        try(var trans = db.ro_transaction(null)){
+            EventAPI.get_event(null, trans, events.get(1), true);
+        }
+    }
+
+    @Test
+    @Order(8)
+    public void deleteEventTest() throws SQLException, Unauthorized, BadRequest {
+        var auth = u1.userSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(1), media);
+            trans.tryCommit();
+            Assertions.fail("Should not be able to delete event");
+        }catch(BadRequest ignore){}
+
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(1), media);
+            trans.tryCommit();
+            Assertions.fail("Should not be able to delete event");
+        }catch(BadRequest ignore){}
+
+        auth = o1.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(1), media);
+            trans.tryCommit();
+        }
+
+        auth = u1.userSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(0), media);
+            trans.tryCommit();
+            Assertions.fail("Should not be able to delete event");
+        }catch(BadRequest ignore){}
+
+        auth = o2.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(0), media);
+            trans.tryCommit();
+            Assertions.fail("Should not be able to delete event");
+        }catch(BadRequest ignore){}
+
+        auth = o1.organizerSession(db, null);
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.delete_event(auth, trans, events.get(0), media);
+            trans.tryCommit();
         }
     }
 
     @AfterAll
-    public static void close() {
+    public void close() {
         db.close();
     }
 }

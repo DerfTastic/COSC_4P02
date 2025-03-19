@@ -3,21 +3,18 @@
  */
 package infrastructure.api;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import server.infrastructure.DbManagerImpl;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TicketAPITest {
-    private static DbManager db;
-
-    private static String session;
+    private DbManager db;
+    private String session;
 
     @BeforeAll
-    public static void setup() {
+    public void setup() {
         try{
             db = new DbManagerImpl("ticket_api_test", true, true, true);
         }catch (Exception e){
@@ -26,7 +23,7 @@ public class TicketAPITest {
     }
 
     @AfterAll
-    public static void close() {
+    public void close() {
         db.close();
     }
 }

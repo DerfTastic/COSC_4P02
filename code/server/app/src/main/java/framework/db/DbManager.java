@@ -14,8 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class DbManager implements AutoCloseable{
-    private final static ConcurrentHashMap<Connection, ConcurrentHashMap<String, ConcurrentLinkedQueue<NamedPreparedStatement>>> preparedCache = new ConcurrentHashMap<>();
-    private final static ConcurrentHashMap<String, Tuple<String, HashMap<String, Integer>>> preparedFieldMapCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Connection, ConcurrentHashMap<String, ConcurrentLinkedQueue<NamedPreparedStatement>>> preparedCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Tuple<String, HashMap<String, Integer>>> preparedFieldMapCache = new ConcurrentHashMap<>();
 
 
     private final LinkedList<Connection> writableAvailable = new LinkedList<>();
@@ -217,7 +217,7 @@ public abstract class DbManager implements AutoCloseable{
     }
 
 
-    private static Tuple<String, HashMap<String, Integer>> parsePreparedFields(String sqlO){
+    private Tuple<String, HashMap<String, Integer>> parsePreparedFields(String sqlO){
         return preparedFieldMapCache.computeIfAbsent(sqlO, sql -> {
             int pos;
             int index = 1;

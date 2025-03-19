@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Config {
-    public static final Config CONFIG;
     public final Integer web_threads = initialize(256);
     public final Boolean wipe_db_on_start = initialize(false);
     public final Boolean store_db_in_memory = initialize(false);
@@ -39,60 +38,78 @@ public class Config {
 
     public final String url_root = initialize("http://localhost:80");
 
-    // Creates default values inside server properties file.
-    static {
-        outer:
-        try {
-            var properties = new Properties();
-            if (!Files.exists(Path.of("server.properties"))){
-                CONFIG = new Config();
-
-                for(var field : Config.class.getFields()) {
-                    if(Modifier.isStatic(field.getModifiers())) continue; // Skip if static
-                    properties.put(field.getName(), field.get(CONFIG).toString());
-                }
-                properties.store(new FileOutputStream("server.properties"), null);
-                break outer;
+    private Properties to_properties() {
+        var properties = new Properties();
+        for (var field : Config.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) continue; // Skip if static
+            try {
+                properties.put(field.getName(), field.get(this).toString());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
-            try{
-                properties.load(new FileInputStream("server.properties"));
-            }catch (IOException e){
-                Logger.getGlobal().log(Level.WARNING, "Error while loading properties", e);
-            }
+        }
+        return properties;
+    }
 
-            var config = new Config();
-            for(var field : Config.class.getFields()){
-                if(Modifier.isStatic(field.getModifiers())) continue; // Skip if static
+    public Config(){}
+
+    public static Properties config(String... args){
+        var properties = new Properties();
+        for(int i = 0; i < args.length; i ++){
+            properties.put(args[i++], args[i]);
+        }
+        return properties;
+    }
+
+    public Config(String... args){
+        this(config(args));
+
+    }
+    public Config(Properties properties){
+        try{
+            for (var field : Config.class.getFields()) {
+                if (Modifier.isStatic(field.getModifiers())) continue; // Skip if static
                 field.setAccessible(true);
 
-                if(properties.containsKey(field.getName())){
+                if (properties.containsKey(field.getName())) {
                     String value = properties.getProperty(field.getName()).trim();
-                    if(field.getType()==Integer.class){
-                        field.set(config, Integer.parseInt(value));
-                    }else if(field.getType()== Long.class){
-                        field.set(config, Long.parseLong(value));
-                    }else if(field.getType()==Boolean.class){
-                        field.set(config, Boolean.parseBoolean(value));
-                    }else{
-                        field.set(config, value);
+                    if (field.getType() == Integer.class) {
+                        field.set(this, Integer.parseInt(value));
+                    } else if (field.getType() == Long.class) {
+                        field.set(this, Long.parseLong(value));
+                    } else if (field.getType() == Boolean.class) {
+                        field.set(this, Boolean.parseBoolean(value));
+                    } else {
+                        field.set(this, value);
                     }
-                }else if(field.get(config) == null){
+                } else if (field.get(this) == null) {
                     throw new RuntimeException("Property not specified " + field);
                 }
             }
-            CONFIG = config;
-        } catch (Throwable e) {
+        }catch (IllegalAccessException e){
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * This method creates default directories for the database, media, and logs iff this class is configured to create paths.
-     * @throws IOException if a failure occurs creating a core directory
-     */
-    public static void init() throws IOException {
-        if(Config.CONFIG.create_paths){
-            var paths = new String[]{Config.CONFIG.db_path, Config.CONFIG.dynamic_media_path, Config.CONFIG.log_path};
+    public static Config init() throws IOException {
+        if (!Files.exists(Path.of("server.properties"))) {
+            var config = new Config();
+            config.to_properties().store(new FileOutputStream("server.properties"), null);
+            return config;
+        }
+
+        Config config;
+        var properties = new Properties();
+        try {
+            properties.load(new FileInputStream("server.properties"));
+            config = new Config(properties);
+        } catch (IOException e) {
+            Logger.getGlobal().log(Level.WARNING, "Error while loading properties", e);
+            throw new RuntimeException(e);
+        }
+
+        if(config.create_paths){
+            var paths = new String[]{config.db_path, config.dynamic_media_path, config.log_path};
             for(var path : paths){
                 var p = Path.of(path);
                 if(p.getFileName().toString().contains("."))
@@ -101,6 +118,7 @@ public class Config {
                     Files.createDirectories(p);
             }
         }
+        return config;
     }
 
     /**

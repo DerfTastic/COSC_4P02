@@ -1,7 +1,7 @@
 
 create table users(
     id INTEGER primary key not null,
-    name TEXT not null,
+    full_name TEXT not null,
     email TEXT not null unique,
     pass TEXT not null,
     admin BOOLEAN not null,
@@ -14,7 +14,7 @@ create table users(
 );
 
 CREATE UNIQUE INDEX user_email_idx ON users(email);
-CREATE INDEX user_name_idx ON users(name);
+CREATE INDEX user_full_name_idx ON users(full_name);
 CREATE INDEX user_pass_idx ON users(pass);
 CREATE INDEX user_admin_idx ON users(admin);
 CREATE INDEX user_organizer_idx ON users(organizer);
@@ -44,6 +44,14 @@ create table events(
               ON DELETE CASCADE
               ON UPDATE NO ACTION
 );
+
+CREATE TRIGGER event_owner_is_organizer
+BEFORE INSERT ON events
+BEGIN
+    SELECT RAISE(FAIL, "user is not organizer")
+    FROM users WHERE id = NEW.owner_id AND organizer=false;
+END;
+
 
 CREATE INDEX event_organizer_id_idx ON events(owner_id);
 CREATE INDEX event_name_idx ON events(name);
