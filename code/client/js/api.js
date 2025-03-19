@@ -38,11 +38,6 @@ class Log {
     /** @type{string} */thrown
 }
 
-
-class OrganizerEventTag {
-    /** @type{string} */tag
-}
-
 class EventTicket {
     /** @type{number} */id
     /** @type{string} */name
@@ -75,12 +70,10 @@ class OrganizerEvent {
     /** @type{string} */location_name
     /** @type{number} */location_lat
     /** @type{number} */location_long
-}
 
-class AllOrganizerEvent{
-    /** @type{OrganizerEvent} */ event
-    /** @type{OrganizerEventTag[]} */ tags
-    
+    /** @type{string[]} */tags
+
+    /** @type{UserInfo} */owner
 }
 
 class UpdateOrganizerEvent{
@@ -443,7 +436,7 @@ const api = {
         /**
          * @param {number|string} id 
          * @param {Session?} session 
-         * @returns {Promise<AllOrganizerEvent>}
+         * @returns {Promise<OrganizerEvent>}
          */
         get_event: async function(id, session = cookies.getSession()){
             return await (await api.api_call(
@@ -588,7 +581,7 @@ const api = {
         /**
          * @param {Search} search 
          * @param {Session} session 
-         * @returns {Promise<AllOrganizerEvent[]>}
+         * @returns {Promise<OrganizerEvent[]>}
          */
         search_events: async function(search, session = cookies.getSession()){
             return await (await api.api_call(
@@ -628,7 +621,7 @@ const api = {
 
         /**
          * @param {Search} search 
-         * @returns {Promise<AllOrganizerEvent[]>}
+         * @returns {Promise<OrganizerEvent[]>}
          */
         get_drafts: async function (session = cookies.getSession()) {
             return await api.search.search_events({draft: true}, session = cookies.getSession())
@@ -636,7 +629,7 @@ const api = {
 
         /**
          * @param {Search} search 
-         * @returns {Promise<AllOrganizerEvent[]>}
+         * @returns {Promise<OrganizerEvent[]>}
          */
         get_events: async function (session = cookies.getSession()) {
             return await api.search.search_events({draft: false, owning: true}, session = cookies.getSession())
