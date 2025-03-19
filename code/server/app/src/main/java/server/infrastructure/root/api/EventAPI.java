@@ -1,5 +1,6 @@
 package server.infrastructure.root.api;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import framework.web.annotations.*;
@@ -15,7 +16,9 @@ import server.infrastructure.param.auth.RequireOrganizer;
 import server.infrastructure.param.auth.UserSession;
 import framework.util.SqlSerde;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,47 +37,55 @@ public class EventAPI {
     }
 
     public static class Event{
-            public long id;
-            public long owner_id;
-            public String name;
-            public String description;
-            public long start;
-            public long duration;
-            public String category;
-            public String type;
-            public long picture;
-            public JSONObject metadata;
-            public int available_total_tickets;
-            public boolean draft;
+            public final long id;
+            public final long owner_id;
+            public final String name;
+            public final String description;
+            public final long start;
+            public final long duration;
+            public final String category;
+            public final String type;
+            public final long picture;
+            public final JSONObject metadata;
+            public final long available_total_tickets;
+            public final boolean draft;
 
-            public String location_name;
-            public double location_lat;
-            public double location_long;
+            public final String location_name;
+            public final double location_lat;
+            public final double location_long;
+
+            public final List<String> tags;
+            public final AccountAPI.PublicUserInfo owner;
+
+            public Event(ResultSet rs, boolean read_user) throws SQLException {
+                this.id = rs.getLong("id");
+                this.owner_id = rs.getLong("owner_id");
+                this.name = rs.getString("name");
+                this.description = rs.getString("description");
+                this.start = rs.getLong("start");
+                this.duration = rs.getLong("duration");
+                this.category = rs.getString("category");
+                this.type = rs.getString("type");
+                this.picture = rs.getLong("picture");
+                this.metadata = Optional.ofNullable(rs.getString("metadata")).map(JSON::parseObject).orElse(null);
+                this.available_total_tickets = rs.getLong("available_total_tickets");
+                this.draft = rs.getBoolean("draft");
+                this.location_name = rs.getString("location_name");
+                this.location_lat = rs.getDouble("location_lat");
+                this.location_long = rs.getDouble("location_long");
+                this.tags = new ArrayList<>();
+                this.owner = read_user? AccountAPI.PublicUserInfo.make(rs):null;
+            }
     }
-
-    public static class EventTag{
-        public String tag;
-
-        public EventTag(){}
-
-        public EventTag(String tag) {
-            this.tag = tag;
-        }
-    }
-
-    public record AllEvent(
-            Event event,
-            List<EventTag> tags
-    ){}
 
     @Route("/get_event/<event_id>")
-    public static @Json AllEvent get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, BadRequest {
+    public static @Json Event get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, BadRequest {
         Event event;
         try(var stmt = trans.namedPreparedStatement("select * from events where (id=:event_id AND draft=false) OR (id=:event_id AND owner_id=:owner_id)")){
             stmt.setLong(":event_id", event_id);
             if(session!=null)
                 stmt.setLong(":owner_id", session.user_id);
-            var result = SqlSerde.sqlList(stmt.executeQuery(), Event.class);
+            var result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Event(rs, false));
             if(result.isEmpty())
                 throw new BadRequest("Event doesn't exist or you do not have permission to view it");
             if(result.size()>1)
@@ -82,14 +93,13 @@ public class EventAPI {
             event = result.getFirst();
         }
 
-        List<EventTag> tags;
         try(var stmt = trans.namedPreparedStatement("select * from event_tags where event_id=:event_id")){
             stmt.setLong(":event_id", event.id);
-            tags = SqlSerde.sqlList(stmt.executeQuery(), EventTag.class);
+            SqlSerde.sqlForEach(stmt.executeQuery(), rs -> event.tags.add(rs.getString("tag")));
         }
         trans.commit();
 
-        return new AllEvent(event, tags);
+        return event;
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

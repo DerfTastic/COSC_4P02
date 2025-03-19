@@ -37,13 +37,13 @@
                 <button class="arrow left" id="prev">&lt;</button>
                 <div class="product-container">
                     {{#each events}}
-                    <div class="product-box" onclick="window.location.href = '/event?id={{event.id}}'">
+                    <div class="product-box" onclick="window.location.href = '/event?id={{id}}'">
 
-                        <img src="/media/{{event.picture}}" alt="{{event.name}}">
+                        <img src="/media/{{picture}}" alt="{{name}}">
                         <div class="caption">
-                            <h2>{{event.name}}</h2>
-                            <p><b>Event Time:</b> {{formatTime event.start}}</p>
-                            <p><b>Event Location:</b> {{event.location_name}}</p>
+                            <h2>{{name}}</h2>
+                            <p><b>Event Time:</b> {{formatTime start}}</p>
+                            <p><b>Event Location:</b> {{location_name}}</p>
                             <p><b>Organizer:</b></p>
                         </div>
                     </div>

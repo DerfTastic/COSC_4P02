@@ -30,6 +30,7 @@ import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
@@ -283,7 +284,7 @@ public class AccountAPI {
         var str = new StringBuilder().append("update users set ");
 
         if(update.name!=null)
-            str.append("name=:name,");
+            str.append("full_name=:full_name,");
         if(update.bio!=null)
             str.append("bio=:bio,");
         if(update.disp_email!=null)
@@ -299,7 +300,7 @@ public class AccountAPI {
             stmt.setLong(":id", auth.user_id);
 
             if(update.name!=null)
-                stmt.setString(":name", update.name);
+                stmt.setString(":full_name", update.name);
             if(update.bio!=null&&update.bio.isPresent())
                 stmt.setString(":bio", update.bio.get());
             if(update.disp_email!=null&&update.disp_email.isPresent())
@@ -324,7 +325,28 @@ public class AccountAPI {
         String disp_phone_number,
         long picture,
         long banner
-    ) implements UserInfo {}
+    ) implements UserInfo {
+        public static PublicUserInfo make(ResultSet rs) throws SQLException {
+            return make(rs, rs.getLong("id"));
+        }
+
+        public static PublicUserInfo make(ResultSet rs, long id) throws SQLException {
+            var organizer = rs.getBoolean("organizer");
+            var disp_email = rs.getString("disp_email");
+            if(disp_email==null && organizer)
+                disp_email = rs.getString("email");
+            return new PublicUserInfo(
+                    id,
+                    rs.getString("full_name"),
+                    organizer,
+                    rs.getString("bio"),
+                    disp_email,
+                    rs.getString("disp_phone_number"),
+                    rs.getLong("picture"),
+                    rs.getLong("banner")
+            );
+        }
+    }
 
     public record PrivateUserInfo(
         long id,
@@ -343,31 +365,18 @@ public class AccountAPI {
     public static @Json UserInfo userinfo(@FromRequest(OptionalAuth.class) UserSession auth, RoTransaction trans, @Path @Nullable Long id) throws SQLException, Unauthorized {
         UserInfo result;
         if(id!=null){
-            try(trans; var stmt = trans.namedPreparedStatement("select name, email, bio, organizer, disp_email, disp_phone_number, picture, banner from users where id=:id")){
+            try(trans; var stmt = trans.namedPreparedStatement("select full_name, email, bio, organizer, disp_email, disp_phone_number, picture, banner from users where id=:id")){
                 stmt.setLong(":id", id);
                 var rs = stmt.executeQuery();
-                var organizer = rs.getBoolean("organizer");
-                var disp_email = rs.getString("disp_email");
-                if(disp_email==null && organizer)
-                    disp_email = rs.getString("email");
-                result = new PublicUserInfo(
-                        id,
-                        rs.getString("name"),
-                        organizer,
-                        rs.getString("bio"),
-                        disp_email,
-                        rs.getString("disp_phone_number"),
-                        rs.getLong("picture"),
-                        rs.getLong("banner")
-                );
+                result = PublicUserInfo.make(rs, id);
             }
         }else if(auth!=null){
-            try(trans; var stmt = trans.namedPreparedStatement("select name, bio, disp_email, disp_phone_number, picture, banner from users where id=:id")){
+            try(trans; var stmt = trans.namedPreparedStatement("select full_name, bio, disp_email, disp_phone_number, picture, banner from users where id=:id")){
                 stmt.setLong(":id", auth.user_id);
                 var rs = stmt.executeQuery();
                 result = new PrivateUserInfo(
                         auth.user_id,
-                        rs.getString("name"),
+                        rs.getString("full_name"),
                         auth.email,
                         auth.organizer,
                         auth.admin,
@@ -394,8 +403,8 @@ public class AccountAPI {
     @Route
     public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register, Config config) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
-        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :name, :email, :pass, false, false, null, null, null, null, null)")){
-            stmt.setString(":name", register.name);
+        try(var stmt = trans.namedPreparedStatement("insert into users values(null, :full_name, :email, :pass, false, false, null, null, null, null, null)")){
+            stmt.setString(":full_name", register.name);
             stmt.setString(":email", register.email);
             stmt.setString(":pass", register.password);
             if(stmt.executeUpdate()!=1)

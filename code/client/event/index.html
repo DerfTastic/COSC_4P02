@@ -145,7 +145,7 @@
             try {
                 // Fetch event details
                 const get_event = await api.events.get_event(eventId);
-                const event = get_event.event;
+                const event = get_event;
                 const tags = get_event.tags;
 
                 // Set event details on the page
@@ -174,7 +174,7 @@
                 tags.forEach(tag => {
                     // Access the 'tag' property to display the tag name
                     const tagElement = document.createElement("span");
-                    tagElement.textContent = `#${tag.tag}`;  // Access the 'tag' property from the tag object
+                    tagElement.textContent = `#${tag}`;  // Access the 'tag' property from the tag object
                     tagElement.classList.add("event-tag");
                     eventTagsElement.appendChild(tagElement);
                 });

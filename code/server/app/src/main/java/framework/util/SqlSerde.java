@@ -57,7 +57,7 @@ public class SqlSerde {
         return res.getFirst();
     }
 
-    public static <T> void sqlForEach(ResultSet rs, Consume func) throws SQLException {
+    public static void sqlForEach(ResultSet rs, Consume func) throws SQLException {
         while(rs.next()){
             func.call(rs);
         }

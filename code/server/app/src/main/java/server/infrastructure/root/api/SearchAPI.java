@@ -31,7 +31,7 @@ public class SearchAPI {
             Long date_end,
             Long max_duration,
             Long min_duration,
-            List<EventAPI.EventTag> tags,
+            List<String> tags,
             String category_fuzzy,
             String type_fuzzy,
             String organizer_fuzzy,
@@ -49,7 +49,7 @@ public class SearchAPI {
     ){}
 
     @Route
-    public static @Json List<EventAPI.AllEvent> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search) throws SQLException {
+    public static @Json List<EventAPI.Event> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search) throws SQLException {
         var long_map = new HashMap<String, Long>();
         var str_map = new HashMap<String, String>();
         var real_map = new HashMap<String, Double>();
@@ -69,10 +69,10 @@ public class SearchAPI {
 
         if(search.tags!=null) {
             int index = 0;
-            for (var item : search.tags) {
+            for (var tag : search.tags) {
                 String id = ":tag_id_" + index;
                 whereClause.append(" AND (events.id IN (select event_id from event_tags where tag=").append(id).append("'))");
-                str_map.put(id, item.tag);
+                str_map.put(id, tag);
                 index ++;
             }
         }
@@ -151,8 +151,8 @@ public class SearchAPI {
         long_map.put(":offset", offset);
         long_map.put(":limit", limit);
 
-        List<EventAPI.Event> events_partial;
-        try(var stmt = trans.namedPreparedStatement("select * from events " + clauses)){
+        List<EventAPI.Event> events;
+        try(var stmt = trans.namedPreparedStatement("select * from events inner join users on users.id=events.owner_id " + clauses)){
             for(var es : str_map.entrySet()){
                 stmt.setString(es.getKey(), es.getValue());
             }
@@ -163,11 +163,7 @@ public class SearchAPI {
                 stmt.setDouble(es.getKey(), es.getValue());
             }
             var rs = stmt.executeQuery();
-            events_partial = SqlSerde.sqlList(rs, EventAPI.Event.class);
-        }
-        List<EventAPI.AllEvent> events = new ArrayList<>(events_partial.size());
-        for (EventAPI.Event event : events_partial) {
-            events.add(new EventAPI.AllEvent(event, new ArrayList<>()));
+            events = SqlSerde.sqlList(rs, rs1 -> new EventAPI.Event(rs, false));
         }
 
         try(var stmt = trans.namedPreparedStatement("select id, tag, category from events left join event_tags on id=event_id " + clauses)){
@@ -186,8 +182,8 @@ public class SearchAPI {
             while(rs.next()){
                 var id = rs.getLong("id");
                 var tag = rs.getString("tag");
-                while(events.get(index).event().id!=id)index++;
-                events.get(index).tags().add(new EventAPI.EventTag(tag));
+                while(events.get(index).id!=id)index++;
+                events.get(index).tags.add(tag);
             }
         }
         trans.commit();
