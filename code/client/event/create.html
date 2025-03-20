@@ -297,8 +297,9 @@
             transition: all 0.3s ease;
         }
 
-        textarea{
-            min-height: 300px;        }
+        textarea {
+            min-height: 300px;
+        }
 
         .upload-create-container {
             position: relative;
@@ -751,7 +752,7 @@
                 eventTags: document.getElementById('eventTags').value,
             };
         }
-
+        const tickets = []; // Array to hold all tickets data
         // Function to populate review section
         function populateReviewSection() {
 
@@ -766,6 +767,13 @@
                 const ticketPrice = ticket.querySelector('.ticketPrice').value;
 
                 const formattedPrice = `$${ticketPrice}`;
+
+                // Store individual ticket data in the tickets array
+                tickets.push({
+                    name: ticketTypeName,
+                    price: ticketPrice,  // Storing raw price value, you can format it when needed
+                    available_tickets: ticketQuantity
+                });
 
                 ticketDetails += `<div><strong>${ticketTypeName.charAt(0).toUpperCase() + ticketTypeName.slice(1)}:</strong> Quantity: ${ticketQuantity}, Price: ${formattedPrice}</div>`;
             });
@@ -917,6 +925,46 @@
 
             await api.events.set_picture(eventId, uploadedFile);
 
+            if (Array.isArray(tickets) && tickets.length > 0) {
+                try {
+                    // Step 1: Get existing tickets
+                    const existingTickets = await api.tickets.get_tickets(eventId);
+                    console.log("Existing tickets fetched:", existingTickets);
+
+                    // Step 2: Delete all existing tickets
+                    for (let i = 0; i < existingTickets.length; i++) {  // Start from index 1 to skip the first ticket
+                        const ticket = existingTickets[i];
+                        try {
+                            await api.tickets.delete_ticket(ticket.id);  // Delete the ticket by its ID
+                            console.log(`Ticket ${ticket.id} deleted.`);
+                        } catch (error) {
+                            console.error(`Failed to delete ticket ${ticket.id}:`, error);
+                        }
+                    }
+
+                    // Step 3: Create new tickets
+                    for (let ticket of tickets) {
+                        const newTicket = new EventTicketUpdate();
+                        newTicket.name = ticket.name;
+                        newTicket.price = ticket.price;
+                        newTicket.available_tickets = ticket.available_tickets;
+
+                        console.log("Creating new ticket:", newTicket);
+
+                        // Create the new ticket
+                        const ticket_id = await api.tickets.create_ticket(eventId);
+                        await api.tickets.update_ticket(ticket_id, newTicket);
+                        console.log("New ticket created.");
+                    }
+
+                    console.log("New tickets have been created.");
+
+                } catch (error) {
+                    console.error("Error occurred while managing tickets:", error);
+                }
+            } else {
+                console.warn("No tickets data available.");
+            }
             // After event is created, reset button text and enable the button
             if (action === 'save') {
                 updateButtonState('saveButton', 'Saved', true);
@@ -925,10 +973,10 @@
             } else {
                 updateButtonState('submitButton', 'Submitted', false);
                 await api.events.set_draft(eventId, false);
+                localStorage.clear();
+                window.location.reload();
             }
         }
-
-
         // Function for handling "Save" button click
         function handleSave() {
             updateButtonState('saveButton', 'Saving...', true);  // Change button text and disable
