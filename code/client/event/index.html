@@ -12,28 +12,31 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            z-index: 1;
         }
 
         .img-container {
-            align-self: center;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100vw;
-            border-radius: 20px;
+            align-self: center;
+            width: auto;
+            /* border-radius: 20px; */
             box-sizing: border-box;
             background: rgba(238, 238, 240, 0.3);
             backdrop-filter: blur(10px);
             padding: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out;
+            margin: 0;
+            z-index: 1;
         }
 
         #eventImage {
             position: relative;
             align-self: center;
-            width: auto;
-            height: 100%;
+            width: 100%;
+            height: 60vh;
             object-fit: cover;
             border-radius: 15px;
         }
@@ -41,7 +44,7 @@
         .flex-container {
             display: flex;
             flex-direction: row;
-            gap: 20px;
+            gap: 10px;
         }
 
         .left-column,
@@ -49,49 +52,112 @@
             flex: 2;
             border-radius: 15px;
             box-sizing: border-box;
-            padding: 10px;
+            padding: 0px;
+            margin: 0;
+            /* border: 2px solid black; */
+            flex-direction: column;
         }
 
         .right-column {
             flex: 1;
         }
 
-        .left-column,
-        .right-column {
-            transition: all 0.3s ease-in-out;
-        }
-
-        .left-column:hover,
-        .right-column:hover {
-            /* transform: scale(1.00); */
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-            background: rgba(238, 238, 240, 0.2);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .left-column,
-        .right-column {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .left-column:hover,
-        .right-column:hover {
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-        }
-
-
         #eventTime,
         #eventDate,
-        h2 {
+        h1 {
             margin: 0;
+        }
+
+        /* .eventDetails {
+            font-family: "Klee One", cursive;
+            font-weight: 400;
+            font-style: normal;
+        } */
+
+        h1 {
+            position: relative;
+            margin-top: 0;
+            z-index: 2;
+            font-family: "Marhey", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: normal;
+            text-transform: uppercase;
         }
 
         #eventTime,
         #eventDate {
             font-size: 15px;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+
+        }
+
+        .ticket-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eeeef0;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .ticket-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .ticket-buttons button {
+            padding: 0;
+            font-size: 25px;
+            font-weight: 200;
+            border: none;
+            height: 40px;
+            width: 40px;
+            background-color: #1b263b;
+            color: white;
+            border-radius: 100%;
+            cursor: pointer;
+        }
+
+        .ticket-buttons button:hover {
+            background-color: #1b263b;
+            cursor: pointer;
+        }
+
+        .ticket-buttons button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .ticket-quantity {
+            width: 50px;
+            padding: 5px;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         @media (max-width: 768px) {
@@ -106,37 +172,65 @@
 <body>
     <div class="content">
         <div class="eventPage">
-            <div class="img-container">
-                <img id="eventImage" src="" alt="Event Picture" />
-            </div>
-
             <div class="flex-container">
-                <div class="left-column">
-                    <p id="eventDate">
-                    <p id="eventTime"></p>
-                    </p>
-                    <h2 class="eventTitle" id="eventTitle"></h2>
-                    <p>Event Location: <span id="eventLocation"></span></p>
-                    <p>Event Duration: <span id="eventDuration"></span></p>
-                    <p id="eventDescription"></p>
-                    <h2>Tags:</h2>
-                    <div id="eventTags"></div>
+                <div class=" left-column">
+
+                    <div class="img-container">
+                        <img id="eventImage" src="" alt="Event Picture" />
+                    </div>
                 </div>
 
                 <div class="right-column">
-                    <h2>Tickets:</h2>
-                    <ul id="eventTicketsDisplay"></ul>
+                    <div id="map">
+                        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0"
+                            marginwidth="0"
+                            src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&t=k&z=14&ie=UTF8&iwloc=B&output=embed">
+                        </iframe>
+
+                    </div>
                 </div>
             </div>
+            <div class="flex-container">
+
+                <div class="left-column eventDetails">
+                    <!-- <span id="eventDate"></span>
+                        <span id="eventTime"></span><br><br> -->
+                    <h1 class="eventTitle" id="eventTitle"></h1>
+                    <h3>Date & Time:</h3> <span id="eventDuration"></span>
+                    <h3>Location:</h3> <span id="eventLocation"></span>
+                    <p id="eventDescription"></p>
+
+                </div>
+                <div class="right-column">
+
+                    <div class="right-column">
+                        <h2>Tickets:</h2>
+                        <p id="eventTicketsDisplay"></p>
+                    </div>
+
+                    <div class="right-column">
+                        <h2>Organiser Information:</h2>
+                        <p><span id="owner"></span>
+                        </p>
+                    </div>
+
+                    <div class="right-column">
+                        <h2>Tags:</h2>
+                        <div id="eventTags"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-
     </div>
     <script>
+        let id;
         window.onload = async function () {
             // Retrieve the event ID from the URL query parameters
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('id');
+            id = eventId;
+
             // Check if event ID is provided
             if (!eventId) {
                 console.log("No event ID found.");
@@ -144,53 +238,142 @@
             }
             try {
                 // Fetch event details
-                const get_event = await api.events.get_event(eventId);
+                const get_event = await api.events.get_event_with_owner(eventId);
                 const event = get_event;
                 const tags = get_event.tags;
+                const owner = get_event.owner;
+                console.log(owner);
 
                 // Set event details on the page
                 document.getElementById("eventTitle").textContent = event.name;
                 document.getElementById("eventLocation").textContent = event.location_name;
 
-                // Format event start date (assuming it's a timestamp)
-                const eventDate = new Date(event.start);  // Assuming 'start' is a timestamp
-                document.getElementById("eventTime").textContent = new Date(event.start).toLocaleTimeString();
-                document.getElementById("eventDate").textContent = new Date(event.start).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                // For the event duration (assuming it's in milliseconds)
-                const durationInHours = Math.floor(event.duration / (1000 * 60 * 60));  // Convert milliseconds to hours
-                const durationInMinutes = Math.floor((event.duration % (1000 * 60 * 60)) / (1000 * 60));  // Convert remaining milliseconds to minutes
+                const eventStart = new Date(event.start);  // Event start date from the timestamp
+                const eventEnd = new Date(eventStart.getTime() + event.duration);  // Event end date from duration
 
-                // Display the duration in hours and minutes
-                document.getElementById("eventDuration").textContent = `${durationInHours} hours ${durationInMinutes} minutes`;
+                // Function to format the time
+                const formatTime = (date) => {
+                    const hours = date.getHours();
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                    const ampm = hours >= 12 ? 'pm' : 'am';
+                    const formattedHours = hours % 12 || 12;  // Convert 24-hour to 12-hour format
+                    return `${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+                };
+
+                // Format start and end time
+                const startFormatted = `${eventStart.toLocaleString('default', { month: 'long' })} ${eventStart.getDate()}, ${eventStart.getFullYear()} @ ${formatTime(eventStart)}`;
+                const endFormatted = `${eventEnd.toLocaleString('default', { month: 'long' })} ${eventEnd.getDate()}, ${eventEnd.getFullYear()} @ ${formatTime(eventEnd)}`;
+
+                // Display the formatted date and time
+                document.getElementById("eventDuration").textContent = `${startFormatted} - ${endFormatted}`;
+
                 document.getElementById("eventDescription").textContent = event.description;
 
                 // Display tags
                 const eventTagsElement = document.getElementById("eventTags");
                 tags.forEach(tag => {
-                    // Access the 'tag' property to display the tag name
                     const tagElement = document.createElement("span");
-                    tagElement.textContent = `#${tag}`;  // Access the 'tag' property from the tag object
+                    tagElement.textContent = `#${tag}`;
                     tagElement.classList.add("event-tag");
                     eventTagsElement.appendChild(tagElement);
                 });
 
                 if (event.picture) {
-                    console.log("Event picture:", event.picture);
                     document.getElementById("eventImage").src = `/media/${event.picture}`;
                 } else {
-                    console.log("No event picture found.");
-                    document.getElementById("eventImage").src = '/media/default-image.jpg';  // Provide a fallback image
+                    document.getElementById("eventImage").src = '/media/default-image.jpg';  // Fallback image
                 }
+
+                document.getElementById("owner").innerHTML = "Name: " + owner.name + "<br>Phone Number: " + owner.disp_phone_number + "<br>Email: " + owner.disp_email;
+
             } catch (error) {
                 console.error("Error fetching event:", error);
             }
 
+            // Fetch tickets
+            fetchAndRenderTickets(id);
         };
+
+        let tickets = [];  // Declare tickets globally to store the fetched tickets
+
+        // Fetch tickets from API and render them
+        async function fetchAndRenderTickets(id) {
+            try {
+                tickets = await api.tickets.get_tickets(id);  // Fetch tickets and store them globally
+                console.log('Fetched tickets:', tickets);
+                renderTickets();
+            } catch (error) {
+                console.error("Error fetching tickets:", error);
+            }
+        }
+
+        // Function to render tickets dynamically based on the fetched data
+        function renderTickets() {
+            const eventTicketsDisplay = document.getElementById('eventTicketsDisplay');  // Get the element to display the tickets
+            eventTicketsDisplay.innerHTML = '';  // Clear existing tickets display
+
+            tickets.forEach(ticket => {
+                const ticketContainer = document.createElement('li');
+                ticketContainer.classList.add('ticket-container');
+
+                // Ensure ticket.quantity exists or set it to 0
+                ticket.quantity = ticket.quantity || 0;  // Default quantity to 0 if not provided
+                ticket.availableQuantity = ticket.availableQuantity || 10;  // Set available quantity, e.g., 10 tickets
+
+                // Max quantity user can select is the minimum of 10 or available quantity
+                const maxQuantity = Math.min(10, ticket.availableQuantity);
+
+                ticketContainer.innerHTML = `
+                    <span class="ticket-name">${ticket.name} - $${ticket.price}</span>
+                    <div class="ticket-buttons">
+                        <button class="decrease" onclick="updateTicketQuantity(${ticket.id}, -1)">-</button>
+                        <input 
+                            type="number" 
+                            class="ticket-quantity" 
+                            value="${ticket.quantity}" 
+                            onchange="updateTicketQuantityFromInput(${ticket.id}, this.value)" 
+                            min="0"
+                            max="${maxQuantity}"  <!-- Limit input max value -->
+                        <button class="increase" onclick="updateTicketQuantity(${ticket.id}, 1)">+</button>
+                    </div>
+                `;
+
+                // Enable or disable the + button based on available tickets and current quantity
+                const increaseButton = ticketContainer.querySelector('.increase');
+                if (ticket.quantity >= maxQuantity) {
+                    increaseButton.disabled = true;
+                }
+
+                eventTicketsDisplay.appendChild(ticketContainer);
+            });
+        }
+
+        // Function to update ticket quantity when user clicks +/- buttons
+        function updateTicketQuantity(ticketId, delta) {
+            const ticket = tickets.find(t => t.id === ticketId);  // Find ticket by id
+            if (ticket) {
+                // Calculate the new quantity, ensuring it's within the allowed range
+                const maxQuantity = Math.min(10, ticket.availableQuantity);
+                ticket.quantity = Math.max(0, Math.min(ticket.quantity + delta, maxQuantity));  // Ensure quantity doesn't go below 0 or exceed max limit
+                renderTickets(); // Re-render tickets after updating the quantity
+            }
+        }
+
+        // Function to update ticket quantity from the input field
+        function updateTicketQuantityFromInput(ticketId, inputValue) {
+            const ticket = tickets.find(t => t.id === ticketId);  // Find ticket by id
+            const parsedValue = parseInt(inputValue);  // Parse the input value as an integer
+
+            if (ticket && !isNaN(parsedValue)) {
+                // Calculate the new quantity, ensuring it's within the allowed range
+                const maxQuantity = Math.min(10, ticket.availableQuantity);
+                ticket.quantity = Math.max(0, Math.min(parsedValue, maxQuantity));  // Ensure quantity doesn't go below 0 or exceed max limit
+                renderTickets(); // Re-render tickets after updating the quantity
+            } else {
+                ticket.quantity = 0; // Reset to 0 if input is invalid
+                renderTickets(); // Re-render with valid input (reset to 0)
+            }
+        }
 
     </script>
 
