@@ -223,8 +223,13 @@
         </div>
         
         <div class="profile-container">
-            <div class="profile-picture">
-                <button class="change-profile-btn"></button>
+            <div class="profile-picture" id="profilePic">
+                <!-- Change Profile Picture Button -->
+                <button class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
+
+                <!-- Hidden File Input for Profile Picture -->
+                <input type="file" id="profilePicInput" accept="image/png" style="display: none;" onchange="updateProfilePicture(event)">
+
             </div>
             
             <button class="go-pro-btn">Go Pro</button>
@@ -453,6 +458,22 @@
             let color = document.getElementById("bannerColorPicker").value;
             document.querySelector(".profile-banner").style.background = color;
             closeModal(); // Close modal after selection
+        }
+
+        function updateProfilePicture(event) {
+            const file = event.target.files[0];
+
+            if (file && file.type === "image/png") {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById("profilePic").style.backgroundImage = `url(${e.target.result})`;
+                };
+
+                reader.readAsDataURL(file); // Convert the file to a Data URL
+            } else {
+                alert("Please upload a PNG file.");
+            }
         }
 
     </script>
