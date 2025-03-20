@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Black+Ops+One&family=Klee+One&family=Marhey:wght@300..700&display=swap');
+
 body {
     color: #f4f4f9;
     background: linear-gradient(135deg, #1b263b 0%, #2a3e59 40%, #415a77 75%, #778da9 100%);
@@ -193,6 +195,7 @@ nav a,
     color: #eeeef0;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     font-size: 20px;
+    font-weight: 100;
     padding: 15px 25px;
     display: block;
     transition: all 0.3s ease;
@@ -271,6 +274,7 @@ nav a:hover,
 
 .product-box:hover {
     transform: scale(1.05);
+    cursor: pointer;
 }
 
 .product-box img {
@@ -278,7 +282,7 @@ nav a:hover,
     height: 300px;
     object-fit: cover;
     padding: 20px;
-    padding-bottom:0;
+    padding-bottom: 0;
     border-bottom: 3px solid #eeeef0;
 }
 
@@ -292,7 +296,7 @@ nav a:hover,
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap:5px;
+    gap: 5px;
 }
 
 .product-box .caption h2 {
@@ -318,14 +322,15 @@ nav a:hover,
 
 .arrow {
     position: absolute;
-    top: 15%;
+    top: 5%;
     transform: translateY(-50%);
     background-color: #eeeef0;
-    color: #415a77;
+    color: #1b263b;
     border: none;
-    padding: 10px 15px;
+    padding: 5px 15px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: 600;
     z-index: 1;
     margin: 20px;
 }
@@ -339,7 +344,7 @@ nav a:hover,
 }
 
 .arrow:hover {
-    background-color: #778da9;
+    background-color: #f4f4f9;
 }
 
 .heading {
@@ -355,7 +360,13 @@ nav a:hover,
 .heading a {
     color: #eeeef0;
     text-decoration: none;
-    font-size: 30px;
+    font-size: 40px;
+    font-family: "Marhey", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    text-transform: uppercase;
+
 }
 
 .heading a:hover {
@@ -717,7 +728,11 @@ nav a:hover,
     padding: 5px 10px;
     margin: 2px;
     border-radius: 15px;
-    font-size: 14px;
+    font-size: 20px;
+}
+
+.event-tag:hover {
+    background-color: #778da9;
 }
 
 @media (max-width: 768px) {
@@ -900,5 +915,6 @@ nav a:hover,
         padding: 6px 10px;
         font-size: 14px;
         margin: 5px;
+        top: 6%
     }
 }
