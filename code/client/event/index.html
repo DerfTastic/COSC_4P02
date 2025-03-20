@@ -208,9 +208,10 @@
                     </div>
 
                     <div class="right-column">
-                        <h2>Organiser Information:</h2>
-                        <p><span id="owner"></span>
-                        </p>
+                        <a href="#" id="profileLink" style="text-decoration: none; color: white;"><h2>Organiser Information:</h2>
+                        
+                            <p><span id="owner"></span></p>
+                        </a>
                     </div>
 
                     <div class="right-column">
@@ -229,6 +230,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('id');
             id = eventId;
+            const profileLink = document.getElementById('profileLink');
+
+            // Update the href dynamically
+            profileLink.href = `/user/profile?id=${eventId}`;
+
 
             // Check if event ID is provided
             if (!eventId) {
