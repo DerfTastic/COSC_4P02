@@ -69,7 +69,7 @@ async function create_all_user_defined(){
 let tracker = 0;
 function random_image_url(){
     tracker++;
-    return `https://picsum.photos/200/300?random=${tracker}`;
+    return `https://picsum.photos/1366/768?random=${tracker}`;
 }
 
 async function create_random() {
@@ -105,10 +105,10 @@ async function create_random() {
             event.start = chance.timestamp()*1000;
             event.duration = chance.integer({ min: 1000*60*5, max: 1000*60*60*12 });
 
-            if(chance.bool())
+            if(true||chance.bool())
                 event.available_total_tickets = chance.integer({ min: 50, max: 500 });
 
-            if(chance.bool({likelihood: 70})){
+            if(true||chance.bool({likelihood: 70})){
                 event.location_name = chance.address();
                 if(chance.bool({likelihood: 70})){
                     event.location_lat = chance.latitude();

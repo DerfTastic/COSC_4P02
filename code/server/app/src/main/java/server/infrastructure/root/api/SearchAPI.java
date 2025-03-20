@@ -115,7 +115,7 @@ public class SearchAPI {
             long_map.put(":organizer_exact", search.organizer_exact);
         }
         if(search.organizer_fuzzy!=null){
-            whereClause.append(" AND owner_id IN (select users.id from users where events.owner_id=users.id AND users.name LIKE :organizer_name_fuzzy)");
+            whereClause.append(" AND owner_id IN (select users.id from users where events.owner_id=users.id AND users.full_name LIKE :organizer_name_fuzzy)");
             str_map.put(":organizer_name_fuzzy", search.organizer_fuzzy);
         }
         if(search.name_fuzzy!=null){
