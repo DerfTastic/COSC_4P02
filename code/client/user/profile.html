@@ -10,12 +10,18 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Keeps content at the top but centered horizontally */
+            min-height: 100vh; /* Ensures it takes full viewport height */
         }
 
         .profile{
             width: 65%;
-            align-self: center;
+            max-width: 800px; /* Ensures it doesn't get too wide */
+            margin: 0 auto; /* Centers it horizontally */
+            border-radius: 8px; /* Optional: Softens edges */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Adds subtle depth */
         }
 
         .profile-banner {
