@@ -35,7 +35,7 @@
         .profile-container {
             position: relative;
             display: flex;
-            flex-direction: column; /* Stack elements vertically */
+            flex-direction: column;
             align-items: center;
             padding: 20px;
             text-align: center;
@@ -55,7 +55,7 @@
             position: absolute;
             width: 30px;
             height: 30px;
-            background: url('/images/pencil-icon.png') center/contain no-repeat;
+            background: url('/images/edit-icon.png') center/contain no-repeat;
             border: none;
             cursor: pointer;
             right: 5px;
@@ -68,7 +68,7 @@
             right: 10px;
             width: 30px;
             height: 30px;
-            background: url('/images/pencil-icon.png') center/contain no-repeat;
+            background: url('/images/edit-icon.png') center/contain no-repeat;
             border: none;
             cursor: pointer;
         }
@@ -167,12 +167,12 @@
     <div src="/partials/header.html" type="text/x-html-template"></div>
     <div class="profile">
         <div class="profile-banner">
-            <button class="change-banner-btn">Change Banner</button>
+            <button class="change-banner-btn"></button>
         </div>
 
         <div class="profile-container">
             <div class="profile-picture"></div>
-            <button class="change-profile-btn">Change Profile</button>
+            <button class="change-profile-btn"></button>
 
             <div class="user-info">
                 <div class="user-name">John Doe</div>
@@ -249,7 +249,7 @@
 
             document.querySelector(".go-pro-btn").addEventListener("click", function () {
                 // Redirect to Pro sign-up page
-                window.location.href = "/pro-signup"; // Replace with actual link
+                window.location.href = ""; // Replace with actual link
             });
         });
     </script>
