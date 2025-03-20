@@ -91,12 +91,42 @@ document.addEventListener("DOMContentLoaded", function () {
         const locationFilter = document.getElementById("filterLocation").value.toLowerCase();
         const categoryFilter = document.getElementById("filterCategory").value.toLowerCase();
         const tagFilter = document.getElementById("filterTag").value.toLowerCase();
+        const minPrice = parseFloat(document.getElementById("minPrice").value) || 0;
+        const maxPrice = parseFloat(document.getElementById("maxPrice").value) || Number.MAX_VALUE;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const sortBy = document.getElementById("sort").value;
+        const order = document.getElementById("order").value;
 
-        filteredEvents = events.filter(event =>
-            (locationFilter === "" || event.location.toLowerCase().includes(locationFilter)) &&
-            (categoryFilter === "" || event.category.toLowerCase().includes(categoryFilter)) &&
-            (tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter)))
-        );
+        filteredEvents = events.filter(event => {
+            const eventDate = new Date(event.date);
+            const isLocationMatch = locationFilter === "" || event.location.toLowerCase().includes(locationFilter);
+            const isCategoryMatch = categoryFilter === "" || event.category.toLowerCase().includes(categoryFilter);
+            const isTagMatch = tagFilter === "" || event.tags.some(tag => tag.toLowerCase().includes(tagFilter));
+            const isPriceMatch = event.price >= minPrice && event.price <= maxPrice;
+            const isDateMatch = (!startDate || eventDate >= new Date(startDate)) && (!endDate || eventDate <= new Date(endDate));
+
+            return isLocationMatch && isCategoryMatch && isTagMatch && isPriceMatch && isDateMatch;
+        });
+
+        filteredEvents.sort((a, b) => {
+            let valueA = a[sortBy];
+            let valueB = b[sortBy];
+
+            if (sortBy === "date") {
+                valueA = new Date(a.date);
+                valueB = new Date(b.date);
+            } else if (sortBy === "price") {
+                valueA = parseFloat(a.price);
+                valueB = parseFloat(b.price);
+            }
+
+            if (order === "asc") {
+                return valueA > valueB ? 1 : -1;
+            } else {
+                return valueA < valueB ? 1 : -1;
+            }
+        });
 
         currentPage = 1;
         changePage(1);
