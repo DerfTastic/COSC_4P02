@@ -208,7 +208,7 @@
     <div class="profile">
         <div class="profile-banner">
             <!-- Change Banner Button -->
-            <button class="change-banner-btn" onclick="openModal()">🖊️</button>
+            <button class="change-banner-btn" onclick="openModal()"></button>
 
             <!-- Popup Modal -->
             <div id="colorModal" class="modal">
@@ -441,6 +441,20 @@
                 window.location.href = ""; // Replace with actual link
             });
         });
+        function openModal() {
+            document.getElementById("colorModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("colorModal").style.display = "none";
+        }
+
+        function changeBannerColor() {
+            let color = document.getElementById("bannerColorPicker").value;
+            document.querySelector(".profile-banner").style.background = color;
+            closeModal(); // Close modal after selection
+        }
+
     </script>
 
 </body>
