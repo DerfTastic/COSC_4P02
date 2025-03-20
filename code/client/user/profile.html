@@ -10,11 +10,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            justify-content: center;
-            display: flex;
+            align-content: center;
+        }
+        .profile{
             width: 65%;
         }
-
         .profile-banner {
             position: relative;
             width: 100%;
@@ -154,71 +154,72 @@
 
 <body>
     <div src="/partials/header.html" type="text/x-html-template"></div>
-
-    <div class="profile-banner">
-        <button class="change-banner-btn">Change Banner</button>
-    </div>
-
-    <div class="profile-container">
-        <div class="profile-picture"></div>
-        <button class="change-profile-btn">Change Profile</button>
-
-        <div class="user-info">
-            <div class="user-name">John Doe</div>
+    <div class="profile">
+        <div class="profile-banner">
+            <button class="change-banner-btn">Change Banner</button>
         </div>
 
-        <div class="contact-info">
-            <div>Email: johndoe@example.com</div>
-            <div>Phone: (123) 456-7890</div>
-            <button class="go-pro-btn">Go Pro</button>
+        <div class="profile-container">
+            <div class="profile-picture"></div>
+            <button class="change-profile-btn">Change Profile</button>
+
+            <div class="user-info">
+                <div class="user-name">John Doe</div>
+            </div>
+
+            <div class="contact-info">
+                <div>Email: johndoe@example.com</div>
+                <div>Phone: (123) 456-7890</div>
+                <button class="go-pro-btn">Go Pro</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="hosted">Events Hosted</div>
+            <div class="tab" data-tab="history">Ticket History</div>
+            <div class="tab" data-tab="upcoming">Upcoming Events</div>
+            <div class="tab" data-tab="drafts">Drafts</div>
+        </div>
+
+        <div class="tab-content active" id="hosted">
+            <ul class="event-list">
+                <li>Live Concert - Hosted</li>
+                <li>Broadway Show - Hosted</li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="history">
+            <ul class="event-list">
+                <li>Comedy Night - Attended</li>
+                <li>Food Festival - Attended</li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="upcoming">
+            <ul class="event-list">
+                <li>Tech Conference - Coming Soon</li>
+                <li>Art Exhibition - Coming Soon</li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="drafts">
+            <ul class="event-list">
+                <li>Jazz Festival - Draft</li>
+                <li>Gaming Expo - Draft</li>
+            </ul>
+        </div>
+
+        <div class="carousel-container">
+            <h3>Recommended Events</h3>
+            <div class="carousel">
+                <div class="carousel-item">Event 1</div>
+                <div class="carousel-item">Event 2</div>
+                <div class="carousel-item">Event 3</div>
+                <div class="carousel-item">Event 4</div>
+            </div>
         </div>
     </div>
-
-    <div class="tabs">
-        <div class="tab active" data-tab="hosted">Events Hosted</div>
-        <div class="tab" data-tab="history">Ticket History</div>
-        <div class="tab" data-tab="upcoming">Upcoming Events</div>
-        <div class="tab" data-tab="drafts">Drafts</div>
-    </div>
-
-    <div class="tab-content active" id="hosted">
-        <ul class="event-list">
-            <li>Live Concert - Hosted</li>
-            <li>Broadway Show - Hosted</li>
-        </ul>
-    </div>
-
-    <div class="tab-content" id="history">
-        <ul class="event-list">
-            <li>Comedy Night - Attended</li>
-            <li>Food Festival - Attended</li>
-        </ul>
-    </div>
-
-    <div class="tab-content" id="upcoming">
-        <ul class="event-list">
-            <li>Tech Conference - Coming Soon</li>
-            <li>Art Exhibition - Coming Soon</li>
-        </ul>
-    </div>
-
-    <div class="tab-content" id="drafts">
-        <ul class="event-list">
-            <li>Jazz Festival - Draft</li>
-            <li>Gaming Expo - Draft</li>
-        </ul>
-    </div>
-
-    <div class="carousel-container">
-        <h3>Recommended Events</h3>
-        <div class="carousel">
-            <div class="carousel-item">Event 1</div>
-            <div class="carousel-item">Event 2</div>
-            <div class="carousel-item">Event 3</div>
-            <div class="carousel-item">Event 4</div>
-        </div>
-    </div>
-
+    
     <div src="/partials/footer.html" type="text/x-html-template"></div>
 
     <script>
