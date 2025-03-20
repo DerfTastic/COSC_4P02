@@ -69,7 +69,7 @@ async function create_all_user_defined(){
 let tracker = 0;
 function random_image_url(){
     tracker++;
-    return `https://picsum.photos/200/300?random=${tracker}`;
+    return `https://picsum.photos/500/200?random=${tracker}`;
 }
 
 async function create_random() {
