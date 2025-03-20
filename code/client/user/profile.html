@@ -171,6 +171,35 @@
             font-size: 18px;
             border: 1px solid #ccc;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .modal::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
     </style>
 </head>
 
@@ -179,15 +208,32 @@
     <div src="/partials/header.html" type="text/x-html-template"></div>
     <div class="profile">
         <div class="profile-banner">
-            <button class="change-banner-btn"></button>
-        </div>
+            <!-- Change Banner Button -->
+            <button class="change-banner-btn" onclick="openModal()"></button>
 
+            <!-- Popup Modal -->
+            <div id="colorModal" class="modal">
+                <div class="modal-content">
+                    <h2>Change Banner Color</h2>
+                    <input type="color" id="bannerColorPicker">
+                    <br><br>
+                    <button onclick="changeBannerColor()">Save</button>
+                    <button onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
         <div class="profile-container">
-            <div class="profile-picture">
-                <button class="change-profile-btn"></button> <!-- Pencil icon for profile -->
+            <div class="profile-picture" id="profilePic">
+                <!-- Change Profile Picture Button -->
+                <button class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
+
+                <!-- Hidden File Input for Profile Picture -->
+                <input type="file" id="profilePicInput" accept="image/png" style="display: none;" onchange="updateProfilePicture(event)">
+
             </div>
             
-            <button class="go-pro-btn">Go Pro</button> <!-- Positioned in line with profile picture -->
+            <button class="go-pro-btn">Go Pro</button>
         </div>
 
         <div class="user-info-container">
@@ -402,6 +448,36 @@
                 window.location.href = ""; // Replace with actual link
             });
         });
+        function openModal() {
+            document.getElementById("colorModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("colorModal").style.display = "none";
+        }
+
+        function changeBannerColor() {
+            let color = document.getElementById("bannerColorPicker").value;
+            document.querySelector(".profile-banner").style.background = color;
+            closeModal(); // Close modal after selection
+        }
+
+        function updateProfilePicture(event) {
+            const file = event.target.files[0];
+
+            if (file && file.type === "image/png") {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById("profilePic").style.backgroundImage = `url(${e.target.result})`;
+                };
+
+                reader.readAsDataURL(file); // Convert the file to a Data URL
+            } else {
+                alert("Please upload a PNG file.");
+            }
+        }
+
     </script>
 
 </body>
