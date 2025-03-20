@@ -47,8 +47,9 @@
             border-radius: 50%;
             border: 3px solid white;
             background: black;
-            position: relative;
-            margin-bottom: 10px; /* Adds spacing before user info */
+            position: absolute;
+            top: -60px;
+            left: 20px;
         }
 
         .change-profile-btn {
@@ -58,8 +59,8 @@
             background: url('/images/edit-icon.png') center/contain no-repeat;
             border: none;
             cursor: pointer;
-            right: 5px;
-            bottom: 5px;
+            right: -10px;
+            bottom: -10px;
         }
 
         .change-banner-btn {
@@ -71,6 +72,13 @@
             background: url('/images/edit-icon.png') center/contain no-repeat;
             border: none;
             cursor: pointer;
+        }
+
+        .user-info-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 50px 20px 0;
         }
 
         .user-info {
@@ -85,6 +93,7 @@
         .user-name {
             font-size: 24px;
             font-weight: bold;
+            text-align: left;
         }
 
         .go-pro-btn {
@@ -94,6 +103,9 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
+            position: absolute;
+            right: 20px; /* Aligns it to the right */
+            top: 30px; /* Matches profile picture alignment */
         }
 
         .tabs {
@@ -171,17 +183,18 @@
         </div>
 
         <div class="profile-container">
-            <div class="profile-picture"></div>
-            <button class="change-profile-btn"></button>
-
-            <div class="user-info">
-                <div class="user-name">John Doe</div>
+            <div class="profile-picture">
+                <button class="change-profile-btn"></button> <!-- Pencil icon for profile -->
             </div>
+            
+            <button class="go-pro-btn">Go Pro</button> <!-- Positioned in line with profile picture -->
+        </div>
 
+        <div class="user-info-container">
+            <div class="user-name">John Doe</div>
             <div class="contact-info">
                 <div>Email: johndoe@example.com</div>
                 <div>Phone: (123) 456-7890</div>
-                <button class="go-pro-btn">Go Pro</button>
             </div>
         </div>
 
