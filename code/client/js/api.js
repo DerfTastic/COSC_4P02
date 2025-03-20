@@ -1184,7 +1184,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             return options.fn();
         });
         Handlebars.registerHelper('formatTime', function(millis) {
-            const date = new Date(millis);
+            const date = new Date(millis).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
             return date.toLocaleString();
         });
         Handlebars.registerHelper('logColor', function(level) {
