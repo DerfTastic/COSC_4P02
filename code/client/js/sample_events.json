@@ -5,8 +5,8 @@
         "bio": "Community-focused DIY craft event organizer specializing in workshops, maker fairs, and creative retreats.",
         "disp_email": "events@craftyconnections.com",
         "disp_phone_number": "(555) 123-4567",
-        "picture": "craftyconnections.jpg",
-        "banner": "craftyconnections_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "NYC Crafty Project Fair",
@@ -23,7 +23,7 @@
                     "Artisanal",
                     "Workshops"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Chelsea Market in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -54,7 +54,7 @@
                     "Fun",
                     "Handmade"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "The Crafty Nest in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -84,7 +84,7 @@
                     "Family-Friendly",
                     "New York City"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Crafty Corner in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -119,7 +119,7 @@
                     "Family Fun",
                     "Chicago Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Makers Hall in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -156,7 +156,7 @@
                     "Community",
                     "Fun"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Craft Haven Community Center in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -192,7 +192,7 @@
                     "Los Angeles",
                     "Creativity"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Arts District Pavilion in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -227,7 +227,7 @@
                     "Hands-On Fun",
                     "Family-Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Maker Space NYC in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -264,7 +264,7 @@
                     "Fun",
                     "Artisan"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "The Crafty Corner in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -294,7 +294,7 @@
                     "Toronto",
                     "Artisan Skills"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "Toronto Art Studio in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -331,7 +331,7 @@
                     "Hands-on",
                     "Arts and Crafts"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "Sunny Art Studio in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -362,7 +362,7 @@
                     "Hands-On",
                     "Arts and Crafts"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "Calgary Craft Studio in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -394,7 +394,7 @@
                     "Family Fun",
                     "Workshops"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Toronto Artisans Hall in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -430,7 +430,7 @@
                     "Art",
                     "Workshops"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Creative Hub in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -467,7 +467,7 @@
                     "Artisanal",
                     "Workshops"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Chelsea Market in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -498,7 +498,7 @@
                     "Fun",
                     "Handmade"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "The Crafty Nest in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -528,7 +528,7 @@
                     "Family-Friendly",
                     "New York City"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Crafty Corner in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -563,7 +563,7 @@
                     "Family Fun",
                     "Chicago Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Makers Hall in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -600,7 +600,7 @@
                     "Community",
                     "Fun"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Craft Haven Community Center in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -636,7 +636,7 @@
                     "Los Angeles",
                     "Creativity"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Arts District Pavilion in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -671,7 +671,7 @@
                     "Hands-On Fun",
                     "Family-Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Maker Space NYC in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -708,7 +708,7 @@
                     "Fun",
                     "Artisan"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "The Crafty Corner in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -738,7 +738,7 @@
                     "Toronto",
                     "Artisan Skills"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "Toronto Art Studio in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -775,7 +775,7 @@
                     "Hands-on",
                     "Arts and Crafts"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "Sunny Art Studio in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -806,7 +806,7 @@
                     "Hands-On",
                     "Arts and Crafts"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/workshop.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/workshop.jpg",
                 "location_name": "Calgary Craft Studio in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -838,7 +838,7 @@
                     "Family Fun",
                     "Workshops"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "Toronto Artisans Hall in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -874,7 +874,7 @@
                     "Art",
                     "Workshops"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/project fair.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/project fair.jpg",
                 "location_name": "The Creative Hub in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -904,8 +904,8 @@
         "bio": "Independent film festival organizer showcasing emerging talent and diverse voices in cinema from around the world.",
         "disp_email": "submissions@cinematichorizons.com",
         "disp_phone_number": "(555) 789-0123",
-        "picture": "cinematichorizons.jpg",
-        "banner": "cinematichorizons_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "St. Catharines International Film Showcase",
@@ -920,7 +920,7 @@
                     "St. Catharines",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Merli Tour Theatre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -954,7 +954,7 @@
                     "Independent Films",
                     "Film Screening"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Balboa Theatre in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -990,7 +990,7 @@
                     "Screening Night",
                     "Cultural Experiences"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Grand Luxe Theatre in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -1027,7 +1027,7 @@
                     "Filmmaking",
                     "Artistry"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Royal Cinema in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -1063,7 +1063,7 @@
                     "Independent Films",
                     "Artistry"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1093,7 +1093,7 @@
                     "Cultural Event",
                     "Short Films"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Royal Alexandra Theatre in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -1130,7 +1130,7 @@
                     "Independent Films",
                     "Film Lovers"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "St. Catharines Performing Arts Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1167,7 +1167,7 @@
                     "Independent Film",
                     "Filmmaking"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Historic Rice Theatre in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -1201,7 +1201,7 @@
                     "Film Lovers",
                     "Philadelphia Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Kimmel Center for the Performing Arts in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -1232,7 +1232,7 @@
                     "Cultural Event",
                     "Independent Films"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Royal Cinema in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -1262,7 +1262,7 @@
                     "Independent Films",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Lincoln Theatre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1297,7 +1297,7 @@
                     "Cultural Celebration",
                     "Film Screening"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Archer City Theater in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -1329,7 +1329,7 @@
                     "Storytelling",
                     "Visual Arts"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The ByTowne Cinema in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -1363,7 +1363,7 @@
                     "Screenings",
                     "Cultural Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Royal Geographical Society in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -1399,7 +1399,7 @@
                     "Cultural Event",
                     "Art House Films"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Calgary Performing Arts Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -1435,7 +1435,7 @@
                     "Cultural Experience",
                     "Independent Film"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Ottawa Arts Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -1469,7 +1469,7 @@
                     "Artistic Expression",
                     "Calgary Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Calgary Art Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -1504,7 +1504,7 @@
                     "San Diego",
                     "Artisan Screenings"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Historic Balboa Theatre in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -1538,7 +1538,7 @@
                     "Cultural Event",
                     "Artistic Showcase"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Cinematic Arts Theatre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1569,7 +1569,7 @@
                     "Cultural Event",
                     "Screening"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Royal Canadian Legion, Calgary in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -1598,7 +1598,7 @@
                     "Art",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Grand Hall at the Masonic Temple in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -1628,7 +1628,7 @@
                     "Arts and Culture",
                     "Independent Films"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Royal Ontario Museum in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -1664,7 +1664,7 @@
                     "Independent Film",
                     "Cultural Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "National Arts Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -1700,7 +1700,7 @@
                     "St. Catharines",
                     "Cultural Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1736,7 +1736,7 @@
                     "Cultural Events",
                     "Film Screening"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "Crown Theatre in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -1771,7 +1771,7 @@
                     "Independent Films",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Rooftop at The Morgan in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -1807,7 +1807,7 @@
                     "Screening",
                     "International Films"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/film festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/film festival.jpg",
                 "location_name": "The Grand Theatre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1837,8 +1837,8 @@
         "bio": "Specialized children's event organizer creating magical, educational, and interactive experiences for kids of all ages.",
         "disp_email": "bookings@wondermakers.com",
         "disp_phone_number": "(555) 456-7890",
-        "picture": "wondermakers.jpg",
-        "banner": "wondermakers_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
 
             {
@@ -1853,7 +1853,7 @@
                     "Crafts",
                     "Games"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Sunnydale Park in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -1883,7 +1883,7 @@
                     "Silly",
                     "Philadelphia"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/school play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/school play.jpg",
                 "location_name": "Rainbow Theater in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -1919,7 +1919,7 @@
                     "Games",
                     "New York City"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Central Park Adventure Zone in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -1956,7 +1956,7 @@
                     "outdoors",
                     "play"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports practice.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports practice.jpg",
                 "location_name": "Sunnyday Sports Complex in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -1991,7 +1991,7 @@
                     "Cake",
                     "Celebration"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/birthday party.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/birthday party.jpg",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -2027,7 +2027,7 @@
                     "Entertainment",
                     "Family"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "Ottawa Community Center in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -2063,7 +2063,7 @@
                     "Interactive",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "Chicago Children's Theater in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -2098,7 +2098,7 @@
                     "Theater",
                     "Live Performance"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/school play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/school play.jpg",
                 "location_name": "Houston Community School Auditorium in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -2129,7 +2129,7 @@
                     "Games",
                     "Outdoor Adventures"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Sunny Day Park in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -2165,7 +2165,7 @@
                     "New York",
                     "Outdoor Activities"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Central Park Kids Zone in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -2195,7 +2195,7 @@
                     "cake",
                     "San Diego"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/birthday party.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/birthday party.jpg",
                 "location_name": "Sunshine Park in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -2231,7 +2231,7 @@
                     "Silly",
                     "Youth Performance"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/school play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/school play.jpg",
                 "location_name": "St. Catharines Performing Arts Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -2265,7 +2265,7 @@
                     "entertainment",
                     "St. Catharines"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "The Enchanted Theater in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -2302,7 +2302,7 @@
                     "Crafts",
                     "Games"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Calgary Sunshine Park in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -2337,7 +2337,7 @@
                     "Illusion",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "Giggles & Glamour Theater in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -2374,7 +2374,7 @@
                     "Show",
                     "Illusion"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "Philadelphia Magic Theater in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -2404,7 +2404,7 @@
                     "Games",
                     "Outdoor Activities"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Central Park Adventure Zone in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -2440,7 +2440,7 @@
                     "Games",
                     "Activities"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/birthday party.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/birthday party.jpg",
                 "location_name": "Jolly Jumper Park in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -2476,7 +2476,7 @@
                     "Illusion",
                     "Laughter"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "Philadelphia Children's Theater in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -2510,7 +2510,7 @@
                     "San Diego",
                     "Live Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/magic show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/magic show.jpg",
                 "location_name": "Wonderland Theatre in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -2545,7 +2545,7 @@
                     "Adventure",
                     "Family-Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/school play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/school play.jpg",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -2579,7 +2579,7 @@
                     "Theater",
                     "New York City"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/school play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/school play.jpg",
                 "location_name": "Manhattan School Auditorium in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -2613,7 +2613,7 @@
                     "Chicago",
                     "Celebration"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/birthday party.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/birthday party.jpg",
                 "location_name": "FunZone Chicago in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -2649,7 +2649,7 @@
                     "Crafts",
                     "Games"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Sunny Days Park in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -2678,7 +2678,7 @@
                     "Family Fun",
                     "Toronto"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/school play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/school play.jpg",
                 "location_name": "Toronto Community Theatre in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -2713,7 +2713,7 @@
                     "Philadelphia",
                     "Activities"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports practice.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports practice.jpg",
                 "location_name": "Philly Sports Arena in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -2747,7 +2747,7 @@
                     "Fun",
                     "Adventure"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/summer daycamp.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/summer daycamp.jpg",
                 "location_name": "Sunny Days Play Park in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -2777,8 +2777,8 @@
         "bio": "John brings you worldwide comedy events",
         "disp_email": "support@livenation.com",
         "disp_phone_number": "(123) 456-7890",
-        "picture": "johnswwce.jpg",
-        "banner": "johnbanner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
                 {
                     "name": "Comedy Night in Chicago!",
@@ -2794,7 +2794,7 @@
                         "Laughter",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Laugh Factory Chicago in Chicago, Illinois",
                     "location_lat": 41.882,
                     "location_long": -87.628,
@@ -2830,7 +2830,7 @@
                         "St. Catharines",
                         "Laughter"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Chuckle House in St. Catharines, Ontario",
                     "location_lat": 43.1583,
                     "location_long": -79.2458,
@@ -2860,7 +2860,7 @@
                         "Laughter",
                         "Live Performance"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Toronto Comedy Club in Toronto, Ontario",
                     "location_lat": 43.742,
                     "location_long": -76.373,
@@ -2895,7 +2895,7 @@
                         "Live Show",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Dome Theater in Houston, Texas",
                     "location_lat": 29.763,
                     "location_long": -95.383,
@@ -2930,7 +2930,7 @@
                         "Ottawa",
                         "Laugh Fest"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh City Theatre in Ottawa, Ontario",
                     "location_lat": 45.425,
                     "location_long": -75.695,
@@ -2965,7 +2965,7 @@
                         "London",
                         "Night Out"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Chuckle Hut in London, UK",
                     "location_lat": 51.507,
                     "location_long": -0.128,
@@ -3000,7 +3000,7 @@
                         "Entertainment",
                         "St. Catharines"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Giggle Garden in St. Catharines, Ontario",
                     "location_lat": 43.1583,
                     "location_long": -79.2458,
@@ -3035,7 +3035,7 @@
                         "Laughs",
                         "Live Event"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Laughing Bean Cafe in Toronto, Ontario",
                     "location_lat": 43.742,
                     "location_long": -76.373,
@@ -3070,7 +3070,7 @@
                         "Live Entertainment",
                         "Laughter"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Haven Theatre in Toronto, Ontario",
                     "location_lat": 43.742,
                     "location_long": -76.373,
@@ -3105,7 +3105,7 @@
                         "Los Angeles",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Factory LA in Los Angeles, California",
                     "location_lat": 34.05,
                     "location_long": -118.25,
@@ -3143,7 +3143,7 @@
                         "Funny",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "St. Catharines Comedy Club in St. Catharines, Ontario",
                     "location_lat": 43.1583,
                     "location_long": -79.2458,
@@ -3177,7 +3177,7 @@
                         "Puns",
                         "Live Performance"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Calgary Comedy Club in Calgary, Alberta",
                     "location_lat": 51.05,
                     "location_long": -114.067,
@@ -3209,7 +3209,7 @@
                         "Funny",
                         "Night Out"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Giggle Box Theatre in St. Catharines, Ontario",
                     "location_lat": 43.1583,
                     "location_long": -79.2458,
@@ -3244,7 +3244,7 @@
                         "Puns",
                         "Comedy Show"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Chuckle Factory in London, UK",
                     "location_lat": 51.507,
                     "location_long": -0.128,
@@ -3273,7 +3273,7 @@
                         "Puns",
                         "Live Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laughing Lobster Theater in San Diego, California",
                     "location_lat": 32.715,
                     "location_long": -117.163,
@@ -3309,7 +3309,7 @@
                         "punny",
                         "live performance"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Pacific Comedy Club in San Diego, California",
                     "location_lat": 32.715,
                     "location_long": -117.163,
@@ -3345,7 +3345,7 @@
                         "Live Performance",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Comedy Cove in St. Catharines, Ontario",
                     "location_lat": 43.1583,
                     "location_long": -79.2458,
@@ -3380,7 +3380,7 @@
                         "Live Performance",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Giggle Factory in Calgary, Alberta",
                     "location_lat": 51.05,
                     "location_long": -114.067,
@@ -3410,7 +3410,7 @@
                         "Laughs",
                         "Live Performance"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Giggle Garage in San Diego, California",
                     "location_lat": 32.715,
                     "location_long": -117.163,
@@ -3445,7 +3445,7 @@
                         "Puns",
                         "Live Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Chuckle Hut in Toronto, Ontario",
                     "location_lat": 43.742,
                     "location_long": -76.373,
@@ -3479,7 +3479,7 @@
                         "Live Performance",
                         "London Events"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Giggling Goat in London, UK",
                     "location_lat": 51.507,
                     "location_long": -0.128,
@@ -3513,7 +3513,7 @@
                         "Live Entertainment",
                         "Humor"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Factory NYC in New York City, New York",
                     "location_lat": 40.712,
                     "location_long": -74.006,
@@ -3548,7 +3548,7 @@
                         "Puns",
                         "Live Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Chuckle Hut in Houston, Texas",
                     "location_lat": 29.763,
                     "location_long": -95.383,
@@ -3583,7 +3583,7 @@
                         "Live Show",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Factory LA in Los Angeles, California",
                     "location_lat": 34.05,
                     "location_long": -118.25,
@@ -3619,7 +3619,7 @@
                         "Laughter",
                         "Night Out"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Giggle Factory in Toronto, Ontario",
                     "location_lat": 43.742,
                     "location_long": -76.373,
@@ -3650,7 +3650,7 @@
                         "Laughter",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Factory Chicago in Chicago, Illinois",
                     "location_lat": 41.882,
                     "location_long": -87.628,
@@ -3679,7 +3679,7 @@
                         "comedy night",
                         "live performance"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "Laugh Factory in Los Angeles, California",
                     "location_lat": 34.05,
                     "location_long": -118.25,
@@ -3715,7 +3715,7 @@
                         "Houston",
                         "Entertainment"
                     ],
-                    "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/stand-up show.jpg",
+                    "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/stand-up show.jpg",
                     "location_name": "The Chuckle Factory in Houston, Texas",
                     "location_lat": 29.763,
                     "location_long": -95.383,
@@ -3745,8 +3745,8 @@
         "bio": "Need help organizing events for your community? We got your back from coast to coast... and in Europe.",
         "disp_email": "support@commorganizers.com",
         "disp_phone_number": "(783) 713-7930",
-        "picture": "communityeventorganizer.jpg",
-        "banner": "eventorganizer.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "Heartfelt Connections: Community Support Gathering",
@@ -3760,7 +3760,7 @@
                     "Ottawa Events",
                     "Mental Health Awareness"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/support group.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/support group.jpg",
                 "location_name": "Ottawa Community Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -3796,7 +3796,7 @@
                     "Neighborhood",
                     "Gathering"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/town hall.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/town hall.jpg",
                 "location_name": "Ottawa Community Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -3825,7 +3825,7 @@
                     "Wellness",
                     "Toronto"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/support group.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/support group.jpg",
                 "location_name": "The Friendly Hall in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -3854,7 +3854,7 @@
                     "St. Catharines",
                     "family-friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/town hall.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/town hall.jpg",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -3888,7 +3888,7 @@
                     "New York City",
                     "Culture"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/support group.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/support group.jpg",
                 "location_name": "The Gathering Place in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -3918,7 +3918,7 @@
                     "Local Music",
                     "Food Trucks"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/festival.jpg",
                 "location_name": "Meridian Centre Park in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -3953,7 +3953,7 @@
                     "Family-Friendly",
                     "Toronto Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/festival.jpg",
                 "location_name": "Trinity Bellwoods Park in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -3987,7 +3987,7 @@
                     "Networking",
                     "Local Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/town hall.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/town hall.jpg",
                 "location_name": "Oceanview Community Center in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4018,7 +4018,7 @@
                     "Local Art",
                     "Music"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/festival.jpg",
                 "location_name": "Confederation Park in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -4053,7 +4053,7 @@
                     "Family Friendly",
                     "Toronto"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/festival.jpg",
                 "location_name": "Trinity Bellwoods Park in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -4089,7 +4089,7 @@
                     "local",
                     "gathering"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/town hall.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/town hall.jpg",
                 "location_name": "Calgary Community Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -4120,7 +4120,7 @@
                     "Calgary",
                     "Family-Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/festival.jpg",
                 "location_name": "Calgary Civic Park in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -4150,7 +4150,7 @@
                     "Family-Friendly",
                     "Festival"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/festival.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/festival.jpg",
                 "location_name": "Balboa Park in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4184,7 +4184,7 @@
                     "Connection",
                     "Mental Health"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/support group.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/support group.jpg",
                 "location_name": "Ocean View Community Center in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4213,7 +4213,7 @@
                     "Mental Health",
                     "Social Gathering"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/support group.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/support group.jpg",
                 "location_name": "Ottawa Community Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -4243,7 +4243,7 @@
                     "Houston",
                     "Connection"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/support group.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/support group.jpg",
                 "location_name": "Harmony Center in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -4268,8 +4268,8 @@
         "bio": "Dynamic music event curator bringing unforgettable live performances and themed music nights to intimate venues and unique spaces.",
         "disp_email": "bookings@rhythmrepublic.com",
         "disp_phone_number": "(555) 234-5678",
-        "picture": "rhythmrepublic.jpg",
-        "banner": "rhythmrepublic_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "Symphony Under the Stars",
@@ -4284,7 +4284,7 @@
                     "Evening Entertainment",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Royal Albert Hall in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -4318,7 +4318,7 @@
                     "Local Artists",
                     "Artistic Community"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Sound Lounge in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -4353,7 +4353,7 @@
                     "Music Lovers",
                     "Nightlife"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "The Harmonic Hall in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -4389,7 +4389,7 @@
                     "Community",
                     "Networking"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Sound Lounge in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -4425,7 +4425,7 @@
                     "Networking",
                     "Intimate Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Sound Lounge in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -4461,7 +4461,7 @@
                     "Arts Festival",
                     "Outdoor Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Echo Park Amphitheater in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -4497,7 +4497,7 @@
                     "Melodic Fusion",
                     "Outdoor Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Skyline Pavilion in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4533,7 +4533,7 @@
                     "Indie",
                     "Relaxation"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "The Royal Botanic Gardens in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -4568,7 +4568,7 @@
                     "Live Music",
                     "Artistic Expression"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Music Box in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -4602,7 +4602,7 @@
                     "Ottawa Events",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "Ottawa Arts Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -4633,7 +4633,7 @@
                     "Evening Event",
                     "Music Lovers"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Central Park Band Shell in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -4669,7 +4669,7 @@
                     "Networking",
                     "Intimate Concert"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Harmony Lounge in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -4703,7 +4703,7 @@
                     "Artistic Experience",
                     "Nightlife"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "The Toronto Music Hall in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -4733,7 +4733,7 @@
                     "Evening Out",
                     "Melodic Vibes"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Echo Park Amphitheater in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -4763,7 +4763,7 @@
                     "Indie Artists",
                     "Nightlife"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "The Celestial Theatre in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -4799,7 +4799,7 @@
                     "San Diego",
                     "Music Festival"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Moonlit Gardens in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4836,7 +4836,7 @@
                     "Artists",
                     "Community"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Melody Lounge in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -4871,7 +4871,7 @@
                     "Culture",
                     "Nightlife"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Liberty Bell Amphitheater in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -4906,7 +4906,7 @@
                     "Outdoor Event",
                     "Music Festival"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Oceanview Pavilion in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4941,7 +4941,7 @@
                     "Artistic Connection",
                     "Local Artists"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "Calgary Arts Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -4972,7 +4972,7 @@
                     "Networking",
                     "Nightlife"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Soundstage Lounge in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -5002,7 +5002,7 @@
                     "Artistic Experience",
                     "Networking"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Art House in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -5033,7 +5033,7 @@
                     "artistic experience",
                     "nightlife"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "The Art House in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5067,7 +5067,7 @@
                     "San Diego",
                     "Live Performance"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Coastal Creative Space in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -5103,7 +5103,7 @@
                     "Networking",
                     "Concerts"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "Rhythmic Arts Studio in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -5140,7 +5140,7 @@
                     "Artists",
                     "Networking"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Sound Studio in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -5176,7 +5176,7 @@
                     "Music Festival",
                     "Emerging Artists"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/concert.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/concert.jpg",
                 "location_name": "Skyline Music Park in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -5213,7 +5213,7 @@
                     "Community",
                     "Artist Interaction"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/meet and greet.jpg",
                 "location_name": "The Echo in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -5243,8 +5243,8 @@
         "bio": "Hosting cutting-edge technology conferences worldwide.",
         "disp_email": "events@techfuture.com",
         "disp_phone_number": "(456) 789-0123",
-        "picture": "techfuture.jpg",
-        "banner": "techfuture_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "Innovate Tomorrow: Science & Technology Conference 2023",
@@ -5262,7 +5262,7 @@
                     "Future",
                     "Research"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/conference.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/conference.jpg",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5298,7 +5298,7 @@
                     "Chicago",
                     "STEM"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/tradeshow.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/tradeshow.jpg",
                 "location_name": "McCormick Place in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -5329,7 +5329,7 @@
                     "Tradeshows",
                     "Industry Leaders"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/tradeshow.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/tradeshow.jpg",
                 "location_name": "The Philadelphia Convention Center in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -5365,7 +5365,7 @@
                     "STEM",
                     "Networking"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/exhibition.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/exhibition.jpg",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5401,7 +5401,7 @@
                     "Calgary",
                     "Industry Leaders"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/tradeshow.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/tradeshow.jpg",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5431,7 +5431,7 @@
                     "St. Catharines",
                     "Networking"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/exhibition.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/exhibition.jpg",
                 "location_name": "St. Catharines Conference Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -5467,7 +5467,7 @@
                     "London",
                     "Future Trends"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/tradeshow.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/tradeshow.jpg",
                 "location_name": "London ExCeL Centre in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -5503,7 +5503,7 @@
                     "Calgary",
                     "Industry Leaders"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/tradeshow.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/tradeshow.jpg",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5540,7 +5540,7 @@
                     "Trade Show",
                     "Future"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/tradeshow.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/tradeshow.jpg",
                 "location_name": "New York Convention Center in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -5575,7 +5575,7 @@
                     "Networking",
                     "Chicago"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/conference.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/conference.jpg",
                 "location_name": "Chicago Conference Center in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -5612,7 +5612,7 @@
                     "STEM",
                     "Inspiration"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/exhibition.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/exhibition.jpg",
                 "location_name": "The Franklin Institute in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -5642,8 +5642,8 @@
         "bio": "Premier sporting event organization specializing in professional games, athlete meet-and-greets, and exclusive fan experiences across multiple sports.",
         "disp_email": "events@victorycircuit.com",
         "disp_phone_number": "(555) 678-9012",
-        "picture": "victorycircuit.jpg",
-        "banner": "victorycircuit_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "Toronto Maple Leafs vs. Rival Team",
@@ -5659,7 +5659,7 @@
                     "NHL",
                     "family-friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Scotiabank Arena in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -5694,7 +5694,7 @@
                     "Philadelphia",
                     "Athletes"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Liberty Bell Center in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -5729,7 +5729,7 @@
                     "Competition",
                     "Team Spirit"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Los Angeles Coliseum in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -5764,7 +5764,7 @@
                     "Local Stars",
                     "Fan Interaction"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Ottawa Sports Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -5800,7 +5800,7 @@
                     "Rivalry",
                     "Game Day"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Soldier Field in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -5835,7 +5835,7 @@
                     "Autographs",
                     "Fan Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "L.A. Sports Complex in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -5871,7 +5871,7 @@
                     "Family-Friendly",
                     "Competition"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Scotiabank Saddledome in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5907,7 +5907,7 @@
                     "Local Rivalry",
                     "Football"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "NRG Stadium in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -5944,7 +5944,7 @@
                     "Photos",
                     "Community"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -5980,7 +5980,7 @@
                     "Autographs",
                     "Community Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -6015,7 +6015,7 @@
                     "Family Friendly",
                     "Competition"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Madison Square Garden in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -6049,7 +6049,7 @@
                     "San Diego",
                     "Family Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "San Diego Convention Center in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -6084,7 +6084,7 @@
                     "Team Rivalry",
                     "Family Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Los Angeles Stadium in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6120,7 +6120,7 @@
                     "London",
                     "Team Spirit"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Wembley Stadium in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -6155,7 +6155,7 @@
                     "Chicago",
                     "Family-friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -6185,7 +6185,7 @@
                     "Competition",
                     "Local Teams"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Scotiabank Arena in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -6221,7 +6221,7 @@
                     "Athletes",
                     "Interaction"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Madison Square Garden in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -6252,7 +6252,7 @@
                     "Autographs",
                     "Q&A"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -6288,7 +6288,7 @@
                     "Family-Friendly",
                     "Game Day"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Ottawa Sports Arena in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -6324,7 +6324,7 @@
                     "Autographs",
                     "Photo Opportunities"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "L.A. Sports Arena in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6354,7 +6354,7 @@
                     "Houston",
                     "Athletes"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Houston Sports Complex in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -6389,7 +6389,7 @@
                     "Toronto",
                     "Fan Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/player meet and greet.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/player meet and greet.jpg",
                 "location_name": "Toronto Sports Complex in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -6426,7 +6426,7 @@
                     "Family Friendly",
                     "Toronto"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Scotiabank Arena in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -6461,7 +6461,7 @@
                     "St. Catharines",
                     "Family Friendly"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -6497,7 +6497,7 @@
                     "Family Friendly",
                     "Local Team"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "Canadian Tire Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -6533,7 +6533,7 @@
                     "Hawks",
                     "Competition"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/sports game.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/sports game.jpg",
                 "location_name": "LA Sports Arena in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6563,8 +6563,8 @@
         "bio": "International theatre production company presenting acclaimed plays, musicals, and theatrical experiences across premier venues in North America and the United Kingdom.",
         "disp_email": "bookings@spotlightstages.com",
         "disp_phone_number": "(555) 345-6789",
-        "picture": "spotlightstages.jpg",
-        "banner": "spotlightstages_banner.jpg",
+        "picture": null,
+        "banner": null,
         "events": [
             {
                 "name": "Premiere Night: A Theatrical Extravaganza",
@@ -6580,7 +6580,7 @@
                     "Arts",
                     "Culture"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "The Los Angeles Playhouse in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6615,7 +6615,7 @@
                     "Art",
                     "Culture"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "The El Dorado Theater in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6651,7 +6651,7 @@
                     "Creativity",
                     "Talent Showcase"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "The Royal Playhouse in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -6687,7 +6687,7 @@
                     "Community Event",
                     "Live Performance"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "The St. Catharines Performing Arts Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -6717,7 +6717,7 @@
                     "Arts",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Royal Alexandra Theatre in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -6751,7 +6751,7 @@
                     "Ottawa Events",
                     "Arts & Culture"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Ottawa Grand Theatre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -6786,7 +6786,7 @@
                     "Artistry",
                     "Cultural Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Houston Grand Theatre in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -6822,7 +6822,7 @@
                     "live show",
                     "creativity"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "The Creative Space in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6857,7 +6857,7 @@
                     "Arts",
                     "Cultural Event"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "Philadelphia Arts Center in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -6893,7 +6893,7 @@
                     "Arts",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "Downtown Playhouse in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -6927,7 +6927,7 @@
                     "Arts",
                     "Chicago Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "The Chicago Playhouse in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -6957,7 +6957,7 @@
                     "Arts",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "The Classic Playhouse in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -6991,7 +6991,7 @@
                     "Local Talent",
                     "Toronto Events"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "The Studio Theatre in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -7026,7 +7026,7 @@
                     "Cultural Event",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "Calgary Arts Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -7061,7 +7061,7 @@
                     "Arts & Culture",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Ocean View Theater in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -7096,7 +7096,7 @@
                     "Cultural Event",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Chicago Grand Theater in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -7130,7 +7130,7 @@
                     "Chicago Arts",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "Chicago Grand Theater in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -7167,7 +7167,7 @@
                     "Art",
                     "Creativity"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "The Grand Stage in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -7203,7 +7203,7 @@
                     "Art",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "The Grand Theater in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -7239,7 +7239,7 @@
                     "Art",
                     "Entertainment"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Ottawa Grand Theatre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -7276,7 +7276,7 @@
                     "Creativity",
                     "Ensemble"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/rehearsal.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/rehearsal.jpg",
                 "location_name": "Chicago Arts Center in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -7312,7 +7312,7 @@
                     "Ottawa Events",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/premiere show.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/premiere show.jpg",
                 "location_name": "Ottawa Grand Theatre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -7348,7 +7348,7 @@
                     "Arts",
                     "Cultural Experience"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "Houston Grand Theater in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -7379,7 +7379,7 @@
                     "Community",
                     "Culture"
                 ],
-                "picture": "http://jacobswackyworld.ca/stuff/media/4p02-images/play.jpg",
+                "picture": "http://cosc.brocku.ca/~ja20gp/stuff/media/4p02-images/play.jpg",
                 "location_name": "Houston Performing Arts Center in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
