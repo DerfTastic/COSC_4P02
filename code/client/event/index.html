@@ -181,9 +181,9 @@
 
                 <div class="right-column">
                     <div id="map">
-                        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0"
+                        <iframe id="map-frame" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0"
                             marginwidth="0"
-                            src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&t=k&z=14&ie=UTF8&iwloc=B&output=embed">
+                            src="">
                         </iframe>
 
                     </div>
@@ -252,6 +252,8 @@
                 // Set event details on the page
                 document.getElementById("eventTitle").textContent = event.name;
                 document.getElementById("eventLocation").textContent = event.location_name;
+                event.location_name = "Brock" // delete once we have real locations
+                document.getElementById("map-frame").src = `https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${encodeURI(event.location_name)}&t=k&z=14&ie=UTF8&iwloc=B&output=embed`
 
                 const eventStart = new Date(event.start);  // Event start date from the timestamp
                 const eventEnd = new Date(eventStart.getTime() + event.duration);  // Event end date from duration

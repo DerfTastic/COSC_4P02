@@ -28,6 +28,7 @@ create table events(
     description TEXT not null,
     start INTEGER,
     duration INTEGER,
+    release_time INTEGER,
     category TEXT not null,
     type TEXT not null,
     picture INTEGER,
