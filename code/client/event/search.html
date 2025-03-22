@@ -89,22 +89,19 @@
             padding: 0;
         }
 
-
-        /* Make the entire ticket SVG respond to hover */
         #ticket-svg {
             transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         }
 
         #ticket-svg:hover {
             transform: scale(1.05);
-            /* Slightly enlarge the SVG */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            /* Add a subtle shadow */
             filter: brightness(1.1);
-            /* Slightly brighten the ticket */
+        }
+    
+        #ticket-svg path{
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Image slide effect on hover */
         #ticket-svg image {
             transition: transform 0.3s ease;
         }
