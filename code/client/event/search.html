@@ -177,6 +177,9 @@
     <div class="sidebar" id="sidebar">
         <h3>Filter Events</h3>
         <form id="filterForm">
+            <label for="filterName">Name:</label>
+            <input type="text" id="filterName" placeholder="Enter Name">
+
             <label for="filterLocation">Location:</label>
             <input type="text" id="filterLocation" placeholder="Enter location">
 
@@ -196,16 +199,14 @@
 
             <label for="sort">Sort By:</label>
             <select id="sort">
-                <option value="price">Price</option>
-                <option value="date">Date</option>
-                <option value="location">Location</option>
-                <option value="category">Category</option>
-            </select>
-
-            <label for="order">Order:</label>
-            <select id="order">
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
+                <option selected value="Nothing">Nothing</option>
+                <option value="MinPrice">Min Price</option>
+                <option value="MaxPrice">Max Price</option>
+                <option value="TicketsAvailable">Tickets Available</option>
+                <option value="Closest">Closest</option>
+                <option value="StartTime">StartTime</option>
+                <option value="MinDuration">Min Duration</option>
+                <option value="MaxDuration">Max Duration</option>
             </select>
         </form>
     </div>

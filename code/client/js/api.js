@@ -159,6 +159,7 @@ class Search{
     /** @type{string?} */ location
     /** @type{number?} */ offset
     /** @type{number?} */ limit
+    /** @type{"MinPrice"|"MaxPrice"|"TicketsAvailable"|"Closest"|"StartTime"|"MinDuration"|"MaxDuration"|"Nothing"} */ sort_by
 }
 
 // actually just a string but shhhh

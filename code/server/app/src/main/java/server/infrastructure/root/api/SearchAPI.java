@@ -71,7 +71,7 @@ public class SearchAPI {
             int index = 0;
             for (var tag : search.tags) {
                 String id = ":tag_id_" + index;
-                whereClause.append(" AND (events.id IN (select event_id from event_tags where tag=").append(id).append("'))");
+                whereClause.append(" AND (events.id IN (select event_id from event_tags where tag=").append(id).append("))");
                 str_map.put(id, tag);
                 index ++;
             }
