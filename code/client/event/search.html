@@ -18,10 +18,15 @@
             height: 90vh;
             overflow-y: auto;
             gap: 10px;
+            z-index: 2;
         }
 
         .sidebar h3 {
             margin-top: 0;
+        }
+
+        .sidebar label {
+            font-size: 15px;
         }
 
 
@@ -97,8 +102,8 @@
             transform: scale(1.05);
             filter: brightness(1.1);
         }
-    
-        #ticket-svg path{
+
+        #ticket-svg path {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
@@ -207,16 +212,16 @@
         <h3>Filter Events</h3>
         <form id="filterForm">
             <label for="filterName">Event Name:</label>
-            <input class="input-field" type="text" id="filterName" placeholder="Enter Event">
+            <input class="input-field" type="text" id="filterName">
 
             <label for="filterLocation">Location:</label>
-            <input class="input-field" type="text" id="filterLocation" placeholder="Enter location">
+            <input class="input-field" type="text" id="filterLocation">
 
             <label for="filterCategory">Event Category:</label>
-            <input class="input-field" type="text" id="filterCategory" placeholder="Enter category">
+            <input class="input-field" type="text" id="filterCategory">
 
             <label for="filterTag">Tag:</label>
-            <input class="input-field" type="text" id="filterTag" placeholder="Enter tag">
+            <input class="input-field" type="text" id="filterTag">
 
             <label for="priceRange">Price Range:</label><br>
             <input class="input-field" type="text" id="minPrice" placeholder="Min. price">
@@ -228,7 +233,7 @@
 
             <label for="sort">Sort By:</label>
             <select class="select-field" id="sort">
-                <option selected value="Select">Select</option>
+                <option selected value="Select">---</option>
                 <option value="MinPrice">Min Price</option>
                 <option value="MaxPrice">Max Price</option>
                 <option value="TicketsAvailable">Tickets Available</option>

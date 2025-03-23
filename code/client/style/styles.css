@@ -37,10 +37,11 @@ html {
     margin: auto;
     justify-content: center;
     padding: 10px;
-    min-height: 70vh;
+    min-height: 71.3vh;
 }
 
 footer {
+    position: relative;
     justify-self: center;
     width: 100%;
     padding: 10px;
@@ -50,6 +51,12 @@ footer {
     color: #eeeef0;
     text-align: center;
     font-size: 18px;
+    /* z-index: 2; */
+}
+
+footer nav {
+    justify-content: center;
+    align-items: center;
 }
 
 header {
@@ -77,14 +84,15 @@ header:hover {
 
 nav {
     display: flex;
-    justify-content: center;
+    justify-content: right;
     align-items: center;
     padding: 0;
-    margin: 0;
+    margin: 0 20px;
     transition: all 0.3s ease;
     gap: 10px;
     flex: 0.4;
 }
+
 
 .logo-and-title {
     display: flex;
@@ -216,9 +224,9 @@ nav a:hover,
 }
 
 .cart {
-    margin: auto;
-    height: 55px;
-    width: 80px;
+    margin: none;
+    height: 50px;
+    width: 50px;
     background: none;
     padding: 0;
 }
@@ -382,9 +390,10 @@ nav a:hover,
 .container {
     display: flex;
     margin: 0;
+    padding: 40px;
     justify-content: center;
     align-items: center;
-    min-height: 70vh;
+    min-height: 100%;
     background-color: transparent;
 }
 
@@ -417,7 +426,10 @@ nav a:hover,
     text-align: center;
 }
 
-.form-footer a {
+.form-links {
+    padding-top: 10px;
+    text-align: center;
+    font-size: 18px;
     color: #1b263b;
     font-weight: bold;
 }
@@ -429,8 +441,11 @@ nav a:hover,
 }
 
 .form-group label {
-    font-size: 18px;
+    z-index: 1;
+    position: relative;
+    font-size: 15px;
     margin-bottom: 5px;
+    font-weight: 600;
 }
 
 .form-group input {
@@ -744,7 +759,7 @@ nav a:hover,
 @media (max-width: 768px) {
 
     body {
-        margin-top: 35vh;
+        margin-top: 20vh;
     }
 
     .container {
@@ -829,7 +844,7 @@ nav a:hover,
 
 @media (max-width: 480px) {
     body {
-        margin-top: 30vh;
+        margin-top: 20vh;
     }
 
     .container {
@@ -845,6 +860,7 @@ nav a:hover,
     .content {
         margin: 0;
         padding: 20px;
+        min-height: 60vh;
     }
 
     header {
@@ -854,6 +870,10 @@ nav a:hover,
         height: min-content;
         margin: 0;
         padding: auto;
+    }
+
+    .heading a {
+        font-size: 25px;
     }
 
     .logo-and-title h1 {
