@@ -127,7 +127,8 @@
             resize: vertical;
         }
 
-        .btn-container {
+        .btn-container,
+        #top {
             margin: 10px 10px;
             padding: 0;
             display: flex;
@@ -158,6 +159,10 @@
             background: #1b263b;
         }
 
+        #top {
+            text-decoration: none;
+        }
+
 
         .progress-bar {
             position: relative;
@@ -182,6 +187,7 @@
             font-size: 25px;
             color: #eeeef0;
             margin-bottom: 8px;
+            padding-left: 0;
         }
 
         .progress-bar .step .bullet {
@@ -335,7 +341,8 @@
 
         @media (max-width: 480px) {
             .container {
-                width: 90vw;
+                width: 100vw;
+                padding: 5px;
             }
 
             .progress-bar .step .bullet {
@@ -363,12 +370,28 @@
             }
 
             .progress-bar .step p {
-                font-size: 20px;
+                font-size: 18px;
 
+            }
+
+            .form-outer p,
+            .form p {
+                padding: 10px;
             }
 
             .progress-bar {
                 gap: 50px;
+            }
+
+            .ticket-type {
+                margin: 10px 0;
+                padding: 0px;
+                border-radius: 5px;
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -564,15 +587,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn-container">
-                    <button class="previous" style="display: none;">
-                        Previous
-                    </button>
-                    <button class="next">
-                        Next
-                    </button>
-                    <button id="saveButton" onclick="handleSave()">Save</button>
-                    <button id="submitButton" onclick="handleSubmit()" style="display: none;">Submit</button>
+                <div class="btn-container"><a id="top" href="#">
+                        <button class="previous" style="display: none;">
+                            Previous
+                        </button>
+                        <button class="next">
+                            Next
+                        </button>
+                        <button id="saveButton" onclick="handleSave()">Save</button>
+                        <button id="submitButton" onclick="handleSubmit()" style="display: none;">Submit</button></a>
                 </div>
             </div>
         </div>

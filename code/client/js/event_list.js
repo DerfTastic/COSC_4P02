@@ -12,26 +12,30 @@ document.addEventListener("DOMContentLoaded", function () {
             const ticketSVG = document.createElement("div");
             ticketSVG.classList.add("event-box");
             ticketSVG.innerHTML = `
-                <svg style="cursor: pointer;" width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <svg id="ticket-svg" style="cursor: pointer;" width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
                     <!-- Ticket Shape -->
                     <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
+                          fill="#eeeef0"/>
                     <!-- Placeholder Image -->
-                    <image href="/media/${event.picture}" x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <!-- <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text> -->
+                    <image href="/media/${event.picture}" preserveAspectRatio="none" x="30" y="40" width="200" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
+                    <!-- <text x="130" y="110" font-size="14" fill="#666" text-anchor="middle">Image</text> -->
 
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
+                     <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
 
                     <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.name}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${new Date(event.start).toUTCString()}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location_name}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Organizer: ${event.owner.name}</text>
+                    <text x="250" y="50" font-size="18" font-weight="bold" fill="#333">
+                     ${event.name.length > 20 ? `<tspan x="250" dy="0">${event.name.slice(0, event.name.lastIndexOf(" ", 20))}</tspan>
+                    <tspan x="250" dy="20">${event.name.slice(event.name.lastIndexOf(" ", 20) + 1)}</tspan>`
+                    : `<tspan x="250" dy="0">${event.name}</tspan>`}</text>
+
+                    <text x="250" y="90" font-size="14">Date: ${new Date(event.start).toUTCString()}</text>
+                    <text x="250" y="110" font-size="14">Location: ${event.location_name}</text>
+                    <text x="250" y="130" font-size="14">Category: ${event.category}</text>
+                    <text x="250" y="150" font-size="14">Organizer: ${event.owner.name}</text>
                 </svg>
             `;
-            
+            /* <text x="250" y="150" font-size="14">Tags: ${event.tags.join(", ")}</text> */
+
             ticketSVG.firstElementChild.addEventListener("click", e => {
                 window.location.href = `/event?id=${event.id}`
             })
@@ -78,11 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let count = 1;
     let doing = false;
     async function applyFilters() {
-        if(doing)return count++;
+        if (doing) return count++;
         doing = true;
         let mycount;
-        try{
-            do{
+        try {
+            do {
                 mycount = ++count
                 const nameFilter = document.getElementById("filterName").value.toLowerCase().trim();
                 const locationFilter = document.getElementById("filterLocation").value.toLowerCase().trim();
@@ -93,36 +97,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 const startDate = document.getElementById("startDate").value;
                 const endDate = document.getElementById("endDate").value;
                 const sortBy = document.getElementById("sort").value;
-    
+
                 /**
                  * @type{Search}
                  */
                 var search = {};
-                if(nameFilter.length > 0){
+                if (nameFilter.length > 0) {
                     search.name_fuzzy = `%${nameFilter}%`
                 }
-                if(locationFilter.length > 0){
+                if (locationFilter.length > 0) {
                     search.location = `%${locationFilter}%`
                 }
-                if(categoryFilter.length > 0){
+                if (categoryFilter.length > 0) {
                     search.category_fuzzy = `%${categoryFilter}%`
                 }
-                if(tagFilter.length > 0){
+                if (tagFilter.length > 0) {
                     search.tags = [tagFilter];
                 }
-                if(startDate.length>0){
+                if (startDate.length > 0) {
                     search.date_start = new Date(startDate).getTime()
                 }
-                if(endDate.length>0){
+                if (endDate.length > 0) {
                     search.date_end = new Date(endDate).getTime() + 8.64e+7;
                 }
                 search.sort_by = sortBy;
-                
+
                 currentPage = 1;
                 events = await api.search.search_events_with_owner(search);
                 changePage(1);
-            }while(mycount!=count);
-        }catch(e){
+            } while (mycount != count);
+        } catch (e) {
             console.log(e);
         }
 
