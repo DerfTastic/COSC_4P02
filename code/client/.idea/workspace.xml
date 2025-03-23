@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="015444ad-5997-4ac4-8301-2f3225b3707d" name="Changes" comment="Trimmed user-inputted filter tags from whitespace">
+    <list default="true" id="015444ad-5997-4ac4-8301-2f3225b3707d" name="Changes" comment="Updated category list with categories in sample_events.json and now they all properly show on the homepage and &quot;Browse events&quot;">
+      <change afterPath="$PROJECT_DIR$/.idea/client.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/initialize_test.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/initialize_test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/sample_events.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/sample_events.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/index.hbs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +94,7 @@
       <workItem from="1742496060252" duration="6000" />
       <workItem from="1742496753335" duration="2521000" />
       <workItem from="1742744105577" duration="1826000" />
-      <workItem from="1742754054416" duration="8529000" />
+      <workItem from="1742754054416" duration="10749000" />
     </task>
     <task id="LOCAL-00001" summary="Updated sample_events with organizers for each category">
       <option name="closed" value="true" />
@@ -120,7 +120,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742500645202</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Removed quotes around start and duration fields in sample_events.json so it would read as a number and not a string. Required extensive debugging but at least I know more about how the API works now.">
+      <option name="closed" value="true" />
+      <created>1742766172390</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742766172390</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,6 +151,8 @@
     <MESSAGE value="Changed event pictures URLs to other server to avoid cross-origin blocking, made incorrect organizer banners and pictures null." />
     <MESSAGE value="Trimmed user-inputted filter tags from whitespace" />
     <MESSAGE value=".idea/ files were being very annoying" />
-    <option name="LAST_COMMIT_MESSAGE" value=".idea/ files were being very annoying" />
+    <MESSAGE value="Removed quotes around start and duration fields in sample_events.json so it would read as a number and not a string. Required extensive debugging but at least I know more about how the API works now." />
+    <MESSAGE value="Updated category list with categories in sample_events.json and now they all properly show on the homepage and &quot;Browse events&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated category list with categories in sample_events.json and now they all properly show on the homepage and &quot;Browse events&quot;" />
   </component>
 </project>
