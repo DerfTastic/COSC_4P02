@@ -42,9 +42,27 @@ class Organizer {
 }
 
 async function delete_database_stuff(){
-    await api.admin.execute_sql("delete from events");
-    await api.admin.execute_sql("delete from users where id != 1");
-    alert("done");
+    try{
+        await api.admin.execute_sql("delete from events");
+        await api.admin.execute_sql("delete from users where id != 1");
+        alert("done");
+    }catch({error, code}){
+        alert(error)
+    }
+}
+
+async function makie(){
+    try{
+        await create_organizers(await (await fetch("/js/sample_events.json")).json());
+    }catch(e){
+        console.log(e);
+        if(e.error != undefined){
+            alert(e.error);
+        }else{
+            alert(e);
+        }
+    }
+    alert("Finished");
 }
 
 async function create_all_user_defined(){

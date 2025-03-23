@@ -24,8 +24,10 @@
 
 <body>
     <button onclick="delete_database_stuff()">Nuke DB (needs to be logged into admin)</button>
-    <button onclick="create_random()">Random</button>
-    <button onclick="create_all_user_defined()">Pre Defined</button>
+    <p>This isn't magic and doesn't run automatically it literally exists to "pretend" to be a bunch of users who create events because we don't have actual users</p>
+    <button onclick="create_random()">Populate With Randomly Generated</button>
+    <button onclick="makie()">Pupulate With Sample Events Defined In The "sample_events.json" File Jacob Was Supposed To Add A Week Ago. This Literally Just Loads The JSON From The Server And Is The Same As Pasting It Into The Text Box An Running It There</button>
+    <button onclick="create_all_user_defined()">Populate From Json In Text Box</button>
     <textarea id="json"></textarea>
 </body>
 
