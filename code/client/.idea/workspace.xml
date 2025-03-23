@@ -4,13 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="015444ad-5997-4ac4-8301-2f3225b3707d" name="Changes" comment="Trimmed user-inputted filter tags from whitespace" />
+    <list default="true" id="015444ad-5997-4ac4-8301-2f3225b3707d" name="Changes" comment="Trimmed user-inputted filter tags from whitespace">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/initialize_test.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/initialize_test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/sample_events.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/sample_events.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -38,6 +47,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;S:/program/gitrepos/COSC_4P02/code/client/js/sample_events.json&quot;,
@@ -54,19 +64,6 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="S:\program\gitrepos\COSC_4P02\code\client\js" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="client" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="client" />
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -97,6 +94,7 @@
       <workItem from="1742496060252" duration="6000" />
       <workItem from="1742496753335" duration="2521000" />
       <workItem from="1742744105577" duration="1826000" />
+      <workItem from="1742754054416" duration="8529000" />
     </task>
     <task id="LOCAL-00001" summary="Updated sample_events with organizers for each category">
       <option name="closed" value="true" />
@@ -144,6 +142,7 @@
     <MESSAGE value="Merge branch 'main' of https://github.com/DerfTastic/COSC_4P02" />
     <MESSAGE value="Changed event pictures URLs to other server to avoid cross-origin blocking, made incorrect organizer banners and pictures null." />
     <MESSAGE value="Trimmed user-inputted filter tags from whitespace" />
-    <option name="LAST_COMMIT_MESSAGE" value="Trimmed user-inputted filter tags from whitespace" />
+    <MESSAGE value=".idea/ files were being very annoying" />
+    <option name="LAST_COMMIT_MESSAGE" value=".idea/ files were being very annoying" />
   </component>
 </project>
