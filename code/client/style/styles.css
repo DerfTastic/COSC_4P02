@@ -36,6 +36,7 @@ html {
 .content {
     margin: auto;
     justify-content: center;
+    align-items: center;
     padding: 10px;
     min-height: 71.3vh;
 }
@@ -112,7 +113,7 @@ nav {
     display: flex;
     font-family: "Black Ops One", serif;
     font-weight: 400;
-    font-size: clamp(25px, 3vw, 50px);
+    font-size: clamp(30px, 3vw, 50px);
     font-style: normal;
     color: #eeeef0;
     margin: 0;
@@ -221,6 +222,10 @@ nav a {
     gap: 5px;
 }
 
+nav a:has(> svg) {
+    padding: 0px 25px;
+}
+
 nav a:hover {
     background-color: #778da9;
 }
@@ -324,7 +329,7 @@ nav a:hover {
     width: 100%;
     margin: 0 auto;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: none;
 
 }
 
@@ -361,7 +366,7 @@ nav a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: #415a77 double 5px;
+    border-bottom: #eeeef0 solid 3px;
     height: auto;
 }
 
@@ -387,7 +392,7 @@ nav a:hover {
     padding: 40px;
     justify-content: center;
     align-items: center;
-    min-height: 100%;
+    min-height: 71.3vh;;
     background-color: transparent;
 }
 
@@ -788,7 +793,7 @@ nav a:hover {
     }
 
     .logo-and-title h1 {
-        font-size: clamp(40px, 2vw, 45px);
+        font-size: 2em;
     }
 
     nav {
@@ -866,11 +871,12 @@ nav a:hover {
     }
 
     .heading a {
-        font-size: 25px;
+        font-size: 1.5em;
     }
 
     .logo-and-title h1 {
         font-size: clamp(25px, 2vw, 30px);
+        /* display: none; */
     }
 
     .logo-and-title img {

@@ -1,5 +1,33 @@
 const apiRoot = "/api";
 
+
+class UserPayment{
+    /** @type{string} */name
+    /** @type{string} */billing
+    /** @type{string} */card
+    /** @type{string} */exparation
+    /** @type{string} */code
+}
+
+class UserOrderItem{
+    /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
+    /** @type{number?} */id
+}
+
+class UserOrder{
+    /** @type{UserPayment} */ payment
+    /** @type{UserOrderItem[]} */ items
+}
+
+/** @typedef{ReceiptItem[]} Receipt */
+
+class ReceiptItem{
+    /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
+    /** @type{string?} */name
+    /** @type{number?} */id
+    /** @type{number?} */purchase_price
+}
+
 class UserInfo {
     /** @type{number} */id
     /** @type{string} */name
@@ -64,8 +92,7 @@ class OrganizerEvent {
 
     /** @type{number?} */start
     /** @type{number?} */duration
-
-    /** @type{number} */available_total_tickets
+    /** @type{number} */release_time
 
     /** @type{string} */location_name
     /** @type{number} */location_lat
@@ -86,8 +113,7 @@ class UpdateOrganizerEvent{
 
     /** @type{string?} */type
     /** @type{string?} */category
-    
-    /** @type{number?} */available_total_tickets
+    /** @type{number?} */release_time
 
     /** @type{string?} */location_name
     /** @type{number?} */location_lat
@@ -189,6 +215,44 @@ const api = {
         } else {
             throw { error, code: response.status };
         }
+    },
+
+    payment: {
+        /**
+         * @param {UserOrder} order 
+         * @param {Session} session 
+         * @returns {Promise<ReceiptItem>}
+         */
+        make_purchase: async function(order, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/make_purchase`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(order)
+                },
+                "An error occured when processing the transaction"
+            )).json();
+        },
+
+        /**
+         * @param {Session} session 
+         * @returns {Promise<Receipt>}
+         */
+        list_receipts: async function(session = cookies.getSession()){
+            return await (await api.api_call(
+                `/list_receipts`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured when fetching the receipts"
+            )).json();
+        },
     },
 
     tickets: {
