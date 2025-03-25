@@ -40,6 +40,8 @@
         <a href="/account/login" id="login-link">Login</a>
         <a href="/account/register" id="signup-link">Signup</a>
         <a href="#" id="logout-link" style="display: none;">Logout</a>
+        
+
 
     </nav>
 </header>
@@ -51,7 +53,6 @@
         const logoutLink = document.getElementById("logout-link");
         const searchLink = document.getElementById("search-event-link");
         const createLink = document.getElementById("create-event-link");
-        const cart = document.getElementById("cart");
         const session = cookies.getSession();
 
         if (session && session.length > 0) {
@@ -59,7 +60,7 @@
             signupLink.style.display = 'none';
             logoutLink.style.display = 'inline';
 
-            signupLink.insertAdjacentHTML('afterend', '<a href="/account">Account</a>');
+            signupLink.insertAdjacentHTML('afterend', '<a href="/account"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="25" height="47.6"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" fill="#eeeef0" ></svg></a>');
 
             logoutLink.onclick = function () {
                 utility.logout();
@@ -71,7 +72,6 @@
                 const userInfo = await page.account.userinfo();
                 if (userInfo && userInfo.admin) {
                     searchLink.style.display = 'none';
-                    cart.style.display = 'none';
                     const adminLinksHTML = `
                         <a href="/admin/logs">Logs</a>
                         <a href="/admin/console">Console</a>
@@ -91,7 +91,6 @@
             loginLink.style.display = 'inline';
             signupLink.style.display = 'inline';
             logoutLink.style.display = 'none';
-            cart.style.display = 'inline';
         }
     }
     updateAuthLinks();
