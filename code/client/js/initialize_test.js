@@ -183,7 +183,16 @@ async function create_organizers(organizers) {
             const pic = await (await fetch(organizer.banner)).blob();
             await api.user.set_user_banner_picture(pic, session);
         }
-        await api.organizer.convert_to_organizer_account(session);
+        await api.payment.make_purchase({
+            payment: {
+                billing: "My House",
+                card: "1234567890",
+                code: "921",
+                exparation: "25/45",
+                name: "Dw about it"
+            },
+            items: [new AccountOrganizerUpgradeOrderItem()]
+        }, session);
         await create_events(organizer.events, session);
     }));
 }

@@ -106,10 +106,9 @@ create table purchased_tickets(
     id INTEGER primary key not null,
     user_id INTEGER,
     ticket_id INTEGER,
-
     payment_id INTEGER NOT NULL,
-
     purchase_price INTEGER NOT NULL,
+    salt TEXT NOT NULL,
 
     FOREIGN KEY (user_id)
         REFERENCES users (id)
@@ -157,6 +156,15 @@ CREATE INDEX purchased_tickets_user_id_idx ON purchased_tickets(user_id) WHERE u
 CREATE INDEX purchased_ticket_id_id_idx ON purchased_tickets(ticket_id) WHERE ticket_id IS NOT NULL;
 CREATE INDEX purchased_payment_id_id_idx ON purchased_tickets(payment_id) WHERE payment_id IS NOT NULL;
 
+create table scanned_tickets(
+    purchased_ticket INTEGER NOT NULL,
+    time_scanned INTEGER NOT NULL,
+
+    FOREIGN KEY (purchased_ticket)
+        REFERENCES purchased_tickets (id)
+            ON DELETE CASCADE
+            ON UPDATE NO ACTION
+);
 
 create table payments(
     id INTEGER primary key not null,
@@ -174,6 +182,7 @@ create table payments(
 );
 
 CREATE INDEX payments_user_id_idx ON payments(user_id);
+CREATE INDEX payments_payment_date_idx ON payments(payment_date);
 
 create table sessions(
     id INTEGER primary key not null,

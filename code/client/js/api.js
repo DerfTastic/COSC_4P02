@@ -9,23 +9,55 @@ class UserPayment{
     /** @type{string} */code
 }
 
-class UserOrderItem{
-    /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
-    /** @type{number?} */id
+class TicketOrderItem{
+    type = "Ticket"
+    /** @type{number} */id
+
+    constructor(id){
+        this.id = id;
+    }
 }
+
+class AccountOrganizerUpgradeOrderItem{
+    type = "AccountOrganizerUpgrade"
+}
+
+/** @typedef{(TicketOrderItem|AccountOrganizerUpgradeOrderItem)} UserOrderItem */
 
 class UserOrder{
     /** @type{UserPayment} */ payment
     /** @type{UserOrderItem[]} */ items
 }
 
-/** @typedef{ReceiptItem[]} Receipt */
+class Receipt{
+    /** @type{number} */payment_id
+    /** @type{ReceiptItem[]} */items
+    /** @type{number} */date
+    /** @type{number} */subtotal
+    /** @type{number} */fees
+    /** @type{number} */gst
+    /** @type{number} */total
+
+}
+
+class PurchasedTicketId{
+    id
+    salt
+}
 
 class ReceiptItem{
     /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
     /** @type{string?} */name
-    /** @type{number?} */id
+    /** @type{PurchasedTicketId?} */id
     /** @type{number?} */purchase_price
+}
+
+class BillEstimate{
+    /** @type{ReceiptItem[]} */items
+    /** @type{number} */subtotal
+    /** @type{number} */fees
+    /** @type{number} */gst
+    /** @type{number} */total
 }
 
 class UserInfo {
@@ -226,6 +258,25 @@ const api = {
         make_purchase: async function(order, session = cookies.getSession()){
             return await (await api.api_call(
                 `/make_purchase`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(order)
+                },
+                "An error occured when processing the transaction"
+            )).json();
+        },
+
+        /**
+         * @param {UserOrder} order 
+         * @param {Session} session 
+         * @returns {Promise<BillEstimate>}
+         */
+        create_estimate: async function(order, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/create_estimate`,
                 {
                     method: 'POST',
                     headers: {
@@ -704,25 +755,6 @@ const api = {
     },
 
     organizer: {
-        /**
-         * @param {Session} session 
-         * @returns {Promise<>}
-         */
-        convert_to_organizer_account: async function (session = cookies.getSession()) {
-            await api.api_call(
-                '/convert_to_organizer_account',
-                {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-UserAPIToken': session
-                    }
-                },
-                "An error occured while converting account to organizer"
-            );
-        },
-
-
         /**
          * @param {Search} search 
          * @returns {Promise<OrganizerEvent[]>}
