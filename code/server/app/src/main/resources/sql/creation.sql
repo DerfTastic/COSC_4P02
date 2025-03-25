@@ -25,7 +25,7 @@ CREATE TRIGGER user_is_not_already_organizer
 BEFORE UPDATE OF organizer ON users
 BEGIN
     SELECT RAISE(FAIL, "user is already an organizer")
-    FROM users WHERE id = NEW.id AND users.organizer=true;
+    FROM users WHERE id = NEW.id AND users.organizer=true AND NEW.organizer=true;
 END;
 
 create table events(
@@ -139,19 +139,19 @@ BEGIN
     FROM events WHERE draft=true AND id IN  (select event_id from tickets where tickets.id = NEW.ticket_id);
 END;
 
-CREATE TRIGGER can_purchase_tickets_released
-BEFORE INSERT ON purchased_tickets
-BEGIN
-    SELECT RAISE(FAIL, "event tickets not released yet")
-    FROM events WHERE release_time<unixepoch()*1000 AND id IN  (select event_id from tickets where tickets.id = NEW.ticket_id);
-END;
-
-CREATE TRIGGER can_purchase_event_hasnt_happened
-BEFORE INSERT ON purchased_tickets
-BEGIN
-    SELECT RAISE(FAIL, "has already happened")
-    FROM events WHERE start+duration<unixepoch()*1000 AND id IN  (select event_id from tickets where tickets.id = NEW.ticket_id);
-END;
+--CREATE TRIGGER can_purchase_tickets_released
+--BEFORE INSERT ON purchased_tickets
+--BEGIN
+--    SELECT RAISE(FAIL, "event tickets not released yet")
+--    FROM events WHERE release_time<unixepoch()*1000 AND id IN  (select event_id from tickets where tickets.id = NEW.ticket_id);
+--END;
+--
+--CREATE TRIGGER can_purchase_event_hasnt_happened
+--BEFORE INSERT ON purchased_tickets
+--BEGIN
+--    SELECT RAISE(FAIL, "has already happened")
+--    FROM events WHERE start+duration<unixepoch()*1000 AND id IN  (select event_id from tickets where tickets.id = NEW.ticket_id);
+--END;
 
 CREATE INDEX purchased_tickets_user_id_idx ON purchased_tickets(user_id) WHERE user_id IS NOT NULL;
 CREATE INDEX purchased_ticket_id_id_idx ON purchased_tickets(ticket_id) WHERE ticket_id IS NOT NULL;
@@ -162,8 +162,11 @@ create table payments(
     id INTEGER primary key not null,
     user_id INTEGER,
     receipt TEXT NOT NULL,
-    amount INTEGER NOT NULL,
     payment_date INTEGER NOT NULL,
+    subtotal INTEGER NOT NULL,
+    fees INTEGER NOT NULL,
+    gst INTEGER NOT NULL,
+    total INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users (id)
             ON DELETE SET NULL
