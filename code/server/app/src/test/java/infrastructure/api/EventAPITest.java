@@ -43,7 +43,7 @@ public class EventAPITest {
         o1.makeOrganizer(db, null);
         try{
             o1.makeOrganizer(db, null);
-            Assertions.fail("no");
+            Assertions.fail("Account was able to be made organizer more than once (shouldn't be possible)");
         }catch (Exception ignore){}
 
         o2.register(mail, db, config);
