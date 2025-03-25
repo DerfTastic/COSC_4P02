@@ -41,6 +41,10 @@ public class EventAPITest {
         o1.register(mail, db, config);
         o1.login(mail, db, config);
         o1.makeOrganizer(db, null);
+        try{
+            o1.makeOrganizer(db, null);
+            Assertions.fail("no");
+        }catch (Exception ignore){}
 
         o2.register(mail, db, config);
         o2.login(mail, db, config);
