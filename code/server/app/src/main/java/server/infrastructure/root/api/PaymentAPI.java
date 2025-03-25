@@ -2,6 +2,7 @@ package server.infrastructure.root.api;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONType;
+import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.util.SqlSerde;
 import framework.web.annotations.*;
@@ -64,6 +65,25 @@ public class PaymentAPI {
 
     public static void verify_payment(PaymentInfo payment, long amount){
         //TODO
+    }
+
+    @Route
+    public static @Json List<Receipt> list_receipts(@FromRequest(RequireSession.class)UserSession auth, RoTransaction trans) throws SQLException {
+        List<Receipt> list;
+        try(var stmt = trans.namedPreparedStatement("select * from payments where user_id=:user_id order by payment_date desc")){
+            stmt.setLong(":user_id", auth.user_id);
+            list = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Receipt(
+                    rs.getLong("id"),
+                    JSON.parseArray(rs.getString("receipt"), ReceiptItem.class),
+                    rs.getLong("payment_date"),
+                    rs.getLong("subtotal"),
+                    rs.getLong("fees"),
+                    rs.getLong("gst"),
+                    rs.getLong("total")
+            ));
+        }
+        trans.commit();
+        return list;
     }
 
     @Route
