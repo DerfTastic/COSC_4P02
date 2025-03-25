@@ -19,7 +19,6 @@ class UserOrder{
     /** @type{UserOrderItem[]} */ items
 }
 
-
 /** @typedef{ReceiptItem[]} Receipt */
 
 class ReceiptItem{
@@ -220,7 +219,7 @@ const api = {
 
     payment: {
         /**
-         * @param {Order} order 
+         * @param {UserOrder} order 
          * @param {Session} session 
          * @returns {Promise<ReceiptItem>}
          */
