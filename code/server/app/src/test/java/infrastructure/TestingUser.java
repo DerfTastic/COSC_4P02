@@ -11,6 +11,7 @@ import server.Config;
 import server.infrastructure.param.auth.*;
 import server.infrastructure.root.api.AccountAPI;
 import server.infrastructure.root.api.OrganizerAPI;
+import server.infrastructure.root.api.PaymentAPI;
 import server.mail.MailServer;
 
 import java.io.IOException;
@@ -65,14 +66,19 @@ public class TestingUser {
     /** Makes this test user the organizer by using {@link OrganizerAPI#convert_to_organizer_account}
      * @param db
      * @param cache
+     * @param mail
      * @throws SQLException
      * @throws Unauthorized
      * @throws BadRequest if the test user is already an organizer
      */
-    public void makeOrganizer(DbManager db, SessionCache cache) throws SQLException, Unauthorized, BadRequest {
+    public void makeOrganizer(DbManager db, SessionCache cache, MailServer mail) throws SQLException, Unauthorized, BadRequest {
         var auth = this.userSession(db, cache);
         try(var conn = db.rw_transaction(null)){
-            OrganizerAPI.convert_to_organizer_account(auth, conn, cache);
+            PaymentAPI.make_purchase(auth, conn,
+                    new PaymentAPI.Order(
+                            List.of(new PaymentAPI.AccountOrganizerUpgrade()),
+                            new PaymentAPI.PaymentInfo("", "", "", "", "")
+                    ), cache, mail);
             conn.tryCommit();
         }
     }

@@ -70,7 +70,7 @@ public class AccountAPITest {
         }
         // this is needed for later as we have some features which rely on users being organizers
         for(var user : new TestingUser[]{o1, o2}){
-            user.makeOrganizer(db, null);
+            user.makeOrganizer(db, null, mail);
         }
     }
 
