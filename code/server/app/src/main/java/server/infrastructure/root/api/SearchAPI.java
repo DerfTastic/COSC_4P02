@@ -18,7 +18,6 @@ public class SearchAPI {
     public enum SortBy{
         MinPrice,
         MaxPrice,
-        TicketsAvailable,
         Closest,
         StartTime,
         MinDuration,
@@ -130,7 +129,6 @@ public class SearchAPI {
         String order = switch(search.sort_by==null?SortBy.Nothing:search.sort_by){
             case MinPrice -> "(select min(price) from tickets where event_id=id) ASC";
             case MaxPrice -> "(select max(price) from tickets where event_id=id) DESC";
-            case TicketsAvailable -> "(coalesce(coalesce((select sum(available_tickets) from tickets where tickets.event_id=events.id),events.available_total_tickets)-(select count(*) from purchased_tickets where purchased_tickets.ticket_id in (select tickets.id from tickets where tickets.event_id=events.id)),999999999)) DESC";
             case Closest -> {
                 if(search.location_lat!=null && search.location_long!=null){
                     real_map.put(":location_lat", search.location_lat);

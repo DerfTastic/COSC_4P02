@@ -17,7 +17,7 @@ class OurEvent {
     /** @type{number?} */start
     /** @type{number?} */duration
 
-    /** @type{number?} */available_total_tickets
+    /** @type{number?} */release_date
 
     /** @type{string[]} */tags
 
@@ -120,7 +120,8 @@ async function create_random() {
         
             event.picture = random_image_url();
 
-            event.start = chance.timestamp()*1000;
+            event.start = chance.integer({ min: new Date("2025-01-01").getTime(), max: new Date("2026-01-01").getTime() });
+            event.release_date = chance.integer({ min:  1000*60*60*24*30, max: 0});
             event.duration = chance.integer({ min: 1000*60*5, max: 1000*60*60*12 });
 
             if(true||chance.bool())

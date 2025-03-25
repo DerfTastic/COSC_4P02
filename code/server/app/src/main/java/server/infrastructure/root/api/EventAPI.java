@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import framework.web.annotations.*;
-import framework.web.annotations.url.Nullable;
 import framework.web.annotations.url.QueryFlag;
 import framework.web.error.BadRequest;
 import framework.web.request.Request;
@@ -30,7 +29,7 @@ public class EventAPI {
     @Route
     public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
         long result;
-        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, '', '', null, null, null, true, null, null, null) returning id")){
+        try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, null, '', '', null, null, true, null, null, null) returning id")){
             stmt.setLong(":owner_id", session.user_id);
             result = stmt.executeQuery().getLong("id");
         }
@@ -45,11 +44,11 @@ public class EventAPI {
             public final String description;
             public final long start;
             public final long duration;
+            public final long release_time;
             public final String category;
             public final String type;
             public final long picture;
             public final JSONObject metadata;
-            public final long available_total_tickets;
             public final boolean draft;
 
             public final String location_name;
@@ -70,7 +69,7 @@ public class EventAPI {
                 this.type = rs.getString("type");
                 this.picture = rs.getLong("picture");
                 this.metadata = Optional.ofNullable(rs.getString("metadata")).map(JSON::parseObject).orElse(null);
-                this.available_total_tickets = rs.getLong("available_total_tickets");
+                this.release_time = rs.getLong("release_time");
                 this.draft = rs.getBoolean("draft");
                 this.location_name = rs.getString("location_name");
                 this.location_lat = rs.getDouble("location_lat");
@@ -117,8 +116,7 @@ public class EventAPI {
 
         public Optional<Long> start;
         public Optional<Long> duration;
-
-        public Optional<Long> available_total_tickets;
+        public Optional<Long> release_time;
 
         public Optional<String> location_name;
         public Optional<Double> location_lat;
@@ -179,7 +177,7 @@ public class EventAPI {
                     case "category" -> this.category = optionalString(reader);
                     case "start" -> this.start = optionalLong(reader);
                     case "duration" -> this.duration = optionalLong(reader);
-                    case "available_total_tickets" -> this.available_total_tickets = optionalLong(reader);
+                    case "release_time" -> this.release_time = optionalLong(reader);
                     case "location_name" -> this.location_name = optionalString(reader);
                     case "location_lat" -> this.location_lat = optionalDouble(reader);
                     case "location_long" -> this.location_long = optionalDouble(reader);
@@ -218,8 +216,8 @@ public class EventAPI {
             str.append("duration=:duration,");
         if(update.metadata!=null)
             str.append("metadata=:metadata,");
-        if(update.available_total_tickets!=null)
-            str.append("available_total_tickets=:available_total_tickets,");
+        if(update.release_time!=null)
+            str.append("release_time=:release_time,");
         if(update.location_name!=null)
             str.append("location_name=:location_name,");
         if(update.location_lat!=null)
@@ -249,8 +247,8 @@ public class EventAPI {
                 stmt.setLong(":duration", update.duration.get());
             if(update.metadata!=null&&update.metadata.isPresent())
                 stmt.setString(":metadata", update.metadata.get().toJSONString());
-            if(update.available_total_tickets!=null&&update.available_total_tickets.isPresent())
-                stmt.setLong(":available_total_tickets", update.available_total_tickets.get());
+            if(update.release_time!=null&&update.release_time.isPresent())
+                stmt.setLong(":release_time", update.release_time.get());
             if(update.location_name!=null&&update.location_name.isPresent())
                 stmt.setString(":location_name", update.location_name.get());
             if(update.location_lat!=null&&update.location_lat.isPresent())

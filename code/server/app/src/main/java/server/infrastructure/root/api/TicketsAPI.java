@@ -22,7 +22,7 @@ public class TicketsAPI {
         public long id;
         public String name;
         public long price;
-        public Integer available_tickets;
+        public Integer total_tickets;
     }
 
     @Route("/create_ticket/<event_id>")
@@ -54,11 +54,11 @@ public class TicketsAPI {
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
-        try (var stmt = trans.namedPreparedStatement("update tickets set name=:name, price=:price, available_tickets=:available_tickets where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("update tickets set name=:name, price=:price, total_tickets=:total_tickets where id=:id")) {
             stmt.setString(":name", ticket.name);
             stmt.setLong(":price", ticket.price);
-            if(ticket.available_tickets!=null)
-                stmt.setLong(":available_tickets", ticket.available_tickets);
+            if(ticket.total_tickets!=null)
+                stmt.setLong(":total_tickets", ticket.total_tickets);
             stmt.setLong(":id", ticket_id);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to update ticket");
