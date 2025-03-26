@@ -90,7 +90,7 @@ create table tickets(
     event_id INTEGER,
     name TEXT not null,
     price INTEGER not null,
-    total_tickets INTEGER,
+    total_tickets INTEGER CHECK(total_tickets>0),
 
      FOREIGN KEY (event_id)
            REFERENCES events (id)
@@ -128,7 +128,7 @@ CREATE TRIGGER can_purchase_tickets_enough
 BEFORE INSERT ON purchased_tickets
 BEGIN
     SELECT RAISE(FAIL, "not enough tickets")
-    FROM tickets WHERE tickets.id = NEW.ticket_id AND coalesce(tickets.total_tickets > (select count(*) from purchased_tickets where ticket_id=NEW.ticket_id), false);
+    FROM tickets WHERE tickets.id = NEW.ticket_id AND coalesce(tickets.total_tickets < (select count(*) from purchased_tickets where ticket_id=NEW.ticket_id), false);
 END;
 
 CREATE TRIGGER can_purchase_tickets_draft

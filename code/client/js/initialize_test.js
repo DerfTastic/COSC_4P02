@@ -3,7 +3,7 @@
 class Ticket {
     /** @type{string} */name
     /** @type{number} */price
-    /** @type{number?} */available_tickets
+    /** @type{number?} */total_tickets
 }
 
 class OurEvent {
@@ -149,7 +149,7 @@ async function create_random() {
                 ticket.name = chance.sentence({ words: chance.integer({ min: 2, max: 5 }) });
                 ticket.price = chance.integer({min: 0, max: 500});
                 if(chance.bool())
-                    ticket.available_tickets = chance.integer({min: 10, max: 500});
+                    ticket.total_tickets = chance.integer({min: 10, max: 500});
 
                 event.tickets.push(ticket);
             }
@@ -206,7 +206,6 @@ async function create_events(events, session) {
     await Promise.all(events.map(async(event) => {
         const id = await api.events.create_event(session);
         await api.events.update_event(id, {
-            available_total_tickets: event.available_total_tickets,
             category: event.category,
             description: event.description,
             duration: event.duration,
@@ -245,7 +244,7 @@ async function create_tickets(tickets, event_id, session) {
         await api.tickets.update_ticket(id, {
               name: ticket.name,
               price: ticket.price,
-              available_tickets: ticket.available_tickets
+              total_tickets: ticket.total_tickets
         }, session);
     }));
 }

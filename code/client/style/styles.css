@@ -379,6 +379,7 @@ nav a:hover {
     font-weight: 600;
     font-style: normal;
     text-transform: uppercase;
+    text-align: center;
 
 }
 
@@ -829,7 +830,6 @@ nav a:hover {
         width: 30px;
     }
 
-
     .product-box {
         width: calc((100% / 2));
         height: smaller;
@@ -850,15 +850,15 @@ nav a:hover {
         align-items: center;
         justify-content: center;
         margin: 0;
-        padding: 20px;
+        min-height: 100%;
+        padding: 0;
     }
-
-
 
     .content {
         margin: 0;
-        padding: 20px;
-        min-height: 60vh;
+        padding: 15px;
+        min-height: 60.5vh;
+        font-size: 0.7em;
     }
 
     header {
@@ -870,12 +870,8 @@ nav a:hover {
         padding: auto;
     }
 
-    .heading a {
-        font-size: 1.5em;
-    }
-
     .logo-and-title h1 {
-        font-size: clamp(25px, 2vw, 30px);
+        font-size: 1.5em;
         /* display: none; */
     }
 
@@ -893,8 +889,6 @@ nav a:hover {
     nav {
         flex-direction: row;
         align-items: center;
-        padding: 0;
-        margin: 0;
     }
 
     .search-bar {
@@ -904,29 +898,21 @@ nav a:hover {
     }
 
     .search-bar input {
-        font-size: 15px;
-        height: 30px;
-        width: 100%;
-    }
-
-    .search-bar button {
-        height: 30px;
-        width: 30px;
+        font-size: 0.7em;
     }
 
     nav a {
-        font-size: 14px;
-        padding: 0px 8px;
+        font-size: 0.7em;
     }
 
-    .carousel {
-        width: 100%;
-        margin: 0;
+    .heading a {
+        font-size: 1.5em;
+        margin: 0 0 15px 15px;
+
     }
 
     .product-box {
         width: 100%;
-        height: small;
     }
 
     .product-container {
@@ -936,9 +922,29 @@ nav a:hover {
     }
 
     .arrow {
+        margin: 0;
         padding: 6px 10px;
-        font-size: 14px;
-        margin: 5px;
-        top: 6%
+        font-size: 1em;
+    }
+}
+
+@media (min-width:1537px) {
+    .product-box {
+        width: calc((100% / 5));
+    }
+
+    .content {
+        margin: 0;
+        padding: 15px;
+        min-height: 60vh;
+        /* font-size: 2em; */
+    }
+
+    header nav a {
+        font-size: 1.5em;
+    }
+
+    .logo-and-title h1 {
+        font-size: 3em;
     }
 }
