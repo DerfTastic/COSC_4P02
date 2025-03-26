@@ -18,12 +18,12 @@ import java.util.List;
 @Routes
 public class TicketsAPI {
 
-    public static class Ticket{
-        public long id;
-        public String name;
-        public long price;
-        public Integer total_tickets;
-    }
+    public record Ticket(
+            long id,
+            String name,
+            long price,
+            Long total_tickets
+    ){}
 
     @Route("/create_ticket/<event_id>")
     public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
@@ -82,7 +82,12 @@ public class TicketsAPI {
         List<Ticket> result;
         try (var stmt = trans.namedPreparedStatement("select * from tickets where event_id=:event_id")) {
             stmt.setLong(":event_id", event_id);
-            result = SqlSerde.sqlList(stmt.executeQuery(), Ticket.class);
+            result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Ticket(
+                    rs.getLong("id"),
+                    rs.getString("name"),
+                    rs.getLong("price"),
+                    SqlSerde.nullableLong(rs, "total_tickets")
+            ));
         }
         trans.commit();
         return result;

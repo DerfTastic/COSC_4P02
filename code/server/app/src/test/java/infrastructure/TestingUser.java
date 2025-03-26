@@ -45,6 +45,13 @@ public class TestingUser {
         this.password = password;
     }
 
+    /** Registers this TestingUser using {@link AccountAPI#register}
+     * @param mail
+     * @param db
+     * @param config
+     * @throws BadRequest
+     * @throws SQLException
+     */
     public void register(MailServer mail, DbManager db, Config config) throws BadRequest, SQLException {
         try(var conn = db.rw_transaction(null)){
             var register = new AccountAPI.Register();
@@ -56,6 +63,14 @@ public class TestingUser {
         }
     }
 
+    /** Makes this test user the organizer by using {@link OrganizerAPI#convert_to_organizer_account}
+     * @param db
+     * @param cache
+     * @param mail
+     * @throws SQLException
+     * @throws Unauthorized
+     * @throws BadRequest if the test user is already an organizer
+     */
     public void makeOrganizer(DbManager db, SessionCache cache, MailServer mail) throws SQLException, Unauthorized, BadRequest {
         var auth = this.userSession(db, cache);
         try(var conn = db.rw_transaction(null)){
@@ -68,6 +83,15 @@ public class TestingUser {
         }
     }
 
+    /** Logs in this TestingUser by using {@link AccountAPI#login} and then returns the session
+     * @param mail
+     * @param db
+     * @param config
+     * @return The hashed session id token of the newly created session of this TestingUser
+     * @throws SQLException
+     * @throws UnknownHostException
+     * @throws Unauthorized
+     */
     public String login(MailServer mail, DbManager db, Config config) throws SQLException, UnknownHostException, Unauthorized {
         try(var conn = db.rw_transaction(null)){
             var login = new AccountAPI.Login();

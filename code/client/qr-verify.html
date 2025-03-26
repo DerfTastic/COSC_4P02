@@ -5,25 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
     <link rel="stylesheet" href="/style/styles.css">
-    <title>Ticket Verification - Ticket Express</title>    
+    <title>Ticket Verification - Ticket Express</title>
+    <script type="module">
+        import QrScanner from '/js/qr-scanner.min.js';
+        const qrScanner = new QrScanner(
+            document.getElementById('videoEle'),
+            result => scanned(result),
+            { returnDetailedScanResult: true }
+        );
+        async function scanned(result) {
+            console.log(result);
+            document.getElementById("url").innerText = result.data;
+            document.getElementById("url").href = result.data;
+            // Now close up stuff
+            await delay(2000);
+            qrScanner.stop();
+        }
+        function startScanning() {
+            qrScanner.stop();
+            qrScanner.start();
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        document.getElementById("Scan-butn").addEventListener("click", startScanning);
+    </script>
 </head>
 <body>
-    <div src="/header.html" type="text/x-html-template"></div>
-    <div src="/footer.html" type="text/x-html-template"></div>
+    <div src="/partials/header.html" type="text/x-html-template"></div>
 
-    <div class="content">
-        <label for="eventId">eventid:</label>
-        <input type="text" id="eventid" name="eventid"><br><br>
-        <button onclick="genQR()">Generate QR code for event</button>
-    </div>
+    <h1>Event QR Code Scanner</h1>
+    <button id="Scan-butn">Scan Code</button><br>
+    <video style="width: min(90%, 500px); margin: auto; display:block;" id="videoEle"></video>
+    <p><b><u>URL:</u> </b><a id="url" href=""></a></p>
+
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
+
 
     <script src="/js/api.js"></script>
     <script src="/js/ui.js"></script>
-
-    <script>
-        function genQR() {
-            var eventid = document.getElementById("eventid").value;
-            console.log(eventid);
-        }
-    </script>
 </body>

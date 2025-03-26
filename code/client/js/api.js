@@ -40,6 +40,12 @@ class Receipt{
 
 }
 
+class QRCodeScan{
+    /** @type{number} */event_id
+    /** @type{string} */name
+    /** @type{PurchasedTicketId} */id
+}
+
 class PurchasedTicketId{
     id
     salt
@@ -755,6 +761,27 @@ const api = {
     },
 
     organizer: {
+        
+        /**
+         * @param {QRCodeScan} scan 
+         * @param {Session} session 
+         * @returns {Promise<{date: integer}[]>}
+         */
+        scan_ticket: async function(scan, session = cookies.getSession()){
+            return await (await api.api_call(
+                '/scan_ticket',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(scan),
+                },
+                "An error occured while scanning ticket"
+            )).json();
+        },
+
         /**
          * @param {Search} search 
          * @returns {Promise<OrganizerEvent[]>}
