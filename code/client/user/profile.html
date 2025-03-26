@@ -177,7 +177,18 @@
             border: 1px solid #ccc;
         }
 
-        .modal {
+        .modal::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .image-modal {
             display: none;
             position: fixed;
             top: 50%;
@@ -192,27 +203,39 @@
             z-index: 1000;
         }
 
-        .modal-content {
+        .image-modal-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
-        .modal::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: -1;
-        }
-        .cropper-container img {
+        .image-cropper-container img {
             max-width: 100%;
             max-height: 300px;
+            border: 1px solid #ccc;
         }
+
+        .image-modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .image-modal-buttons button {
+            padding: 10px 15px;
+            border: none;
+            background: blue;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .image-modal-buttons button:hover {
+            background: darkblue;
+        }
+
     </style>
 </head>
 
@@ -222,43 +245,32 @@
         <div class="profile">
             <div class="profile-banner">
                 <!-- Change Banner Button -->
-                <button class="change-banner-btn" onclick="openModal()"></button>
-
-                <!-- Popup Modal -->
-                <div id="colorModal" class="modal">
-                    <div class="modal-content">
-                        <h2>Change Banner Color</h2>
-                        <input type="color" id="bannerColorPicker">
-                        <br><br>
-                        <button onclick="changeBannerColor()">Save</button>
-                        <button onclick="closeModal()">Cancel</button>
-                    </div>
-                </div>
+                <button class="change-banner-btn" onclick="document.getElementById('bannerPicInput').click()"></button>
             </div>
 
             <div class="profile-container">
                 <div class="profile-picture" id="profilePic">
                     <!-- Change Profile Picture Button -->
-                    <button class="change-profile-btn"
-                        onclick="document.getElementById('profilePicInput').click()"></button>
+                    <button class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
+                </div>
+                
+                <button class="go-pro-btn">Go Pro</button>
+            </div>
 
-                    <!-- Hidden File Input for Profile Picture -->
-                    <input type="file" id="profilePicInput" accept="image/png" style="display: none;"
-                        onchange="openCropper(event)">
-                    
-                    <div id="cropperModal" class="modal">
-                        <div class="modal-content">
-                            <h2>Crop Your Profile Picture</h2>
-                            <div class="cropper-container">
-                                <img id="cropperImage" src="" alt="Crop Preview">
-                            </div>
-                            <button onclick="applyCrop()">Save</button>
-                            <button onclick="closeCropper()">Cancel</button>
-                        </div>
+            <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'profile')">
+            <input type="file" id="bannerPicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'banner')">
+
+            <div id="imageCropperModal" class="image-modal">
+                <div class="image-modal-content">
+                    <h2>Crop Your Image</h2>
+                    <div class="image-cropper-container">
+                        <img id="cropperImage" src="" alt="Crop Preview">
+                    </div>
+                    <div class="image-modal-buttons">
+                        <button onclick="applyCrop()">Save</button>
+                        <button onclick="closeImageCropper()">Cancel</button>
                     </div>
                 </div>
-
-                <button class="go-pro-btn">Go Pro</button>
             </div>
 
             <div class="user-info-container">
@@ -584,36 +596,38 @@
             }
         }
         let cropper;
+        let currentImageType = ""; // To track if cropping profile or banner
 
-        function openCropper(event) {
+        function openImageCropper(event, type) {
             const file = event.target.files[0];
 
-            if (file && file.type === "image/png") {
+            if (file && file.type.startsWith("image/")) {
                 const reader = new FileReader();
 
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const image = document.getElementById("cropperImage");
                     image.src = e.target.result;
 
-                    // Show modal
-                    const modal = document.getElementById("cropperModal");
-                    modal.style.display = "block";
+                    // Show the modal
+                    document.getElementById("imageCropperModal").style.display = "block";
+                    currentImageType = type; // Set whether it's profile or banner
 
-                    // Destroy old cropper instance and create a new one
+                    // Destroy old cropper instance if it exists
                     if (cropper) {
                         cropper.destroy();
                     }
 
+                    // Set cropper aspect ratio based on image type
                     cropper = new Cropper(image, {
-                        aspectRatio: 1,
+                        aspectRatio: type === "profile" ? 1 / 1 : 16 / 9,
                         viewMode: 2,
-                        autoCropArea: 1
+                        autoCropArea: 1,
                     });
                 };
 
                 reader.readAsDataURL(file);
             } else {
-                alert("Please upload a PNG file.");
+                alert("Please upload a valid image file.");
             }
         }
 
@@ -623,16 +637,19 @@
             if (croppedCanvas) {
                 const croppedImageURL = croppedCanvas.toDataURL("image/png");
 
-                // Apply cropped image as profile picture
-                document.getElementById("profilePic").style.backgroundImage = `url(${croppedImageURL})`;
+                if (currentImageType === "profile") {
+                    document.getElementById("profilePicture").style.backgroundImage = `url(${croppedImageURL})`;
+                } else if (currentImageType === "banner") {
+                    document.getElementById("profileBanner").style.backgroundImage = `url(${croppedImageURL})`;
+                }
 
                 // Close the modal
-                closeCropper();
+                closeImageCropper();
             }
         }
 
-        function closeCropper() {
-            document.getElementById("cropperModal").style.display = "none";
+        function closeImageCropper() {
+            document.getElementById("imageCropperModal").style.display = "none";
         }
 
     </script>
