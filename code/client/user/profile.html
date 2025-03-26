@@ -180,19 +180,22 @@
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
             background: white;
             padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
         }
 
@@ -208,7 +211,7 @@
         }
         .cropper-container img {
             max-width: 100%;
-            max-height: 400px;
+            max-height: 300px;
         }
     </style>
 </head>
@@ -580,6 +583,8 @@
                 alert("Please upload a PNG file.");
             }
         }
+        let cropper;
+
         function openCropper(event) {
             const file = event.target.files[0];
 
@@ -591,15 +596,16 @@
                     image.src = e.target.result;
 
                     // Show modal
-                    document.getElementById("cropperModal").style.display = "flex";
+                    const modal = document.getElementById("cropperModal");
+                    modal.style.display = "block";
 
-                    // Destroy old cropper instance (if exists) and create a new one
+                    // Destroy old cropper instance and create a new one
                     if (cropper) {
                         cropper.destroy();
                     }
 
                     cropper = new Cropper(image, {
-                        aspectRatio: 1, // Keeps it square
+                        aspectRatio: 1,
                         viewMode: 2,
                         autoCropArea: 1
                     });
@@ -628,6 +634,7 @@
         function closeCropper() {
             document.getElementById("cropperModal").style.display = "none";
         }
+
     </script>
 
 </body>
