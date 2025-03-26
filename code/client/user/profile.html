@@ -7,6 +7,11 @@
     <title>Profile</title>
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
+    <!-- Cropper.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <style>
         /* body {
             font-family: Arial, sans-serif;
@@ -199,6 +204,10 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
+        .cropper-container img {
+            max-width: 100%;
+            max-height: 400px;
+        }
     </style>
 </head>
 
@@ -230,8 +239,18 @@
 
                     <!-- Hidden File Input for Profile Picture -->
                     <input type="file" id="profilePicInput" accept="image/png" style="display: none;"
-                        onchange="updateProfilePicture(event)">
-
+                        onchange="openCropper(event)">
+                    
+                    <div id="cropperModal" class="modal">
+                        <div class="modal-content">
+                            <h2>Crop Your Profile Picture</h2>
+                            <div class="cropper-container">
+                                <img id="cropperImage" src="" alt="Crop Preview">
+                            </div>
+                            <button onclick="applyCrop()">Save</button>
+                            <button onclick="closeCropper()">Cancel</button>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="go-pro-btn">Go Pro</button>
@@ -559,7 +578,54 @@
                 alert("Please upload a PNG file.");
             }
         }
+        function openCropper(event) {
+            const file = event.target.files[0];
 
+            if (file && file.type === "image/png") {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const image = document.getElementById("cropperImage");
+                    image.src = e.target.result;
+
+                    // Show modal
+                    document.getElementById("cropperModal").style.display = "flex";
+
+                    // Destroy old cropper instance (if exists) and create a new one
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1, // Keeps it square
+                        viewMode: 2,
+                        autoCropArea: 1
+                    });
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please upload a PNG file.");
+            }
+        }
+
+        function applyCrop() {
+            const croppedCanvas = cropper.getCroppedCanvas();
+
+            if (croppedCanvas) {
+                const croppedImageURL = croppedCanvas.toDataURL("image/png");
+
+                // Apply cropped image as profile picture
+                document.getElementById("profilePic").style.backgroundImage = `url(${croppedImageURL})`;
+
+                // Close the modal
+                closeCropper();
+            }
+        }
+
+        function closeCropper() {
+            document.getElementById("cropperModal").style.display = "none";
+        }
     </script>
 
 </body>
