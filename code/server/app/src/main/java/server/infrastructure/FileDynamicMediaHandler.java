@@ -79,10 +79,6 @@ public class FileDynamicMediaHandler implements DynamicMediaHandler {
 
     }
 
-    public FileDynamicMediaHandler(Config config) throws IOException {
-        this(config.dynamic_media_path, config.dynamic_media_cache_size, 8, 64);
-    }
-
     private String pathFromId(long id, boolean createDirectories) throws IOException {
         var start_bit = first_section_start_bit;
         var builder = new StringBuilder();

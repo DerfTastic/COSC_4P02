@@ -23,9 +23,6 @@ import java.util.List;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SearchAPITest {
     private static DbManager db;
-    private final Config config = new Config(
-            "send_mail", "false"
-    );
     private final MailServerSkeleton mail = new MailServerSkeleton();
 
     private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
@@ -34,8 +31,8 @@ public class SearchAPITest {
     public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
         db = new DbManagerImpl("search_api_test", true, true, true);
 
-        u1.register(mail, db, config);
-        u1.login(mail, db, config);
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
     }
 
     @Test

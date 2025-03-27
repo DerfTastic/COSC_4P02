@@ -22,10 +22,6 @@ import java.util.logging.Logger;
 public class DbManagerImpl extends DbManager {
     private final List<SQLiteUpdateListener> listeners = new ArrayList<>();
 
-    public DbManagerImpl(Config config) throws SQLException {
-        this(config.db_path, config.store_db_in_memory, config.wipe_db_on_start, true);
-    }
-
     public synchronized void addUpdateHook(SQLiteUpdateListener listener){
         listeners.add(listener);
         super.forEachExisting(conn -> {

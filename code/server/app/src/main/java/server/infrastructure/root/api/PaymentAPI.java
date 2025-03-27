@@ -263,7 +263,6 @@ public class PaymentAPI {
                 }
                 str.append("</div>");
             }
-            System.out.println(str.toString());
             message.setContent(str.toString(), "text/html");
         });
 

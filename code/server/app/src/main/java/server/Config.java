@@ -122,6 +122,18 @@ public class Config {
         return config;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T get(String name, Class<T> type) {
+        try {
+            var val = this.getClass().getField(name).get(this);
+//            if(!type.isInstance(val))
+//                throw new ClassCastException();
+            return (T)val;
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * This method exists purely so we can define default values in a semi non-annoying way without java treating our
      * initializers as a constant expression and inlining their values preventing us from changing them if loaded from a file.

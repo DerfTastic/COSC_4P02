@@ -29,16 +29,15 @@ public class WebServerImpl extends WebServer {
         addManagedState(config, Config.class);
 
         addManagedState(new TimedEvents());
-        addManagedState(new FileDynamicMediaHandler(config), DynamicMediaHandler.class);
         try{
-            var db = new DbManagerImpl(config);
+            var db = new DbManagerImpl(config.db_path, config.store_db_in_memory, config.wipe_db_on_start, true);
             addManagedState(db, DbManager.class);
             addManagedState(db);
         }catch (Exception e){
             this.close();
             throw e;
         }
-        var secrets = new Secrets(config);
+        var secrets = new Secrets(config.secrets_path);
         MailServer mail;
         if(config.send_mail)
             mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"), config.sender_filter);
@@ -49,7 +48,7 @@ public class WebServerImpl extends WebServer {
         tracker = new ServerStatistics(getManagedState(DbManager.class).getTracker());
         addManagedState(tracker);
 
-        mount(new RequestBuilderImpl(), "/", "server.infrastructure.root");
+        mount(new RequestBuilderImpl(config), "/", "server.infrastructure.root");
     }
 
     @Override

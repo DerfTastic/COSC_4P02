@@ -5,6 +5,7 @@ import framework.web.request.Request;
 import framework.web.route.RequestsBuilder;
 import framework.web.route.RouteImpl;
 import framework.web.route.RouteParameter;
+import server.infrastructure.param.Config;
 
 import java.lang.reflect.Parameter;
 import java.sql.SQLException;
@@ -12,9 +13,11 @@ import java.util.HashMap;
 
 public class RequestBuilderImpl extends RequestsBuilder {
     private final HashMap<Class<?>, RouteParameter<?>> parameterHandlerMap = new HashMap<>();
+    private final server.Config config;
 
-    public RequestBuilderImpl(){
+    public RequestBuilderImpl(server.Config config) {
         initializeParameterHandlers();
+        this.config = config;
     }
 
     private void initializeParameterHandlers() {
@@ -80,7 +83,12 @@ public class RequestBuilderImpl extends RequestsBuilder {
 
     @Override
     protected RouteParameter<?> getParameterHandler(RouteImpl route, Parameter parameter) throws Throwable {
-        if(parameterHandlerMap.containsKey(parameter.getType())){
+        if(parameter.isAnnotationPresent(Config.class)){
+            var config = parameter.getAnnotation(Config.class);
+            var name = config.name().equals("!")?parameter.getName():config.name();
+            Object value = this.config.get(name, parameter.getType());
+            return request -> value;
+        }else if(parameterHandlerMap.containsKey(parameter.getType())){
             return parameterHandlerMap.get(parameter.getType());
         }else{
             return super.getParameterHandler(route, parameter);

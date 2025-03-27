@@ -16,8 +16,11 @@ import java.io.IOException;
 public class MediaAPI {
 
     @OnMount
-    public static void init(WebServer server) throws IOException {
-        server.addManagedState(new FileDynamicMediaHandler(server.getManagedState(Config.class)));
+    public static void init(WebServer server, Config config) throws IOException {
+        server.addManagedState(
+                new FileDynamicMediaHandler(config.dynamic_media_path, config.dynamic_media_cache_size, 8, 64),
+                DynamicMediaHandler.class
+        );
     }
 
     @Route("/<id>")

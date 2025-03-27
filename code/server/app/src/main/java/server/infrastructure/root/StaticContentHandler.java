@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 @Handler
+@SuppressWarnings("unused")
 public class StaticContentHandler implements RequestHandler {
 
     public final boolean checkCachedSources = true;
