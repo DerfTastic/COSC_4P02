@@ -18,7 +18,6 @@ public class SearchAPI {
     public enum SortBy{
         MinPrice,
         MaxPrice,
-        TicketsAvailable,
         Closest,
         StartTime,
         MinDuration,
@@ -62,7 +61,7 @@ public class SearchAPI {
                 whereClause.append("draft=false AND owner_id=:owner_id");
                 long_map.put(":owner_id", session==null?0:session.user_id);
             }
-        }else {
+        } else {
             whereClause.append("draft=true AND owner_id=:owner_id");
             long_map.put(":owner_id", session==null?0:session.user_id);
         }
@@ -71,7 +70,7 @@ public class SearchAPI {
             int index = 0;
             for (var tag : search.tags) {
                 String id = ":tag_id_" + index;
-                whereClause.append(" AND (events.id IN (select event_id from event_tags where tag=").append(id).append("'))");
+                whereClause.append(" AND (events.id IN (select event_id from event_tags where tag=").append(id).append("))");
                 str_map.put(id, tag);
                 index ++;
             }
@@ -130,11 +129,14 @@ public class SearchAPI {
         String order = switch(search.sort_by==null?SortBy.Nothing:search.sort_by){
             case MinPrice -> "(select min(price) from tickets where event_id=id) ASC";
             case MaxPrice -> "(select max(price) from tickets where event_id=id) DESC";
-            case TicketsAvailable -> "(coalesce(coalesce((select sum(available_tickets) from tickets where tickets.event_id=events.id),events.available_total_tickets)-(select count(*) from purchased_tickets where purchased_tickets.ticket_id in (select tickets.id from tickets where tickets.event_id=events.id)),999999999)) DESC";
             case Closest -> {
-                real_map.put(":location_lat", search.location_lat);
-                real_map.put(":location_long", search.location_long);
-                yield "abs(location_lat-:location_lat) ASC, abs(location_long-:location_long) ASC";
+                if(search.location_lat!=null && search.location_long!=null){
+                    real_map.put(":location_lat", search.location_lat);
+                    real_map.put(":location_long", search.location_long);
+                    yield "abs(location_lat-:location_lat) ASC, abs(location_long-:location_long) ASC";
+                }else{
+                    yield "";
+                }
             }
             case StartTime -> "start ASC";
             case MinDuration -> "duration ASC";

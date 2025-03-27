@@ -11,22 +11,21 @@
 
     <meta name="viewport" content="initial-scale=1, width=device-width">
     <link rel="stylesheet" href="/style/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Caveat:wght@400..700&family=Special+Elite&display=swap"
-        rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
 
     <title>Ticket Express</title>
 </head>
 
 <body>
+    <div class="content">
     <button onclick="delete_database_stuff()">Nuke DB (needs to be logged into admin)</button>
-    <button onclick="create_random()">Random</button>
-    <button onclick="create_all_user_defined()">Pre Defined</button>
-    <textarea id="json"></textarea>
+    <p>This isn't magic and doesn't run automatically it literally exists to "pretend" to be a bunch of users who create events because we don't have actual users</p>
+    <button onclick="create_random()">Populate With Randomly Generated</button>
+    <button onclick="makie()">Populate With Sample Events Defined In The "sample_events.json" File Jacob Was Supposed To Add A Week Ago. This Literally Just Loads The JSON From The Server And Is The Same As Pasting It Into The Text Box An Running It There</button>
+    <button onclick="create_all_user_defined()">Populate From Json In Text Box</button>
+    <textarea id="json"></textarea></div>
+     <div src="/partials/header.html" type="text/x-html-template"></div>
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 
 </html>

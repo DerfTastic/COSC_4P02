@@ -25,7 +25,11 @@
             margin-top: 0;
         }
 
-        .sidebar label,
+        .sidebar label {
+            font-size: 15px;
+        }
+
+
         .sidebar input {
             display: block;
             width: 100%;
@@ -34,6 +38,19 @@
             padding: 3px;
             border: 1px solid #ccc;
             border-radius: 4px;
+        }
+
+        #minPrice,
+        #maxPrice,
+        #startDate,
+        #endDate {
+            width: 48%;
+            display: inline-block;
+        }
+
+        .select-field {
+            padding: 5px;
+            width: 65%;
         }
 
         .sidebar.collapsed {
@@ -75,6 +92,23 @@
             margin: 0;
             overflow: hidden;
             padding: 0;
+        }
+
+        #ticket-svg {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+        }
+
+        #ticket-svg:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        #ticket-svg path {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #ticket-svg image {
+            transition: transform 0.3s ease;
         }
 
         .events-container {
@@ -177,35 +211,36 @@
     <div class="sidebar" id="sidebar">
         <h3>Filter Events</h3>
         <form id="filterForm">
+            <label for="filterName">Event Name:</label>
+            <input class="input-field" type="text" id="filterName">
+
             <label for="filterLocation">Location:</label>
-            <input type="text" id="filterLocation" placeholder="Enter location">
+            <input class="input-field" type="text" id="filterLocation">
 
             <label for="filterCategory">Event Category:</label>
-            <input type="text" id="filterCategory" placeholder="Enter category">
+            <input class="input-field" type="text" id="filterCategory">
 
             <label for="filterTag">Tag:</label>
-            <input type="text" id="filterTag" placeholder="Enter tag">
+            <input class="input-field" type="text" id="filterTag">
 
-            <label for="priceRange">Price Range:</label>
-            <input type="text" id="minPrice" placeholder="Enter minimum price">
-            <input type="text" id="maxPrice" placeholder="Enter maximum price">
+            <label for="priceRange">Price Range:</label><br>
+            <input class="input-field" type="text" id="minPrice" placeholder="Min. price">
+            <input class="input-field" type="text" id="maxPrice" placeholder="Max. price"><br>
 
-            <label for="dateRange">Event Date:</label>
+            <label for="dateRange">Event Date:</label><br>
             <input type="date" id="startDate">
-            <input type="date" id="endDate">
+            <input type="date" id="endDate"><br><br>
 
             <label for="sort">Sort By:</label>
-            <select id="sort">
-                <option value="price">Price</option>
-                <option value="date">Date</option>
-                <option value="location">Location</option>
-                <option value="category">Category</option>
-            </select>
-
-            <label for="order">Order:</label>
-            <select id="order">
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
+            <select class="select-field" id="sort">
+                <option selected value="Select">---</option>
+                <option value="MinPrice">Min Price</option>
+                <option value="MaxPrice">Max Price</option>
+                <option value="TicketsAvailable">Tickets Available</option>
+                <option value="Closest">Closest</option>
+                <option value="StartTime">StartTime</option>
+                <option value="MinDuration">Min Duration</option>
+                <option value="MaxDuration">Max Duration</option>
             </select>
         </form>
     </div>

@@ -1,7 +1,5 @@
 package server.mail;
 
-import server.Config;
-
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -11,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class SmtpMailServer implements Closeable, MailServer {
     private final Session session;
@@ -20,10 +19,12 @@ public class SmtpMailServer implements Closeable, MailServer {
     private final ExecutorService executor;
 
     private final ThreadLocal<Transport> transport;
+    private final Pattern sender_filter;
 
 
-    public SmtpMailServer(String username, String password) {
+    public SmtpMailServer(String username, String password, String sender_filter) {
         this.username = username;
+        this.sender_filter = Pattern.compile(sender_filter);
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -73,6 +74,10 @@ public class SmtpMailServer implements Closeable, MailServer {
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(username));
                 configurator.config(message);
+                for(var recip : message.getAllRecipients()) {
+                    if (!sender_filter.matcher(recip.toString()).matches())
+                        return;
+                }
                 transport.get().sendMessage(message, message.getAllRecipients());
                 configurator.completed();
             }catch (MessagingException e){

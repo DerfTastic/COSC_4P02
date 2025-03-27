@@ -131,6 +131,10 @@ public abstract class DbManager implements AutoCloseable{
         tracker.db_release(conn.id, false, System.nanoTime()-conn.acquired);
     }
 
+    /** Instantiates a new RwTransaction of this DbManager
+     * @param id
+     * @throws SQLException
+     */
     public RwTransaction rw_transaction(String id) throws SQLException {
         return new RwTransaction(this, id);
     }

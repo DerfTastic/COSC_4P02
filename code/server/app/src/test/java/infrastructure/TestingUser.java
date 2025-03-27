@@ -11,6 +11,7 @@ import server.Config;
 import server.infrastructure.param.auth.*;
 import server.infrastructure.root.api.AccountAPI;
 import server.infrastructure.root.api.OrganizerAPI;
+import server.infrastructure.root.api.PaymentAPI;
 import server.mail.MailServer;
 
 import java.io.IOException;
@@ -44,31 +45,42 @@ public class TestingUser {
         this.password = password;
     }
 
-    public void register(MailServer mail, DbManager db, Config config) throws BadRequest, SQLException {
+    /**
+     * Registers this TestingUser using {@link AccountAPI#register}
+     */
+    public void register(MailServer mail, DbManager db, boolean send_mail_on_register) throws BadRequest, SQLException {
         try(var conn = db.rw_transaction(null)){
             var register = new AccountAPI.Register();
             register.name = this.name;
             register.email = this.email;
             register.password = this.password;
-            AccountAPI.register(mail, conn, register, config);
+            AccountAPI.register(mail, conn, register, send_mail_on_register);
             conn.tryCommit();
         }
     }
 
-    public void makeOrganizer(DbManager db, SessionCache cache) throws SQLException, Unauthorized, BadRequest {
+
+    public void makeOrganizer(DbManager db, SessionCache cache, MailServer mail) throws SQLException, Unauthorized, BadRequest {
         var auth = this.userSession(db, cache);
         try(var conn = db.rw_transaction(null)){
-            OrganizerAPI.convert_to_organizer_account(auth, conn, cache);
+            PaymentAPI.make_purchase(auth, conn,
+                    new PaymentAPI.Order(
+                            List.of(new PaymentAPI.AccountOrganizerUpgrade()),
+                            new PaymentAPI.PaymentInfo("", "", "", "", "")
+                    ), cache, mail);
             conn.tryCommit();
         }
     }
 
-    public String login(MailServer mail, DbManager db, Config config) throws SQLException, UnknownHostException, Unauthorized {
+    /**
+     * Logs in this TestingUser by using {@link AccountAPI#login} and then returns the session
+     */
+    public String login(MailServer mail, DbManager db, boolean send_mail_on_login) throws SQLException, UnknownHostException, Unauthorized {
         try(var conn = db.rw_transaction(null)){
             var login = new AccountAPI.Login();
             login.email = this.email;
             login.password = this.password;
-            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "", conn, login, config);
+            session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "", conn, login, send_mail_on_login);
             conn.tryCommit();
             return session;
         }

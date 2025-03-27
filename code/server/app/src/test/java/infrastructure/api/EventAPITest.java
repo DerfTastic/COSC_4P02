@@ -24,9 +24,6 @@ import java.util.Optional;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EventAPITest {
     private static DbManager db;
-    private final Config config = new Config(
-            "send_mail", "false"
-    );
     private final MailServerSkeleton mail = new MailServerSkeleton();
     private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
 
@@ -38,16 +35,20 @@ public class EventAPITest {
     @BeforeAll
     public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
         db = new DbManagerImpl("event_api_test", true, true, true);
-        o1.register(mail, db, config);
-        o1.login(mail, db, config);
-        o1.makeOrganizer(db, null);
+        o1.register(mail, db, false);
+        o1.login(mail, db, false);
+        o1.makeOrganizer(db, null, mail);
+        try{
+            o1.makeOrganizer(db, null, mail);
+            Assertions.fail("no");
+        }catch (Exception ignore){}
 
-        o2.register(mail, db, config);
-        o2.login(mail, db, config);
-        o2.makeOrganizer(db, null);
+        o2.register(mail, db, false);
+        o2.login(mail, db, false);
+        o2.makeOrganizer(db, null, mail);
 
-        u1.register(mail, db, config);
-        u1.login(mail, db, config);
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
     }
 
     @Test

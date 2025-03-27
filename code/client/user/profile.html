@@ -8,19 +8,21 @@
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
     <style>
-        body {
+        /* body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-        }
+        } */
 
-        .profile{
-            width: 65%;
-            max-width: 800px;
+        .profile {
+            width: auto;
+            /* max-width: 800px; */
             margin: 0 auto;
+            margin-left: 10em;
+            margin-right: 10em;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -171,215 +173,345 @@
             font-size: 18px;
             border: 1px solid #ccc;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .modal::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
     </style>
 </head>
 
 <body>
-    <div src="/partials/header.html" type="text/x-html-template"></div>
-    <div class="profile">
-        <div class="profile-banner">
-            <button class="change-banner-btn"></button>
-        </div>
+    <div class="content">
+        <div src="/partials/header.html" type="text/x-html-template"></div>
+        <div class="profile">
+            <div class="profile-banner">
+                <!-- Change Banner Button -->
+                <button class="change-banner-btn" onclick="openModal()"></button>
 
-        <div class="profile-container">
-            <div class="profile-picture">
-                <button class="change-profile-btn"></button> <!-- Pencil icon for profile -->
+                <!-- Popup Modal -->
+                <div id="colorModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Change Banner Color</h2>
+                        <input type="color" id="bannerColorPicker">
+                        <br><br>
+                        <button onclick="changeBannerColor()">Save</button>
+                        <button onclick="closeModal()">Cancel</button>
+                    </div>
+                </div>
             </div>
-            
-            <button class="go-pro-btn">Go Pro</button> <!-- Positioned in line with profile picture -->
-        </div>
 
-        <div class="user-info-container">
-            <div class="user-name">John Doe</div>
-            <div class="contact-info">
-                <div>Email: johndoe@example.com</div>
-                <div>Phone: (123) 456-7890</div>
+            <div class="profile-container">
+                <div class="profile-picture" id="profilePic">
+                    <!-- Change Profile Picture Button -->
+                    <button class="change-profile-btn"
+                        onclick="document.getElementById('profilePicInput').click()"></button>
+
+                    <!-- Hidden File Input for Profile Picture -->
+                    <input type="file" id="profilePicInput" accept="image/png" style="display: none;"
+                        onchange="updateProfilePicture(event)">
+
+                </div>
+
+                <button class="go-pro-btn">Go Pro</button>
             </div>
-        </div>
 
-        <div class="tabs">
-            <div class="tab active" data-tab="hosted">Events Hosted</div>
-            <div class="tab" data-tab="history">Ticket History</div>
-            <div class="tab" data-tab="upcoming">Upcoming Events</div>
-            <div class="tab" data-tab="drafts">Drafts</div>
-        </div>
-
-        <div class="tab-content active" id="hosted">
-            <ul class="event-list">
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-            </ul>
-        </div>
-
-        <div class="tab-content" id="history">
-            <ul class="event-list">
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-            </ul>
-        </div>
-
-        <div class="tab-content" id="upcoming">
-            <ul class="event-list">
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-            </ul>
-        </div>
-
-        <div class="tab-content" id="drafts">
-            <ul class="event-list">
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-                <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="white" stroke="#ccc" stroke-width="2"/>
-                    <!-- Placeholder Image -->
-                    <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666" text-anchor="middle">Image</text>
-                
-                     <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3" stroke-dasharray="5,5"/>
-                
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold" fill="#333">${event.title}</text>
-                    <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date: ${event.date}</text>
-                    <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location: ${event.location}</text>
-                    <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category: ${event.category}</text>
-                    <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags: ${event.tags.join(", ")}</text>
-                    <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price: $${event.price}</text>
-                </svg></li>
-            </ul>
-        </div>
-
-        <div class="carousel-container">
-            <h3>Recommended Events</h3>
-            <div class="carousel">
-                <div class="carousel-item">Event 1</div>
-                <div class="carousel-item">Event 2</div>
-                <div class="carousel-item">Event 3</div>
-                <div class="carousel-item">Event 4</div>
+            <div class="user-info-container">
+                <div class="user-name">John Doe</div>
+                <div class="contact-info">
+                    <div>Email: johndoe@example.com</div>
+                    <div>Phone: (123) 456-7890</div>
+                </div>
             </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="hosted">Events Hosted</div>
+                <div class="tab" data-tab="history">Ticket History</div>
+                <div class="tab" data-tab="upcoming">Upcoming Events</div>
+                <div class="tab" data-tab="drafts">Drafts</div>
+            </div>
+
+            <div class="tab-content active" id="hosted">
+                <ul class="event-list">
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="history">
+                <ul class="event-list">
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="upcoming">
+                <ul class="event-list">
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="drafts">
+                <ul class="event-list">
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid meet">
+                            <!-- Ticket Shape -->
+                            <path
+                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                fill="white" stroke="#ccc" stroke-width="2" />
+                            <!-- Placeholder Image -->
+                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
+                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
+                                text-anchor="middle">Image</text>
+
+                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
+                                stroke-dasharray="5,5" />
+
+                            <!-- Event Details -->
+                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
+                                fill="#333">${event.title}</text>
+                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
+                                ${event.date}</text>
+                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
+                                ${event.location}</text>
+                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
+                                ${event.category}</text>
+                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
+                                ${event.tags.join(", ")}</text>
+                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
+                                $${event.price}</text>
+                        </svg></li>
+                </ul>
+            </div>
+
+            <div class="carousel-container">
+                <h3>Recommended Events</h3>
+                <div class="carousel">
+                    <div class="carousel-item">Event 1</div>
+                    <div class="carousel-item">Event 2</div>
+                    <div class="carousel-item">Event 3</div>
+                    <div class="carousel-item">Event 4</div>
+                </div>
+            </div>
+
         </div>
-        <div src="/partials/footer.html" type="text/x-html-template"></div>
+        
     </div>
-
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const tabs = document.querySelectorAll(".tab");
@@ -400,6 +532,36 @@
                 window.location.href = ""; // Replace with actual link
             });
         });
+        function openModal() {
+            document.getElementById("colorModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("colorModal").style.display = "none";
+        }
+
+        function changeBannerColor() {
+            let color = document.getElementById("bannerColorPicker").value;
+            document.querySelector(".profile-banner").style.background = color;
+            closeModal(); // Close modal after selection
+        }
+
+        function updateProfilePicture(event) {
+            const file = event.target.files[0];
+
+            if (file && file.type === "image/png") {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById("profilePic").style.backgroundImage = `url(${e.target.result})`;
+                };
+
+                reader.readAsDataURL(file); // Convert the file to a Data URL
+            } else {
+                alert("Please upload a PNG file.");
+            }
+        }
+
     </script>
 
 </body>

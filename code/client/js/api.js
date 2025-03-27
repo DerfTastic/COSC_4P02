@@ -1,5 +1,71 @@
 const apiRoot = "/api";
 
+
+class UserPayment{
+    /** @type{string} */name
+    /** @type{string} */billing
+    /** @type{string} */card
+    /** @type{string} */exparation
+    /** @type{string} */code
+}
+
+class TicketOrderItem{
+    type = "Ticket"
+    /** @type{number} */id
+
+    constructor(id){
+        this.id = id;
+    }
+}
+
+class AccountOrganizerUpgradeOrderItem{
+    type = "AccountOrganizerUpgrade"
+}
+
+/** @typedef{(TicketOrderItem|AccountOrganizerUpgradeOrderItem)} UserOrderItem */
+
+class UserOrder{
+    /** @type{UserPayment} */ payment
+    /** @type{UserOrderItem[]} */ items
+}
+
+class Receipt{
+    /** @type{number} */payment_id
+    /** @type{ReceiptItem[]} */items
+    /** @type{number} */date
+    /** @type{number} */subtotal
+    /** @type{number} */fees
+    /** @type{number} */gst
+    /** @type{number} */total
+
+}
+
+class QRCodeScan{
+    /** @type{number} */event_id
+    /** @type{string} */name
+    /** @type{PurchasedTicketId} */id
+}
+
+class PurchasedTicketId{
+    id
+    salt
+}
+
+class ReceiptItem{
+    /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
+    /** @type{string?} */name
+    /** @type{PurchasedTicketId?} */id
+    /** @type{number?} */purchase_price
+}
+
+class BillEstimate{
+    /** @type{ReceiptItem[]} */items
+    /** @type{number} */subtotal
+    /** @type{number} */fees
+    /** @type{number} */gst
+    /** @type{number} */total
+}
+
 class UserInfo {
     /** @type{number} */id
     /** @type{string} */name
@@ -64,8 +130,7 @@ class OrganizerEvent {
 
     /** @type{number?} */start
     /** @type{number?} */duration
-
-    /** @type{number} */available_total_tickets
+    /** @type{number} */release_time
 
     /** @type{string} */location_name
     /** @type{number} */location_lat
@@ -86,8 +151,7 @@ class UpdateOrganizerEvent{
 
     /** @type{string?} */type
     /** @type{string?} */category
-    
-    /** @type{number?} */available_total_tickets
+    /** @type{number?} */release_time
 
     /** @type{string?} */location_name
     /** @type{number?} */location_lat
@@ -159,6 +223,7 @@ class Search{
     /** @type{string?} */ location
     /** @type{number?} */ offset
     /** @type{number?} */ limit
+    /** @type{"MinPrice"|"MaxPrice"|"TicketsAvailable"|"Closest"|"StartTime"|"MinDuration"|"MaxDuration"|"Nothing"} */ sort_by
 }
 
 // actually just a string but shhhh
@@ -188,6 +253,63 @@ const api = {
         } else {
             throw { error, code: response.status };
         }
+    },
+
+    payment: {
+        /**
+         * @param {UserOrder} order 
+         * @param {Session} session 
+         * @returns {Promise<ReceiptItem>}
+         */
+        make_purchase: async function(order, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/make_purchase`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(order)
+                },
+                "An error occured when processing the transaction"
+            )).json();
+        },
+
+        /**
+         * @param {UserOrder} order 
+         * @param {Session} session 
+         * @returns {Promise<BillEstimate>}
+         */
+        create_estimate: async function(order, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/create_estimate`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                    body: JSON.stringify(order)
+                },
+                "An error occured when processing the transaction"
+            )).json();
+        },
+
+        /**
+         * @param {Session} session 
+         * @returns {Promise<Receipt>}
+         */
+        list_receipts: async function(session = cookies.getSession()){
+            return await (await api.api_call(
+                `/list_receipts`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured when fetching the receipts"
+            )).json();
+        },
     },
 
     tickets: {
@@ -639,24 +761,26 @@ const api = {
     },
 
     organizer: {
+        
         /**
+         * @param {QRCodeScan} scan 
          * @param {Session} session 
-         * @returns {Promise<>}
+         * @returns {Promise<{date: integer}[]>}
          */
-        convert_to_organizer_account: async function (session = cookies.getSession()) {
-            await api.api_call(
-                '/convert_to_organizer_account',
+        scan_ticket: async function(scan, session = cookies.getSession()){
+            return await (await api.api_call(
+                '/scan_ticket',
                 {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
                         'X-UserAPIToken': session
-                    }
+                    },
+                    body: JSON.stringify(scan),
                 },
-                "An error occured while converting account to organizer"
-            );
+                "An error occured while scanning ticket"
+            )).json();
         },
-
 
         /**
          * @param {Search} search 

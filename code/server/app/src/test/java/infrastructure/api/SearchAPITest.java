@@ -3,25 +3,52 @@
  */
 package infrastructure.api;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
+import infrastructure.MailServerSkeleton;
+import infrastructure.TestingUser;
+import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.root.api.EventAPI;
+import server.infrastructure.root.api.SearchAPI;
+
+import java.net.UnknownHostException;
+import java.sql.SQLException;
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SearchAPITest {
     private static DbManager db;
+    private final MailServerSkeleton mail = new MailServerSkeleton();
 
-    private static String session;
+    private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
 
     @BeforeAll
-    public static void setup() {
-        try{
-            db = new DbManagerImpl("search_api_test", true, true, true);
-        }catch (Exception e){
-            throw new RuntimeException(e);
+    public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
+        db = new DbManagerImpl("search_api_test", true, true, true);
+
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
+    }
+
+    @Test
+    @Order(1)
+    public void searchEventsTest() throws SQLException, Unauthorized {
+        var session = u1.userSession(db, null);
+
+        // Get all events by max price
+        try(var trans = db.ro_transaction(null)) {
+            SearchAPI.Search s = new SearchAPI.Search(
+                    null, null, null, null,
+                    null, null,null, null, null,
+                    null,
+                    null, null,null, null,
+                    null,false, null, null, SearchAPI.SortBy.Nothing
+                    );
+            List<EventAPI.Event> result = SearchAPI.search_events(session, trans, s, false);
+            System.out.println("\t" + result.size() + " results");
         }
     }
 

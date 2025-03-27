@@ -10,44 +10,75 @@
 </head>
 <div src="/partials/header.html" type="text/x-html-template"></div>
 
-
 <body>
-    <div class="container">
+    <div class="content">
+        <div class="container">
 
-        <div class="login-container">
-            <form class="login-form" action="javascript:page.login.login(username.value, password.value)" method="POST">
-                <h2>Login</h2>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required />
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required />
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn-login">Login</button>
-                </div>
-                <p class="form-footer">
-                    Don't have an account? <a href="/account/register">Sign up</a><br><br>
-                    <a href="javascript:promptUsername()">Forgot your Password?</a>
-                </p>
-            </form>
+            <div class="login-container">
+                <form class="login-form" id="loginForm"
+                    action="javascript:page.login.login(username.value, password.value)">
+                    <h2>Welcome Back!</h2>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required />
+                        <a class="form-links" href="javascript:showResetForm()">Forgot your Password?</a>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-login">Login</button>
+                    </div>
+                    <p>
+                        Don't have an account? <a class="form-links" href="/account/register">Sign up</a>
+                    </p>
+                </form>
+
+                <!-- Password Reset Form (Hidden by Default) -->
+                <form class="login-form" action="javascript:sendResetEmail()" id="emailResetForm" style="display: none;">
+                    <h2>Forgot your Password?</h2>
+                    <div class="form-group">
+                        <label for="reset-email">Email Address</label>
+                        <input type="email" id="reset-email" required />
+                    </div>
+                    <p id="reset-error" style="color:#fdd835;" class="error-message"></p>
+                    <div class="form-group">
+                        <button type="submit" class="btn-login" >Submit</button>
+                        <a class="form-links" >Back to Login</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <script>
-        // Prompt user for username when clicking "Forgot your Password?"
-        async function promptUsername() {
-            var email = prompt("Please enter your email to reset your password:");
-            if (email) {
-                try {
-                    await api.user.reset_password(email);
-                    alert("An email has been sent with a password reset link.");
-                } catch ({ error, code }) {
-                    alert('Error resetting password: ' + error);
-                }
-            } else {
-                alert("Email is required to reset your password.");
+        function showResetForm() {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("emailResetForm").style.display = "block";
+        }
+
+        function showLoginForm() {
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("emailResetForm").style.display = "none";
+        }
+
+        async function sendResetEmail() {
+            const email = document.getElementById("reset-email").value;
+            const errorMsg = document.getElementById("reset-error");
+
+            if (!email) {
+                errorMsg.innerText = "Email is required to reset your password!";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            try {
+                await api.user.reset_password(email);
+                alert("An email has been sent with a password reset link.");
+                showLoginForm();
+            } catch ({ error }) {
+                errorMsg.innerText = "Error: " + error;
+                errorMsg.style.display = "block";
             }
         }
     </script>

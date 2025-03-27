@@ -31,6 +31,11 @@ public class SqlSerde {
         });
     }
 
+    public static Long nullableLong(ResultSet rs, String totalTickets) throws SQLException {
+        long l = rs.getLong(totalTickets);
+        return rs.wasNull()?null:l;
+    }
+
     public interface Map<T>{
         T call(ResultSet rs) throws SQLException;
     }

@@ -18,12 +18,12 @@ import java.util.List;
 @Routes
 public class TicketsAPI {
 
-    public static class Ticket{
-        public long id;
-        public String name;
-        public long price;
-        public Integer available_tickets;
-    }
+    public record Ticket(
+            long id,
+            String name,
+            long price,
+            Long total_tickets
+    ){}
 
     @Route("/create_ticket/<event_id>")
     public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
@@ -54,11 +54,11 @@ public class TicketsAPI {
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
-        try (var stmt = trans.namedPreparedStatement("update tickets set name=:name, price=:price, available_tickets=:available_tickets where id=:id")) {
+        try (var stmt = trans.namedPreparedStatement("update tickets set name=:name, price=:price, total_tickets=:total_tickets where id=:id")) {
             stmt.setString(":name", ticket.name);
             stmt.setLong(":price", ticket.price);
-            if(ticket.available_tickets!=null)
-                stmt.setLong(":available_tickets", ticket.available_tickets);
+            if(ticket.total_tickets!=null)
+                stmt.setLong(":total_tickets", ticket.total_tickets);
             stmt.setLong(":id", ticket_id);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Failed to update ticket");
@@ -82,7 +82,12 @@ public class TicketsAPI {
         List<Ticket> result;
         try (var stmt = trans.namedPreparedStatement("select * from tickets where event_id=:event_id")) {
             stmt.setLong(":event_id", event_id);
-            result = SqlSerde.sqlList(stmt.executeQuery(), Ticket.class);
+            result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Ticket(
+                    rs.getLong("id"),
+                    rs.getString("name"),
+                    rs.getLong("price"),
+                    SqlSerde.nullableLong(rs, "total_tickets")
+            ));
         }
         trans.commit();
         return result;

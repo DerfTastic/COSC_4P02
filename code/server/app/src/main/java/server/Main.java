@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class Main {
     public static void main(String[] args) throws IOException {
         var config = Config.init(); // initialize fundamental directories
-        ServerLogger.initialize(Level.CONFIG, config);
+        ServerLogger.initialize(Level.CONFIG, config.log_path);
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             Logger.getGlobal().log(Level.SEVERE, "Unhandled exception on thread " + t, e);
         });

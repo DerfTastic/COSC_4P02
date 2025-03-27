@@ -11,7 +11,7 @@
 
     <form class="search-bar" id="searchForm" method="GET" action="/event/search">
         <input type="text" name="search" id="search" placeholder="Search events..." value="">
-        <button type="submit" aria-label="Search">
+        <button type="submit">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16">
                 <path fill="currentcolor"
                     d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
@@ -19,6 +19,20 @@
         </button>
     </form>
 
+    <!-- Work in Progress. 
+    <div class="search-container">
+        <div class="search-bar">
+            <div id="select">
+                <p>All Categories</p>
+                <ul>
+                    <li class="options">All Categories</li>
+                    <li class="options">Electronics</li>
+                </ul>
+            </div>
+            <input type="text" placeholder="Search in all categories">
+        </div>
+    </div>
+    ~ Ben -->
 
     <nav>
         <a href="/event/search" id="search-event-link">Browse Events</a>
@@ -26,11 +40,9 @@
         <a href="/account/login" id="login-link">Login</a>
         <a href="/account/register" id="signup-link">Signup</a>
         <a href="#" id="logout-link" style="display: none;">Logout</a>
+        
 
-        <button id="cart" class="cart" aria-label="View Cart">
-            <!-- <i class="fa badge fa-lg">&#xf07a;</i> -->
-            <i class="fa  fa-lg">&#xf07a;</i>
-        </button>
+
     </nav>
 </header>
 
@@ -41,7 +53,6 @@
         const logoutLink = document.getElementById("logout-link");
         const searchLink = document.getElementById("search-event-link");
         const createLink = document.getElementById("create-event-link");
-        const cart = document.getElementById("cart");
         const session = cookies.getSession();
 
         if (session && session.length > 0) {
@@ -49,7 +60,7 @@
             signupLink.style.display = 'none';
             logoutLink.style.display = 'inline';
 
-            signupLink.insertAdjacentHTML('afterend', '<a href="/account">Account</a>');
+            signupLink.insertAdjacentHTML('afterend', '<a href="/account"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="25" height="47.6"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" fill="#eeeef0" ></svg></a>');
 
             logoutLink.onclick = function () {
                 utility.logout();
@@ -61,7 +72,6 @@
                 const userInfo = await page.account.userinfo();
                 if (userInfo && userInfo.admin) {
                     searchLink.style.display = 'none';
-                    cart.style.display = 'none';
                     const adminLinksHTML = `
                         <a href="/admin/logs">Logs</a>
                         <a href="/admin/console">Console</a>
@@ -69,7 +79,7 @@
                     `;
                     loginLink.insertAdjacentHTML('afterend', adminLinksHTML);
                 }
-                else if (userInfo && userInfo.organiser) {
+                else if (userInfo && userInfo.organizer) {
                     createLink.style.display = "inline"
                 }
             } catch (error) {
@@ -81,7 +91,6 @@
             loginLink.style.display = 'inline';
             signupLink.style.display = 'inline';
             logoutLink.style.display = 'none';
-            cart.style.display = 'inline';
         }
     }
     updateAuthLinks();

@@ -1,17 +1,24 @@
 package server.infrastructure.root.api;
 
-import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.annotation.JSONType;
+import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.util.SqlSerde;
-import framework.web.WebServer;
+import framework.web.Util;
 import framework.web.annotations.*;
-import framework.web.annotations.http.Get;
-import framework.web.error.BadRequest;
 import server.infrastructure.param.auth.RequireSession;
+import server.infrastructure.param.auth.SessionCache;
 import server.infrastructure.param.auth.UserSession;
+import server.mail.MailServer;
 
+import javax.mail.Message;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,125 +26,250 @@ import java.util.List;
 @Routes
 public class PaymentAPI {
 
-    public sealed interface OrderItem permits TicketItem, AccountUpgrade{}
-    public record TicketItem(String name, long ticket_id, long price) implements OrderItem{}
-    public record AccountUpgrade(long user_id, long price) implements OrderItem{}
-    public record Order(
-            List<OrderItem> items,
-            long sub_total,
-            long usage_fee,
-            long tax,
-            long total
-    ){}
-
-    private static class PaymentState{}
-
-    @OnMount
-    public static void init(WebServer server){
-        server.addManagedState(new PaymentState());
+    public record PaymentInfo(
+            String name,
+            String billing,
+            String card,
+            String expiration,
+            String code
+    ) {
     }
 
     @JSONType(
             typeKey = "type",
             seeAlso = {AccountOrganizerUpgrade.class, Ticket.class}
     )
-    public sealed interface Item permits AccountOrganizerUpgrade, Ticket{}
-    @JSONType(typeName = "AccountOrganizerUpgrade")
-    public record AccountOrganizerUpgrade() implements Item {}
-    @JSONType(typeName = "Ticket")
-    public record Ticket(long id) implements Item {}
+    public sealed interface OrderItem permits AccountOrganizerUpgrade, Ticket {
+    }
 
-    public static List<Ticket> verify_purchase_viability(UserSession session, RwTransaction trans, Item[] items) throws SQLException, BadRequest {
-        final boolean[] upgrade = {false};
-        JSONArray ticket_ids = new JSONArray();
-        for(var item : items){
-            switch(item){
-                case AccountOrganizerUpgrade ignore when upgrade[0] -> throw new BadRequest("Cannot purchase account organizer upgrade twice");
-                case AccountOrganizerUpgrade ignore -> upgrade[0] = true;
-                case Ticket(long id) -> ticket_ids.add(id);
+    @JSONType(typeName = "AccountOrganizerUpgrade")
+    public record AccountOrganizerUpgrade() implements OrderItem {
+    }
+
+    @JSONType(typeName = "Ticket")
+    public record Ticket(long id) implements OrderItem {
+    }
+
+    public record Order(
+            List<OrderItem> items,
+            PaymentInfo payment
+    ) {
+    }
+
+    @JSONType(
+            typeKey = "type",
+            seeAlso = {AccountOrganizerUpgradeReceipt.class, TicketReceipt.class},
+            serializeFeatures = JSONWriter.Feature.WriteClassName
+    )
+    public sealed interface ReceiptItem permits AccountOrganizerUpgradeReceipt, TicketReceipt {
+        long purchase_price();
+    }
+
+    @JSONType(typeName = "AccountOrganizerUpgrade")
+    public record AccountOrganizerUpgradeReceipt(long purchase_price) implements ReceiptItem {
+    }
+
+    @JSONType(typeName = "Ticket")
+    public record TicketReceipt(String name, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
+    }
+
+    public record PurchasedTicketId(long pid, String salt) {
+    }
+
+    public record Receipt(
+            long payment_id,
+            List<ReceiptItem> items,
+            long date,
+            long subtotal,
+            long fees,
+            long gst,
+            long total
+    ) {
+    }
+
+    public static void verify_payment(PaymentInfo payment, long amount) {
+        //TODO
+    }
+
+    @Route
+    public static @Json List<Receipt> list_receipts(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans) throws SQLException {
+        List<Receipt> list;
+        try (var stmt = trans.namedPreparedStatement("select * from payments where user_id=:user_id order by payment_date desc")) {
+            stmt.setLong(":user_id", auth.user_id);
+            list = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Receipt(
+                    rs.getLong("id"),
+                    JSON.parseArray(rs.getString("receipt"), ReceiptItem.class),
+                    rs.getLong("payment_date"),
+                    rs.getLong("subtotal"),
+                    rs.getLong("fees"),
+                    rs.getLong("gst"),
+                    rs.getLong("total")
+            ));
+        }
+        trans.commit();
+        return list;
+    }
+
+    public record Estimate(
+            List<ReceiptItem> items,
+            long subtotal,
+            long fees,
+            long gst,
+            long total
+    ) {
+    }
+
+    @Route
+    public static @Json Estimate create_estimate(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json OrderItem[] order) throws SQLException {
+        ArrayList<ReceiptItem> items = new ArrayList<>();
+        long subtotal = 0;
+        try (var ticket = trans.namedPreparedStatement("select name, price from tickets where id=:ticket_id AND event_id IN (select id from events where draft=false)");) {
+            for (var item : order) {
+                switch (item) {
+                    case AccountOrganizerUpgrade ignore -> items.add(new AccountOrganizerUpgradeReceipt(50_000000));
+                    case Ticket(long id) -> {
+                        ticket.setLong(":ticket_id", id);
+                        items.add(SqlSerde.sqlSingle(ticket.executeQuery(),
+                                rs -> new TicketReceipt(
+                                        rs.getString(1),
+                                        rs.getLong(2),
+                                        null
+                                ))
+                        );
+                    }
+                }
+                subtotal += items.getLast().purchase_price();
             }
         }
-        if(session.organizer&&upgrade[0])
-            throw new BadRequest("Cannot purchase account organizer upgrade, account is already organizer");
 
-        List<Ticket> tickets;
-        try(var stmt = trans.namedPreparedStatement("select * from users join json_each(:tickets) on users.id=json_each.value")){
-            stmt.setString(":tickets", ticket_ids.toJSONString());
-            tickets = SqlSerde.sqlList(stmt.executeQuery(), Ticket.class);
-        }
-
-        return tickets;
-    }
-
-
-    @Route
-    public static String createOrder(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans, @Body @Json Item[] items) throws SQLException, BadRequest {
-
-        verify_purchase_viability(session, trans, items);
-
-
+        long fees = (subtotal * 15000) / (1_000000L); // 0.015 1.5%
+        long gst = (subtotal * 50000) / (1_000000L); // 0.050 5.0%
+        long total = subtotal + fees + gst;
         trans.commit();
 
-        PretendPaypal.createOrder();
-        return "";
+        return new Estimate(
+                items,
+                subtotal,
+                fees,
+                gst,
+                total
+        );
     }
-
 
     @Route
-    public static void finishOrder(@FromRequest (RequireSession.class)UserSession session, RwTransaction trans, String token){
-//        verify_purchase_viability(session, trans, items);
+    public static @Json Receipt make_purchase(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json Order order, SessionCache cache, MailServer mail) throws SQLException {
 
-        PretendPaypal.captureOrder();
+        long date = System.currentTimeMillis();
+        long payment_id;
+        try (var stmt = trans.namedPreparedStatement("insert into payments values (null, :user_id, '', :date, 0, 0, 0, 0) returning id")) {
+            stmt.setLong(":user_id", auth.user_id);
+            stmt.setLong(":date", date);
+            payment_id = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getLong("id"));
+        }
+
+        ArrayList<ReceiptItem> items = new ArrayList<>();
+        long subtotal = 0;
+        try (var ticket = trans.namedPreparedStatement("insert into purchased_tickets values(null, :user_id, :ticket_id, :payment_id, (select price from tickets where id=:ticket_id), :salt) returning (select name from tickets where id=:ticket_id), (select price from tickets where id=:ticket_id), id"); var organizer = trans.namedPreparedStatement("update users set organizer=true where id=:user_id")) {
+            for (var item : order.items) {
+                switch (item) {
+                    case AccountOrganizerUpgrade ignore -> {
+                        organizer.setLong(":user_id", auth.user_id);
+                        if (organizer.executeUpdate() != 1)
+                            throw new SQLException();
+                        items.add(new AccountOrganizerUpgradeReceipt(50_000000));
+
+                        if (cache != null) {
+                            // we need to manually invalidate the cache here
+                            try (var stmt = trans.namedPreparedStatement("select id from sessions where user_id=:id")) {
+                                stmt.setLong(":id", auth.user_id);
+                                SqlSerde.sqlForEach(stmt.executeQuery(), rs -> {
+                                    cache.invalidate_session(rs.getLong("id"));
+                                });
+                            }
+                        }
+                    }
+                    case Ticket(long id) -> {
+                        ticket.setLong(":user_id", auth.user_id);
+                        ticket.setLong(":ticket_id", id);
+                        ticket.setLong(":payment_id", payment_id);
+                        var rng = new byte[16];
+                        new SecureRandom().nextBytes(rng);
+                        var salt = Util.hashy(rng);
+                        ticket.setString(":salt", salt);
+                        items.add(SqlSerde.sqlSingle(ticket.executeQuery(),
+                                rs -> new TicketReceipt(
+                                        rs.getString(1),
+                                        rs.getLong(2),
+                                        new PurchasedTicketId(rs.getLong(3), salt)
+                                ))
+                        );
+                    }
+                }
+                subtotal += items.getLast().purchase_price();
+            }
+        }
+
+        long fees = (subtotal * 15000) / (1_000000L); // 0.015 1.5%
+        long gst = (subtotal * 50000) / (1_000000L); // 0.050 5.0%
+        long total = subtotal + fees + gst;
+        try (var stmt = trans.namedPreparedStatement("update payments set receipt=:receipt, subtotal=:subtotal, fees=:fees, gst=:gst, total=:total where id=:payment_id")) {
+            stmt.setLong(":payment_id", payment_id);
+            stmt.setString(":receipt", JSON.toJSONString(items));
+            stmt.setLong(":subtotal", subtotal);
+            stmt.setLong(":fees", fees);
+            stmt.setLong(":gst", gst);
+            stmt.setLong(":total", total);
+            if (stmt.executeUpdate() != 1)
+                throw new SQLException();
+        }
+
+        var receipt = new Receipt(
+                payment_id,
+                items,
+                date,
+                subtotal,
+                fees,
+                gst,
+                total
+        );
+
+        verify_payment(order.payment, total);
+        trans.commit();
+
+        mail.sendMail(message -> {
+            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(auth.email));
+            message.setSubject("Purchase");
+            var str = new StringBuilder();
+            str.append("<p>Sub Total: ").append(formatPrice(receipt.subtotal)).append("</p>");
+            str.append("<p>Fees: ").append(formatPrice(receipt.fees)).append("</p>");
+            str.append("<p>GST: ").append(formatPrice(receipt.gst)).append("</p>");
+            str.append("<p>Total: ").append(formatPrice(receipt.total)).append("</p>");
+            for (var item : receipt.items) {
+                str.append("<div>");
+                switch (item) {
+                    case AccountOrganizerUpgradeReceipt(long purchase_price) -> {
+                        str.append("<p>Account Upgrade: ").append(formatPrice(purchase_price)).append("</p>");
+                    }
+                    case TicketReceipt(String name, long purchase_price, PurchasedTicketId id) -> {
+                        str.append("<p>Ticket: ")
+                                .append(name).append(" ")
+                                .append(formatPrice(purchase_price))
+                                .append("</p>");
+                        str.append("<img width=\"200\" height=\"200\" src=\"")
+                                .append("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=")
+                                .append(URLEncoder.encode(JSON.toJSONString(id), StandardCharsets.UTF_8))
+                                .append("\"></img>");
+                    }
+                }
+                str.append("</div>");
+            }
+            message.setContent(str.toString(), "text/html");
+        });
+
+        return receipt;
     }
 
-
-    /**
-     * @implNote <br>
-     * createOrder: Client -> US -(token)> Client <br>
-     * ~showOrderDetails Client -(token)> paymentAPI -> Client <br>
-     * confirmOrder Client -(token)> paymentAPI <br>
-     * captureOrder Client -(token)> US <br>
-     * |---capturePayment US -(token)> paymentAPI <br>
-     */
-    @Routes
-    public static class PretendPaypal{
-        /**
-         * Creates an order from a list of tickets the user wants to purchase
-         * Note: this doesn't reserve the tickets and they can be purchased after this
-         *
-         * @implNote This is normally responsible for creating the order on the payment API then relaying the token back to the user
-         */
-        public static void createOrder(){}
-
-        /**
-         * Shows the order detains
-         * @implNote This is normally done on the client side through the payment API but this is an example endpoint
-         */
-        @Route
-        @Get
-        public static void showOrderDetails(@FromRequest (RequireSession.class)UserSession session, String token){
-
-        }
-
-        /**
-         * This confirms the client is willing to pay the order
-         *
-         * @implNote  This is normally done on the client side through the payment API but this is an example endpoint
-         */
-        @Route
-        public static void confirmOrder(String token){
-            // this is basically just
-        }
-
-        /**
-         * Once the client reviews and confirms the order this is where the payment will actually take place
-         * The tickets are set aside and verified they still exist, only after that will we proceed with the transaction
-         * and move the funds
-         *
-         * @implNote This would verify through the payment API that the transaction was successful
-         */
-        public static void captureOrder(){
-
-        }
+    private static String formatPrice(long price) {
+        return "$" + (price / 1000000) + "." + String.format("%06d", price % 1000000);
     }
 }

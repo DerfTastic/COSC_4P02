@@ -3,7 +3,7 @@
 class Ticket {
     /** @type{string} */name
     /** @type{number} */price
-    /** @type{number?} */available_tickets
+    /** @type{number?} */total_tickets
 }
 
 class OurEvent {
@@ -17,7 +17,7 @@ class OurEvent {
     /** @type{number?} */start
     /** @type{number?} */duration
 
-    /** @type{number?} */available_total_tickets
+    /** @type{number?} */release_date
 
     /** @type{string[]} */tags
 
@@ -42,9 +42,27 @@ class Organizer {
 }
 
 async function delete_database_stuff(){
-    await api.admin.execute_sql("delete from events");
-    await api.admin.execute_sql("delete from users where id != 1");
-    alert("done");
+    try{
+        await api.admin.execute_sql("delete from events");
+        await api.admin.execute_sql("delete from users where id != 1");
+        alert("done");
+    }catch({error, code}){
+        alert(error)
+    }
+}
+
+async function makie(){
+    try{
+        await create_organizers(await (await fetch("/js/sample_events.json")).json());
+    }catch(e){
+        console.log(e);
+        if(e.error != undefined){
+            alert(e.error);
+        }else{
+            alert(e);
+        }
+    }
+    alert("Finished");
 }
 
 async function create_all_user_defined(){
@@ -102,11 +120,9 @@ async function create_random() {
         
             event.picture = random_image_url();
 
-            event.start = chance.timestamp()*1000;
+            event.start = chance.integer({ min: new Date("2025-01-01").getTime(), max: new Date("2026-01-01").getTime() });
+            event.release_date = chance.integer({ min:  -1000*60*60*24*30, max: 0});
             event.duration = chance.integer({ min: 1000*60*5, max: 1000*60*60*12 });
-
-            if(true||chance.bool())
-                event.available_total_tickets = chance.integer({ min: 50, max: 500 });
 
             if(true||chance.bool({likelihood: 70})){
                 event.location_name = chance.address();
@@ -131,9 +147,9 @@ async function create_random() {
             for(let t = 0; t < tickets; t ++){
                 const ticket = new Ticket();
                 ticket.name = chance.sentence({ words: chance.integer({ min: 2, max: 5 }) });
-                ticket.price = chance.integer({min: 0, max: 500});
+                ticket.price = chance.integer({min: 0, max: 50000000});
                 if(chance.bool())
-                    ticket.available_tickets = chance.integer({min: 10, max: 500});
+                    ticket.total_tickets = chance.integer({min: 10, max: 500});
 
                 event.tickets.push(ticket);
             }
@@ -167,7 +183,16 @@ async function create_organizers(organizers) {
             const pic = await (await fetch(organizer.banner)).blob();
             await api.user.set_user_banner_picture(pic, session);
         }
-        await api.organizer.convert_to_organizer_account(session);
+        await api.payment.make_purchase({
+            payment: {
+                billing: "My House",
+                card: "1234567890",
+                code: "921",
+                exparation: "25/45",
+                name: "Dw about it"
+            },
+            items: [new AccountOrganizerUpgradeOrderItem()]
+        }, session);
         await create_events(organizer.events, session);
     }));
 }
@@ -181,7 +206,6 @@ async function create_events(events, session) {
     await Promise.all(events.map(async(event) => {
         const id = await api.events.create_event(session);
         await api.events.update_event(id, {
-            available_total_tickets: event.available_total_tickets,
             category: event.category,
             description: event.description,
             duration: event.duration,
@@ -220,7 +244,7 @@ async function create_tickets(tickets, event_id, session) {
         await api.tickets.update_ticket(id, {
               name: ticket.name,
               price: ticket.price,
-              available_tickets: ticket.available_tickets
+              total_tickets: ticket.total_tickets
         }, session);
     }));
 }

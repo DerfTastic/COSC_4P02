@@ -31,17 +31,17 @@ public class ServerLogger {
         return Logger.getGlobal().getLevel();
     }
 
-    public static void initialize(Level level, Config config){
+    public static void initialize(Level level, String path){
         if(fh!=null||mh!=null)
             throw new RuntimeException("Already initialized");
         try {
-            if(new File(config.log_path+"/log").exists()){
-                var file = new File(config.log_path+"/log");
+            if(new File(path+"/log").exists()){
+                var file = new File(path+"/log");
                 var log_attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                 var dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
                 var name = dateFormat.format(new Date(log_attributes.creationTime().toMillis()));
 
-                var out_file = new File(config.log_path+"/" + name + ".zip");
+                var out_file = new File(path+"/" + name + ".zip");
                 ZipOutputStream out = new ZipOutputStream(new FileOutputStream(out_file));
                 ZipEntry e = new ZipEntry(name);
                 out.putNextEntry(e);
@@ -56,7 +56,7 @@ public class ServerLogger {
             Logger.getGlobal().log(Level.SEVERE, "Failed to zip older log file", e);
         }
         try{
-            fh = new FileHandler(config.log_path+"/log");
+            fh = new FileHandler(path+"/log");
         }catch (Exception e){
             throw new RuntimeException(e);
         }
