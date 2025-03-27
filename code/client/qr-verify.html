@@ -97,7 +97,6 @@
             console.log(result);
             document.getElementById("url").innerText = result.data;
             // document.getElementById("url").href = result.data;
-            videoOverlay.style.display = "block"; // Dims the screen and allows the status icons to be shown
 
             var check = await verifyTicket(result.data.id, result.data.salt);
             showStatusIcon(check);
@@ -146,6 +145,7 @@
 
         /* Checkmark = true to show green checkmark, false to show red X */
         function showStatusIcon(checkmark) {
+            videoOverlay.style.display = "block"; // Dims the screen and allows the status icons to be shown
             (!checkmark ? greenCheckIcon : redXIcon).style.display = "none";
             (checkmark ? greenCheckIcon : redXIcon).style.display = "";
         }
