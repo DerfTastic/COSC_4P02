@@ -35,7 +35,7 @@
             width: 100%;
             height: 250px;
             background: grey center/cover no-repeat;
-            background-size: contain;
+            background-size: cover;
             background-position: center; 
         }
 
@@ -79,6 +79,21 @@
             background: url('/images/edit-icon.png') center/contain no-repeat;
             border: none;
             cursor: pointer;
+        }
+
+        .edit-profile-btn {
+            width: 30px;
+            height: 30px;
+            background: url('/images/edit-icon.png') center/contain no-repeat;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            margin-right: 10px;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .edit-profile-btn.saving {
+            background: url('/images/save-icon.png') center/contain no-repeat;
         }
 
         .user-info-container {
@@ -239,6 +254,19 @@
             background: darkblue;
         }
 
+        .edit-field {
+            display: none;
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 
@@ -277,12 +305,24 @@
             </div>
 
             <div class="user-info-container">
-                <div class="user-name">John Doe</div>
-                <div class="contact-info">
-                    <div>Email: johndoe@example.com</div>
-                    <div>Phone: (123) 456-7890</div>
+                <div class="user-name">
+                    <button id="editProfileBtn" class="edit-profile-btn" onclick="toggleEditMode()"></button>
+                    <span id="displayName">John Doe</span>
+                    <input type="text" id="nameInput" value="John Doe" class="edit-field">
                 </div>
+                <div class="contact-info">
+                    <div>
+                        Email: <span id="displayEmail">johndoe@example.com</span>
+                        <input type="email" id="emailInput" value="johndoe@example.com" class="edit-field">
+                    </div>
+                    <div>
+                        Phone: <span id="displayPhone">(123) 456-7890</span>
+                        <input type="tel" id="phoneInput" value="(123) 456-7890" class="edit-field">
+                    </div>
+                </div>
+                <button id="saveProfileBtn" class="hidden" onclick="saveProfile()">Save</button>
             </div>
+                        
 
             <div class="tabs">
                 <div class="tab active" data-tab="hosted">Events Hosted</div>
@@ -442,6 +482,49 @@
 
         function closeImageCropper() {
             document.getElementById("imageCropperModal").style.display = "none";
+        }
+
+        function toggleEditMode() {
+            let editBtn = document.getElementById("editProfileBtn");
+            let isEditing = editBtn.classList.toggle("saving"); // Toggle "saving" state
+
+            let displayElements = ["displayName", "displayEmail", "displayPhone"];
+            let inputElements = ["nameInput", "emailInput", "phoneInput"];
+
+            if (isEditing) {
+                // Switch to Edit Mode
+                displayElements.forEach(id => document.getElementById(id).style.display = "none");
+                inputElements.forEach(id => document.getElementById(id).style.display = "inline-block");
+            } else {
+                // Save and Switch Back
+                document.getElementById("displayName").textContent = document.getElementById("nameInput").value;
+                document.getElementById("displayEmail").textContent = document.getElementById("emailInput").value;
+                document.getElementById("displayPhone").textContent = document.getElementById("phoneInput").value;
+
+                displayElements.forEach(id => document.getElementById(id).style.display = "inline");
+                inputElements.forEach(id => document.getElementById(id).style.display = "none");
+            }
+        }
+
+        function saveProfile() {
+            let newName = document.getElementById("nameInput").value;
+            let newEmail = document.getElementById("emailInput").value;
+            let newPhone = document.getElementById("phoneInput").value;
+
+            document.getElementById("displayName").textContent = newName;
+            document.getElementById("displayEmail").textContent = newEmail;
+            document.getElementById("displayPhone").textContent = newPhone;
+
+            document.getElementById("displayName").style.display = "inline";
+            document.getElementById("displayEmail").style.display = "inline";
+            document.getElementById("displayPhone").style.display = "inline";
+
+            document.getElementById("nameInput").style.display = "none";
+            document.getElementById("emailInput").style.display = "none";
+            document.getElementById("phoneInput").style.display = "none";
+
+            document.getElementById("editProfileBtn").classList.remove("hidden");
+            document.getElementById("saveProfileBtn").classList.add("hidden");
         }
 
     </script>
