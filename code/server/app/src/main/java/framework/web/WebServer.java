@@ -149,7 +149,7 @@ public class WebServer {
         }
     }
 
-    private void attachRouteHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void attachRouteHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         var constructor = handlerClass.getConstructors()[0];
         var paramsTy = constructor.getParameters();
         var params  = new Object[paramsTy.length];
