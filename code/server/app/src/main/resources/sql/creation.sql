@@ -157,10 +157,10 @@ CREATE INDEX purchased_ticket_id_id_idx ON purchased_tickets(ticket_id) WHERE ti
 CREATE INDEX purchased_payment_id_id_idx ON purchased_tickets(payment_id) WHERE payment_id IS NOT NULL;
 
 create table scanned_tickets(
-    purchased_ticket INTEGER NOT NULL,
+    purchased_ticket_id INTEGER NOT NULL,
     time_scanned INTEGER NOT NULL,
 
-    FOREIGN KEY (purchased_ticket)
+    FOREIGN KEY (purchased_ticket_id)
         REFERENCES purchased_tickets (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION

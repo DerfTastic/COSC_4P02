@@ -41,7 +41,7 @@ public class WebServerImpl extends WebServer {
         var secrets = new Secrets(config);
         MailServer mail;
         if(config.send_mail)
-            mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"));
+            mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"), config.sender_filter);
         else
             mail = configurator -> {};
         addManagedState(mail, MailServer.class);

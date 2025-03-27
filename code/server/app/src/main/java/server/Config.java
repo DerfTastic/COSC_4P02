@@ -37,6 +37,7 @@ public class Config {
     public final Boolean send_mail_on_login = initialize(false);
 
     public final String url_root = initialize("http://localhost:80");
+    public final String sender_filter = initialize(".*");
 
     private Properties to_properties() {
         var properties = new Properties();

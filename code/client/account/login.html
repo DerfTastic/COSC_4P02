@@ -16,7 +16,7 @@
 
             <div class="login-container">
                 <form class="login-form" id="loginForm"
-                    action="javascript:page.login.login(username.value, password.value)" method="POST">
+                    action="javascript:page.login.login(username.value, password.value)">
                     <h2>Welcome Back!</h2>
                     <div class="form-group">
                         <label for="username">Username</label>
@@ -36,7 +36,7 @@
                 </form>
 
                 <!-- Password Reset Form (Hidden by Default) -->
-                <form class="login-form" id="emailResetForm" style="display: none;">
+                <form class="login-form" action="javascript:sendResetEmail()" id="emailResetForm" style="display: none;">
                     <h2>Forgot your Password?</h2>
                     <div class="form-group">
                         <label for="reset-email">Email Address</label>
@@ -44,8 +44,8 @@
                     </div>
                     <p id="reset-error" style="color:#fdd835;" class="error-message"></p>
                     <div class="form-group">
-                        <button type="submit" class="btn-login" onclick="sendResetEmail()">Submit</button>
-                        <a class="form-links" href="javascript:showLoginForm()">Back to Login</a>
+                        <button type="submit" class="btn-login" >Submit</button>
+                        <a class="form-links" >Back to Login</a>
                     </div>
                 </form>
             </div>
