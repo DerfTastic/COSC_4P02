@@ -52,6 +52,118 @@ footer {
     font-size: 18px;
 }
 
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    gap: 5px;
+}
+
+.footer-logo-container {
+    display: flex;
+    width: 163px;
+    height: 152px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.footer-logo {
+    width: 183px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+.footer-logo:hover {
+    cursor: pointer;
+}
+
+.text {
+    gap: 5px;
+}
+
+.text h1{
+    display: flex;
+    font-family: "Black Ops One", serif;
+    font-weight: 400;
+    font-size: clamp(50px, 3vw, 50px);
+    font-style: normal;
+    color: #eeeef0;
+    margin: 0;
+    margin-left: -25px;
+}
+
+.contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.contact-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.contact p{
+    text-align: left;
+    align-self: stretch;
+    margin: 5px;
+}
+
+.contact-b-left {
+    float: left;
+    gap: 5px;
+}
+
+.social-media {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.social {
+    fill:#eeeef0;
+    height: 28px;
+    width: auto;
+}
+
+hr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color:#eeeef0;
+    height: 3px;
+    width: 80%;
+}
+
+.tiny {
+    display: flex;
+    justify-self: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    font-size: 11px;
+}
+
+.tiny-left {
+    gap: 5px;
+}
+
+.dot {
+    height: 3px;
+    width: 3px;
+    fill: #eeeef0;
+}
+
+.tiny a{  
+    color: #eeeef0;
+    text-decoration: none;
+}
+
 header {
     width: 100%;
     background: rgba(42, 62, 89, 0.3);
