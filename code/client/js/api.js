@@ -37,7 +37,18 @@ class Receipt{
     /** @type{number} */fees
     /** @type{number} */gst
     /** @type{number} */total
+}
 
+class ScanResult{
+    /** @type{UserInfo} */userinfo
+    /** @type{OurEvent} */event
+    /** @type{EventTicket} */ticket
+    /** @type{boolean} */purchase_matches
+    /** @type{Scanned}} */scans
+}
+
+class Scanned{
+    /** @type{number} */date
 }
 
 class QRCodeScan{
@@ -47,8 +58,8 @@ class QRCodeScan{
 }
 
 class PurchasedTicketId{
-    id
-    salt
+    /** @type{number} */ id
+    /** @type{string} */ salt
 }
 
 class ReceiptItem{
@@ -765,7 +776,7 @@ const api = {
         /**
          * @param {QRCodeScan} scan 
          * @param {Session} session 
-         * @returns {Promise<{date: integer}[]>}
+         * @returns {Promise<ScanResult>}
          */
         scan_ticket: async function(scan, session = cookies.getSession()){
             return await (await api.api_call(

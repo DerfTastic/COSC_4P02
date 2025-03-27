@@ -17,6 +17,10 @@
             background-color: white;
         }
 
+        #event-fields {
+            padding: 0.5em;
+        }
+
         video {
             width: 100%;
             display:block;
@@ -91,19 +95,55 @@
         async function scanned(result) {
             console.log(result);
             document.getElementById("url").innerText = result.data;
-            document.getElementById("url").href = result.data;
-            videoOverlay.style.display = "block";
-            showStatusIcon(true);
-            // qrScanner.alpha = 0.5;
+            // document.getElementById("url").href = result.data;
+            videoOverlay.style.display = "block"; // Dims the screen and allows the status icons to be shown
+
+            var promise = verifyTicket(result.data.id, result.data.salt);
+            var showStatus = promise.then(
+                showStatusIcon(true),
+                showStatusIcon(false)
+            );
 
             // Now close up stuff
             // await delay(2000);
             // qrScanner.stop();
         }
+
         function startScanning() {
             qrScanner.stop();
             videoOverlay.style.display = "none";
             qrScanner.start();
+        }
+        
+        /* returns if ticket verification was successful or not */
+        async function verifyTicket(purchasedTicketID, ticketSalt) {
+            const eventID = document.getElementById('eventID').value;
+            const scanName = document.getElementById('scanName').value;
+
+            const scan = {
+                event_id: eventID,
+                name: scanName,
+                id: {
+                    purchasedTicketID,
+                    ticketSalt
+                }
+            };
+
+            try {
+                const response = await api.organizer.scan_ticket(scan);
+
+                console.log(response);
+
+                if (response.ok) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error verifying ticket:', error);
+                alert('An error occurred while verifying the ticket.');
+                return false;
+            }
         }
 
         /* Checkmark = true to show green checkmark, false to show red X */
@@ -122,6 +162,14 @@
 <div src="/partials/header.html" type="text/x-html-template"></div>
 
 <h1>Event QR Code Scanner</h1>
+
+<div id="event-fields">
+    <label>Event ID:</label>
+    <input id="eventID" type="text"/>
+    <label>Scan name:</label>
+    <input id="scanName" type="text"/>
+</div>
+
 <div id="butn-container">
     <button id="Scan-butn">Scan QR Code</button>
 </div>
@@ -135,7 +183,7 @@
             </div>
             <!-- red X cross -->
             <div id="redX" class="status-icon">
-                <svg fill="#f20000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 305.002 305.002" xml:space="preserve" stroke="#f20000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M152.502,0.001C68.412,0.001,0,68.412,0,152.501s68.412,152.5,152.502,152.5c84.089,0,152.5-68.411,152.5-152.5 S236.591,0.001,152.502,0.001z M152.502,280.001C82.197,280.001,25,222.806,25,152.501c0-70.304,57.197-127.5,127.502-127.5 c70.304,0,127.5,57.196,127.5,127.5C280.002,222.806,222.806,280.001,152.502,280.001z"></path> <path d="M170.18,152.5l43.13-43.129c4.882-4.882,4.882-12.796,0-17.678c-4.881-4.882-12.796-4.881-17.678,0l-43.13,43.13 l-43.131-43.131c-4.882-4.881-12.796-4.881-17.678,0c-4.881,4.882-4.881,12.796,0,17.678l43.13,43.13l-43.131,43.131 c-4.881,4.882-4.881,12.796,0,17.679c2.441,2.44,5.64,3.66,8.839,3.66c3.199,0,6.398-1.221,8.839-3.66l43.131-43.132 l43.131,43.132c2.441,2.439,5.64,3.66,8.839,3.66s6.398-1.221,8.839-3.66c4.882-4.883,4.882-12.797,0-17.679L170.18,152.5z"></path> </g> </g> </g></svg>
+                <svg fill="#f20000" version="1.1" id="Capa_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 305.002 305.002" xml:space="preserve" stroke="#f20000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M152.502,0.001C68.412,0.001,0,68.412,0,152.501s68.412,152.5,152.502,152.5c84.089,0,152.5-68.411,152.5-152.5 S236.591,0.001,152.502,0.001z M152.502,280.001C82.197,280.001,25,222.806,25,152.501c0-70.304,57.197-127.5,127.502-127.5 c70.304,0,127.5,57.196,127.5,127.5C280.002,222.806,222.806,280.001,152.502,280.001z"></path> <path d="M170.18,152.5l43.13-43.129c4.882-4.882,4.882-12.796,0-17.678c-4.881-4.882-12.796-4.881-17.678,0l-43.13,43.13 l-43.131-43.131c-4.882-4.881-12.796-4.881-17.678,0c-4.881,4.882-4.881,12.796,0,17.678l43.13,43.13l-43.131,43.131 c-4.881,4.882-4.881,12.796,0,17.679c2.441,2.44,5.64,3.66,8.839,3.66c3.199,0,6.398-1.221,8.839-3.66l43.131-43.132 l43.131,43.132c2.441,2.439,5.64,3.66,8.839,3.66s6.398-1.221,8.839-3.66c4.882-4.883,4.882-12.797,0-17.679L170.18,152.5z"></path> </g> </g> </g></svg>
             </div>
         </div>
     </div>

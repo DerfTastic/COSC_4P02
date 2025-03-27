@@ -31,11 +31,13 @@
 
     <div class="content">
 
-        <script src="get_events('Music', 'Sports', 'Kids\'', 'Comedy', 'Science/Technology', 'Theater', 'DIY', 'Community/Culture', 'Film Screening')" type="text/x-handlebars-template">
+        <script
+            src="get_events('Music', 'Sports', 'Kids\'', 'Comedy', 'Science/Technology', 'Theater', 'DIY', 'Community/Culture', 'Film Screening')"
+            type="text/x-handlebars-template">
             {{#each @root}}
             <div class="carousel">
-                <div class="heading "><a href="">{{title}}</a></div>
-                <button class="arrow left" id="prev">&lt;</button>
+                <div class="heading "><button class="arrow left" id="prev">&#10094;</button><a href="">{{title}}</a><button class="arrow right" id="next">&#10095;</button></div>
+                
                 <div class="product-container">
                     {{#each events}}
                     <div class="product-box" onclick="window.location.href = '/event?id={{id}}'">
@@ -50,7 +52,7 @@
                     </div>
                     {{/each}}
                 </div>
-                <button class="arrow right" id="next">&gt;</button>
+                
             </div>
             {{/each}}
         </script>
