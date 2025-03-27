@@ -15,6 +15,7 @@ import server.infrastructure.root.api.SearchAPI;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -23,14 +24,37 @@ public class SearchAPITest {
     private static DbManager db;
     private final MailServerSkeleton mail = new MailServerSkeleton();
 
+    ArrayList<Long> events;
     private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
+    private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
 
     @BeforeAll
     public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
         db = new DbManagerImpl("search_api_test", true, true, true);
 
+        // Register the fake users
         u1.register(mail, db, false);
         u1.login(mail, db, false);
+        o1.register(mail, db, false);
+        o1.login(mail, db, false);
+        o1.makeOrganizer(db, null, mail);
+
+        // Create some fake events
+        var auth = o1.organizerSession(db, null);
+        events = new ArrayList<>();
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        System.out.println("\t" + events.size() + " fake events were made");
     }
 
     @Test
@@ -38,14 +62,14 @@ public class SearchAPITest {
     public void searchEventsTest() throws SQLException, Unauthorized {
         var session = u1.userSession(db, null);
 
-        // Get all events by max price
+        // Get all events that were made
         try(var trans = db.ro_transaction(null)) {
             SearchAPI.Search s = new SearchAPI.Search(
                     null, null, null, null,
                     null, null,null, null, null,
                     null,
                     null, null,null, null,
-                    null,false, null, null, SearchAPI.SortBy.Nothing
+                    null,null, null, null, SearchAPI.SortBy.Nothing
                     );
             List<EventAPI.Event> result = SearchAPI.search_events(session, trans, s, false);
             System.out.println("\t" + result.size() + " results");
