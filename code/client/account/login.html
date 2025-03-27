@@ -7,6 +7,7 @@
     <title>Login</title>
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
 </head>
 <div src="/partials/header.html" type="text/x-html-template"></div>
 
@@ -36,7 +37,8 @@
                 </form>
 
                 <!-- Password Reset Form (Hidden by Default) -->
-                <form class="login-form" action="javascript:sendResetEmail()" id="emailResetForm" style="display: none;">
+                <form class="login-form" action="javascript:sendResetEmail()" id="emailResetForm"
+                    style="display: none;">
                     <h2>Forgot your Password?</h2>
                     <div class="form-group">
                         <label for="reset-email">Email Address</label>
@@ -44,8 +46,8 @@
                     </div>
                     <p id="reset-error" style="color:#fdd835;" class="error-message"></p>
                     <div class="form-group">
-                        <button type="submit" class="btn-login" >Submit</button>
-                        <a class="form-links" >Back to Login</a>
+                        <button type="submit" class="btn-login">Submit</button>
+                        <a class="form-links" href="javascript:showLoginForm()">Back to Login</a>
                     </div>
                 </form>
             </div>
@@ -84,7 +86,6 @@
     </script>
 
     <div src="/partials/footer.html" type="text/x-html-template"></div>
-    <script src="/js/api.js" type="text/javascript"></script>
 </body>
 
 </html>
