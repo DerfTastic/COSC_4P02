@@ -17,6 +17,7 @@ import framework.web.route.RouteImpl;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -150,10 +151,10 @@ public class WebServer {
 
     private void attachRouteHandler(String parentPath, Class<? extends RequestHandler> handlerClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var constructor = handlerClass.getConstructors()[0];
-        var paramsTy = constructor.getParameterTypes();
+        var paramsTy = constructor.getParameters();
         var params  = new Object[paramsTy.length];
         for(int p = 0; p < params.length; p ++){
-            params[p] = this.getManagedState(paramsTy[p]);
+            params[p] = getOnMountParameter(paramsTy[p]);
         }
 
         var instance = (RequestHandler)constructor.newInstance(params);
@@ -182,10 +183,10 @@ public class WebServer {
                 Logger.getGlobal().log(Level.SEVERE, "On mount declared non static, but no instance available " + method);
                 return;
             }
-            var paramTypes = method.getParameterTypes();
+            var paramTypes = method.getParameters();
             var params = new Object[paramTypes.length];
             for(int i = 0; i < paramTypes.length; i ++){
-                params[i] = getManagedState(paramTypes[i]);
+                params[i] = getOnMountParameter(paramTypes[i]);
             }
             try {
                 method.invoke(instance, params);
@@ -197,6 +198,9 @@ public class WebServer {
         }
     }
 
+    protected Object getOnMountParameter(Parameter p){
+        return getManagedState(p.getType());
+    }
 
     public HttpContext attachHandler(String path, HttpHandler handler){
         return server.createContext(path, handler);

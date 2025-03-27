@@ -1,9 +1,9 @@
 package server.infrastructure.root;
 
-import server.Config;
 import framework.web.request.RequestHandler;
 import framework.web.annotations.Handler;
 import framework.web.request.Request;
+import server.infrastructure.param.Config;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,10 +23,12 @@ public class StaticContentHandler implements RequestHandler {
     }
 
     private final HashMap<String, CachedItem> cache = new HashMap<>();
-    private final Config config;
+    private final String rootPath;
+    private final boolean doCache;
 
-    public StaticContentHandler(Config config){
-        this.config = config;
+    public StaticContentHandler(@Config String static_content_path, @Config boolean cache_static_content){
+        this.rootPath = static_content_path;
+        this.doCache = cache_static_content;
     }
 
     @Override
@@ -56,15 +58,15 @@ public class StaticContentHandler implements RequestHandler {
             StringBuilder builder = new StringBuilder(requestedPath);
             if(builder.toString().endsWith("/"))
                 builder.append("index");
-            else if(Files.isDirectory(Path.of(config.static_content_path+builder)))
+            else if(Files.isDirectory(Path.of(rootPath +builder)))
                 builder.append("/index");
             if(!builder.toString().contains("."))
-                if(Files.exists(Path.of(config.static_content_path + builder + ".html")))
+                if(Files.exists(Path.of(rootPath + builder + ".html")))
                     builder.append(".html");
-                else if(Files.exists(Path.of(config.static_content_path + builder +".hbs")))
+                else if(Files.exists(Path.of(rootPath + builder +".hbs")))
                     builder.append(".hbs");
 
-            var path = Path.of(config.static_content_path + builder);
+            var path = Path.of(rootPath + builder);
 
             if(requestedPath.contains("..")){
                 request.sendResponse(400, "");
@@ -85,7 +87,7 @@ public class StaticContentHandler implements RequestHandler {
         }
 
         request.exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
-        if(config.cache_static_content)
+        if(doCache)
             request.exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
         request.sendResponse(200, cached.content);
     }

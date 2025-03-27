@@ -12,6 +12,7 @@ import server.mail.MessageConfigurator;
 import server.mail.SmtpMailServer;
 import server.ServerStatistics;
 
+import java.lang.reflect.Parameter;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
@@ -21,9 +22,11 @@ import java.util.concurrent.Executors;
 public class WebServerImpl extends WebServer {
 
     public final ServerStatistics tracker;
+    private final Config config;
 
     public WebServerImpl(Config config) throws Exception {
         super(new InetSocketAddress(config.hostname, config.port), config.backlog);
+        this.config = config;
         server.setExecutor(Executors.newFixedThreadPool(config.web_threads));
 
         addManagedState(config, Config.class);
@@ -62,5 +65,15 @@ public class WebServerImpl extends WebServer {
             var code = exchange.getResponseCode();
             tracker.track_route(path, code, System.nanoTime()-start);
         });
+    }
+
+    @Override
+    protected Object getOnMountParameter(Parameter p) {
+        if(p.isAnnotationPresent(server.infrastructure.param.Config.class)){
+            var config = p.getAnnotation(server.infrastructure.param.Config.class);
+            var name = config.name().equals("!")?p.getName():config.name();
+            return this.config.get(name, p.getType());
+        }
+        return super.getOnMountParameter(p);
     }
 }

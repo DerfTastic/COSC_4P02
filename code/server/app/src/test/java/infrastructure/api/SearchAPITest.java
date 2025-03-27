@@ -5,12 +5,10 @@ package infrastructure.api;
 
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
-import infrastructure.DynamicMediaHandlerSkeleton;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
-import server.Config;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.root.api.EventAPI;
 import server.infrastructure.root.api.SearchAPI;

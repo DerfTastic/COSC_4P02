@@ -10,7 +10,6 @@ import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
-import server.Config;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.root.api.AccountAPI;
 
