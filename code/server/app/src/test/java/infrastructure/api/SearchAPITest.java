@@ -47,14 +47,26 @@ public class SearchAPITest {
             trans.tryCommit();
         }
         try(var trans = db.rw_transaction(null)){
-            events.add(EventAPI.create_event(auth, trans));
+            EventAPI.set_draft(auth, trans, events.getLast(), false);
             trans.tryCommit();
         }
         try(var trans = db.rw_transaction(null)){
             events.add(EventAPI.create_event(auth, trans));
             trans.tryCommit();
         }
-        System.out.println("\t" + events.size() + " fake events were made");
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), false);
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), false);
+            trans.tryCommit();
+        }
+        System.out.println("\t\033[33;1m" + events.size() + " \033[0mfake events were made");
     }
 
     @Test
@@ -72,7 +84,7 @@ public class SearchAPITest {
                     null,null, null, null, SearchAPI.SortBy.Nothing
                     );
             List<EventAPI.Event> result = SearchAPI.search_events(session, trans, s, false);
-            System.out.println("\t" + result.size() + " results");
+            System.out.println("\t\033[33;1m" + result.size() + "\033[0m events found while searching for all");
         }
     }
 
