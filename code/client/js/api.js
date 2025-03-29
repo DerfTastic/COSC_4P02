@@ -1318,14 +1318,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         Handlebars.registerHelper("raw-helper", function (options) {
             return options.fn();
         });
-        Handlebars.registerHelper('formatTime', function(millis) {
-            const date = new Date(millis).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-            return date.toLocaleString();
+        Handlebars.registerHelper('formatTime', function (millis) {
+            const date = new Date(millis);
+            const hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            const formattedHours = hours % 12 || 12; // Convert 24-hour to 12-hour format
+
+            return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()} @ ${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
         });
         Handlebars.registerHelper('logColor', function(level) {
             const colors = { "SEVERE": "red", "WARNING": "yellow", "INFO": "blue", "CONFIG": "grey" };
