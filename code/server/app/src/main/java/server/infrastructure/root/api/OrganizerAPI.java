@@ -3,11 +3,8 @@ package server.infrastructure.root.api;
 import framework.db.RwTransaction;
 import framework.util.SqlSerde;
 import framework.web.annotations.*;
-import framework.web.annotations.url.Nullable;
 import framework.web.error.BadRequest;
 import server.infrastructure.param.auth.RequireOrganizer;
-import server.infrastructure.param.auth.RequireSession;
-import server.infrastructure.param.auth.SessionCache;
 import server.infrastructure.param.auth.UserSession;
 
 import java.sql.SQLException;
@@ -37,13 +34,13 @@ public class OrganizerAPI {
     public static @Json ScanResult scan_ticket(@FromRequest(RequireOrganizer.class)UserSession auth, RwTransaction trans, @Body@Json Scan scan) throws SQLException, BadRequest {
         AccountAPI.PublicUserInfo info;
         try(var stmt = trans.namedPreparedStatement("select * from users where id=(select user_id from purchased_tickets where id=:pid)")){
-            stmt.setLong(":pid", scan.id.id());
+            stmt.setLong(":pid", scan.id.pid());
             info = SqlSerde.sqlSingle(stmt.executeQuery(), AccountAPI.PublicUserInfo::make);
         }
 
         TicketsAPI.Ticket ticket;
         try(var stmt = trans.namedPreparedStatement("select * from tickets where id=(select ticket_id from purchased_tickets where id=:pid)")){
-            stmt.setLong(":pid", scan.id.id());
+            stmt.setLong(":pid", scan.id.pid());
             ticket = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> new TicketsAPI.Ticket(
                     rs.getLong("id"),
                     rs.getString("name"),
@@ -59,8 +56,8 @@ public class OrganizerAPI {
         }
 
         boolean matches;
-        try(var stmt = trans.namedPreparedStatement("select coalesce((select ticket_id from purchased_tickets where id=:purchased_ticket_id AND salt=:salt) IN (select id from tickets where event_id=:event_id AND owner_id=:user_id),false)")){
-            stmt.setLong(":purchased_ticket_id", scan.id.id());
+        try(var stmt = trans.namedPreparedStatement("select coalesce((select ticket_id from purchased_tickets where id=:id AND salt=:salt) IN (select id from tickets where event_id=:event_id AND owner_id=:user_id),false)")){
+            stmt.setLong(":id", scan.id.pid());
             stmt.setString(":salt", scan.id.salt());
             stmt.setLong(":event_id", scan.event);
             stmt.setLong(":user_id", auth.user_id);
@@ -69,14 +66,14 @@ public class OrganizerAPI {
 
         List<PreviousScan> scans = null;
         if(matches){
-            try(var stmt = trans.namedPreparedStatement("insert into scanned_tickets values(:purchased_ticket, :time_scanned)")){
-                stmt.setLong(":purchased_ticket", scan.id.id());
+            try(var stmt = trans.namedPreparedStatement("insert into scanned_tickets values(:id, :time_scanned)")){
+                stmt.setLong(":id", scan.id.pid());
                 stmt.setLong(":time_scanned", System.currentTimeMillis());
                 stmt.execute();
             }
 
-            try(var stmt = trans.namedPreparedStatement("select time_scanned from scanned_tickets where purchased_ticket=:purchased_ticket")){
-                stmt.setLong(":purchased_ticket", scan.id.id());
+            try(var stmt = trans.namedPreparedStatement("select time_scanned from scanned_tickets where purchased_ticket_id=:pid")){
+                stmt.setLong(":pid", scan.id.pid());
                 scans = SqlSerde.sqlList(stmt.executeQuery(), rs -> new PreviousScan(rs.getLong(1)));
             }
         }

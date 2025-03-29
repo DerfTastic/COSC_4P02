@@ -1,8 +1,211 @@
+<style>
+  .main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    gap: 5px;
+  }
+
+  .footer-logo-container {
+    display: flex;
+    width: 163px;
+    height: 152px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .footer-logo {
+    width: 183px;
+    height: 180px;
+    flex-shrink: 0;
+  }
+
+  .footer-logo:hover {
+    cursor: pointer;
+  }
+
+  .text {
+    gap: 5px;
+  }
+
+  .text h1 {
+    display: flex;
+    font-family: "Black Ops One", serif;
+    font-weight: 400;
+    font-size: clamp(50px, 3vw, 50px);
+    font-style: normal;
+    color: #eeeef0;
+    margin: 0;
+    margin-left: -25px;
+  }
+
+  .contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contact-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .contact p {
+    text-align: left;
+    align-self: stretch;
+    margin: 5px;
+  }
+
+  .contact-b-left {
+    float: left;
+    gap: 5px;
+  }
+
+  .social-media {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+  }
+
+  .social {
+    fill: #eeeef0;
+    height: 28px;
+    width: auto;
+  }
+
+  hr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eeeef0;
+    height: 3px;
+    /*width: 80%;*/
+  }
+
+  .tiny {
+    display: flex;
+    justify-self: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 11px;
+  }
+
+  .tiny-left {
+    gap: 5px;
+  }
+
+  .dot {
+    height: 3px;
+    width: 3px;
+    fill: #eeeef0;
+  }
+
+  .tiny a {
+    color: #eeeef0;
+    text-decoration: none;
+  }
+</style>
+
 <footer>
-    <nav>
+  <div class="main">
+    <div class="footer-logo-container">
+      <img src="/images/logo.png" class="footer-logo" alt="Logo" onclick="window.location.href='/'">
+    </div>
+    <div class="text">
+      <h1 onclick="window.location.href='/'">TICKET EXPRESS</h1>
+      <div class="contact">
+        <p>
+          00 Example Rd. City, Provice, X0X 0X0
+        </p>
+        <div class="contact-bottom">
+          <div class="contact-b-left">
+            <p>
+              999-999-9999
+            </p>
+            <p>
+              example@email.com
+            </p>
+          </div>
+          <div class="social-media">
+            <svg class="social" alt="TikTok" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+              <path
+                d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z" />
+            </svg>
+            <svg class="social" alt="X-Twitter" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+              <path
+                d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
+            </svg>
+            <svg class="social" alt="Instagram" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+              <path
+                d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
+            </svg>
+            <svg class="social" alt="Facebook" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+              <path
+                d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="tiny">
+    <div class="tiny-left">
+      <a href="/privacy">Privacy Policy</a>
+      <svg class="dot" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 31.955 31.955" xml:space="preserve">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <g>
+            <path
+              d="M27.25,4.655C20.996-1.571,10.88-1.546,4.656,4.706C-1.571,10.96-1.548,21.076,4.705,27.3 c6.256,6.226,16.374,6.203,22.597-0.051C33.526,20.995,33.505,10.878,27.25,4.655z">
+            </path>
+            <path
+              d="M13.288,23.896l-1.768,5.207c2.567,0.829,5.331,0.886,7.926,0.17l-0.665-5.416 C17.01,24.487,15.067,24.5,13.288,23.896z M8.12,13.122l-5.645-0.859c-0.741,2.666-0.666,5.514,0.225,8.143l5.491-1.375 C7.452,17.138,7.426,15.029,8.12,13.122z M28.763,11.333l-4.965,1.675c0.798,2.106,0.716,4.468-0.247,6.522l5.351,0.672 C29.827,17.319,29.78,14.193,28.763,11.333z M11.394,2.883l1.018,5.528c2.027-0.954,4.356-1.05,6.442-0.288l1.583-5.137 C17.523,1.94,14.328,1.906,11.394,2.883z">
+            </path>
+            <circle cx="15.979" cy="15.977" r="6.117"></circle>
+          </g>
+        </g>
+      </svg>
+      <!--<p>•</p>--->
+      <a href="/tos">Terms of Service</a>
+      <svg class="dot" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 31.955 31.955" xml:space="preserve">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <g>
+            <path
+              d="M27.25,4.655C20.996-1.571,10.88-1.546,4.656,4.706C-1.571,10.96-1.548,21.076,4.705,27.3 c6.256,6.226,16.374,6.203,22.597-0.051C33.526,20.995,33.505,10.878,27.25,4.655z">
+            </path>
+            <path
+              d="M13.288,23.896l-1.768,5.207c2.567,0.829,5.331,0.886,7.926,0.17l-0.665-5.416 C17.01,24.487,15.067,24.5,13.288,23.896z M8.12,13.122l-5.645-0.859c-0.741,2.666-0.666,5.514,0.225,8.143l5.491-1.375 C7.452,17.138,7.426,15.029,8.12,13.122z M28.763,11.333l-4.965,1.675c0.798,2.106,0.716,4.468-0.247,6.522l5.351,0.672 C29.827,17.319,29.78,14.193,28.763,11.333z M11.394,2.883l1.018,5.528c2.027-0.954,4.356-1.05,6.442-0.288l1.583-5.137 C17.523,1.94,14.328,1.906,11.394,2.883z">
+            </path>
+            <circle cx="15.979" cy="15.977" r="6.117"></circle>
+          </g>
+        </g>
+      </svg>
+      <a href="/cookie">Manage Cookie Preferences</a>
+    </div>
+    <p>© 2025 Ticket Express. All rights reserved.</p>
+  </div>
+
+  <!--<nav>
         <a href="/privacy">Privacy Policy</a> 
         <a href="/tos">Terms of Service</a> 
         <a href="/contact">Contact</a>
     </nav>
     <p>© 2025 Ticket Express. All rights reserved.</p>
+    --->
 </footer>

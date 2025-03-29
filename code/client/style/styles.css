@@ -10,7 +10,6 @@ body {
     grid-template-rows: auto 1fr auto;
     width: 100%;
     padding: 0;
-    animation: fadeIn 0.6s ease-out;
 }
 
 html {
@@ -230,23 +229,6 @@ nav a:hover {
     background-color: #778da9;
 }
 
-.fa {
-    padding: 0;
-}
-
-.badge:after {
-    content: attr(value);
-    font-size: 12px;
-    color: #eeeef0;
-    background: red;
-    border-radius: 50%;
-    padding: 0 5px;
-    position: relative;
-    left: -8px;
-    top: -15px;
-    opacity: 0.9;
-}
-
 .product-container {
     display: flex;
     flex-wrap: nowrap;
@@ -285,9 +267,46 @@ nav a:hover {
     box-sizing: border-box;
 }
 
+@keyframes pixelReveal {
+    0% {
+        filter: blur(10px);
+        opacity: 1;
+    }
+
+    100% {
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+@keyframes polaroidEntry {
+    from {
+        transform: translateY(100px) rotate(-10deg);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fallingPolaroid {
+    0% {
+        transform: translateY(-100px) rotate(-15deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+    }
+}
+
 .product-box:hover {
     transform: scale(1.05);
     cursor: pointer;
+    filter: sepia(30%) brightness(1.1) contrast(85%);
 }
 
 .product-box img {
@@ -296,7 +315,6 @@ nav a:hover {
     object-fit: cover;
     padding: 20px;
     padding-bottom: 0;
-    border-bottom: 3px solid #eeeef0;
 }
 
 .product-box .caption {
@@ -334,43 +352,39 @@ nav a:hover {
 }
 
 .arrow {
-    position: absolute;
-    top: 5%;
-    transform: translateY(-50%);
-    background-color: #eeeef0;
-    color: #1b263b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: transparent;
+    color: #eeeef0;
     border: none;
     padding: 5px 15px;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 35px;
     font-weight: 600;
     z-index: 1;
     margin: 20px;
 }
 
-.arrow.left {
-    left: 0px;
-}
-
-.arrow.right {
-    right: 0px;
-}
-
 .arrow:hover {
-    background-color: #f4f4f9;
+    transform: scale(1.2);
+    opacity: 1;
 }
 
 .heading {
     position: relative;
     padding: 20px;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     border-bottom: #eeeef0 solid 3px;
     height: auto;
 }
 
 .heading a {
+    display: flex;
     color: #eeeef0;
     text-decoration: none;
     font-size: 40px;
@@ -393,7 +407,8 @@ nav a:hover {
     padding: 40px;
     justify-content: center;
     align-items: center;
-    min-height: 71.3vh;;
+    min-height: 71.3vh;
+    ;
     background-color: transparent;
 }
 
@@ -897,18 +912,13 @@ nav a:hover {
         max-width: 300px;
     }
 
-    .search-bar input {
-        font-size: 0.7em;
-    }
-
+    .search-bar input,
     nav a {
         font-size: 0.7em;
     }
 
     .heading a {
         font-size: 1.5em;
-        margin: 0 0 15px 15px;
-
     }
 
     .product-box {

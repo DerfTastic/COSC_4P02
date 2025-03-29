@@ -13,6 +13,9 @@ import server.infrastructure.param.auth.SessionCache;
 import server.infrastructure.param.auth.UserSession;
 import server.mail.MailServer;
 
+import javax.mail.Message;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -70,7 +73,7 @@ public class PaymentAPI {
     public record TicketReceipt(String name, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
     }
 
-    public record PurchasedTicketId(long id, String salt) {
+    public record PurchasedTicketId(long pid, String salt) {
     }
 
     public record Receipt(
@@ -123,7 +126,7 @@ public class PaymentAPI {
         try (var ticket = trans.namedPreparedStatement("select name, price from tickets where id=:ticket_id AND event_id IN (select id from events where draft=false)");) {
             for (var item : order) {
                 switch (item) {
-                    case AccountOrganizerUpgrade ignore -> items.add(new AccountOrganizerUpgradeReceipt(50_000));
+                    case AccountOrganizerUpgrade ignore -> items.add(new AccountOrganizerUpgradeReceipt(50_000000));
                     case Ticket(long id) -> {
                         ticket.setLong(":ticket_id", id);
                         items.add(SqlSerde.sqlSingle(ticket.executeQuery(),
@@ -139,8 +142,8 @@ public class PaymentAPI {
             }
         }
 
-        long fees = (subtotal * 15) / (1_000L); // 0.015 1.5%
-        long gst = (subtotal * 50) / (1_000L); // 0.050 5.0%
+        long fees = (subtotal * 15000) / (1_000000L); // 0.015 1.5%
+        long gst = (subtotal * 50000) / (1_000000L); // 0.050 5.0%
         long total = subtotal + fees + gst;
         trans.commit();
 
@@ -166,14 +169,14 @@ public class PaymentAPI {
 
         ArrayList<ReceiptItem> items = new ArrayList<>();
         long subtotal = 0;
-        try (var ticket = trans.namedPreparedStatement("insert into purchased_tickets values(null, :user_id, :ticket_id, :payment_id, (select price from tickets where id=:ticket_id), :salt) returning (select name from tickets where id=:ticket_id), id, (select price from tickets where id=:ticket_id)"); var organizer = trans.namedPreparedStatement("update users set organizer=true where id=:user_id")) {
+        try (var ticket = trans.namedPreparedStatement("insert into purchased_tickets values(null, :user_id, :ticket_id, :payment_id, (select price from tickets where id=:ticket_id), :salt) returning (select name from tickets where id=:ticket_id), (select price from tickets where id=:ticket_id), id"); var organizer = trans.namedPreparedStatement("update users set organizer=true where id=:user_id")) {
             for (var item : order.items) {
                 switch (item) {
                     case AccountOrganizerUpgrade ignore -> {
                         organizer.setLong(":user_id", auth.user_id);
                         if (organizer.executeUpdate() != 1)
                             throw new SQLException();
-                        items.add(new AccountOrganizerUpgradeReceipt(50_000));
+                        items.add(new AccountOrganizerUpgradeReceipt(50_000000));
 
                         if (cache != null) {
                             // we need to manually invalidate the cache here
@@ -197,7 +200,7 @@ public class PaymentAPI {
                                 rs -> new TicketReceipt(
                                         rs.getString(1),
                                         rs.getLong(2),
-                                        new PurchasedTicketId(id, salt)
+                                        new PurchasedTicketId(rs.getLong(3), salt)
                                 ))
                         );
                     }
@@ -206,8 +209,8 @@ public class PaymentAPI {
             }
         }
 
-        long fees = (subtotal * 15) / (1_000L); // 0.015 1.5%
-        long gst = (subtotal * 50) / (1_000L); // 0.050 5.0%
+        long fees = (subtotal * 15000) / (1_000000L); // 0.015 1.5%
+        long gst = (subtotal * 50000) / (1_000000L); // 0.050 5.0%
         long total = subtotal + fees + gst;
         try (var stmt = trans.namedPreparedStatement("update payments set receipt=:receipt, subtotal=:subtotal, fees=:fees, gst=:gst, total=:total where id=:payment_id")) {
             stmt.setLong(":payment_id", payment_id);
@@ -233,6 +236,40 @@ public class PaymentAPI {
         verify_payment(order.payment, total);
         trans.commit();
 
+        mail.sendMail(message -> {
+            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(auth.email));
+            message.setSubject("Purchase");
+            var str = new StringBuilder();
+            str.append("<p>Sub Total: ").append(formatPrice(receipt.subtotal)).append("</p>");
+            str.append("<p>Fees: ").append(formatPrice(receipt.fees)).append("</p>");
+            str.append("<p>GST: ").append(formatPrice(receipt.gst)).append("</p>");
+            str.append("<p>Total: ").append(formatPrice(receipt.total)).append("</p>");
+            for (var item : receipt.items) {
+                str.append("<div>");
+                switch (item) {
+                    case AccountOrganizerUpgradeReceipt(long purchase_price) -> {
+                        str.append("<p>Account Upgrade: ").append(formatPrice(purchase_price)).append("</p>");
+                    }
+                    case TicketReceipt(String name, long purchase_price, PurchasedTicketId id) -> {
+                        str.append("<p>Ticket: ")
+                                .append(name).append(" ")
+                                .append(formatPrice(purchase_price))
+                                .append("</p>");
+                        str.append("<img width=\"200\" height=\"200\" src=\"")
+                                .append("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=")
+                                .append(URLEncoder.encode(JSON.toJSONString(id), StandardCharsets.UTF_8))
+                                .append("\"></img>");
+                    }
+                }
+                str.append("</div>");
+            }
+            message.setContent(str.toString(), "text/html");
+        });
+
         return receipt;
+    }
+
+    private static String formatPrice(long price) {
+        return "$" + (price / 1000000) + "." + String.format("%06d", price % 1000000);
     }
 }

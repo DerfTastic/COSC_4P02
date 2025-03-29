@@ -14,9 +14,9 @@ import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
-import server.Config;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.DynamicMediaHandler;
+import server.infrastructure.param.Config;
 import server.infrastructure.param.auth.*;
 import server.mail.MailServer;
 import framework.web.Util;
@@ -78,7 +78,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login, Config config) throws SQLException, Unauthorized {
+    public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login, @Config boolean send_mail_on_login) throws SQLException, Unauthorized {
         long user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
@@ -118,7 +118,7 @@ public class AccountAPI {
         trans.commit();
 
 
-        if(config.send_mail_on_login)
+        if(send_mail_on_login)
             mail.sendMail(message -> {
                 Util.LocationQuery res = null;
                 try{
@@ -401,7 +401,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register, Config config) throws SQLException, BadRequest {
+    public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register, @Config boolean send_mail_on_register) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("insert into users values(null, :full_name, :email, :pass, false, false, null, null, null, null, null)")){
             stmt.setString(":full_name", register.name);
@@ -417,7 +417,7 @@ public class AccountAPI {
         }
         trans.commit();
 
-        if(config.send_mail_on_register)
+        if(send_mail_on_register)
             mail.sendMail(message -> {
                 message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(register.email));
                 message.setSubject("Welcome!");
@@ -530,7 +530,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm, Config config) throws SQLException {
+    public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm, @Config String url_root) throws SQLException {
         long id;
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email")){
             stmt.setString(":email", email);
@@ -553,7 +553,7 @@ public class AccountAPI {
         mail.sendMail(message -> {
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(email));
             message.setSubject("Do you want to reset your password \uD83E\uDD28");
-            message.setContent("click this link if you are sure you really really want to reset your password! <a href=\""+config.url_root+"/account/reset_password?token="+ URLEncoder.encode(finalRngStr, StandardCharsets.UTF_8) +"\">RESET</a>", "text/html");
+            message.setContent("click this link if you are sure you really really want to reset your password! <a href=\""+url_root+"/account/reset_password?token="+ URLEncoder.encode(finalRngStr, StandardCharsets.UTF_8) +"\">RESET</a>", "text/html");
         });
     }
 

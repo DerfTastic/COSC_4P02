@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 public class Secrets {
     private final Properties properties = new Properties();
 
-    public Secrets(Config config){
+    public Secrets(String path){
         try {
-            properties.load(new FileInputStream(config.secrets_path));
+            properties.load(new FileInputStream(path));
         } catch (IOException e) {
             Logger.getGlobal().log(Level.WARNING, "Cannot load secrets file. Some features might not work properly or be missing", e);
         }

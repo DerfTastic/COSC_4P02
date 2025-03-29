@@ -37,6 +37,7 @@ public class Config {
     public final Boolean send_mail_on_login = initialize(false);
 
     public final String url_root = initialize("http://localhost:80");
+    public final String sender_filter = initialize(".*");
 
     private Properties to_properties() {
         var properties = new Properties();
@@ -119,6 +120,18 @@ public class Config {
             }
         }
         return config;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(String name, Class<T> type) {
+        try {
+            var val = this.getClass().getField(name).get(this);
+//            if(!type.isInstance(val))
+//                throw new ClassCastException();
+            return (T)val;
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

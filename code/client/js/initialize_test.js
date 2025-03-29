@@ -147,7 +147,7 @@ async function create_random() {
             for(let t = 0; t < tickets; t ++){
                 const ticket = new Ticket();
                 ticket.name = chance.sentence({ words: chance.integer({ min: 2, max: 5 }) });
-                ticket.price = chance.integer({min: 0, max: 500});
+                ticket.price = chance.integer({min: 0, max: 50000000});
                 if(chance.bool())
                     ticket.total_tickets = chance.integer({min: 10, max: 500});
 

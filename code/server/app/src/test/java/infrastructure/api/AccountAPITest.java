@@ -10,7 +10,6 @@ import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
-import server.Config;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.root.api.AccountAPI;
 
@@ -29,12 +28,6 @@ public class AccountAPITest {
     private DbManager db;
     private final MailServerSkeleton mail = new MailServerSkeleton();
     private final AccountAPI.PasswordResetManager prm = new AccountAPI.PasswordResetManager();
-
-    private final Config config = new Config(
-            "send_mail", "true",
-            "send_mail_on_register", "true",
-            "send_mail_on_login", "true"
-    );
     private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
 
     private final TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
@@ -51,11 +44,11 @@ public class AccountAPITest {
     @Order(1)
     public void testAccountRegistration() throws BadRequest, SQLException {
         for(var user : new TestingUser[]{u1, u2, o1, o2}){
-            user.register(mail, db, config);
+            user.register(mail, db, true);
         }
 
         try{
-            u1.register(mail, db, config);
+            u1.register(mail, db, true);
             Assertions.fail("Shouldn't be able to register for an account whos email already exists");
         } catch (BadRequest e) {
             Assertions.assertEquals("Account with that email already exists", e.getMessage());
@@ -66,7 +59,7 @@ public class AccountAPITest {
     @Order(2)
     public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException, BadRequest {
         for(var user : new TestingUser[]{u1, u2, o1, o2}){
-            user.login(mail, db, config);
+            user.login(mail, db, true);
         }
         // this is needed for later as we have some features which rely on users being organizers
         for(var user : new TestingUser[]{o1, o2}){
@@ -104,7 +97,7 @@ public class AccountAPITest {
                 var ignore = user.userSession(db, null);
                 Assertions.fail("Session should have been invalidated");
             }catch(Unauthorized ignore){
-                user.login(mail, db, config);
+                user.login(mail, db, true);
             }
         }
     }
@@ -126,7 +119,7 @@ public class AccountAPITest {
             Assertions.fail("Session should have been invalidated");
         }catch(Unauthorized ignore){
             u1.password = "new_password";
-            u1.login(mail, db, config);
+            u1.login(mail, db, true);
         }
     }
 
@@ -147,7 +140,7 @@ public class AccountAPITest {
             Assertions.fail("Session should have been invalidated");
         }catch(Unauthorized ignore){
             u1.email = "new_yui@gmail.com";
-            u1.login(mail, db, config);
+            u1.login(mail, db, true);
         }
     }
 
@@ -156,7 +149,7 @@ public class AccountAPITest {
     public void testResetPassword() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
         {//reset password
             try (var conn = db.ro_transaction(null)) {
-                AccountAPI.reset_password(mail, conn, u1.email, prm, config);
+                AccountAPI.reset_password(mail, conn, u1.email, prm, "meow");
             }
             // shouldn't log us out yet
             u1.userSession(db, null);
@@ -179,7 +172,7 @@ public class AccountAPITest {
             account.email = u1.email;
             account.password = u1.password;
             try (var trans = db.rw_transaction(null)) {
-                u1.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, config);
+                u1.session = AccountAPI.login(mail, InetAddress.getByName("localhost"), "Agent", trans, account, true);
                 trans.tryCommit();
             }
         }
@@ -198,7 +191,7 @@ public class AccountAPITest {
 
         {//incorrect email
             try(var conn = db.ro_transaction(null)){
-                AccountAPI.reset_password(mail, conn, u1.email, prm, config);
+                AccountAPI.reset_password(mail, conn, u1.email, prm, "meow");
             }
             Pattern r = Pattern.compile("(.*)token=(\\S+)\"(.*)");
             Matcher m = r.matcher(mail.mail.getLast().message);
@@ -391,7 +384,7 @@ public class AccountAPITest {
     public void testAccountDeleted() throws SQLException, UnknownHostException {
         for(var user : new TestingUser[]{u1, o1}) {
             try{
-                user.login(mail, db, config);
+                user.login(mail, db, true);
                 Assertions.fail("Account should have been deleted");
             }catch (Unauthorized e) {
                 Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
@@ -403,7 +396,7 @@ public class AccountAPITest {
     @Order(52)
     public void testAccountNotDeleted() throws SQLException, UnknownHostException, Unauthorized {
         for(var user : new TestingUser[]{u2, o2}) {
-            user.login(mail, db, config);
+            user.login(mail, db, true);
         }
     }
 

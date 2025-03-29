@@ -12,6 +12,7 @@ import server.mail.MessageConfigurator;
 import server.mail.SmtpMailServer;
 import server.ServerStatistics;
 
+import java.lang.reflect.Parameter;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
@@ -21,27 +22,28 @@ import java.util.concurrent.Executors;
 public class WebServerImpl extends WebServer {
 
     public final ServerStatistics tracker;
+    private final Config config;
 
     public WebServerImpl(Config config) throws Exception {
         super(new InetSocketAddress(config.hostname, config.port), config.backlog);
+        this.config = config;
         server.setExecutor(Executors.newFixedThreadPool(config.web_threads));
 
         addManagedState(config, Config.class);
 
         addManagedState(new TimedEvents());
-        addManagedState(new FileDynamicMediaHandler(config), DynamicMediaHandler.class);
         try{
-            var db = new DbManagerImpl(config);
+            var db = new DbManagerImpl(config.db_path, config.store_db_in_memory, config.wipe_db_on_start, true);
             addManagedState(db, DbManager.class);
             addManagedState(db);
         }catch (Exception e){
             this.close();
             throw e;
         }
-        var secrets = new Secrets(config);
+        var secrets = new Secrets(config.secrets_path);
         MailServer mail;
         if(config.send_mail)
-            mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"));
+            mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"), config.sender_filter);
         else
             mail = configurator -> {};
         addManagedState(mail, MailServer.class);
@@ -49,7 +51,7 @@ public class WebServerImpl extends WebServer {
         tracker = new ServerStatistics(getManagedState(DbManager.class).getTracker());
         addManagedState(tracker);
 
-        mount(new RequestBuilderImpl(), "/", "server.infrastructure.root");
+        mount(new RequestBuilderImpl(config), "/", "server.infrastructure.root");
     }
 
     @Override
@@ -63,5 +65,15 @@ public class WebServerImpl extends WebServer {
             var code = exchange.getResponseCode();
             tracker.track_route(path, code, System.nanoTime()-start);
         });
+    }
+
+    @Override
+    protected Object getOnMountParameter(Parameter p) {
+        if(p.isAnnotationPresent(server.infrastructure.param.Config.class)){
+            var config = p.getAnnotation(server.infrastructure.param.Config.class);
+            var name = config.name().equals("!")?p.getName():config.name();
+            return this.config.get(name, p.getType());
+        }
+        return super.getOnMountParameter(p);
     }
 }
