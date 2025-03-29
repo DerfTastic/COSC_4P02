@@ -7,6 +7,11 @@
     <title>Profile</title>
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
+    <!-- Cropper.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <style>
         /* body {
             font-family: Arial, sans-serif;
@@ -32,6 +37,8 @@
             width: 100%;
             height: 250px;
             background: grey center/cover no-repeat;
+            background-size: cover;
+            background-position: center; 
         }
 
         .profile-container {
@@ -74,6 +81,21 @@
             background: url('/images/edit-icon.png') center/contain no-repeat;
             border: none;
             cursor: pointer;
+        }
+
+        .edit-profile-btn {
+            width: 30px;
+            height: 30px;
+            background: url('/images/edit-icon.png') center/contain no-repeat;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            margin-right: 10px;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .edit-profile-btn.saving {
+            background: url('/images/save-icon.png') center/contain no-repeat;
         }
 
         .user-info-container {
@@ -174,23 +196,6 @@
             border: 1px solid #ccc;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            text-align: center;
-        }
-
         .modal::before {
             content: "";
             position: fixed;
@@ -201,6 +206,69 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background: #2a3e59;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .image-modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .image-cropper-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ccc;
+        }
+
+        .image-modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .image-modal-buttons button {
+            padding: 10px 15px;
+            border: none;
+            background: blue;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .image-modal-buttons button:hover {
+            background: darkblue;
+        }
+
+        .edit-field {
+            display: none;
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 
@@ -210,42 +278,53 @@
         <div class="profile">
             <div class="profile-banner">
                 <!-- Change Banner Button -->
-                <button class="change-banner-btn" onclick="openModal()"></button>
-
-                <!-- Popup Modal -->
-                <div id="colorModal" class="modal">
-                    <div class="modal-content">
-                        <h2>Change Banner Color</h2>
-                        <input type="color" id="bannerColorPicker">
-                        <br><br>
-                        <button onclick="changeBannerColor()">Save</button>
-                        <button onclick="closeModal()">Cancel</button>
-                    </div>
-                </div>
+                <button class="change-banner-btn" onclick="document.getElementById('bannerPicInput').click()"></button>
             </div>
 
             <div class="profile-container">
                 <div class="profile-picture" id="profilePic">
                     <!-- Change Profile Picture Button -->
-                    <button class="change-profile-btn"
-                        onclick="document.getElementById('profilePicInput').click()"></button>
-
-                    <!-- Hidden File Input for Profile Picture -->
-                    <input type="file" id="profilePicInput" accept="image/png" style="display: none;"
-                        onchange="updateProfilePicture(event)">
-
+                    <button class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
                 </div>
-
+                
                 <button class="go-pro-btn">Go Pro</button>
             </div>
 
-            <div class="user-info-container">
-                <div class="user-name">John Doe</div>
-                <div class="contact-info">
-                    <div>Email: johndoe@example.com</div>
-                    <div>Phone: (123) 456-7890</div>
+            <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'profile')">
+            <input type="file" id="bannerPicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'banner')">
+
+            <div id="imageCropperModal" class="image-modal">
+                <div class="image-modal-content">
+                    <h2>Crop Your Image</h2>
+                    <div class="image-cropper-container">
+                        <img id="cropperImage" src="" alt="Crop Preview">
+                    </div>
+                    <div class="image-modal-buttons">
+                        <button onclick="applyCrop()">Save</button>
+                        <button onclick="closeImageCropper()">Cancel</button>
+                    </div>
                 </div>
             </div>
+
+            <div class="user-info-container">
+                <div class="user-name">
+                    <button id="editProfileBtn" class="edit-profile-btn" onclick="toggleEditMode()"></button>
+                    <span id="displayName">John Doe</span>
+                    <input type="text" id="nameInput" value="John Doe" class="edit-field">
+                </div>
+                <div class="contact-info">
+                    <div>
+                        Email: <span id="displayEmail">johndoe@example.com</span>
+                        <input type="email" id="emailInput" value="johndoe@example.com" class="edit-field">
+                    </div>
+                    <div>
+                        Phone: <span id="displayPhone">(123) 456-7890</span>
+                        <input type="tel" id="phoneInput" value="(123) 456-7890" class="edit-field">
+                    </div>
+                </div>
+                <button id="saveProfileBtn" class="hidden" onclick="saveProfile()">Save</button>
+            </div>
+                        
 
             <div class="tabs">
                 <div class="tab active" data-tab="hosted">Events Hosted</div>
@@ -256,245 +335,33 @@
 
             <div class="tab-content active" id="hosted">
                 <ul class="event-list">
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
+                    <!--Events go here-->
+                    <li></li>
+                    <li></li>
                 </ul>
             </div>
 
             <div class="tab-content" id="history">
                 <ul class="event-list">
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
+                    <!--Events go here-->
+                    <li></li>
+                    <li></li>
                 </ul>
             </div>
 
             <div class="tab-content" id="upcoming">
                 <ul class="event-list">
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
+                    <!--Events go here-->
+                    <li></li>
+                    <li></li>
                 </ul>
             </div>
 
             <div class="tab-content" id="drafts">
                 <ul class="event-list">
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
-                    <li><svg width="600" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid meet">
-                            <!-- Ticket Shape -->
-                            <path
-                                d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                fill="white" stroke="#ccc" stroke-width="2" />
-                            <!-- Placeholder Image -->
-                            <rect x="40" y="40" width="180" height="120" fill="#ddd" stroke="#aaa" stroke-width="2" />
-                            <text x="130" y="110" font-size="14" font-family="Arial, sans-serif" fill="#666"
-                                text-anchor="middle">Image</text>
-
-                            <line x1="240" y1="30" x2="240" y2="180" stroke="#ccc" stroke-width="3"
-                                stroke-dasharray="5,5" />
-
-                            <!-- Event Details -->
-                            <text x="250" y="50" font-size="15" font-family="Arial, sans-serif" font-weight="bold"
-                                fill="#333">${event.title}</text>
-                            <text x="250" y="80" font-size="16" font-family="Arial, sans-serif" fill="#555">Date:
-                                ${event.date}</text>
-                            <text x="250" y="100" font-size="16" font-family="Arial, sans-serif" fill="#555">Location:
-                                ${event.location}</text>
-                            <text x="250" y="120" font-size="14" font-family="Arial, sans-serif" fill="#777">Category:
-                                ${event.category}</text>
-                            <text x="250" y="140" font-size="14" font-family="Arial, sans-serif" fill="#777">Tags:
-                                ${event.tags.join(", ")}</text>
-                            <text x="250" y="160" font-size="14" font-family="Arial, sans-serif" fill="#777">Price:
-                                $${event.price}</text>
-                        </svg></li>
+                    <!--Events go here-->
+                    <li></li>
+                    <li></li>
                 </ul>
             </div>
 
@@ -560,6 +427,106 @@
             } else {
                 alert("Please upload a PNG file.");
             }
+        }
+        let cropper;
+        let currentImageType = ""; // To track if cropping profile or banner
+
+        function openImageCropper(event, type) {
+            const file = event.target.files[0];
+
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const image = document.getElementById("cropperImage");
+                    image.src = e.target.result;
+
+                    // Show the modal
+                    document.getElementById("imageCropperModal").style.display = "block";
+                    currentImageType = type; // Set whether it's profile or banner
+
+                    // Destroy old cropper instance if it exists
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+
+                    // Set cropper aspect ratio based on image type
+                    cropper = new Cropper(image, {
+                        aspectRatio: type === "profile" ? 1 / 1 : 16 / 9,
+                        viewMode: 2,
+                        autoCropArea: 1,
+                    });
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please upload a valid image file.");
+            }
+        }
+
+        function applyCrop() {
+            const croppedCanvas = cropper.getCroppedCanvas();
+
+            if (croppedCanvas) {
+                const croppedImageURL = croppedCanvas.toDataURL("image/png");
+
+                if (currentImageType === "profile") {
+                    document.getElementById("profilePic").style.backgroundImage = `url(${croppedImageURL})`;
+                } else if (currentImageType === "banner") {
+                    document.querySelector(".profile-banner").style.backgroundImage = `url(${croppedImageURL})`;
+                }
+
+                // Close the modal
+                closeImageCropper();
+            }
+        }
+
+
+        function closeImageCropper() {
+            document.getElementById("imageCropperModal").style.display = "none";
+        }
+
+        function toggleEditMode() {
+            let editBtn = document.getElementById("editProfileBtn");
+            let isEditing = editBtn.classList.toggle("saving"); // Toggle "saving" state
+
+            let displayElements = ["displayName", "displayEmail", "displayPhone"];
+            let inputElements = ["nameInput", "emailInput", "phoneInput"];
+
+            if (isEditing) {
+                // Switch to Edit Mode
+                displayElements.forEach(id => document.getElementById(id).style.display = "none");
+                inputElements.forEach(id => document.getElementById(id).style.display = "inline-block");
+            } else {
+                // Save and Switch Back
+                document.getElementById("displayName").textContent = document.getElementById("nameInput").value;
+                document.getElementById("displayEmail").textContent = document.getElementById("emailInput").value;
+                document.getElementById("displayPhone").textContent = document.getElementById("phoneInput").value;
+
+                displayElements.forEach(id => document.getElementById(id).style.display = "inline");
+                inputElements.forEach(id => document.getElementById(id).style.display = "none");
+            }
+        }
+
+        function saveProfile() {
+            let newName = document.getElementById("nameInput").value;
+            let newEmail = document.getElementById("emailInput").value;
+            let newPhone = document.getElementById("phoneInput").value;
+
+            document.getElementById("displayName").textContent = newName;
+            document.getElementById("displayEmail").textContent = newEmail;
+            document.getElementById("displayPhone").textContent = newPhone;
+
+            document.getElementById("displayName").style.display = "inline";
+            document.getElementById("displayEmail").style.display = "inline";
+            document.getElementById("displayPhone").style.display = "inline";
+
+            document.getElementById("nameInput").style.display = "none";
+            document.getElementById("emailInput").style.display = "none";
+            document.getElementById("phoneInput").style.display = "none";
+
+            document.getElementById("editProfileBtn").classList.remove("hidden");
+            document.getElementById("saveProfileBtn").classList.add("hidden");
         }
 
     </script>
