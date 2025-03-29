@@ -75,6 +75,11 @@
             display: none;
         }
 
+        input[type="file"] {
+            display: block;
+            margin-bottom: 16px;
+        }
+
     </style>
 
     <script type="module">
@@ -83,27 +88,60 @@
         const videoEle = document.getElementById('videoEle');
         const videoContainer = document.getElementById("videoContainer");
         const videoOverlay = document.getElementById("overlay")
-
+        
         const greenCheckIcon = document.getElementById("greenCheck");
         const redXIcon = document.getElementById("redX");
+
+        // For testing if they don't have a camera 
+        const fileSelector = document.getElementById('file-selector'); 
+        const qrResult = document.getElementById('qr-result');
+        const camQrResultTimestamp = document.getElementById('cam-qr-result-timestamp');
 
         const qrScanner = new QrScanner(
             videoEle,
             result => scanned(result),
             { highlightScanRegion: true, returnDetailedScanResult: true }
         );
+        
+        // Add events listener to start scanning process
+        document.getElementById("Scan-butn").addEventListener("click", startScanning);
 
-        async function scanned(result) {
+        fileSelector.addEventListener('change', event => {
+            const file = fileSelector.files[0];
+            if (!file) {
+                return;
+            }
+            QrScanner.scanImage(file, { returnDetailedScanResult: true })
+                .then(result => scanned(qrResult, result))
+                .catch(e => setResult(qrResult, { data: e || 'No QR code found.' }));
+        });
+
+        /** First thing that is called here after QR code is scanned.
+         * It sets HTML elements with the scan results, makes the ticket 
+         * verification API call, then calls the function to reveal the 
+         * status icons (check or X).
+        */
+        async function scanned(label, result) {
+            setResult(label, result); // Display scan results
             console.log(result);
-            document.getElementById("url").innerText = result.data;
-            // document.getElementById("url").href = result.data;
+            // qrResult.href = result.data; // if url
 
-            var check = await verifyTicket(result.data.id, result.data.salt);
-            showStatusIcon(check);
+            var check = await verifyTicket(result.data.id, result.data.salt); // Make API call to verify ticket
+            showStatusIcon(check); // Reveal scan status icon
 
             // Now close up stuff
             // await delay(2000);
             // qrScanner.stop();
+        }
+
+        /** Sets an HTML element with the result from the QR code scan */
+        function setResult(label, result) {
+            console.log(result.data);
+            label.textContent = result.data;
+            camQrResultTimestamp.textContent = new Date().toString();
+            label.style.color = 'teal';
+            clearTimeout(label.highlightTimeout);
+            label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
         }
 
         function startScanning() {
@@ -154,7 +192,6 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        document.getElementById("Scan-butn").addEventListener("click", startScanning);
     </script>
 </head>
 <body>
@@ -170,8 +207,17 @@
 </div>
 
 <div id="butn-container">
-    <button id="Scan-butn">Scan QR Code</button>
+    <button id="Scan-butn">Scan QR Code <br>with Camera</button>
+
 </div>
+
+<br>
+<p style="color:yellow;">Scan from image file for testing if you don't have a camera:</p>
+<input type="file" id="file-selector">
+<b>Detected QR code: </b>
+<br>
+<b>Last detected at: </b>
+<span id="cam-qr-result-timestamp"></span>
 
 <div id="videoContainer">
     <div id="overlay">
@@ -184,7 +230,7 @@
     </div>
     <video id="videoEle"></video>
 </div>
-<p><b><u>URL:</u> </b><a id="url" href=""></a></p>
+<p><b><u>URL:</u> </b><a id="qr-result">None</a></p>
 
 <div src="/partials/footer.html" type="text/x-html-template"></div>
 
