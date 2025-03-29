@@ -345,7 +345,7 @@ nav a:hover {
     margin: 0 auto;
     overflow: hidden;
     background: none;
-
+    /* overflow-x: scroll; */
 }
 
 .arrow {
@@ -364,13 +364,13 @@ nav a:hover {
     margin: 20px;
 }
 
-.arrow:hover {
+.arrow:hover,
+.heading a:hover {
     transform: scale(1.2);
     opacity: 1;
 }
 
 .heading {
-    position: relative;
     padding: 20px;
     display: flex;
     flex-direction: row;
@@ -378,6 +378,11 @@ nav a:hover {
     align-items: center;
     border-bottom: #eeeef0 solid 3px;
     height: auto;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
 }
 
 .heading a {
@@ -391,11 +396,6 @@ nav a:hover {
     font-style: normal;
     text-transform: uppercase;
     text-align: center;
-
-}
-
-.heading a:hover {
-    color: #778da9;
 }
 
 .container {
@@ -921,6 +921,11 @@ nav a:hover {
         gap: 10px;
         width: 100%;
         margin: 0;
+        animation: none;
+    }
+
+    .carousel {
+        overflow-x: scroll;
     }
 
     .arrow {
