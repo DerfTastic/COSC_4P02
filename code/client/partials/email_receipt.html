@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 
 <body>
@@ -36,31 +36,7 @@
             </tr>
             <tr>
                 <td bgcolor="#2a3e59">
-                    <h3 style="color: #eeeef0;" align="center">Event Details</h3>
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="10" bgcolor="#eeeef0">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <strong>Event Name:</strong> Amazing Concert 2025
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Number of Tickets Purchased:</strong> 2
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Payment Type:</strong> Credit Card
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td bgcolor="#2a3e59">
-                    <h3 style="color: #eeeef0;" align="center">Invoice Summary</h3>
+                    <h2 style="color: #eeeef0;" align="center">Invoice Summary</h2>
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="10" bgcolor="#eeeef0">
                         <tbody>
                             <tr>
@@ -83,40 +59,94 @@
                                     <strong>Total:</strong> $0.000029
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <strong>Payment Type:</strong> Credit Card
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </td>
             </tr>
             <tr>
                 <td bgcolor="#2a3e59">
-                    <h3 style="color: #eeeef0;" align="center">Your Tickets</h3>
+                    <h2 style="color: #eeeef0;" align="center">Your Tickets</h2>
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="10" bgcolor="#eeeef0">
                         <tbody>
                             <tr>
-                                <td align="center">
-                                    <p style="color: #2a3e59;"><strong>Type:</strong> Free</p>
-                                    <p style="color: #2a3e59;"><strong>Price:</strong> $50.000001</p>
-                                    <img src="https://api.grserver.com/v1/create-qr-code/?size=200x200&amp;data=%7B%22id%22%3A12%2C%22salt%22%3A%22cd85c902b60daa9272e79b17499f18aa856eeda4fce6d2373fbcfa4845c85534%22%7D"
-                                        alt="QR Code">
+                                <td align="center" bgcolor="#2a3e59">
+                                    <h3 style="color: #eeeef0;"><strong>Type:</strong> Free</h3>
+                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> $50.000001</h3>
+                                    <svg id="ticket-svg" width="900" height="400" viewbox="0 0 500 200"
+                                        xmlns="http://www.w3.org/2000/svg" preserveaspectratio="xMidYMid meet">
+                                        <!-- Ticket Shape -->
+                                        <path
+                                            d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                            fill="#eeeef0"></path>
+
+
+                                        <!-- QR Code Inside the SVG -->
+                                        <image
+                                            href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=%7B%22id%22%3A16%2C%22salt%22%3A%220c26431c2ab89a45022496f18c7d98c91b41b9a115cf0635a1f02fb0c89aalla%22%7D"
+                                            x="60" y="40" width="120" height="120"></image>
+
+
+                                        <!-- Event Details -->
+                                        <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5"
+                                            stroke-dasharray="5,5"></line>
+
+                                        <text x="250" y="50" font-size="18" font-weight="bold" fill="#333">
+                                            Amazing Concert 2025
+                                        </text>
+                                        <text x="250" y="90" font-size="14">Date: March 15, 2025</text>
+                                        <text x="250" y="110" font-size="14">Location: New York, NY</text>
+                                        <text x="250" y="130" font-size="14">Category: Music</text>
+                                        <text x="250" y="150" font-size="14">Organizer: Ticket Express</text>
+
+                                    </svg>
                                 </td>
                             </tr>
                             <tr>
-                                <td align="center">
-                                    <hr>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="center">
-                                    <p style="color: #2a3e59;"><strong>Type:</strong> General Admission</p>
-                                    <p style="color: #2a3e59;"><strong>Price:</strong> $50.000007</p>
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=%7B%22id%22%3A16%2C%22salt%22%3A%220c26431c2ab89a45022496f18c7d98c91b41b9a115cf0635a1f02fb0c89aalla%22%7D"
-                                        alt="QR Code">
+                                <td align="center" bgcolor="#2a3e59">
+                                    <h3 style="color: #eeeef0;"><strong>Type:</strong> General Admission</h3>
+                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> $50.000007</h3>
+
+
+                                    <svg id="ticket-svg" width="900" height="400" viewbox="0 0 500 200"
+                                        xmlns="http://www.w3.org/2000/svg" preserveaspectratio="xMidYMid meet">
+                                        <!-- Ticket Shape -->
+                                        <path
+                                            d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
+                                            fill="#eeeef0"></path>
+
+
+                                        <!-- QR Code Inside the SVG -->
+                                        <image
+                                            href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=%7B%22id%22%3A16%2C%22salt%22%3A%220c26431c2ab89a45022496f18c7d98c91b41b9a115cf0635a1f02fb0c89aalla%22%7D"
+                                            x="60" y="40" width="120" height="120"></image>
+
+
+                                        <!-- Event Details -->
+                                        <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5"
+                                            stroke-dasharray="5,5"></line>
+
+                                        <text x="250" y="50" font-size="18" font-weight="bold" fill="#333">
+                                            Amazing Concert 2025
+                                        </text>
+                                        <text x="250" y="90" font-size="14">Date: March 15, 2025</text>
+                                        <text x="250" y="110" font-size="14">Location: New York, NY</text>
+                                        <text x="250" y="130" font-size="14">Category: Music</text>
+                                        <text x="250" y="150" font-size="14">Organizer: Ticket Express</text>
+
+                                    </svg>
+
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </td>
             </tr>
+
             <tr>
                 <td bgcolor="#2a3e59">
                     <blockquote>
