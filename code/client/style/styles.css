@@ -46,8 +46,7 @@ footer {
     width: 100%;
     padding: 10px;
     border-top: 1px solid rgba(238, 238, 240, 0.2);
-    background: rgba(238, 238, 240, 0.1);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: transparent;
     color: #eeeef0;
     text-align: center;
     font-size: 18px;
@@ -110,8 +109,8 @@ nav {
 
 .logo-and-title h1 {
     display: flex;
-    font-family: "Black Ops One", serif;
-    font-weight: 400;
+    /* font-family: "Black Ops One", serif; */
+    font-weight: 600;
     font-size: clamp(30px, 3vw, 50px);
     font-style: normal;
     color: #eeeef0;
@@ -162,27 +161,25 @@ nav {
     background-color: #2a3e59;
 }
 
-.search-bar input:-webkit-autofill {
-    -webkit-text-fill-color: #eeeef0 !important;
-    box-shadow: 0 0 0px 1000px #2a3e59 inset !important;
-}
-
 .search-bar input::placeholder {
-    color: #eeeef09a;
+    font-family: 'Times New Roman', Times, serif;
+    color: #eeeef0;
 }
 
 .search-bar input::selection {
     background-color: #1b263b;
+    font-size: large;
 }
+
 
 .search-bar button {
     position: absolute;
     right: 0;
-    height: 40px;
+    height: 39px;
     width: 40px;
     border: none;
     border-radius: 100%;
-    background: rgba(238, 238, 240, 0.3);
+    background: #2a3e59;
     cursor: pointer;
     transition: background-color 0.3s ease;
     z-index: 10;
@@ -424,14 +421,8 @@ nav a:hover {
     background: rgba(238, 238, 240, 0.1);
     backdrop-filter: blur(15px);
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: #eeeef0;
-}
-
-.login-container:hover,
-.register-container:hover,
-.reset-container:hover {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    color: #eeeef0;
 }
 
 .login-form h2,
@@ -498,6 +489,7 @@ nav a:hover {
 .btn-login,
 .btn-register,
 .btn-reset {
+    font-family: 'Times New Roman', Times, serif;
     width: 100%;
     padding: 10px;
     background-color: transparent;
