@@ -3,8 +3,6 @@
  */
 package infrastructure.api;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONReader;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
@@ -15,10 +13,8 @@ import server.infrastructure.DbManagerImpl;
 import server.infrastructure.root.api.EventAPI;
 import server.infrastructure.root.api.SearchAPI;
 
-import java.math.BigDecimal;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
-import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -132,7 +128,7 @@ public class SearchAPITest {
                     null, null, SearchAPI.SortBy.Nothing
             );
             results = SearchAPI.search_events(session, trans, s, false);
-            if (results.size() > 0) {
+            if (!results.isEmpty()) {
                 Assertions.fail("Should not be able to find non-draft events in the events table");
             }
         }
@@ -148,8 +144,8 @@ public class SearchAPITest {
                     null,null, null, null, SearchAPI.SortBy.Nothing
             );
             results = SearchAPI.search_events(session, trans, s, false);
-            Assertions.assertEquals(results.size(), 1);
-            Assertions.assertEquals(results.get(0).id, 2);
+            Assertions.assertEquals(1, results.size());
+            Assertions.assertEquals(2, results.get(0).id);
         }
 
         // Try to search by name
@@ -162,7 +158,7 @@ public class SearchAPITest {
                     null,null, null, null, SearchAPI.SortBy.Nothing
             );
             results = SearchAPI.search_events(session, trans, s, false);
-            Assertions.assertEquals(results.size(), 1);
+            Assertions.assertEquals(1, results.size());
             Assertions.assertTrue(results.get(0).name.equals("a play"));
         }
     }
@@ -187,7 +183,7 @@ public class SearchAPITest {
     /** Basically prints {@link String#formatted(Object...)} but actually makes strings "null" if they're null */
     public static void printFormatWithNull(String formatString, Object... args) {
         Object[] newArgs = new Object[args.length];
-        ArrayList<Integer> indicesToMakeYellow = new ArrayList<Integer>();
+        ArrayList<Integer> indicesToMakeYellow = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof String) {
                 if (args[i] == null) {
