@@ -126,7 +126,8 @@
             console.log(result);
             // qrResult.href = result.data; // if url
 
-            var check = await verifyTicket(result.data.id, result.data.salt); // Make API call to verify ticket
+            var resultJSON = JSON.parse(result.data);
+            var check = await verifyTicket(resultJSON.id, resultJSON.salt); // Make API call to verify ticket
             showStatusIcon(check); // Reveal scan status icon
 
             // Now close up stuff
@@ -155,12 +156,12 @@
             const eventID = document.getElementById('eventID').value;
             const scanName = document.getElementById('scanName').value;
 
-            const scan = {
-                event_id: eventID,
-                name: scanName,
-                id: {
-                    purchasedTicketID,
-                    ticketSalt
+            var scan = {
+                "event": eventID,
+                "name": scanName,
+                "id": {
+                    "pid": purchasedTicketID,
+                    "salt": ticketSalt
                 }
             };
 

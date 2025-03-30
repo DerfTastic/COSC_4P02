@@ -248,3 +248,66 @@ async function create_tickets(tickets, event_id, session) {
         }, session);
     }));
 }
+
+async function make_purchases() {
+    try {
+        var rand_items = []
+
+        // Assumes there are tickets for all ids bewteen 1-10
+        for(var i = 1; i < 5; i++) {
+            rand_items.push(new TicketOrderItem(i));
+        }
+
+        // Make an admin session who's going to purchase these tickets
+        const session = await api.user.login("admin@localhost", "admin"); 
+
+        const receipt_item = await api.payment.make_purchase({
+            payment: {
+                billing: "My House",
+                card: "1234567890",
+                code: "921",
+                exparation: "25/45",
+                name: "Dw about it"
+            },
+            items: rand_items
+        }, session);
+
+        console.log(receipt_item);
+
+        // Make a QR for each purchased item
+        for (var item of receipt_item.items) {
+            var ptID = { // PurchasedTicketId
+                "id": item.id.pid, 
+                "salt": item.id.salt
+            }
+            console.log(item.id.pid);
+            var QRimgsrc = gen_qr(JSON.stringify(ptID), 200);
+            appendImage(QRimgsrc);
+        }
+
+    }catch(e){
+        console.log(e);
+        alert(e);
+    }
+}
+
+/** Puts new <img> elements inside the ".content" div
+ * @param {String} imgsrc The src attribute of the image
+ */
+function appendImage(imgsrc) {
+    const contentDivs = document.getElementsByClassName("content");
+    if (contentDivs.length === 0) {
+        console.error("No content div");
+        return;
+    }
+    else if (contentDivs.length > 1) {
+        console.error("Too many content divs");
+        return;
+    }
+    const contentDiv = contentDivs[0];
+
+    const newImageEle = document.createElement("img");
+    newImageEle.src = imgsrc;
+    contentDiv.appendChild(newImageEle.cloneNode(true));
+    contentDiv.appendChild(document.createElement("br"));
+}

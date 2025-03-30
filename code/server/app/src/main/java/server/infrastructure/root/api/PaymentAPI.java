@@ -169,7 +169,13 @@ public class PaymentAPI {
 
         ArrayList<ReceiptItem> items = new ArrayList<>();
         long subtotal = 0;
-        try (var ticket = trans.namedPreparedStatement("insert into purchased_tickets values(null, :user_id, :ticket_id, :payment_id, (select price from tickets where id=:ticket_id), :salt) returning (select name from tickets where id=:ticket_id), (select price from tickets where id=:ticket_id), id"); var organizer = trans.namedPreparedStatement("update users set organizer=true where id=:user_id")) {
+        try (var ticket = trans.namedPreparedStatement(
+                "insert into purchased_tickets values(null, :user_id, :ticket_id, :payment_id, (select price from tickets where id=:ticket_id), :salt) " +
+                "returning (select name from tickets where id=:ticket_id), " +
+                        "(select price from tickets where id=:ticket_id), id");
+             var organizer = trans.namedPreparedStatement(
+                     "update users set organizer=true where id=:user_id")
+            ) {
             for (var item : order.items) {
                 switch (item) {
                     case AccountOrganizerUpgrade ignore -> {
@@ -196,13 +202,14 @@ public class PaymentAPI {
                         new SecureRandom().nextBytes(rng);
                         var salt = Util.hashy(rng);
                         ticket.setString(":salt", salt);
-                        items.add(SqlSerde.sqlSingle(ticket.executeQuery(),
+                        ReceiptItem ri = SqlSerde.sqlSingle(ticket.executeQuery(),
                                 rs -> new TicketReceipt(
                                         rs.getString(1),
                                         rs.getLong(2),
                                         new PurchasedTicketId(rs.getLong(3), salt)
-                                ))
-                        );
+                                ));
+                        System.out.println(ri.purchase_price());
+                        items.add(ri);
                     }
                 }
                 subtotal += items.getLast().purchase_price();
