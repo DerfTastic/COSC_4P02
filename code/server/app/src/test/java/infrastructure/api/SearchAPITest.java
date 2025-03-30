@@ -3,6 +3,8 @@
  */
 package infrastructure.api;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONReader;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
@@ -13,10 +15,13 @@ import server.infrastructure.DbManagerImpl;
 import server.infrastructure.root.api.EventAPI;
 import server.infrastructure.root.api.SearchAPI;
 
+import java.math.BigDecimal;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -50,6 +55,14 @@ public class SearchAPITest {
             EventAPI.set_draft(auth, trans, events.getLast(), false);
             trans.tryCommit();
         }
+        // Update the 1st event's name
+        try(var trans = db.rw_transaction(null)){
+            var update = new EventAPI.UpdateEvent();
+            update.name = Optional.of("a concert");
+            update.category = Optional.of("Music");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
         try(var trans = db.rw_transaction(null)){
             events.add(EventAPI.create_event(auth, trans));
             trans.tryCommit();
@@ -58,12 +71,30 @@ public class SearchAPITest {
             EventAPI.set_draft(auth, trans, events.getLast(), false);
             trans.tryCommit();
         }
+        // Update the 2nd event's name
+        try(var trans = db.rw_transaction(null)){
+            var update = new EventAPI.UpdateEvent();
+            update.name = Optional.of("a play");
+            update.category = Optional.of("Theatre");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
+        // 3rd Event is empty
         try(var trans = db.rw_transaction(null)){
             events.add(EventAPI.create_event(auth, trans));
             trans.tryCommit();
         }
         try(var trans = db.rw_transaction(null)){
             EventAPI.set_draft(auth, trans, events.getLast(), false);
+            trans.tryCommit();
+        }
+        // 4th Event is a draft
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), true);
             trans.tryCommit();
         }
         System.out.println("\t\033[33;1m" + events.size() + " \033[0mfake events were made");
@@ -73,8 +104,9 @@ public class SearchAPITest {
     @Order(1)
     public void searchEventsTest() throws SQLException, Unauthorized {
         var session = u1.userSession(db, null);
+        List<EventAPI.Event> results;
 
-        // Get all events that were made
+        // Get all events that aren't drafts
         try(var trans = db.ro_transaction(null)) {
             SearchAPI.Search s = new SearchAPI.Search(
                     null, null, null, null,
@@ -83,13 +115,124 @@ public class SearchAPITest {
                     null, null,null, null,
                     null,null, null, null, SearchAPI.SortBy.Nothing
                     );
-            List<EventAPI.Event> result = SearchAPI.search_events(session, trans, s, false);
-            System.out.println("\t\033[33;1m" + result.size() + "\033[0m events found while searching for all");
+            results = SearchAPI.search_events(session, trans, s, false);
+            System.out.println("\t\033[33;1m" + results.size() + "\033[0m events found while searching for all:");
+            System.out.println("\t\t" + getColumnHeaders());
+            printlnNicely("\t\t", results);
+        }
+        // Try to only get draft events
+        try(var trans = db.ro_transaction(null)) {
+            SearchAPI.Search s = new SearchAPI.Search(
+                    null, null, null, null,
+                    null, null,null, null, null,
+                    null,
+                    null, null,null, null,
+                    null,
+                    true,       // Is a draft
+                    null, null, SearchAPI.SortBy.Nothing
+            );
+            results = SearchAPI.search_events(session, trans, s, false);
+            if (results.size() > 0) {
+                Assertions.fail("Should not be able to find non-draft events in the events table");
+            }
+        }
+
+        // Try to search by category (theatre)
+        try(var trans = db.ro_transaction(null)) {
+            SearchAPI.Search s = new SearchAPI.Search(
+                    null, null, null, null,
+                    null, "Theatre", // Searching by category
+                    null, null, null,
+                    null,
+                    null, null,null, null,
+                    null,null, null, null, SearchAPI.SortBy.Nothing
+            );
+            results = SearchAPI.search_events(session, trans, s, false);
+            Assertions.assertEquals(results.size(), 1);
+            Assertions.assertEquals(results.get(0).id, 2);
+        }
+
+        // Try to search by name
+        try(var trans = db.ro_transaction(null)) {
+            SearchAPI.Search s = new SearchAPI.Search(
+                    null, null, null, null,
+                    null, null,null, null, "a play", // Searching by name
+                    null,
+                    null, null,null, null,
+                    null,null, null, null, SearchAPI.SortBy.Nothing
+            );
+            results = SearchAPI.search_events(session, trans, s, false);
+            Assertions.assertEquals(results.size(), 1);
+            Assertions.assertTrue(results.get(0).name.equals("a play"));
         }
     }
 
     @AfterAll
     public static void close() {
         db.close();
+    }
+
+    /** Easy way to show event attribute names during a test
+     * Just prints id, name, owner_id, and category underlined.
+     */
+    public static String getColumnHeaders() {
+        return "\033[4m%4s%12s%12s%12s\033[0m".formatted("id", "name", "owner_id", "category");
+    }
+
+    public static void printlnNicely(String leadingPrefixToEachLine, List<EventAPI.Event> events) {
+        for (EventAPI.Event e : events)
+            printFormatWithNull(leadingPrefixToEachLine + "%4d%12s%12d%12s", e.id, e.name, e.owner_id, e.category);
+    }
+
+    /** Basically prints {@link String#formatted(Object...)} but actually makes strings "null" if they're null */
+    public static void printFormatWithNull(String formatString, Object... args) {
+        Object[] newArgs = new Object[args.length];
+        ArrayList<Integer> indicesToMakeYellow = new ArrayList<Integer>();
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof String) {
+                if (args[i] == null) {
+                    newArgs[i] = "nullStr";
+                    indicesToMakeYellow.add(i);
+                }
+                else if (((String)args[i]).isEmpty()) {
+                    newArgs[i] = "emptyStr";
+                    indicesToMakeYellow.add(i);
+                }
+                else {
+                    newArgs[i] = args[i];
+                }
+            }
+            else {
+                if (args[i] == null) {
+                    newArgs[i] = "nullObj";
+                    indicesToMakeYellow.add(i);
+                } else {
+                    newArgs[i] = args[i];
+                }
+            }
+        }
+        System.out.println(applyESCodeToArgs(formatString, indicesToMakeYellow, "\033[33m", "\033[0m").formatted(newArgs));
+    }
+
+    public static String applyESCodeToArgs(String input, List<Integer> argIndices, String leadingEscapeCode, String defaultCode) {
+        int[] count = {-1}; // Counter to track occurrences
+        return IntStream.range(0, input.length())
+                .mapToObj(i -> {
+                    char c = input.charAt(i);
+                    if (c == '%') {
+                        count[0]++;
+                        if (argIndices.contains(count[0])) {
+                            return leadingEscapeCode + c;
+                        }
+                        else {
+                            return defaultCode + c;
+                        }
+                    }
+                    if (i == input.length()-1) {
+                        return c + defaultCode;
+                    }
+                    return Character.toString(c);
+                })
+                .collect(Collectors.joining());
     }
 }

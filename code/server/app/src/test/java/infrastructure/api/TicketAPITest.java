@@ -26,6 +26,7 @@ public class TicketAPITest {
     public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
         db = new DbManagerImpl("ticket_api_test", true, true, true);
 
+        // Make fake users
         o1.register(mail, db, false);
         o1.login(mail, db, false);
         o1.makeOrganizer(db, null, mail);
