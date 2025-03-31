@@ -208,7 +208,6 @@ public class PaymentAPI {
                                         rs.getLong(2),
                                         new PurchasedTicketId(rs.getLong(3), salt)
                                 ));
-                        System.out.println(ri.purchase_price());
                         items.add(ri);
                     }
                 }

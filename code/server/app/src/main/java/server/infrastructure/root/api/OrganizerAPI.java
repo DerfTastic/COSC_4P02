@@ -62,14 +62,13 @@ public class OrganizerAPI {
                         "IN " +
                         "(select id from tickets " +
                             "where event_id=:event_id AND " +
-                                "(select owner_id from events E where E.id=event_id AND E.owner_id=:user_id)" +
+                                ":user_id IN (select owner_id from events E where E.id=event_id)" +
                         ")," +
                     "false)")){
             stmt.setLong(":id", scan.id.pid());
             stmt.setString(":salt", scan.id.salt());
             stmt.setLong(":event_id", scan.event);
             stmt.setLong(":user_id", auth.user_id);
-            //TODO return different reasons for why the purchase doesn't match
             matches = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getBoolean(1));
         }
 

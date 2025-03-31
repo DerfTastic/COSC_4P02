@@ -254,7 +254,7 @@ async function make_purchases() {
         var rand_items = []
 
         // Assumes there are tickets for all ids bewteen 1-10
-        for(var i = 1; i < 5; i++) {
+        for(var i = 1; i <= 5; i++) {
             rand_items.push(new TicketOrderItem(i));
         }
 
