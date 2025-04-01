@@ -73,7 +73,7 @@ public class TestingUser {
     }
 
     /**
-     * Logs in this TestingUser by using {@link AccountAPI#login} and then returns the session
+     * Logs in this TestingUser by using {@link AccountAPI#login} (which inserts into the "sessions" table) and then returns the session
      */
     public String login(MailServer mail, DbManager db, boolean send_mail_on_login) throws SQLException, UnknownHostException, Unauthorized {
         try(var conn = db.rw_transaction(null)){

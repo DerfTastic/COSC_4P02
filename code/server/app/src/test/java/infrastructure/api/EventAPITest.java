@@ -40,7 +40,7 @@ public class EventAPITest {
         o1.makeOrganizer(db, null, mail);
         try{
             o1.makeOrganizer(db, null, mail);
-            Assertions.fail("no");
+            Assertions.fail("Shouldn't be able to make someone organizer twice");
         }catch (Exception ignore){}
 
         o2.register(mail, db, false);

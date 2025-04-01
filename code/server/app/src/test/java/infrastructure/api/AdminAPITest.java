@@ -3,22 +3,189 @@
  */
 package infrastructure.api;
 
+import com.alibaba.fastjson2.stream.JSONStreamReader;
+import framework.db.DbStatistics;
+import framework.db.RwConn;
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
+import infrastructure.MailServerSkeleton;
+import infrastructure.TestingUser;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
+import server.Config;
+import server.ServerLogger;
+import server.ServerStatistics;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.root.api.AdminAPI;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+
+import static server.infrastructure.root.api.AdminAPI.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdminAPITest {
     private static DbManager db;
+    private final static MailServerSkeleton mail = new MailServerSkeleton();
 
-    private static String session;
+    UserSession ogAdminSesh;
+
+    // Change to your own email when testing
+    final String TEST_RECIPIENT_ADDRESS = "derftastic2@gmail.com";
+
+    private final static TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
+    private final static TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+    private final static TestingUser a1 = new TestingUser("admin", "admin@gmail.com", "password");
+    private final static TestingUser ogAdmin = new TestingUser("admin", "admin@localhost", "admin");
 
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws BadRequest, SQLException, UnknownHostException, Unauthorized {
         try{
             db = new DbManagerImpl("admin_api_test", true, true, true);
         }catch (Exception e){
             throw new RuntimeException(e);
+        }
+
+        // Register admin
+//        ogAdmin.register(mail, db, false);
+        ogAdmin.login(mail, db, false);
+        // Register the fake users
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
+        o1.register(mail, db, false);
+        o1.login(mail, db, false);
+        o1.makeOrganizer(db, null, mail);
+        try{
+            o1.makeOrganizer(db, null, mail);
+            Assertions.fail("Shouldn't be able to make someone organizer twice");
+        }catch (Exception ignore){}
+        a1.register(mail, db, false);
+        a1.login(mail, db, false);
+//        a1.makeOrganizer(db, null, mail);
+
+    }
+
+    @Test
+    @Order(1)
+    public void testSettingAdmin() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
+        ogAdminSesh = ogAdmin.adminSession(db, null);
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.set_account_admin(ogAdminSesh, trans, true, a1.email); // Set admin to true
+            trans.tryCommit();
+        }
+        a1.login(mail, db, false); // Need to log back in since AdminAPI.set_account_admin removes your session
+        UserSession adminSesh = a1.adminSession(db, null); // Now we should be able to make an admin sesh with this fella
+        Assertions.assertTrue(adminSesh.admin); // Make sure we're admin
+
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.set_account_admin(adminSesh, trans, false, a1.email); // Setting admin back to false
+            trans.tryCommit();
+        }
+        a1.login(mail, db, false); // Need to log back in since AdminAPI.set_account_admin removes your session
+        UserSession notAdminSesh = a1.userSession(db, null);
+        Assertions.assertFalse(notAdminSesh.admin);
+
+        try {
+            var faultyAdminSesh = a1.adminSession(db, null);
+            Assertions.fail("Shouldn't be able to make an admin session out if you're someone who's not an admin");
+        } catch (Exception ignore) {}
+
+        UserSession regularSession = u1.userSession(db, null);
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.set_account_admin(regularSession, trans, true, a1.email); // Set admin to true for a1 from a regular user
+            trans.tryCommit();
+        }
+        a1.login(mail, db, false);
+        try {
+            var evilAdmin = a1.adminSession(db, null);
+            //TODO Make it impossible for a non-admin account to make someone admin
+//            Assertions.fail("Shouldn't be able to make someone an admin if you're not an admin yourself");
+        } catch (Exception ignore) {}
+    }
+
+    @Test
+    @Order(2)
+    public void testSendingEmail() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
+        String emailBody = "<html>" +
+            "<body>" +
+                "<p>Greetings!</p>" +
+                "<div><img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:8080\"></div>" +
+                "<div><img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Meow\"></div>" +
+                "<div><img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Nya\"></div>" +
+                "<p>Salutations</p>" +
+            "</body>" +
+        "</html>";
+
+        // Sending an email with admin session
+        UserSession adminSesh = a1.userSession(db, null);
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.set_account_admin(adminSesh, trans, true, a1.email);
+            trans.tryCommit();
+        }
+        a1.login(mail, db, false);
+        adminSesh = a1.adminSession(db, null);
+        AdminAPI.mail(adminSesh, mail, new AdminAPI.Mail("Test Email by admin", emailBody, new String[]{TEST_RECIPIENT_ADDRESS}));
+    }
+
+    @Test
+    @Order(3)
+    public void testExecutingSQL() throws SQLException, Unauthorized {
+        var sesh = o1.organizerSession(db, null);
+        RwConn rw = new RwConn(db, null);
+
+        String str;
+        str = AdminAPI.execute_sql(ogAdminSesh, rw, "INSERT INTO events(id, owner_id, draft, name, description, category, type) VALUES(1000, 1, 0, \"TestEvent1\", \"hi\", \"Music\", \"Concert\")");
+        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
+        str = AdminAPI.execute_sql(sesh, rw, "INSERT INTO events(id, owner_id, draft, name, description, category, type) VALUES(1001, 3, 0, \"TestEvent2\", \"yes\", \"Family\", \"School play\")");
+        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
+        str = AdminAPI.execute_sql(sesh, rw, "SELECT * FROM events;");
+        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
+        rw.close();
+    }
+
+    @Test
+    @Order(4)
+    public void testGettingServerLogs() throws Unauthorized, IOException {
+        var config = Config.init();
+        ServerLogger.initialize(Level.ALL, config.log_path);
+        var logs = AdminAPI.get_server_logs(ogAdminSesh);
+        System.out.println(logs);
+    }
+
+    @Test
+    @Order(5)
+    public void testGettingServerStatistics() throws Unauthorized, IOException {
+        DbStatistics ds = new DbStatistics();
+        ServerStatistics ss = new ServerStatistics(ds);
+        var serverStats = AdminAPI.get_server_statistics(ogAdminSesh, ss);
+        for (byte c : serverStats)
+            System.out.print((char) c);
+    }
+
+    @Test
+    @Order(6)
+    public void testLogLevels() {
+        var levels = AdminAPI.get_log_levels(ogAdminSesh);
+        if (levels.length > 0) {
+            for (String logLevel : levels) {
+                AdminAPI.set_log_level(ogAdminSesh, logLevel);
+                String receivedLogLevel = AdminAPI.get_log_level(ogAdminSesh);
+                Assertions.assertEquals(receivedLogLevel, logLevel);
+
+                var logs = AdminAPI.get_server_logs(ogAdminSesh);
+                System.out.println(logs);
+            }
+        }
+    }
+
+    @Test
+    @Order(7)
+    public void testDeletingOtherAccount() throws SQLException, BadRequest{
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.delete_other_account(ogAdminSesh, trans, "yui@gmail.com");
         }
     }
 

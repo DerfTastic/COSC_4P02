@@ -26,6 +26,12 @@ public class AdminAPI {
         String subject;
         String content;
         String[] to;
+
+        public Mail(String subject, String content, String[] to) {
+            this.subject = subject;
+            this.content = content;
+            this.to = to;
+        }
     }
 
         /*
