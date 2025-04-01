@@ -9,8 +9,6 @@ import server.infrastructure.session.AdminSession;
 import server.mail.MailServer;
 import server.ServerStatistics;
 import framework.web.annotations.url.Path;
-import server.infrastructure.param.auth.RequireAdmin;
-import server.infrastructure.session.UserSession;
 
 import javax.mail.Message;
 import java.io.PrintWriter;
