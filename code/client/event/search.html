@@ -29,6 +29,11 @@
             font-size: 15px;
         }
 
+        .sidebar input:focus {
+            border-color: #778da9;
+            box-shadow: 0 0 5px #778da9;
+        }
+
 
         .sidebar input {
             display: block;
@@ -236,13 +241,13 @@
             <label for="sort">Sort By:</label>
             <select class="select-field" id="sort">
                 <option selected value="Select">---</option>
-                <option value="MinPrice">Min Price</option>
-                <option value="MaxPrice">Max Price</option>
-                <option value="TicketsAvailable">Tickets Available</option>
-                <option value="Closest">Closest</option>
-                <option value="StartTime">StartTime</option>
-                <option value="MinDuration">Min Duration</option>
-                <option value="MaxDuration">Max Duration</option>
+                <option value="MinPrice">Price: Low to High</option>
+                <option value="MaxPrice">Price: High to Low</option>
+                <option value="TicketsAvailable">Tickets Available (Ascending)</option>
+                <option value="Closest">Closest Event</option>
+                <option value="StartTime">Start Time</option>
+                <option value="MinDuration">Minimum Duration</option>
+                <option value="MaxDuration">Maximum Duration</option>
             </select>
         </form>
     </div>

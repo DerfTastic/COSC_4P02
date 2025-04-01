@@ -167,7 +167,7 @@ nav {
     color: #eeeef0;
 }
 
-.search-bar input::selection {
+input::selection {
     background-color: #1b263b;
     font-size: large;
 }
@@ -332,6 +332,7 @@ nav a:hover {
     font-size: 22px;
     margin: 5px 0;
     color: #28282a;
+    text-align: center;
 }
 
 .product-box .caption p {
@@ -432,9 +433,18 @@ nav a:hover {
     text-align: center;
 }
 
-.form-links {
+.login-form,
+.register-form,
+.reset-form {
+    width: 90%;
+}
+
+.form-links,
+.login-form p,
+.register-form p,
+.reset-form p {
     padding-top: 10px;
-    text-align: center;
+    text-align: left;
     font-size: 18px;
     color: #1b263b;
     font-weight: bold;
@@ -449,12 +459,14 @@ nav a:hover {
 .form-group label {
     z-index: 1;
     position: relative;
-    font-size: 15px;
+    font-size: 12px;
     margin-bottom: 5px;
     font-weight: 600;
+    text-transform: uppercase;
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
     padding: 10px;
     background: rgba(238, 238, 240, 0.1);
     backdrop-filter: blur(12px);
@@ -468,16 +480,6 @@ nav a:hover {
 
 .form-group input::placeholder {
     color: #eeeef09a;
-}
-
-.form-group input,
-.form-group textarea {
-    padding: 12px 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(238, 238, 240, 0.2);
-    font-size: 16px;
-    font-family: "Times New Roman", Times, serif;
-    transition: all 0.3s ease;
 }
 
 .form-group input:focus,

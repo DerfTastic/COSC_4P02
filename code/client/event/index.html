@@ -13,6 +13,7 @@
             flex-direction: column;
             gap: 10px;
             z-index: 1;
+            background-color: #1b263b;
         }
 
         .img-container {
@@ -20,7 +21,7 @@
             justify-content: center;
             align-items: center;
             align-self: center;
-            width: auto;
+            width: 100%;
             /* border-radius: 20px; */
             box-sizing: border-box;
             background: rgba(238, 238, 240, 0.3);
@@ -35,8 +36,8 @@
         #eventImage {
             position: relative;
             align-self: center;
-            width: 100%;
-            height: 60vh;
+            max-width: 100%;
+            height: auto;
             object-fit: cover;
             /* border-radius: 15px; */
         }
@@ -49,13 +50,16 @@
 
         .left-column,
         .right-column {
+            display: flex;
             flex: 2;
-            border-radius: 15px;
+            border-radius: 10px;
             box-sizing: border-box;
-            padding: 0px;
+            padding: 10px;
             margin: 0;
             /* border: 2px solid black; */
             flex-direction: column;
+            width: 100%;
+            gap: 20px;
         }
 
         .right-column {
@@ -73,6 +77,10 @@
             font-weight: 400;
             font-style: normal;
         } */
+         
+        .organizerInfo{
+            border: 2px solid #eeeef0; background-color: #415a77;
+        }
 
         h1 {
             position: relative;
@@ -103,16 +111,24 @@
             height: 100%;
 
         }
+         .ticketInfo{
+            /* height: 100%;
+            position:sticky;
+            top:60%;
+            right:0; */
+            border: 2px solid #eeeef0; background-color: #415a77;
+         }
 
         .ticket-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            border: 1px solid #eeeef0;
             margin-bottom: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eeeef0;
+           
         }
 
         .ticket-name {
@@ -210,28 +226,29 @@
                     <!-- <span id="eventDate"></span>
                         <span id="eventTime"></span><br><br> -->
                     <h1 class="eventTitle" id="eventTitle"></h1>
-                    <h3>Date & Time:</h3> <span id="eventDuration"></span>
-                    <h3>Location:</h3> <span id="eventLocation"></span>
+                    <!-- <h3>Date & Time:</h3> -->
+                    <span id="eventDuration"></span>
+                    <!-- <h3>Location:</h3> -->
+                    <span id="eventLocation"></span>
                     <p id="eventDescription"></p>
 
                 </div>
                 <div class="right-column">
 
-                    <div class="right-column">
+                    <div class="right-column ticketInfo">
                         <h2>Tickets:</h2>
                         <p id="eventTicketsDisplay"></p>
                     </div>
 
-                    <div class="right-column">
+                    <div class="right-column organizerInfo">
                         <a href="#" id="profileLink" style="text-decoration: none; color: white;">
-                            <h2>Organiser Information:</h2>
+                            <h2>Organizer Information:</h2>
 
                             <p><span id="owner"></span></p>
                         </a>
                     </div>
 
                     <div class="right-column">
-                        <h2>Tags:</h2>
                         <div id="eventTags"></div>
                     </div>
                 </div>
