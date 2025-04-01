@@ -3,7 +3,6 @@
  */
 package infrastructure.api;
 
-import com.alibaba.fastjson2.stream.JSONStreamReader;
 import framework.db.DbStatistics;
 import framework.db.RwConn;
 import framework.web.error.BadRequest;
@@ -23,8 +22,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.logging.Level;
-
-import static server.infrastructure.root.api.AdminAPI.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AdminAPITest {
@@ -78,7 +75,7 @@ public class AdminAPITest {
         }
         a1.login(mail, db, false); // Need to log back in since AdminAPI.set_account_admin removes your session
         UserSession adminSesh = a1.adminSession(db, null); // Now we should be able to make an admin sesh with this fella
-        Assertions.assertTrue(adminSesh.admin); // Make sure we're admin
+        Assertions.assertTrue(adminSesh.admin()); // Make sure we're admin
 
         try(var trans = db.rw_transaction(null)) {
             AdminAPI.set_account_admin(adminSesh, trans, false, a1.email); // Setting admin back to false
@@ -86,7 +83,7 @@ public class AdminAPITest {
         }
         a1.login(mail, db, false); // Need to log back in since AdminAPI.set_account_admin removes your session
         UserSession notAdminSesh = a1.userSession(db, null);
-        Assertions.assertFalse(notAdminSesh.admin);
+        Assertions.assertFalse(notAdminSesh.admin());
 
         try {
             var faultyAdminSesh = a1.adminSession(db, null);

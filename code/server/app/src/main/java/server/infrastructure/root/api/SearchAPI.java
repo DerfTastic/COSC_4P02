@@ -59,11 +59,11 @@ public class SearchAPI {
                 whereClause.append("draft=false");
             } else {
                 whereClause.append("draft=false AND owner_id=:owner_id");
-                long_map.put(":owner_id", session==null?0:session.user_id);
+                long_map.put(":owner_id", session==null?0: session.user_id());
             }
         } else {
             whereClause.append("draft=true AND owner_id=:owner_id");
-            long_map.put(":owner_id", session==null?0:session.user_id);
+            long_map.put(":owner_id", session==null?0: session.user_id());
         }
 
         if(search.tags!=null) {

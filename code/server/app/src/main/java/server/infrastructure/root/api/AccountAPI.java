@@ -146,7 +146,7 @@ public class AccountAPI {
     public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
         List<Session> result;
         try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
-            stmt.setLong(":id", auth.user_id);
+            stmt.setLong(":id", auth.user_id());
             result = SqlSerde.sqlList(stmt.executeQuery(), Session.class);
         }
         conn.close();
@@ -158,7 +158,7 @@ public class AccountAPI {
     public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setLong(":session_id", session_id);
-            stmt.setLong(":user_id", auth.user_id);
+            stmt.setLong(":user_id", auth.user_id());
             if(stmt.executeUpdate() != 1)
                 throw new BadRequest("Could not invalidate session, session does not belong to you or does not exist");
         }
@@ -174,13 +174,13 @@ public class AccountAPI {
     public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account, DynamicMediaHandler media) throws SQLException, Unauthorized {
         record DeleteResult(long picture, long banner){}
 
-        if(!account.email.equals(auth.email))
+        if(!account.email.equals(auth.email()))
             throw new Unauthorized("Incorrect email");
         account.password = Util.hashy((account.password+"\0\0\0\0"+account.email).getBytes());
 
         DeleteResult res;
         try(var stmt = trans.namedPreparedStatement("delete from users where email=:email AND pass=:pass returning picture, banner")){
-            stmt.setString(":email", auth.email);
+            stmt.setString(":email", auth.email());
             stmt.setString(":pass", account.password);
             res = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> new DeleteResult(rs.getLong("picture"), rs.getLong("banner")));
         }
@@ -211,14 +211,14 @@ public class AccountAPI {
         try(var stmt = trans.namedPreparedStatement("update users set pass=:new_password, email=:new_email where email=:old_email AND pass=:old_password AND id=:id")){
             stmt.setString(":old_email", ca.old_email);
             stmt.setString(":new_email", ca.new_email);
-            stmt.setLong(":id", auth.user_id);
+            stmt.setLong(":id", auth.user_id());
             stmt.setString(":old_password", ca.old_password);
             stmt.setString(":new_password", ca.new_password);
             stmt.execute();
         }
 
         try(var stmt = trans.namedPreparedStatement("delete from sessions where user_id=:id")){
-            stmt.setLong(":id", auth.user_id);
+            stmt.setLong(":id", auth.user_id());
             stmt.execute();
         }
         trans.commit();
@@ -297,7 +297,7 @@ public class AccountAPI {
         str.append(" where id=:id");
 
         try(var stmt = trans.namedPreparedStatement(str.toString())){
-            stmt.setLong(":id", auth.user_id);
+            stmt.setLong(":id", auth.user_id());
 
             if(update.name!=null)
                 stmt.setString(":full_name", update.name);
@@ -372,14 +372,14 @@ public class AccountAPI {
             }
         }else if(auth!=null){
             try(trans; var stmt = trans.namedPreparedStatement("select full_name, bio, disp_email, disp_phone_number, picture, banner from users where id=:id")){
-                stmt.setLong(":id", auth.user_id);
+                stmt.setLong(":id", auth.user_id());
                 var rs = stmt.executeQuery();
                 result = new PrivateUserInfo(
-                        auth.user_id,
+                        auth.user_id(),
                         rs.getString("full_name"),
-                        auth.email,
-                        auth.organizer,
-                        auth.admin,
+                        auth.email(),
+                        auth.organizer(),
+                        auth.admin(),
                         rs.getString("bio"),
                         rs.getString("disp_email"),
                         rs.getString("disp_phone_number"),
@@ -437,12 +437,12 @@ public class AccountAPI {
         long old_media = 0;
         try{
             try(var stmt = trans.namedPreparedStatement("select picture from users where id=:id")){
-                stmt.setLong(":id", session.user_id);
+                stmt.setLong(":id", session.user_id());
                 old_media = stmt.executeQuery().getLong(1);
             }
 
             try(var stmt = trans.namedPreparedStatement("update users set picture=:picture where id=:id")){
-                stmt.setLong(":id", session.user_id);
+                stmt.setLong(":id", session.user_id());
                 stmt.setLong(":picture", media_id);
                 if(stmt.executeUpdate()!=1)
                     throw new BadRequest("Failed to set picture for user");
@@ -472,12 +472,12 @@ public class AccountAPI {
         long old_media = 0;
         try{
             try(var stmt = trans.namedPreparedStatement("select banner from users where id=:id")){
-                stmt.setLong(":id", session.user_id);
+                stmt.setLong(":id", session.user_id());
                 old_media = stmt.executeQuery().getLong("banner");
             }
 
             try(var stmt = trans.namedPreparedStatement("update users set banner=:banner where id=:id")){
-                stmt.setLong(":id", session.user_id);
+                stmt.setLong(":id", session.user_id());
                 stmt.setLong(":banner", media_id);
                 if(stmt.executeUpdate()!=1)
                     throw new BadRequest("Failed to set banner picture for user");

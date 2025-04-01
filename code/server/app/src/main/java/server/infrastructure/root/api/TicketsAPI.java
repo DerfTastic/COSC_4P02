@@ -30,7 +30,7 @@ public class TicketsAPI {
         try (var stmt = trans.namedPreparedStatement("select owner_id from events where id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
-            if (!rs.next() || rs.getLong("owner_id") != session.user_id)
+            if (!rs.next() || rs.getLong("owner_id") != session.user_id())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
@@ -50,7 +50,7 @@ public class TicketsAPI {
             if (!rs.next())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
             var og_id = rs.getLong("owner_id");
-            if(og_id != session.user_id)
+            if(og_id != session.user_id())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
@@ -76,7 +76,7 @@ public class TicketsAPI {
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
             var draft = rs.getBoolean("draft");
             var og_id = rs.getLong("owner_id");
-            if(draft&&og_id!=(session==null?0:session.user_id))
+            if(draft&&og_id!=(session==null?0: session.user_id()))
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         List<Ticket> result;
@@ -98,7 +98,7 @@ public class TicketsAPI {
         try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();
-            if (!rs.next() || rs.getLong("owner_id") != session.user_id)
+            if (!rs.next() || rs.getLong("owner_id") != session.user_id())
                 throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;

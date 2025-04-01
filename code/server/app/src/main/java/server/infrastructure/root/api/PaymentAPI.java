@@ -95,7 +95,7 @@ public class PaymentAPI {
     public static @Json List<Receipt> list_receipts(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans) throws SQLException {
         List<Receipt> list;
         try (var stmt = trans.namedPreparedStatement("select * from payments where user_id=:user_id order by payment_date desc")) {
-            stmt.setLong(":user_id", auth.user_id);
+            stmt.setLong(":user_id", auth.user_id());
             list = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Receipt(
                     rs.getLong("id"),
                     JSON.parseArray(rs.getString("receipt"), ReceiptItem.class),
@@ -162,7 +162,7 @@ public class PaymentAPI {
         long date = System.currentTimeMillis();
         long payment_id;
         try (var stmt = trans.namedPreparedStatement("insert into payments values (null, :user_id, '', :date, 0, 0, 0, 0) returning id")) {
-            stmt.setLong(":user_id", auth.user_id);
+            stmt.setLong(":user_id", auth.user_id());
             stmt.setLong(":date", date);
             payment_id = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getLong("id"));
         }
@@ -183,7 +183,7 @@ public class PaymentAPI {
             for (var item : order.items) {
                 switch (item) {
                     case AccountOrganizerUpgrade ignore -> {
-                        organizer.setLong(":user_id", auth.user_id);
+                        organizer.setLong(":user_id", auth.user_id());
                         if (organizer.executeUpdate() != 1)
                             throw new SQLException();
                         items.add(new AccountOrganizerUpgradeReceipt(50_000000));
@@ -191,7 +191,7 @@ public class PaymentAPI {
                         if (cache != null) {
                             // we need to manually invalidate the cache here
                             try (var stmt = trans.namedPreparedStatement("select id from sessions where user_id=:id")) {
-                                stmt.setLong(":id", auth.user_id);
+                                stmt.setLong(":id", auth.user_id());
                                 SqlSerde.sqlForEach(stmt.executeQuery(), rs -> {
                                     cache.invalidate_session(rs.getLong("id"));
                                 });
@@ -199,7 +199,7 @@ public class PaymentAPI {
                         }
                     }
                     case Ticket(long id) -> {
-                        ticket.setLong(":user_id", auth.user_id);
+                        ticket.setLong(":user_id", auth.user_id());
                         ticket.setLong(":ticket_id", id);
                         ticket.setLong(":payment_id", payment_id);
                         var rng = new byte[16];
@@ -246,7 +246,7 @@ public class PaymentAPI {
         trans.commit();
 
         mail.sendMail(message -> {
-            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(auth.email));
+            message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(auth.email()));
             message.setSubject("Purchase");
             var str = new StringBuilder();
             str.append("<p>Sub Total: ").append(formatPrice(receipt.subtotal)).append("</p>");

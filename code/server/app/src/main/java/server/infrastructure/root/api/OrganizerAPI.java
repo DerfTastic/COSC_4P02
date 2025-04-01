@@ -71,7 +71,7 @@ public class OrganizerAPI {
             stmt.setLong(":pid", scan.id.pid());
             stmt.setString(":salt", scan.id.salt());
             stmt.setLong(":event_id", scan.event);
-            stmt.setLong(":user_id", auth.user_id);
+            stmt.setLong(":user_id", auth.user_id());
             matches = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> rs.getBoolean(1));
         }
 

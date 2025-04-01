@@ -19,7 +19,7 @@ public class SessionCache {
     public synchronized void add(String token, UserSession session){
         if(sessionMap.size()>1000000)
             sessionMap.clear();
-        sessionMap.put(session.session_id, new Tuple<>(token, session));
+        sessionMap.put(session.session_id(), new Tuple<>(token, session));
     }
 
     public synchronized void invalidate_session(long session) {

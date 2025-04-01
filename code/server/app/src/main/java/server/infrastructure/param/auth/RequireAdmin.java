@@ -10,7 +10,7 @@ public class RequireAdmin extends RequireSession {
     @Override
     public UserSession construct(Request request) throws SQLException, Unauthorized {
         var auth = super.construct(request);
-        if(!auth.admin)
+        if(!auth.admin())
             throw new Unauthorized("Admin level access is needed");
         return auth;
     }

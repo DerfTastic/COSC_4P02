@@ -27,7 +27,7 @@ public class EventAPI {
     public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
         long result;
         try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, null, '', '', null, null, true, null, null, null) returning id")){
-            stmt.setLong(":owner_id", session.user_id);
+            stmt.setLong(":owner_id", session.user_id());
             result = stmt.executeQuery().getLong("id");
         }
         trans.commit();
@@ -84,7 +84,7 @@ public class EventAPI {
         sql += " where (events.id=:event_id AND events.draft=false) OR (events.id=:event_id AND events.owner_id=:owner_id)";
         try(var stmt = trans.namedPreparedStatement(sql)){
             stmt.setLong(":event_id", event_id);
-            stmt.setLong(":owner_id", session!=null?session.user_id:0);
+            stmt.setLong(":owner_id", session!=null? session.user_id() :0);
             var result = SqlSerde.sqlList(stmt.executeQuery(), rs -> new Event(rs, with_owner));
             if(result.isEmpty())
                 throw new BadRequest("Event doesn't exist or you do not have permission to view it");
@@ -228,7 +228,7 @@ public class EventAPI {
 
         try(var stmt = trans.namedPreparedStatement(str.toString())){
             stmt.setLong(":id", id);
-            stmt.setLong(":owner_id", session.user_id);
+            stmt.setLong(":owner_id", session.user_id());
 
             if(update.name!=null&&update.name.isPresent())
                 stmt.setString(":name", update.name.get());
@@ -264,7 +264,7 @@ public class EventAPI {
         long picture;
         try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND owner_id=:owner_id returning picture")){
             stmt.setLong(":id", id);
-            stmt.setLong(":owner_id", session.user_id);
+            stmt.setLong(":owner_id", session.user_id());
             var rs = stmt.executeQuery();
             if(!rs.next())
                 throw new BadRequest("Could not delete event. Event doesn't exist or you don't own event");
@@ -283,7 +283,7 @@ public class EventAPI {
     public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
             stmt.setLong(":event_id", event_id);
-            if(stmt.executeQuery().getLong("owner_id")!=session.user_id)
+            if(stmt.executeQuery().getLong("owner_id")!= session.user_id())
                 throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
         }
         try(var stmt = trans.namedPreparedStatement("insert into event_tags values(:tag, :event_id)")){
@@ -303,7 +303,7 @@ public class EventAPI {
     public static void delete_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
             stmt.setLong(":event_id", event_id);
-            if(stmt.executeQuery().getLong("owner_id")!=session.user_id)
+            if(stmt.executeQuery().getLong("owner_id")!= session.user_id())
                 throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
         }
         try(var stmt = trans.namedPreparedStatement("delete from event_tags where tag=:tag AND event_id=:event_id")){
@@ -319,7 +319,7 @@ public class EventAPI {
     public static void set_draft(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", id);
-            stmt.setLong(":owner_id", session.user_id);
+            stmt.setLong(":owner_id", session.user_id());
             stmt.setBoolean(":draft", draft);
             if(stmt.executeUpdate()!=1)
                 throw new BadRequest("Couldn't update the specified event. Either the event doesn't exist, or you don't control this event");
@@ -339,13 +339,13 @@ public class EventAPI {
         try{
             try(var stmt = trans.namedPreparedStatement("select picture from events where id=:id AND owner_id=:owner_id")){
                 stmt.setLong(":id", id);
-                stmt.setLong(":owner_id", session.user_id);
+                stmt.setLong(":owner_id", session.user_id());
                 old_media = stmt.executeQuery().getLong(1);
             }
 
             try(var stmt = trans.namedPreparedStatement("update events set picture=:picture where id=:id AND owner_id=:owner_id")){
                 stmt.setLong(":id", id);
-                stmt.setLong(":owner_id", session.user_id);
+                stmt.setLong(":owner_id", session.user_id());
                 stmt.setLong(":picture", media_id);
                 if(stmt.executeUpdate()!=1)
                     throw new BadRequest("Failed to add picture to event. Event doesn't exit or you don't own event");
