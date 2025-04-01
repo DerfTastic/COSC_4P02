@@ -1325,7 +1325,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const ampm = hours >= 12 ? 'pm' : 'am';
             const formattedHours = hours % 12 || 12; // Convert 24-hour to 12-hour format
 
-            return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()} @ ${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+            return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()} @ ${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
         });
         Handlebars.registerHelper('logColor', function(level) {
             const colors = { "SEVERE": "red", "WARNING": "yellow", "INFO": "blue", "CONFIG": "grey" };

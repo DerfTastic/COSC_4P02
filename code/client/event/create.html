@@ -7,6 +7,7 @@
     <title>Create An Event</title>
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
     <style>
         .content {
             display: flex;
@@ -81,13 +82,13 @@
 
         .form-page {
             position: relative;
-            border: 2px solid black;
-            /* background-color: ; */
+            background-color: #1b263b;
             width: 100%;
             height: auto;
             color: #eeeef0;
             padding: 10px;
             box-sizing: border-box;
+            border-radius: 12px;
         }
 
         .form-page .title {
@@ -463,9 +464,6 @@
                                     class="input-field" required>
                             </div>
                             <div class="field">
-                                <!-- <div class="label">Event Date & Time</div>
-                                <input type="datetime-local" id="eventStartDate" class="input-field" required><br><br>
-                                <input type="datetime-local" id="eventEndDate" class="input-field" required> -->
                                 <div class="label">Event Date</div>
                                 <input type="date" id="eventDate" class="input-field" required><br><br>
 
@@ -932,7 +930,7 @@
             updateEvent.description = eventDescription;
             updateEvent.start = new Date(`${eventDate}T${eventStartTime}`).getTime();
             updateEvent.duration = new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime();
-            updateEvent.available_total_tickets = totalTickets || 0;
+            // updateEvent.available_total_tickets = totalTickets || 0;
             updateEvent.location_name = eventLocation;
             updateEvent.category = eventCategory;
             updateEvent.type = eventType;
