@@ -57,15 +57,18 @@ public class OrganizerAPI {
 
         boolean matches;
         try(var stmt = trans.namedPreparedStatement(
-                "select coalesce(" +
-                        "(select ticket_id from purchased_tickets where id=:id AND salt=:salt) " +
-                        "IN " +
-                        "(select id from tickets " +
-                            "where event_id=:event_id AND " +
-                                ":user_id IN (select owner_id from events E where E.id=event_id)" +
-                        ")," +
-                    "false)")){
-            stmt.setLong(":id", scan.id.pid());
+                """
+                        select coalesce(
+                            (select ticket_id from purchased_tickets where id=:pid AND salt=:salt)
+                            IN
+                            (
+                                select id from tickets where
+                                    event_id=:event_id
+                                    AND :user_id IN (select owner_id from events where events.id=:event_id)
+                            ),
+                            false
+                        )""")){
+            stmt.setLong(":pid", scan.id.pid());
             stmt.setString(":salt", scan.id.salt());
             stmt.setLong(":event_id", scan.event);
             stmt.setLong(":user_id", auth.user_id);
