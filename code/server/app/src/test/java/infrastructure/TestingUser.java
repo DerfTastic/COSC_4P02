@@ -6,12 +6,9 @@ import framework.web.WebServer;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import framework.web.request.Request;
-import org.junit.jupiter.api.Assertions;
-import server.Config;
-import server.infrastructure.param.auth.*;
 import server.infrastructure.root.api.AccountAPI;
-import server.infrastructure.root.api.OrganizerAPI;
 import server.infrastructure.root.api.PaymentAPI;
+import server.infrastructure.session.*;
 import server.mail.MailServer;
 
 import java.io.IOException;
@@ -87,15 +84,15 @@ public class TestingUser {
     }
 
     public UserSession userSession(DbManager db, SessionCache cache) throws SQLException, Unauthorized {
-        return new RequireSession().construct(createRequest(this.session, db, cache));
+        return Session.require_session(createRequest(this.session, db, cache), false);
     }
 
-    public UserSession organizerSession(DbManager db, SessionCache cache) throws SQLException, Unauthorized {
-        return new RequireOrganizer().construct(createRequest(this.session, db, cache));
+    public OrganizerSession organizerSession(DbManager db, SessionCache cache) throws SQLException, Unauthorized {
+        return Session.require_organizer_session(createRequest(this.session, db, cache), false);
     }
 
-    public UserSession adminSession(DbManager db, SessionCache cache) throws SQLException, Unauthorized {
-        return new RequireAdmin().construct(createRequest(this.session, db, cache));
+    public AdminSession adminSession(DbManager db, SessionCache cache) throws SQLException, Unauthorized {
+        return Session.require_admin_session(createRequest(this.session, db, cache), false);
     }
 
 

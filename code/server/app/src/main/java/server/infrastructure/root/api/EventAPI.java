@@ -12,9 +12,9 @@ import server.infrastructure.DynamicMediaHandler;
 import framework.db.RoTransaction;
 import framework.db.RwTransaction;
 import framework.web.annotations.url.Path;
-import server.infrastructure.param.auth.OptionalAuth;
-import server.infrastructure.param.auth.RequireOrganizer;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.param.NotRequired;
+import server.infrastructure.session.OrganizerSession;
+import server.infrastructure.session.UserSession;
 import framework.util.SqlSerde;
 
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ import java.util.*;
 @Routes
 public class EventAPI {
     @Route
-    public static long create_event(@FromRequest(RequireOrganizer.class) UserSession session, RwTransaction trans) throws SQLException {
+    public static long create_event(OrganizerSession session, RwTransaction trans) throws SQLException {
         long result;
         try(var stmt = trans.namedPreparedStatement("insert into events values(null, :owner_id, '', '', null, null, null, '', '', null, null, true, null, null, null) returning id")){
             stmt.setLong(":owner_id", session.user_id());
@@ -77,7 +77,7 @@ public class EventAPI {
     }
 
     @Route("/get_event/<event_id>")
-    public static @Json Event get_event(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Path long event_id, @QueryFlag boolean with_owner) throws SQLException, BadRequest {
+    public static @Json Event get_event(@NotRequired UserSession session, RoTransaction trans, @Path long event_id, @QueryFlag boolean with_owner) throws SQLException, BadRequest {
         Event event;
         var sql = "select * from events";
         if(with_owner) sql += " inner join users on users.id=events.owner_id";
@@ -196,7 +196,7 @@ public class EventAPI {
 
     @SuppressWarnings("OptionalAssignedToNull")
     @Route("/update_event/<id>")
-    public static void update_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @FromRequest(UpdateEventFromRequest.class) UpdateEvent update) throws SQLException, BadRequest {
+    public static void update_event(OrganizerSession session, RwTransaction trans, @Path long id, @FromRequest(UpdateEventFromRequest.class) UpdateEvent update) throws SQLException, BadRequest {
         var str = new StringBuilder().append("update events set ");
 
         if(update.name!=null)
@@ -260,7 +260,7 @@ public class EventAPI {
     }
 
     @Route("/delete_event/<id>")
-    public static void delete_event(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, DynamicMediaHandler media) throws SQLException, BadRequest {
+    public static void delete_event(OrganizerSession session, RwTransaction trans, @Path long id, DynamicMediaHandler media) throws SQLException, BadRequest {
         long picture;
         try(var stmt = trans.namedPreparedStatement("delete from events where id=:id AND owner_id=:owner_id returning picture")){
             stmt.setLong(":id", id);
@@ -280,7 +280,7 @@ public class EventAPI {
 
 
     @Route("/add_event_tag/<event_id>/<tag>")
-    public static void add_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
+    public static void add_event_tag(OrganizerSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
             stmt.setLong(":event_id", event_id);
             if(stmt.executeQuery().getLong("owner_id")!= session.user_id())
@@ -300,7 +300,7 @@ public class EventAPI {
     }
 
     @Route("/delete_event_tag/<event_id>/<tag>")
-    public static void delete_event_tag(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
+    public static void delete_event_tag(OrganizerSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
             stmt.setLong(":event_id", event_id);
             if(stmt.executeQuery().getLong("owner_id")!= session.user_id())
@@ -316,7 +316,7 @@ public class EventAPI {
     }
 
     @Route("/set_draft/<id>/<draft>")
-    public static void set_draft(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
+    public static void set_draft(OrganizerSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND owner_id=:owner_id")){
             stmt.setLong(":id", id);
             stmt.setLong(":owner_id", session.user_id());
@@ -328,7 +328,7 @@ public class EventAPI {
     }
 
     @Route("/set_event_picture/<id>")
-    public static long set_event_picture(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, BadRequest {
+    public static long set_event_picture(OrganizerSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
         if(data.length > (1<<20)*10){
             throw new BadRequest("File too large, maximum file size is 10 MiB");

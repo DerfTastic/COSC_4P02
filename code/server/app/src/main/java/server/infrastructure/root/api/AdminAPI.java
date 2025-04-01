@@ -5,11 +5,12 @@ import framework.web.annotations.*;
 import server.ServerLogger;
 import framework.db.RwConn;
 import framework.web.error.BadRequest;
+import server.infrastructure.session.AdminSession;
 import server.mail.MailServer;
 import server.ServerStatistics;
 import framework.web.annotations.url.Path;
 import server.infrastructure.param.auth.RequireAdmin;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.session.UserSession;
 
 import javax.mail.Message;
 import java.io.PrintWriter;
@@ -49,7 +50,7 @@ public class AdminAPI {
      */
 
     @Route
-    public static void mail(@FromRequest(RequireAdmin.class) UserSession auth, MailServer server, @Body @Json Mail mail) {
+    public static void mail(AdminSession auth, MailServer server, @Body @Json Mail mail) {
         server.sendMail(message -> {
             message.setRecipients(
                     Message.RecipientType.TO,
@@ -61,7 +62,7 @@ public class AdminAPI {
     }
 
     @Route
-    public static String execute_sql(@FromRequest(RequireAdmin.class) UserSession auth, RwConn connection, @Body String sql) throws SQLException {
+    public static String execute_sql(AdminSession auth, RwConn connection, @Body String sql) throws SQLException {
         StringBuilder list;
         try (var stmt = connection.createStatement()) {
             var rows = stmt.execute(sql);
@@ -109,7 +110,7 @@ public class AdminAPI {
     }
 
     @Route
-    public static @Json List<LogR> get_server_logs(@FromRequest(RequireAdmin.class) UserSession auth){
+    public static @Json List<LogR> get_server_logs(AdminSession auth){
 
         return ServerLogger.streamify().map(r -> new LogR(
                 r.getLevel().getName(),
@@ -124,7 +125,7 @@ public class AdminAPI {
     }
 
     @Route("/delete_other_account/<email>")
-    public static void delete_other_account(@FromRequest(RequireAdmin.class) UserSession auth, RwTransaction trans, @Path String email) throws SQLException, BadRequest {
+    public static void delete_other_account(AdminSession auth, RwTransaction trans, @Path String email) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("delete from users where email=:email")){
             stmt.setString(":email", email);
             if(stmt.executeUpdate() != 1)
@@ -134,7 +135,7 @@ public class AdminAPI {
     }
 
     @Route("/set_account_admin/<admin>/<email>")
-    public static void set_account_admin(@FromRequest(RequireAdmin.class) UserSession auth, RwTransaction trans, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
+    public static void set_account_admin(AdminSession auth, RwTransaction trans, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
         long id;
         try(var stmt = trans.namedPreparedStatement("update users set admin=:admin where email=:email returning id")){
             stmt.setString(":email", email);
@@ -152,22 +153,22 @@ public class AdminAPI {
     }
 
     @Route
-    public static byte[] get_server_statistics(@FromRequest(RequireAdmin.class) UserSession auth, ServerStatistics tracker){
+    public static byte[] get_server_statistics(AdminSession auth, ServerStatistics tracker){
         return tracker.json();
     }
 
     @Route("/set_log_level/<level>")
-    public static void set_log_level(@FromRequest(RequireAdmin.class) UserSession auth, @Path String level){
+    public static void set_log_level(AdminSession auth, @Path String level){
         ServerLogger.setLogLevel(Level.parse(level));
     }
 
     @Route
-    public static String get_log_level(@FromRequest(RequireAdmin.class) UserSession auth){
+    public static String get_log_level(AdminSession auth){
         return ServerLogger.getLogLevel().getName();
     }
 
     @Route
-    public static @Json String[] get_log_levels(@FromRequest(RequireAdmin.class) UserSession auth){
+    public static @Json String[] get_log_levels(AdminSession auth){
         return new String[]{
                 Level.OFF.getName(), Level.SEVERE.getName(), Level.WARNING.getName(), Level.INFO.getName(), Level.CONFIG.getName(), Level.FINE.getName(), Level.FINER.getName(), Level.FINEST.getName(), Level.ALL.getName()
         };

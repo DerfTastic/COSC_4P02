@@ -15,7 +15,8 @@ import server.Config;
 import server.ServerLogger;
 import server.ServerStatistics;
 import server.infrastructure.DbManagerImpl;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.session.AdminSession;
+import server.infrastructure.session.UserSession;
 import server.infrastructure.root.api.AdminAPI;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class AdminAPITest {
     private static DbManager db;
     private final static MailServerSkeleton mail = new MailServerSkeleton();
 
-    UserSession ogAdminSesh;
+    AdminSession ogAdminSesh;
 
     // Change to your own email when testing
     final String TEST_RECIPIENT_ADDRESS = "derftastic2@gmail.com";
@@ -74,7 +75,7 @@ public class AdminAPITest {
             trans.tryCommit();
         }
         a1.login(mail, db, false); // Need to log back in since AdminAPI.set_account_admin removes your session
-        UserSession adminSesh = a1.adminSession(db, null); // Now we should be able to make an admin sesh with this fella
+        AdminSession adminSesh = a1.adminSession(db, null); // Now we should be able to make an admin sesh with this fella
         Assertions.assertTrue(adminSesh.admin()); // Make sure we're admin
 
         try(var trans = db.rw_transaction(null)) {
@@ -90,11 +91,11 @@ public class AdminAPITest {
             Assertions.fail("Shouldn't be able to make an admin session out if you're someone who's not an admin");
         } catch (Exception ignore) {}
 
-        UserSession regularSession = u1.userSession(db, null);
-        try(var trans = db.rw_transaction(null)) {
-            AdminAPI.set_account_admin(regularSession, trans, true, a1.email); // Set admin to true for a1 from a regular user
-            trans.tryCommit();
-        }
+//        UserSession regularSession = u1.userSession(db, null);
+//        try(var trans = db.rw_transaction(null)) {
+//            AdminAPI.set_account_admin(regularSession, trans, true, a1.email); // Set admin to true for a1 from a regular user
+//            trans.tryCommit();
+//        }
         a1.login(mail, db, false);
         try {
             var evilAdmin = a1.adminSession(db, null);
@@ -117,7 +118,7 @@ public class AdminAPITest {
         "</html>";
 
         // Sending an email with admin session
-        UserSession adminSesh = a1.userSession(db, null);
+        AdminSession adminSesh = a1.adminSession(db, null);
         try(var trans = db.rw_transaction(null)) {
             AdminAPI.set_account_admin(adminSesh, trans, true, a1.email);
             trans.tryCommit();
@@ -130,7 +131,7 @@ public class AdminAPITest {
     @Test
     @Order(3)
     public void testExecutingSQL() throws SQLException, Unauthorized {
-        var sesh = o1.organizerSession(db, null);
+        var sesh = o1.adminSession(db, null);
         RwConn rw = new RwConn(db, null);
 
         String str;

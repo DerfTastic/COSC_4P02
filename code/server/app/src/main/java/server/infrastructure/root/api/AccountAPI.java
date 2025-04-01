@@ -17,7 +17,9 @@ import framework.web.error.Unauthorized;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.DynamicMediaHandler;
 import server.infrastructure.param.Config;
-import server.infrastructure.param.auth.*;
+import server.infrastructure.param.NotRequired;
+import server.infrastructure.session.SessionCache;
+import server.infrastructure.session.UserSession;
 import server.mail.MailServer;
 import framework.web.Util;
 import framework.web.annotations.url.Path;
@@ -143,7 +145,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static @Json List<Session> list_sessions(@FromRequest(RequireSession.class) UserSession auth, RoConn conn) throws SQLException {
+    public static @Json List<Session> list_sessions(UserSession auth, RoConn conn) throws SQLException {
         List<Session> result;
         try(var stmt = conn.namedPreparedStatement("select * from sessions where user_id=:id")){
             stmt.setLong(":id", auth.user_id());
@@ -155,7 +157,7 @@ public class AccountAPI {
 
     @Route("/invalidate_session/<session_id>")
     @Delete
-    public static void invalidate_session(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
+    public static void invalidate_session(UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("delete from sessions where id=:session_id AND user_id=:user_id")){
             stmt.setLong(":session_id", session_id);
             stmt.setLong(":user_id", auth.user_id());
@@ -171,7 +173,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void delete_account(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account, DynamicMediaHandler media) throws SQLException, Unauthorized {
+    public static void delete_account(UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account, DynamicMediaHandler media) throws SQLException, Unauthorized {
         record DeleteResult(long picture, long banner){}
 
         if(!account.email.equals(auth.email()))
@@ -199,7 +201,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static void change_auth(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json ChangeAuth ca) throws SQLException, BadRequest {
+    public static void change_auth(UserSession auth, RwTransaction trans, @Body @Json ChangeAuth ca) throws SQLException, BadRequest {
         if(ca.new_password==null&&ca.new_email==null)
             throw new BadRequest("Nothing to change");
 
@@ -280,7 +282,7 @@ public class AccountAPI {
 
     @SuppressWarnings("OptionalAssignedToNull")
     @Route
-    public static void update_user(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @FromRequest(UpdateUserFromRequest.class) UpdateUser update) throws SQLException, BadRequest {
+    public static void update_user(UserSession auth, RwTransaction trans, @FromRequest(UpdateUserFromRequest.class) UpdateUser update) throws SQLException, BadRequest {
         var str = new StringBuilder().append("update users set ");
 
         if(update.name!=null)
@@ -362,7 +364,7 @@ public class AccountAPI {
     ) implements UserInfo {}
 
     @Route("/userinfo/<id>")
-    public static @Json UserInfo userinfo(@FromRequest(OptionalAuth.class) UserSession auth, RoTransaction trans, @Path @Nullable Long id) throws SQLException, Unauthorized {
+    public static @Json UserInfo userinfo(@NotRequired UserSession auth, RoTransaction trans, @Path @Nullable Long id) throws SQLException, Unauthorized {
         UserInfo result;
         if(id!=null){
             try(trans; var stmt = trans.namedPreparedStatement("select full_name, email, bio, organizer, disp_email, disp_phone_number, picture, banner from users where id=:id")){
@@ -427,7 +429,7 @@ public class AccountAPI {
 
 
     @Route
-    public static long set_user_picture(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
+    public static long set_user_picture(UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
         if(data.length > (1<<20)*10){
             throw new BadRequest("File too large, maximum file size is 10 MiB");
@@ -462,7 +464,7 @@ public class AccountAPI {
     }
 
     @Route
-    public static long set_user_banner_picture(@FromRequest(RequireSession.class)UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
+    public static long set_user_banner_picture(UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
         if(data.length > (1<<20)*10){
             throw new BadRequest("File too large, maximum file size is 10 MiB");

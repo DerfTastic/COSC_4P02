@@ -1,11 +1,14 @@
 package server.infrastructure;
 
 import framework.db.*;
+import framework.web.error.Unauthorized;
 import framework.web.request.Request;
 import framework.web.route.RequestsBuilder;
 import framework.web.route.RouteImpl;
 import framework.web.route.RouteParameter;
 import server.infrastructure.param.Config;
+import server.infrastructure.param.NotRequired;
+import server.infrastructure.session.*;
 
 import java.lang.reflect.Parameter;
 import java.sql.SQLException;
@@ -83,6 +86,15 @@ public class RequestBuilderImpl extends RequestsBuilder {
 
     @Override
     protected RouteParameter<?> getParameterHandler(RouteImpl route, Parameter parameter) throws Throwable {
+        if(UserSession.class.isAssignableFrom(parameter.getType())){
+            var optional = parameter.isAnnotationPresent(NotRequired.class);
+            if(AdminSession.class.isAssignableFrom(parameter.getType()))
+                return request -> Session.require_admin_session(request, optional);
+            if(OrganizerSession.class.isAssignableFrom(parameter.getType()))
+                return request -> Session.require_organizer_session(request, optional);
+            return request -> Session.require_session(request, optional);
+        }
+
         if(parameter.isAnnotationPresent(Config.class)){
             var config = parameter.getAnnotation(Config.class);
             var name = config.name().equals("!")?parameter.getName():config.name();

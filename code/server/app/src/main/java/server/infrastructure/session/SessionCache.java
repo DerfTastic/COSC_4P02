@@ -1,4 +1,4 @@
-package server.infrastructure.param.auth;
+package server.infrastructure.session;
 
 import framework.util.Tuple;
 

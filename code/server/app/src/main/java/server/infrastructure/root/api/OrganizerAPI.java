@@ -4,8 +4,7 @@ import framework.db.RwTransaction;
 import framework.util.SqlSerde;
 import framework.web.annotations.*;
 import framework.web.error.BadRequest;
-import server.infrastructure.param.auth.RequireOrganizer;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.session.OrganizerSession;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -31,7 +30,7 @@ public class OrganizerAPI {
     ){}
 
     @Route
-    public static @Json ScanResult scan_ticket(@FromRequest(RequireOrganizer.class)UserSession auth, RwTransaction trans, @Body@Json Scan scan) throws SQLException, BadRequest {
+    public static @Json ScanResult scan_ticket(OrganizerSession auth, RwTransaction trans, @Body@Json Scan scan) throws SQLException, BadRequest {
         AccountAPI.PublicUserInfo info;
         try(var stmt = trans.namedPreparedStatement("select * from users where id=(select user_id from purchased_tickets where id=:pid)")){
             stmt.setLong(":pid", scan.id.pid());

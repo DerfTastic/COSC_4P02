@@ -7,9 +7,9 @@ import framework.web.annotations.*;
 import framework.web.annotations.url.Path;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
-import server.infrastructure.param.auth.OptionalAuth;
-import server.infrastructure.param.auth.RequireOrganizer;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.param.NotRequired;
+import server.infrastructure.session.OrganizerSession;
+import server.infrastructure.session.UserSession;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -26,7 +26,7 @@ public class TicketsAPI {
     ){}
 
     @Route("/create_ticket/<event_id>")
-    public static long create_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
+    public static long create_ticket(OrganizerSession session, RwTransaction trans, @Path long event_id) throws SQLException, Unauthorized {
         try (var stmt = trans.namedPreparedStatement("select owner_id from events where id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
@@ -43,7 +43,7 @@ public class TicketsAPI {
     }
 
     @Route("/update_ticket/<ticket_id>")
-    public static void update_ticket(@FromRequest(RequireOrganizer.class)UserSession session, @Json @Body Ticket ticket, @Path long ticket_id, RwTransaction trans) throws SQLException, Unauthorized, BadRequest {
+    public static void update_ticket(OrganizerSession session, @Json @Body Ticket ticket, @Path long ticket_id, RwTransaction trans) throws SQLException, Unauthorized, BadRequest {
         try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();
@@ -67,7 +67,7 @@ public class TicketsAPI {
     }
 
     @Route("/get_tickets/<event_id>")
-    public static @Json List<Ticket> get_tickets(@FromRequest(OptionalAuth.class)UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, Unauthorized, BadRequest {
+    public static @Json List<Ticket> get_tickets(@NotRequired UserSession session, RoTransaction trans, @Path long event_id) throws SQLException, Unauthorized, BadRequest {
         try (var stmt = trans.namedPreparedStatement("select draft, owner_id from events where id=:id")) {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
@@ -94,7 +94,7 @@ public class TicketsAPI {
     }
 
     @Route("/delete_ticket/<ticket_id>")
-    public static void delete_ticket(@FromRequest(RequireOrganizer.class)UserSession session, RwTransaction trans, @Path long ticket_id) throws SQLException, Unauthorized, BadRequest {
+    public static void delete_ticket(OrganizerSession session, RwTransaction trans, @Path long ticket_id) throws SQLException, Unauthorized, BadRequest {
         try (var stmt = trans.namedPreparedStatement("select owner_id from tickets inner join events on tickets.event_id=events.id where tickets.id=:ticket_id")) {
             stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();

@@ -8,9 +8,8 @@ import framework.db.RwTransaction;
 import framework.util.SqlSerde;
 import framework.web.Util;
 import framework.web.annotations.*;
-import server.infrastructure.param.auth.RequireSession;
-import server.infrastructure.param.auth.SessionCache;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.session.SessionCache;
+import server.infrastructure.session.UserSession;
 import server.mail.MailServer;
 
 import javax.mail.Message;
@@ -92,7 +91,7 @@ public class PaymentAPI {
     }
 
     @Route
-    public static @Json List<Receipt> list_receipts(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans) throws SQLException {
+    public static @Json List<Receipt> list_receipts(UserSession auth, RoTransaction trans) throws SQLException {
         List<Receipt> list;
         try (var stmt = trans.namedPreparedStatement("select * from payments where user_id=:user_id order by payment_date desc")) {
             stmt.setLong(":user_id", auth.user_id());
@@ -120,7 +119,7 @@ public class PaymentAPI {
     }
 
     @Route
-    public static @Json Estimate create_estimate(@FromRequest(RequireSession.class) UserSession auth, RoTransaction trans, @Body @Json OrderItem[] order) throws SQLException {
+    public static @Json Estimate create_estimate(UserSession auth, RoTransaction trans, @Body @Json OrderItem[] order) throws SQLException {
         ArrayList<ReceiptItem> items = new ArrayList<>();
         long subtotal = 0;
         try (var ticket = trans.namedPreparedStatement("select name, price from tickets where id=:ticket_id AND event_id IN (select id from events where draft=false)");) {
@@ -157,7 +156,7 @@ public class PaymentAPI {
     }
 
     @Route
-    public static @Json Receipt make_purchase(@FromRequest(RequireSession.class) UserSession auth, RwTransaction trans, @Body @Json Order order, SessionCache cache, MailServer mail) throws SQLException {
+    public static @Json Receipt make_purchase(UserSession auth, RwTransaction trans, @Body @Json Order order, SessionCache cache, MailServer mail) throws SQLException {
 
         long date = System.currentTimeMillis();
         long payment_id;

@@ -13,6 +13,7 @@ import framework.db.DbManager;
 import server.Config;
 import server.infrastructure.DbManagerImpl;
 import server.infrastructure.root.api.EventAPI;
+import server.infrastructure.session.UserSession;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -69,12 +70,12 @@ public class EventAPITest {
             trans.tryCommit();
         }
 
-        auth = u1.userSession(db, null);
-        try(var trans = db.rw_transaction(null)){
-            events.add(EventAPI.create_event(auth, trans));
-            trans.tryCommit();
-            Assertions.fail("A regular user cannot create an event");
-        }catch (SQLException ignore){}
+//        auth = u1.userSession(db, null);
+//        try(var trans = db.rw_transaction(null)){
+//            events.add(EventAPI.create_event(auth, trans));
+//            trans.tryCommit();
+//            Assertions.fail("A regular user cannot create an event");
+//        }catch (SQLException ignore){}
     }
 
     @Test
@@ -267,7 +268,7 @@ public class EventAPITest {
     @Test
     @Order(7)
     public void getEventTest() throws SQLException, Unauthorized, BadRequest {
-        var auth = o1.organizerSession(db, null);
+        UserSession auth = o1.organizerSession(db, null);
         try(var trans = db.ro_transaction(null)){
             EventAPI.get_event(auth, trans, events.get(0), false);
         }
@@ -306,14 +307,25 @@ public class EventAPITest {
     @Test
     @Order(8)
     public void deleteEventTest() throws SQLException, Unauthorized, BadRequest {
-        var auth = u1.userSession(db, null);
-        try(var trans = db.rw_transaction(null)){
-            EventAPI.delete_event(auth, trans, events.get(1), media);
-            trans.tryCommit();
-            Assertions.fail("Should not be able to delete event");
-        }catch(BadRequest ignore){}
+        {
+//            var auth = u1.userSession(db, null);
+//            try (var trans = db.rw_transaction(null)) {
+//                EventAPI.delete_event(auth, trans, events.get(1), media);
+//                trans.tryCommit();
+//                Assertions.fail("Should not be able to delete event");
+//            } catch (BadRequest ignore) {
+//            }
+//
+//            auth = u1.userSession(db, null);
+//            try (var trans = db.rw_transaction(null)) {
+//                EventAPI.delete_event(auth, trans, events.get(0), media);
+//                trans.tryCommit();
+//                Assertions.fail("Should not be able to delete event");
+//            } catch (BadRequest ignore) {
+//            }
+        }
 
-        auth = o2.organizerSession(db, null);
+        var auth = o2.organizerSession(db, null);
         try(var trans = db.rw_transaction(null)){
             EventAPI.delete_event(auth, trans, events.get(1), media);
             trans.tryCommit();
@@ -325,13 +337,6 @@ public class EventAPITest {
             EventAPI.delete_event(auth, trans, events.get(1), media);
             trans.tryCommit();
         }
-
-        auth = u1.userSession(db, null);
-        try(var trans = db.rw_transaction(null)){
-            EventAPI.delete_event(auth, trans, events.get(0), media);
-            trans.tryCommit();
-            Assertions.fail("Should not be able to delete event");
-        }catch(BadRequest ignore){}
 
         auth = o2.organizerSession(db, null);
         try(var trans = db.rw_transaction(null)){

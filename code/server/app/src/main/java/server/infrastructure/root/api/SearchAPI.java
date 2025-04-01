@@ -3,8 +3,8 @@ package server.infrastructure.root.api;
 import framework.db.RoTransaction;
 import framework.web.annotations.*;
 import framework.web.annotations.url.QueryFlag;
-import server.infrastructure.param.auth.OptionalAuth;
-import server.infrastructure.param.auth.UserSession;
+import server.infrastructure.param.NotRequired;
+import server.infrastructure.session.UserSession;
 import framework.util.SqlSerde;
 
 import java.sql.SQLException;
@@ -48,7 +48,7 @@ public class SearchAPI {
     ){}
 
     @Route
-    public static @Json List<EventAPI.Event> search_events(@FromRequest(OptionalAuth.class) UserSession session, RoTransaction trans, @Body @Json Search search, @QueryFlag boolean with_owner) throws SQLException {
+    public static @Json List<EventAPI.Event> search_events(@NotRequired UserSession session, RoTransaction trans, @Body @Json Search search, @QueryFlag boolean with_owner) throws SQLException {
         var long_map = new HashMap<String, Long>();
         var str_map = new HashMap<String, String>();
         var real_map = new HashMap<String, Double>();
