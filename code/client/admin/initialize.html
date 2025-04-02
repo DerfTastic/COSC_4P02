@@ -15,24 +15,28 @@
 
     <title>Ticket Express</title>
 </head>
+<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
     <div class="content">
         <button onclick="delete_database_stuff()">Nuke DB (needs to be logged into admin)</button>
-        <p>This isn't magic and doesn't run automatically it literally exists to "pretend" to be a bunch of users who create events because we don't have actual users</p>
+        <p>This isn't magic and doesn't run automatically it literally exists to "pretend" to be a bunch of users who
+            create events because we don't have actual users</p>
         <button onclick="create_random()">Populate With Randomly Generated</button>
-        <button onclick="makie()">Populate With Sample Events Defined In The "sample_events.json" File Jacob Was Supposed To Add A Week Ago. This Literally Just Loads The JSON From The Server And Is The Same As Pasting It Into The Text Box An Running It There</button>
+        <button onclick="makie()">Populate With Sample Events Defined In The "sample_events.json" File Jacob Was
+            Supposed To Add A Week Ago. This Literally Just Loads The JSON From The Server And Is The Same As Pasting It
+            Into The Text Box An Running It There</button>
         <button onclick="create_all_user_defined()">Populate From Json In Text Box</button>
         <textarea id="json"></textarea>
         <br>
-        
+
         <!-- To test random purchases -->
         <button onclick="make_purchases()">Make 5 purchases</button>
-        <img id="qr" src=""/>
+        <img id="qr" src="" />
         <br>
     </div>
 
-    <div src="/partials/header.html" type="text/x-html-template"></div>
+
     <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 

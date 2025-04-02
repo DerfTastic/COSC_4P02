@@ -15,67 +15,67 @@
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
 
     <title>Ticket Express</title>
-</head>
-<style>
-    .section {
-        margin-bottom: 30px;
-        width: 100%;
-    }
+    <style>
+        .section {
+            margin-bottom: 30px;
+            width: 100%;
+        }
 
-    .charts-container {
-        height: 60vh;
-        display: flex;
-        gap: 20px;
-        justify-content: space-around;
-    }
-
-    .chart-wrapper {
-        flex: 1 1 calc(25% - 20px);
-        width: 50%;
-        text-align: center;
-    }
-
-    @media (max-width: 600px) {
         .charts-container {
+            height: 60vh;
+            display: flex;
+            gap: 20px;
+            justify-content: space-around;
+        }
+
+        .chart-wrapper {
+            flex: 1 1 calc(25% - 20px);
+            width: 50%;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .charts-container {
+                flex-wrap: wrap;
+                flex-direction: column;
+                height: auto !important;
+            }
+
+            .chart-wrapper {
+                width: 100%;
+                min-height: 60vh;
+            }
+        }
+
+        .buttons {
+            margin-top: 10px;
+            display: flex;
             flex-wrap: wrap;
-            flex-direction: column;
-            height: auto !important; 
-    }
+            gap: 10px;
+            justify-content: center;
+        }
 
-    .chart-wrapper {
-        width: 100%;
-        min-height: 60vh; 
-    }
-    }
+        .button {
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            transition: background 0.3s;
+        }
 
-    .buttons {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-    }
+        .button:hover {
+            background-color: #0056b3;
+        }
 
-    .button {
-        padding: 10px 15px;
-        font-size: 14px;
-        cursor: pointer;
-        border: none;
-        border-radius: 5px;
-        background-color: #007BFF;
-        color: white;
-        transition: background 0.3s;
-    }
-
-    .button:hover {
-        background-color: #0056b3;
-    }
-
-    .active {
-        background-color: #28a745 !important;
-    }
-</style>
+        .active {
+            background-color: #28a745 !important;
+        }
+    </style>
 </head>
+<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
     <div class="content">
@@ -127,7 +127,7 @@
 
 
 
-    <div src="/partials/header.html" type="text/x-html-template"></div>
+
     <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 

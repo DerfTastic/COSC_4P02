@@ -6,11 +6,10 @@ body {
     background: linear-gradient(135deg, #1b263b 0%, #2a3e59 40%, #415a77 75%, #778da9 100%);
     font-family: "Times New Roman", Times, serif;
     margin: 0;
-    margin-top: 10vh;
     font-size: 20px;
-    grid-template-rows: auto 1fr auto;
     width: 100%;
     padding: 0;
+    min-height: 100vh;
 }
 
 html {
@@ -37,8 +36,13 @@ html {
     margin: auto;
     justify-content: center;
     align-items: center;
-    padding: 10px;
-    min-height: 90vh;
+    padding: 8% 10px;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 footer {
@@ -64,17 +68,14 @@ header {
     background: rgba(42, 62, 89, 0.3);
     backdrop-filter: blur(15px);
     border-bottom: 1px solid rgba(238, 238, 240, 0.2);
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 10vh;
+    height: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    flex-grow: 1;
+    flex-wrap: wrap;
     align-items: center;
-    z-index: 2;
     box-sizing: border-box;
     padding: 0 10px;
-    /* Left and right padding 10px */
     gap: 5px;
 }
 
@@ -91,21 +92,19 @@ nav {
     margin: 0 20px;
     transition: all 0.3s ease;
     gap: 10px;
-    flex: 0.4;
+    flex: 0.3;
 }
 
 
 .logo-and-title {
     display: flex;
-    align-self: center;
-    justify-self: center;
+    justify-content: space-around;
     align-items: center;
     gap: 5px;
     white-space: nowrap;
-    overflow: hidden;
-    min-width: fit-content;
-    flex: 0.5;
-    padding-right: 10px;
+    max-width: 100%;
+    flex: 0.3;
+    padding: 0;
 }
 
 .logo-and-title h1 {
@@ -116,6 +115,8 @@ nav {
     font-style: normal;
     color: #eeeef0;
     margin: 0;
+    margin: auto;
+    padding: 0;
 }
 
 .logo {
@@ -124,25 +125,26 @@ nav {
 }
 
 .logo-and-title h1:hover,
-.logo-and-title .logo:hover {
+.logo-and-title .logo:hover,
+.footer-logo:hover {
     cursor: pointer;
 }
 
 .search-bar {
     position: relative;
     display: flex;
+    justify-content: space-around;
     align-items: center;
-    width: 200px;
-    /*300px*/
+    min-width: 300px;
     margin: auto;
-    padding: 0;
     height: 40px;
     outline: none;
     background: rgba(238, 238, 240, 0.15);
     border: 1px solid rgba(238, 238, 240, 0.2);
     border-radius: 25px;
     gap: 0;
-    flex: 0.3;
+    flex-grow: 1;
+    flex: 0.35;
 }
 
 .search-bar input {
@@ -153,7 +155,7 @@ nav {
     background: transparent;
     border-radius: 25px;
     color: #eeeef0;
-    width: 100%;
+    min-width: 100%;
     height: 100%;
     padding-right: 45px;
 }
@@ -176,7 +178,7 @@ input::selection {
 .search-bar button {
     position: absolute;
     right: 0;
-    height: 39px;
+    height: 38px;
     width: 40px;
     border: none;
     border-radius: 100%;
@@ -199,10 +201,8 @@ input::selection {
 
 .search-container {
     flex-grow: 1;
-    /* Allows it to take available space */
     display: flex;
     justify-content: center;
-    /* Centers the search bar */
 }
 
 nav a {
@@ -213,6 +213,7 @@ nav a {
     font-weight: 100;
     padding: 15px 25px;
     display: block;
+    white-space: nowrap;
     transition: all 0.3s ease;
     border: none;
     border-radius: 5px;
@@ -402,11 +403,11 @@ nav a:hover {
 
 .container {
     display: flex;
-    margin: 0;
-    padding: 40px;
+    /* margin: 0;
+    padding: 25% 0px; */
     justify-content: center;
     align-items: center;
-    min-height: 90vh;
+    /* min-height: 100%; */
     background-color: transparent;
 }
 
@@ -767,77 +768,7 @@ nav a:hover {
 
 @media (max-width: 1024px) {
 
-    body {
-        margin-top: 20vh;
-    }
 
-    .container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        padding: 20px;
-    }
-
-    .content {
-        margin: 0;
-    }
-
-    header {
-        display: flex;
-        flex-wrap: nowrap;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        height: fit-content;
-        margin: 0;
-        padding: 10px;
-    }
-
-    .logo-and-title {
-        justify-content: center;
-        flex-wrap: nowrap;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-
-    .logo-and-title h1 {
-        font-size: 2em;
-    }
-
-    nav {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-    }
-
-    nav a {
-        font-size: 20px;
-        padding: 5px 10px;
-        margin: 0;
-    }
-
-    .search-bar {
-        flex-direction: row;
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .search-bar input {
-        font-size: 20px;
-        height: 30px;
-        max-width: 100%;
-    }
-
-    .search-bar button {
-        height: 30px;
-        width: 30px;
-    }
 
     .product-box {
         width: calc((100% / 2));
@@ -850,69 +781,16 @@ nav a:hover {
 }
 
 @media (max-width: 480px) {
-    body {
-        margin-top: 20vh;
-    }
 
-    .container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        min-height: 100%;
-        padding: 0;
-    }
-
-    .content {
-        margin: 0;
-        padding: 15px;
-        min-height: 60.5vh;
-        font-size: 0.7em;
-    }
-
-    header {
-        flex-wrap: wrap;
-        flex-direction: column;
-        justify-content: space-between;
-        height: min-content;
-        margin: 0;
-        padding: auto;
-    }
-
-    .logo-and-title h1 {
-        font-size: 1.5em;
-        /* display: none; */
-    }
-
-    .logo-and-title img {
-        width: 50px;
-        height: auto;
-    }
-
-    .logo-and-title {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-
-    nav {
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .search-bar {
-        flex-direction: row;
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .search-bar input,
+    .heading a,
+    .logo-and-title h1,
     nav a {
-        font-size: 0.7em;
+        font-size: 1em;
     }
 
-    .heading a {
-        font-size: 1.5em;
+    nav a,
+    .search-bar input {
+        font-size: 0.7em;
     }
 
     .product-box {
@@ -942,12 +820,6 @@ nav a:hover {
         width: calc((100% / 5));
     }
 
-    .content {
-        margin: 0;
-        padding: 15px;
-        min-height: 60vh;
-        /* font-size: 2em; */
-    }
 
     header nav a {
         font-size: 1.5em;
