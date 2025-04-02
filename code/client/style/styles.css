@@ -36,7 +36,8 @@ html {
     margin: auto;
     justify-content: center;
     align-items: center;
-    padding: 8% 10px;
+    padding: 0px 10px;
+    min-height: 85vh;
 }
 
 .sticky {
@@ -55,7 +56,6 @@ footer {
     color: #eeeef0;
     text-align: center;
     font-size: 18px;
-    /* z-index: 2; */
 }
 
 footer nav {
@@ -75,7 +75,7 @@ header {
     flex-wrap: wrap;
     align-items: center;
     box-sizing: border-box;
-    padding: 0 10px;
+    padding: 0 15px;
     gap: 5px;
 }
 
@@ -86,7 +86,6 @@ header:hover {
 
 nav {
     display: flex;
-    justify-content: right;
     align-items: center;
     padding: 0;
     margin: 0 20px;
@@ -133,17 +132,15 @@ nav {
 .search-bar {
     position: relative;
     display: flex;
-    justify-content: space-around;
     align-items: center;
     min-width: 300px;
-    margin: auto;
+    margin-left: auto;
     height: 40px;
     outline: none;
     background: rgba(238, 238, 240, 0.15);
     border: 1px solid rgba(238, 238, 240, 0.2);
     border-radius: 25px;
     gap: 0;
-    flex-grow: 1;
     flex: 0.35;
 }
 
@@ -218,6 +215,7 @@ nav a {
     border: none;
     border-radius: 5px;
     gap: 5px;
+    margin: 10px 0;
 }
 
 nav a:has(> svg) {
@@ -403,12 +401,12 @@ nav a:hover {
 
 .container {
     display: flex;
-    /* margin: 0;
-    padding: 25% 0px; */
+    /* margin: 0;*/
+    /* padding: 25% 0px;  */
     justify-content: center;
     align-items: center;
-    /* min-height: 100%; */
     background-color: transparent;
+    min-height: 85vh;
 }
 
 .login-container,
@@ -785,7 +783,7 @@ nav a:hover {
     .heading a,
     .logo-and-title h1,
     nav a {
-        font-size: 1em;
+        font-size: 1.5em;
     }
 
     nav a,
@@ -827,5 +825,12 @@ nav a:hover {
 
     .logo-and-title h1 {
         font-size: 3em;
+    }
+}
+
+@media (max-width:694px) {
+    .search-bar {
+        margin: auto;
+        justify-content: center;
     }
 }
