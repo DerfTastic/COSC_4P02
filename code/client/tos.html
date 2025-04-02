@@ -4,53 +4,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms Of Service</title>
-    <script src="/js/api.js"></script>
+    <title>Terms of Service | Ticket Express</title>
+    <script src="/js/api.js" defer></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <style>
+        /* Page-specific override to remove gradient */
+        body.terms-background {
+            background: #1b263b;
+        }
+    </style>
 </head>
-<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
-<body>
-    <div class="content">
-        <!-- STUFF GOES HERE -->
-         <h1>1. Introduction</h1>
-         <p>Ticket Express is an event management and ticketing service.</p>
+<body class="terms-background">
+    <!-- Header Partial -->
+    <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
-         <h1>2. User Account and Responsiblities</h1>
-         <p>All users of ticket express are obligated to register with the application.</p>
+    <main class="content" style="max-width: 900px; margin: auto; background-color: rgba(238,238,240,0.05); border-radius: 15px; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.3);">
+        <section>
+            <h1 style="color: #f4f4f9; font-size: 2.5rem; margin-bottom: 0.5em;">Terms of Service</h1>
+            <p><strong>Effective Date:</strong> April 9, 2025</p>
+            <p><strong>Last Updated:</strong> April 2, 2025</p>
+        </section>
 
-         <h1>3. Event Organization and Attendee Obligations</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <p>These Terms of Service ("Terms") govern your use of the <strong>Ticket Express</strong> platform ("Service") provided by Group 17 at Brock University ("we", "us", "our"). By accessing or using the Service, you agree to be bound by these Terms.</p>
+        </section>
 
-         <h1>4. Ticket Sales, Pricing, and Refunds</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>1. Eligibility</h2>
+            <p>You must be at least 16 years old and capable of entering into a binding agreement. Users under 18 must have parental consent.</p>
+        </section>
 
-         <h1>5. Premium Subscription Terms</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>2. User Accounts</h2>
+            <ul>
+                <li>Provide accurate and complete information.</li>
+                <li>You are responsible for account security and all activity under your login.</li>
+                <li>We may suspend accounts that violate these Terms.</li>
+            </ul>
+        </section>
 
-         <h1>6. Secure Payment Processing</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>3. Roles and Access</h2>
+            <p>User roles include Attendee, Organizer, and Admin. You agree not to access features beyond your role permissions.</p>
+        </section>
 
-         <h1>7. Intellectual Property and Content Ownership</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>4. Event Listings and Ticketing</h2>
+            <p>Event content is provided by organizers. Ticket Express delivers tickets digitally. Organizers are responsible for ticket validation.</p>
+        </section>
 
-         <h1>8. Privacy Policy and Data Handling</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>5. Payments and Refunds</h2>
+            <p>Payments are processed via third-party systems. Ticket Express does not process refunds unless permitted by the organizer.</p>
+        </section>
 
-         <h1>9. Limitation of Liability and Disclaimers</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>6. Acceptable Use</h2>
+            <ul>
+                <li>Do not use the platform illegally or to harm others.</li>
+                <li>Do not attempt to bypass security or access restricted areas.</li>
+            </ul>
+        </section>
 
-         <h1>10. Termination and Suspension</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>7. Intellectual Property</h2>
+            <p>All site content, branding, and code belong to the developers. You may not reuse without permission.</p>
+        </section>
 
-         <h1>11. Governing Law and Dispute Resolution</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>8. Termination</h2>
+            <p>We reserve the right to terminate access at our discretion for violations of these Terms.</p>
+        </section>
 
-         <h1>12. Contact Information</h1>
-         <p>...</p>
+        <section style="margin-top: 1.5em;">
+            <h2>9. Disclaimers</h2>
+            <p>The Service is provided "as is." We do not guarantee uptime, error-free performance, or security.</p>
+        </section>
 
-            <iframe src="https://places.googleapis.com/v1/places/GyuEmsRBfy61i59si0?fields=addressComponents&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"></iframe>
-    </div>
+        <section style="margin-top: 1.5em;">
+            <h2>10. Limitation of Liability</h2>
+            <p>We are not liable for indirect or consequential damages from use of the Service.</p>
+        </section>
+
+        <section style="margin-top: 1.5em;">
+            <h2>11. Governing Law</h2>
+            <p>These Terms are governed by Ontario and Canadian law. Legal disputes must be handled in Ontario.</p>
+        </section>
+
+        <section style="margin-top: 1.5em;">
+            <h2>12. Changes to These Terms</h2>
+            <p>We may update the Terms. Continued use after changes means you accept the new version.</p>
+        </section>
+
+        <section style="margin-top: 1.5em;">
+            <h2>Contact Us</h2>
+            <p>Group 17 – Ticket Express Development Team<br>
+                <a href="mailto:ticket.express.hr@gmail.com" style="color: #eeeef0; text-decoration: underline;">ticket.express.hr@gmail.com</a></p>
+        </section>
+    </main>
+
+    <!-- Footer Partial -->
     <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 
