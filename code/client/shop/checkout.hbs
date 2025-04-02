@@ -189,6 +189,7 @@
     <title>Checkout</title>
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 </head>
 <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
@@ -284,54 +285,70 @@
                 </form>
             </div>
         </div>
+        <script>
+            async function get_estamate(){
+                var items = new URLSearchParams(window.location.search).get("items");
+                items = JSON.parse(items);
+                return api.payment.create_estimate(items);
+            }
+
+            async function place_order(){
+                const payment = {};
+                var items = new URLSearchParams(window.location.search).get("items");
+                items = JSON.parse(items);
+                return api.payment.make_purchase({payment, items});
+            }
+        </script>
         <div class="order-summary">
-            <h1>Order Summary</h1>
-            <div class="sumary-title">
-                <h4>Event Name</h4>
-            </div>
-            <div class="pay-info">
-                <div class="price">
-                    <div class="item">
-                        <p>Ticket Name</p>
-                        <p>Ticket Name</p>
-                        <p>Ticket Name</p>
-                        <p>Ticket Name</p>
+
+            <script src="get_estamate()" type="text/x-handlebars-template">
+                <h1>Order Estimate</h1>
+                {{!-- <div class="sumary-title">
+                    <h4>Event Name</h4>
+                </div> --}}
+                <div class="pay-info">
+                    <div class="price">
+                        <div class="item">
+                            {{#each items}}
+                            <p>{{name}}</p>
+                            {{/each}}
+                        </div>
+                        <div class="item">
+                            {{#each items}}
+                            <p>{{purchase_price}}</p>
+                            {{/each}}
+                        </div>
                     </div>
-                    <div class="item">
-                        <p>$$$</p>
-                        <p>$$$</p>
-                        <p>$$$</p>
-                        <p>$$$</p>
+                    <div class="sub-total">
+                        <div class="item">
+                            <h4>Subtotal</h4>
+                        </div>
+                        <div class="item">
+                            <p>{{subtotal}}</p>
+                        </div>
+                    </div>
+                    <div class="price">
+                        <div class="item">
+                            <p>Service Fee</p>
+                            <p>Tax</p>
+                        </div>
+                        <div class="item">
+                            <p>{{fees}}</p>
+                            <p>{{gst}}</p>
+                        </div>
+                    </div>
+                    <div class="total">
+                        <div class="item">
+                            <h4>Total</h4>
+                        </div>
+                        <div class="item">
+                            <p>{{total}}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="sub-total">
-                    <div class="item">
-                        <h4>Subtotal</h4>
-                    </div>
-                    <div class="item">
-                        <p>$$$</p>
-                    </div>
-                </div>
-                <div class="price">
-                    <div class="item">
-                        <p>Service Fee</p>
-                        <p>Tax</p>
-                    </div>
-                    <div class="item">
-                        <p>$$$</p>
-                        <p>$$$</p>
-                    </div>
-                </div>
-                <div class="total">
-                    <div class="item">
-                        <h4>Total</h4>
-                    </div>
-                    <div class="item">
-                        <p>$$$</p>
-                    </div>
-                </div>
-            </div>
-            <button class="button" type="button">Place Order</button>
+            </script>
+            <div></div>
+            <button class="button" type="button" onclick="place_order()">Place Order</button>
             <h4>Security & Privacy</h4>
             <p>Every transaction on Ticket Express is secure. Any personal information you give us will be handled
                 according to our <a href="/privacy.html">Privacy Policy</a>.</p>

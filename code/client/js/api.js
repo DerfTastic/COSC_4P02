@@ -287,7 +287,7 @@ const api = {
         },
 
         /**
-         * @param {UserOrder} order 
+         * @param {UserOrderItem[]} order 
          * @param {Session} session 
          * @returns {Promise<BillEstimate>}
          */
