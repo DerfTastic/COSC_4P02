@@ -148,24 +148,39 @@
         .ticket-buttons button {
             padding: 0;
             font-size: 25px;
-            font-weight: 200;
+            font-weight: 500;
             border: none;
             height: 40px;
             width: 40px;
             background-color: #1b263b;
             color: white;
-            border-radius: 100%;
+            border-radius: 50%;
             cursor: pointer;
+            transition: box-shadow 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 0 #0f1a2a, 0 6px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            top: 0;
         }
 
         .ticket-buttons button:hover {
-            background-color: #1b263b;
+            background-color: #273a56;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #0f1a2a, 0 10px 15px rgba(0, 0, 0, 0.4);
             cursor: pointer;
+        }
+
+        .ticket-buttons button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #0f1a2a, 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .ticket-buttons button:disabled {
             background-color: #ccc;
+            color: #888;
             cursor: not-allowed;
+            box-shadow: 0 3px 0 #5f6368, 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: none;
+            opacity: 1.0;
         }
 
         .ticket-quantity {
@@ -175,6 +190,38 @@
             text-align: center;
             border: 1px solid #ccc;
             border-radius: 5px;
+        }
+
+        .purchase-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 
+                box-shadow 0.3s ease,
+                transform 0.2s ease,
+                background-color 0.2s ease;
+            
+            /* ✨ Initial shadow for 3D effect */
+            box-shadow: 0 6px 0 #388E3C, 0 10px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            top: 0;
+         }
+
+         
+         .purchase-button:hover {
+            background-color: #45A049;
+            box-shadow: 0 8px 0 #2e7d32, 0 15px 25px rgba(0, 0, 0, 0.4);
+            transform: translateY(-4px);
+        }
+
+        /* Active (click): "Press" the button down */
+        .purchase-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 0 #2e7d32, 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
         @media (max-width: 768px) {
@@ -238,11 +285,14 @@
                     <p id="eventDescription"></p>
 
                 </div>
+
                 <div class="right-column">
 
                     <div class="right-column ticketInfo">
                         <h2>Tickets:</h2>
+
                         <p id="eventTicketsDisplay"></p>
+
                     </div>
 
                     <div class="right-column organizerInfo">
@@ -256,6 +306,8 @@
                     <div class="right-column">
                         <div id="eventTags"></div>
                     </div>
+
+                    
                 </div>
             </div>
 
@@ -282,6 +334,7 @@
             try {
                 // Fetch event details
                 const get_event = await api.events.get_event_with_owner(eventId);
+                
                 const event = get_event;
                 const tags = get_event.tags;
                 const owner = get_event.owner;
@@ -396,6 +449,19 @@
 
                 eventTicketsDisplay.appendChild(ticketContainer);
             });
+
+            const purchaseButtonContainer = document.createElement('div');
+            purchaseButtonContainer.style.display = 'flex';
+            purchaseButtonContainer.style.justifyContent = 'flex-end';  // Right align
+            purchaseButtonContainer.style.marginTop = '20px';  // Add some spacing
+
+            const purchaseButton = document.createElement('button');
+            purchaseButton.classList.add('purchase-button');
+            purchaseButton.textContent = "Purchase Tickets";
+            purchaseButton.onclick = purchaseTicketQuantity;
+
+            purchaseButtonContainer.appendChild(purchaseButton);
+            eventTicketsDisplay.appendChild(purchaseButtonContainer);
         }
 
         // Function to update ticket quantity when user clicks +/- buttons
@@ -423,6 +489,12 @@
                 ticket.quantity = 0; // Reset to 0 if input is invalid
                 renderTickets(); // Re-render with valid input (reset to 0)
             }
+        }
+
+        // Function to make an API call to purchase the tickets when user clicks 'purchase tickets'
+        function purchaseTicketQuantity() {
+           ticket = api.events.get_tickets(id)
+
         }
 
     </script>

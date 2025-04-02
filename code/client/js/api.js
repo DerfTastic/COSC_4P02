@@ -815,6 +815,8 @@ const api = {
          * @param {number} id
          * @param {Session} session 
          * @returns {Promise<UserInfo>}
+         * 
+         * 
          */
         userinfo: async function (id, session = cookies.getSession()) {
             if(id==undefined||id==null)
