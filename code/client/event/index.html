@@ -318,6 +318,9 @@
         </div>
     </div>
     <script>
+        function goto_cart(items){
+            window.location.href = `/shop/checkout?items=${encodeURI(JSON.stringify(items))}`
+        }
         let id;
         window.onload = async function () {
             // Retrieve the event ID from the URL query parameters
@@ -497,8 +500,8 @@
 
         // Function to make an API call to purchase the tickets when user clicks 'purchase tickets'
         function purchaseTicketQuantity() {
-           ticket = api.events.get_tickets(id)
-
+           //ticket = api.events.get_tickets(id)
+           goto_cart([new TicketOrderItem(12), new TicketOrderItem(13), new TicketOrderItem(14)])
         }
 
     </script>
