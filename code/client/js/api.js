@@ -1355,7 +1355,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return JSON.stringify(context);
         });
         Handlebars.registerHelper('formatPrice', function(context) {
-            return new Intl.NumberFormat('en-CAN', { style: 'currency', currency: 'CAN' }).format(context/1000000);
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context/1000000);
         });
         
     }
