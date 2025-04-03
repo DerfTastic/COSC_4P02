@@ -266,7 +266,7 @@ async function make_purchases() {
                 billing: "My House",
                 card: "1234567890",
                 code: "921",
-                exparation: "25/45",
+                expiration: "25/45",
                 name: "Dw about it"
             },
             items: rand_items

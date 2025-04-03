@@ -3,24 +3,103 @@
  */
 package infrastructure.api;
 
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
+import infrastructure.MailServerSkeleton;
+import infrastructure.TestingUser;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.root.api.EventAPI;
+import server.infrastructure.root.api.PaymentAPI;
+import server.infrastructure.root.api.TicketsAPI;
 
+import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PaymentAPITest {
     private static DbManager db;
+    private final static MailServerSkeleton mail = new MailServerSkeleton();
 
-    private static String session;
+    static ArrayList<Long> events;
+    private static PaymentAPI.Ticket paymentTicket;
+    private static TicketsAPI.Ticket ticketTicket;
+
+    // This user will make payments
+    private final static TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
+    // This organizer will make things the user can pay for
+    private final static TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
 
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws BadRequest, SQLException, UnknownHostException, Unauthorized {
         try{
             db = new DbManagerImpl("payment_api_test", true, true, true);
         }catch (Exception e){
             throw new RuntimeException(e);
+        }
+
+        // Make some fake users
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
+        o1.register(mail, db, false);
+        o1.login(mail, db, false);
+        o1.makeOrganizer(db, null, mail);
+
+        // Make fake event(s)
+        var auth = o1.organizerSession(db, null);
+        events = new ArrayList<>();
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), false); // Event can't be a draft if we want to attach a ticket to it
+            trans.tryCommit();
+        }
+        var update = new EventAPI.UpdateEvent();
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("Hello, World!");
+            update.description = Optional.of("hello world of events");
+            update.type = Optional.of("Concert");
+            update.category = Optional.of("Music");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
+
+        // Create a fake ticket for the fake event
+        var session = o1.organizerSession(db, null);
+        Long ticket_id;
+        try (var trans = db.rw_transaction(null)) {
+            Long event_id = events.getFirst();
+            ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+        }
+        try (var trans = db.rw_transaction(null)) {
+            ticketTicket = new TicketsAPI.Ticket(ticket_id, "General Admission", 9_990000, 10L);
+            TicketsAPI.update_ticket(session, ticketTicket, ticket_id, trans);
+            trans.tryCommit();
+        }
+    }
+
+    @Test
+    @Order(1)
+    public void testMakingPurchase() throws SQLException, Unauthorized {
+        var userSesh = u1.userSession(db, null);
+        // Make payment
+        PaymentAPI.PaymentInfo payment = new PaymentAPI.PaymentInfo("John Doe", "123 Doe Street", "0987654312345678", "09/12", "999");
+        // Make order
+        List<PaymentAPI.OrderItem> ticketList = new ArrayList<>();
+        ticketList.add(new PaymentAPI.Ticket(ticketTicket.id()));
+        PaymentAPI.Order order = new PaymentAPI.Order(ticketList, payment);
+
+        // Make purchase
+        try (var trans = db.rw_transaction(null)) {
+            var receipt = PaymentAPI.make_purchase(userSesh, trans, order, null, mail);
+            System.out.println(receipt);
         }
     }
 

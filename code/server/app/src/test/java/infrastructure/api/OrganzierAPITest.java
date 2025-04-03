@@ -3,25 +3,130 @@
  */
 package infrastructure.api;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import framework.web.Util;
+import framework.web.error.BadRequest;
+import framework.web.error.Unauthorized;
+import infrastructure.MailServerSkeleton;
+import infrastructure.TestingUser;
+import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.root.api.EventAPI;
+import server.infrastructure.root.api.OrganizerAPI;
+import server.infrastructure.root.api.PaymentAPI;
+import server.infrastructure.root.api.TicketsAPI;
+
+import java.net.UnknownHostException;
+import java.security.SecureRandom;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OrganzierAPITest {
     private static DbManager db;
+    private final static MailServerSkeleton mail = new MailServerSkeleton();
 
-    private static String session;
+    static ArrayList<Long> events;
+    static ArrayList<Long> tickets = new ArrayList<>();
+    static long pid;
+
+    // This user will buy the ticket
+    private final static TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
+    // This organizer will make the event and scan the ticket
+    private final static TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
 
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws BadRequest, SQLException, Unauthorized, UnknownHostException {
         try{
             db = new DbManagerImpl("organizer_api_test", true, true, true);
         }catch (Exception e){
             throw new RuntimeException(e);
+        }
+
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
+        o1.register(mail, db, false);
+        o1.login(mail, db, false);
+        o1.makeOrganizer(db, null, mail);
+
+        // Make fake event(s) as o1 (organizer)
+
+        var auth = o1.organizerSession(db, null);
+        events = new ArrayList<>();
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), false); // Event can't be a draft if we want to attach a ticket to it
+            trans.tryCommit();
+        }
+        var update = new EventAPI.UpdateEvent();
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("Hello, World!");
+            update.description = Optional.of("hello world of events");
+            update.type = Optional.of("type");
+            update.category = Optional.of("category");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+
+        // Create a fake ticket for the fake event
+        var session = o1.organizerSession(db, null);
+        long ticket_id;
+        try (var trans = db.rw_transaction(null)) {
+            Long event_id = events.getFirst();
+            ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+        }
+        try (var trans = db.rw_transaction(null)) {
+            var newTicket = new TicketsAPI.Ticket(ticket_id, "General Admission", 9_990000, 10L);
+            tickets.add(newTicket.id());
+            TicketsAPI.update_ticket(session, newTicket, ticket_id, trans);
+            trans.tryCommit();
+        }
+
+        // Make user purchase a ticket and get scan info that will be embedded into the QR code
+
+        // Make payment
+        PaymentAPI.PaymentInfo payment = new PaymentAPI.PaymentInfo("John Doe", "123 Doe Street", "0987654312345678", "09/12", "999");
+        // Make order
+        List<PaymentAPI.OrderItem> ticketList = new ArrayList<>();
+        ticketList.add(new PaymentAPI.Ticket(tickets.getLast()));
+        PaymentAPI.Order order = new PaymentAPI.Order(ticketList, payment);
+
+        // Make purchase (from user)
+        var userSesh = u1.userSession(db, null);
+        try (var trans = db.rw_transaction(null)) {
+            PaymentAPI.Receipt receipt = PaymentAPI.make_purchase(userSesh, trans, order, null, mail);
+            System.out.println(receipt);
+            pid = ((PaymentAPI.TicketReceipt)receipt.items().getFirst()).id().pid(); // pid is not payment id, it's the id for the table "purchased_tickets"
+        }
+    }
+
+    @Test
+    @Order(1)
+    public void testScan() throws SQLException, Unauthorized, BadRequest {
+        var auth = o1.organizerSession(db, null);
+
+        // Make a salt
+        var rng = new byte[16];
+        new SecureRandom().nextBytes(rng);
+        var salt = Util.hashy(rng);
+
+        // Purchase that ticket
+        PaymentAPI.PurchasedTicketId ptid = new PaymentAPI.PurchasedTicketId(pid, salt);
+        OrganizerAPI.Scan scan = new OrganizerAPI.Scan(events.getFirst(), "John", ptid);
+        try(var trans = db.rw_transaction(null)) {
+            var receipt = OrganizerAPI.scan_ticket(auth, trans, scan);
+            System.out.println(receipt);
+            Assertions.assertNotNull(receipt);
         }
     }
 

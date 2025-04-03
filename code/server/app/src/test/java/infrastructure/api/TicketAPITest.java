@@ -9,10 +9,16 @@ import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
+import org.opentest4j.AssertionFailedError;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.root.api.EventAPI;
+import server.infrastructure.root.api.TicketsAPI;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -20,13 +26,19 @@ public class TicketAPITest {
     private static DbManager db;
     private final MailServerSkeleton mail = new MailServerSkeleton();
 
+    static ArrayList<Long> events;
+    ArrayList<Long> tickets;
+
     private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+    private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
 
     @BeforeAll
     public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
         db = new DbManagerImpl("ticket_api_test", true, true, true);
 
         // Make fake users
+        u1.register(mail, db, false);
+        u1.login(mail, db, false);
         o1.register(mail, db, false);
         o1.login(mail, db, false);
         o1.makeOrganizer(db, null, mail);
@@ -34,24 +46,141 @@ public class TicketAPITest {
             o1.makeOrganizer(db, null, mail);
             Assertions.fail("Can't make a user an organizer if they're already an organizer.");
         }catch (Exception ignore){}
+
+        // Make fake event(s)
+        var auth = o1.organizerSession(db, null);
+        events = new ArrayList<>();
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), false); // Event can't be a draft if we want to attach a ticket to it
+            trans.tryCommit();
+        }
+        var update = new EventAPI.UpdateEvent();
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("Hello, World!");
+            update.description = Optional.of("hello world of events");
+            update.type = Optional.of("Concert");
+            update.category = Optional.of("Music");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        update = new EventAPI.UpdateEvent();
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("A second event");
+            update.description = Optional.of("oooo the world of second events");
+            update.type = Optional.of("Conference");
+            update.category = Optional.of("Science");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
     }
 
     @Test
     @Order(1)
-    public void createTicketTest() throws SQLException, Unauthorized {
+    public void testCreatingTicket() throws SQLException, Unauthorized {
         var session = o1.organizerSession(db, null);
+        tickets = new ArrayList<>();
+        try (var trans = db.rw_transaction(null)) {
+            long event_id = events.get(0);
+            long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+            tickets.add(ticket_id);
+            Assertions.assertEquals(1, tickets.size());
+        }
+        try (var trans = db.rw_transaction(null)) {
+            long event_id = events.get(1);
+            long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+            tickets.add(ticket_id);
+        }
+        try (var trans = db.rw_transaction(null)) { // Add two tickets to the same event
+            Long event_id = events.get(1);
+            Long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+            tickets.add(ticket_id);
+            Assertions.assertEquals(3, tickets.size());
+        }
     }
 
     @Test
     @Order(2)
-    public void updateTicketTest() throws SQLException, Unauthorized {
-        var session = o1.organizerSession(db, null);
+    public void testGettingTickets() throws SQLException, Unauthorized, BadRequest {
+        var userSesh = u1.userSession(db, null);
+        List<TicketsAPI.Ticket> list1;
+        List<TicketsAPI.Ticket> list2;
+        try (var trans = db.ro_transaction(null)) {
+            long event_id = events.get(0);
+            list1 = TicketsAPI.get_tickets(userSesh, trans, event_id);
+        }
+        try (var trans = db.ro_transaction(null)) {
+            long event_id = events.get(1);
+            list2 = TicketsAPI.get_tickets(userSesh, trans, event_id);
+        }
+        List<TicketsAPI.Ticket> bothLists = new ArrayList<>();
+        bothLists.addAll(list1);
+        bothLists.addAll(list2);
+        System.out.println(bothLists);
+        if (bothLists.isEmpty()) {
+            throw new AssertionFailedError("No tickets were returned when trying to get_tickets(...)");
+        }
     }
 
     @Test
     @Order(3)
-    public void getTicketTest() throws SQLException, Unauthorized {
+    public void testUpdatingTickets() throws SQLException, Unauthorized, BadRequest {
         var session = o1.organizerSession(db, null);
+        try (var trans = db.rw_transaction(null)) {
+            Long tid = tickets.get(0);
+            TicketsAPI.Ticket ticketObj = new TicketsAPI.Ticket(tid, "General Admission", 9_990000, 10L);
+            TicketsAPI.update_ticket(session, ticketObj, tid, trans);
+            trans.tryCommit();
+        }
+        try (var trans = db.rw_transaction(null)) {
+            Long tid = tickets.get(0);
+            TicketsAPI.Ticket ticketObj = new TicketsAPI.Ticket(tid, "VIP", 49_990000, 5L);
+            TicketsAPI.update_ticket(session, ticketObj, tid, trans);
+            trans.tryCommit();
+        }
+    }
+
+    @Test
+    @Order(4)
+    public void testDeletingTicket() throws SQLException, Unauthorized, BadRequest {
+        // See how many tickets there were to begin with
+        var userSesh = u1.userSession(db, null);
+        List<TicketsAPI.Ticket> list;
+        try (var trans = db.ro_transaction(null)) {
+            Long event_id = events.getFirst();
+            Assertions.assertNotNull(event_id);
+            list = TicketsAPI.get_tickets(userSesh, trans, event_id);
+        }
+        System.out.println("Test: " + list.getFirst().id());
+
+        // Actually try to delete the ticket
+        var session = o1.organizerSession(db, null);
+        try (var trans = db.rw_transaction(null)) {
+            TicketsAPI.delete_ticket(session, trans, tickets.getLast());
+            trans.tryCommit();
+        }
+
+        // See if ticket was really deleted
+        list = new ArrayList<>();
+        try (var trans = db.ro_transaction(null)) {
+            Long event_id = events.getFirst();
+            Assertions.assertNotNull(event_id);
+            list = TicketsAPI.get_tickets(userSesh, trans, event_id);
+        }
+//        if (list.isEmpty()) {
+//            throw new AssertionFailedError("No tickets were returned when trying to get_tickets(...)");
+//        }
+        System.out.println("Test: " + list.getFirst().id());
     }
 
     @AfterAll
