@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderEvents(eventList) {
         eventsContainer.innerHTML = "";
         eventList.forEach(event => {
-            const eventDiv = document.createElement("div");
-            eventDiv.classList.add("event-box");
-            eventDiv.innerHTML = `
+            const ticketSVG = document.createElement("div");
+            ticketSVG.classList.add("event-box");
+            ticketSVG.innerHTML = `
                 <svg id="ticket-svg" style="cursor: pointer;" width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
                     <!-- Ticket Shape -->
                     <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
@@ -37,7 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <text x="250" y="150" font-size="14">Organizer: ${event.owner.name}</text>
                 </svg>
             `;
-            eventsContainer.appendChild(eventDiv);
+            ticketSVG.firstElementChild.addEventListener("click", e => {
+                window.location.href = `/event?id=${event.id}`
+            })
+            eventsContainer.appendChild(ticketSVG);
         });
     }
 
