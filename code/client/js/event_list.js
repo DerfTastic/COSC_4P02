@@ -5,108 +5,59 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentPage = 1;
     const eventsPerPage = 5;
+    let filteredEvents = [...events];
 
     function renderEvents(eventList) {
         eventsContainer.innerHTML = "";
         eventList.forEach(event => {
-            const ticketSVG = document.createElement("div");
-            ticketSVG.classList.add("event-box");
-            ticketSVG.innerHTML = `
-                <svg id="ticket-svg" style="cursor: pointer;" width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                          fill="#eeeef0"/>
-                    <!-- Placeholder Image -->
-                    <image href="/media/${event.picture}" preserveAspectRatio="none" x="30" y="40" width="200" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <!-- <text x="130" y="110" font-size="14" fill="#666" text-anchor="middle">Image</text> -->
-
-                     <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
-
-                    <!-- Event Details -->
-                    <text x="250" y="50" font-size="18" font-weight="bold" fill="#333">
-                     ${event.name.length > 20 ? `<tspan x="250" dy="0">${event.name.slice(0, event.name.lastIndexOf(" ", 20))}</tspan>
-                    <tspan x="250" dy="20">${event.name.slice(event.name.lastIndexOf(" ", 20) + 1)}</tspan>`
-                    : `<tspan x="250" dy="0">${event.name}</tspan>`}</text>
-
-                    <text x="250" y="90" font-size="14">Date: ${new Date(event.start).toUTCString()}</text>
-                    <text x="250" y="110" font-size="14">Location: ${event.location_name}</text>
-                    <text x="250" y="130" font-size="14">Category: ${event.category}</text>
-                    <text x="250" y="150" font-size="14">Organizer: ${event.owner.name}</text>
-                </svg>
+            const eventDiv = document.createElement("div");
+            eventDiv.classList.add("event-box");
+            eventDiv.innerHTML = `
+                <h3>${event.title}</h3>
+                <p>Date: ${event.date}</p>
+                <p>Location: ${event.location}</p>
+                <p>Category: ${event.category}</p>
+                <p>Tags: ${event.tags.join(", ")}</p>
+                <p>Price: $${event.price}</p>
             `;
-            /* <text x="250" y="150" font-size="14">Tags: ${event.tags.join(", ")}</text> */
-
-            ticketSVG.firstElementChild.addEventListener("click", e => {
-                window.location.href = `/event?id=${event.id}`
-            })
-            eventsContainer.appendChild(ticketSVG);
+            eventsContainer.appendChild(eventDiv);
         });
     }
 
-    function generatePagination() {
-        const eventList = document.querySelectorAll(".event-item"); // Select all events
-        const totalEvents = eventList.length;
-        const totalPages = Math.ceil(totalEvents / eventsPerPage); // Calculate total pages
-
-        const paginationContainer = document.getElementById("pagination");
+    function renderPagination() {
         paginationContainer.innerHTML = "";
+        const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+        if (totalPages <= 1) return;
 
-        if (totalPages <= 1) return; // No pagination needed if only one page
-
-        const createPageButton = (pageNumber, isActive = false) => {
-            const button = document.createElement("button");
-            button.textContent = pageNumber;
-            button.classList.add("pagination-btn");
-            if (isActive) {
-                button.classList.add("active");
-            }
-            button.addEventListener("click", () => goToPage(pageNumber));
-            return button;
+        const createButton = (text, page) => {
+            const btn = document.createElement("button");
+            btn.textContent = text;
+            btn.classList.add("page-btn");
+            if (page === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => changePage(page));
+            return btn;
         };
 
-        paginationContainer.appendChild(createPageButton(1, currentPage === 1)); // First page
+        paginationContainer.appendChild(createButton("⏮", 1));
+        paginationContainer.appendChild(createButton("◀", Math.max(1, currentPage - 1)));
 
-        if (currentPage > 3) {
-            paginationContainer.appendChild(document.createElement("span")).textContent = "...";
+        for (let i = 1; i <= totalPages; i++) {
+            paginationContainer.appendChild(createButton(i, i));
         }
 
-        if (currentPage > 2) {
-            paginationContainer.appendChild(createPageButton(currentPage - 1));
-        }
-
-        if (currentPage !== 1 && currentPage !== totalPages) {
-            paginationContainer.appendChild(createPageButton(currentPage, true));
-        }
-
-        if (currentPage < totalPages - 1) {
-            paginationContainer.appendChild(createPageButton(currentPage + 1));
-        }
-
-        if (currentPage < totalPages - 2) {
-            paginationContainer.appendChild(document.createElement("span")).textContent = "...";
-        }
-
-        paginationContainer.appendChild(createPageButton(totalPages, currentPage === totalPages)); // Last page
+        paginationContainer.appendChild(createButton("▶", Math.min(totalPages, currentPage + 1)));
+        paginationContainer.appendChild(createButton("⏭", totalPages));
     }
 
-    function goToPage(pageNumber) {
-        currentPage = pageNumber;
-        generatePagination();
-        displayEvents(); // Refresh events list
-    }
-
-    function displayEvents() {
-        const eventList = document.querySelectorAll(".event-item");
+    function changePage(page) {
+        const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
         const start = (currentPage - 1) * eventsPerPage;
         const end = start + eventsPerPage;
-
-        eventList.forEach((event, index) => {
-            event.style.display = index >= start && index < end ? "block" : "none";
-        });
+        renderEvents(filteredEvents.slice(start, end));
+        renderPagination();
     }
-
-    generatePagination();
-    displayEvents();
 
     let count = 1;
     let doing = false;
