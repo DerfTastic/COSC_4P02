@@ -43,41 +43,70 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function renderPagination() {
+    function generatePagination() {
+        const eventList = document.querySelectorAll(".event-item"); // Select all events
+        const totalEvents = eventList.length;
+        const totalPages = Math.ceil(totalEvents / eventsPerPage); // Calculate total pages
+
+        const paginationContainer = document.getElementById("pagination");
         paginationContainer.innerHTML = "";
-        const totalPages = Math.ceil(events.length / eventsPerPage);
 
-        if (totalPages <= 1) return;
+        if (totalPages <= 1) return; // No pagination needed if only one page
 
-        const createButton = (text, page) => {
-            const btn = document.createElement("button");
-            btn.textContent = text;
-            btn.classList.add("page-btn");
-            if (page === currentPage) btn.classList.add("active");
-            btn.addEventListener("click", () => changePage(page));
-            return btn;
+        const createPageButton = (pageNumber, isActive = false) => {
+            const button = document.createElement("button");
+            button.textContent = pageNumber;
+            button.classList.add("pagination-btn");
+            if (isActive) {
+                button.classList.add("active");
+            }
+            button.addEventListener("click", () => goToPage(pageNumber));
+            return button;
         };
 
-        paginationContainer.appendChild(createButton("⏮", 1));
-        paginationContainer.appendChild(createButton("◀", Math.max(1, currentPage - 1)));
+        paginationContainer.appendChild(createPageButton(1, currentPage === 1)); // First page
 
-        for (let i = 1; i <= totalPages; i++) {
-            paginationContainer.appendChild(createButton(i, i));
+        if (currentPage > 3) {
+            paginationContainer.appendChild(document.createElement("span")).textContent = "...";
         }
 
-        paginationContainer.appendChild(createButton("▶", Math.min(totalPages, currentPage + 1)));
-        paginationContainer.appendChild(createButton("⏭", totalPages));
+        if (currentPage > 2) {
+            paginationContainer.appendChild(createPageButton(currentPage - 1));
+        }
+
+        if (currentPage !== 1 && currentPage !== totalPages) {
+            paginationContainer.appendChild(createPageButton(currentPage, true));
+        }
+
+        if (currentPage < totalPages - 1) {
+            paginationContainer.appendChild(createPageButton(currentPage + 1));
+        }
+
+        if (currentPage < totalPages - 2) {
+            paginationContainer.appendChild(document.createElement("span")).textContent = "...";
+        }
+
+        paginationContainer.appendChild(createPageButton(totalPages, currentPage === totalPages)); // Last page
     }
 
-    function changePage(page) {
-        const totalPages = Math.ceil(events.length / eventsPerPage);
-        // if (page < 1 || page > totalPages) return;
-        currentPage = page;
+    function goToPage(pageNumber) {
+        currentPage = pageNumber;
+        generatePagination();
+        displayEvents(); // Refresh events list
+    }
+
+    function displayEvents() {
+        const eventList = document.querySelectorAll(".event-item");
         const start = (currentPage - 1) * eventsPerPage;
         const end = start + eventsPerPage;
-        renderEvents(events.slice(start, end));
-        renderPagination();
+
+        eventList.forEach((event, index) => {
+            event.style.display = index >= start && index < end ? "block" : "none";
+        });
     }
+
+    generatePagination();
+    displayEvents();
 
     let count = 1;
     let doing = false;
