@@ -1354,6 +1354,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         Handlebars.registerHelper('json', function(context) {
             return JSON.stringify(context);
         });
+        Handlebars.registerHelper('formatPrice', function(context) {
+            return new Intl.NumberFormat('en-CAN', { style: 'currency', currency: 'CAN' }).format(context/1000000);
+        });
         
     }
 
