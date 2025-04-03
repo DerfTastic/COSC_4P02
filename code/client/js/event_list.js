@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentPage = 1;
     const eventsPerPage = 5;
+    let events = [];
     let filteredEvents = [...events];
+    changePage(1);  
 
     function renderEvents(eventList) {
         eventsContainer.innerHTML = "";
@@ -13,12 +15,27 @@ document.addEventListener("DOMContentLoaded", function () {
             const eventDiv = document.createElement("div");
             eventDiv.classList.add("event-box");
             eventDiv.innerHTML = `
-                <h3>${event.title}</h3>
-                <p>Date: ${event.date}</p>
-                <p>Location: ${event.location}</p>
-                <p>Category: ${event.category}</p>
-                <p>Tags: ${event.tags.join(", ")}</p>
-                <p>Price: $${event.price}</p>
+                <svg id="ticket-svg" style="cursor: pointer;" width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                    <!-- Ticket Shape -->
+                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
+                          fill="#eeeef0"/>
+                    <!-- Placeholder Image -->
+                    <image href="/media/${event.picture}" preserveAspectRatio="none" x="30" y="40" width="200" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
+                    <!-- <text x="130" y="110" font-size="14" fill="#666" text-anchor="middle">Image</text> -->
+
+                     <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
+
+                    <!-- Event Details -->
+                    <text x="250" y="50" font-size="18" font-weight="bold" fill="#333">
+                     ${event.name.length > 20 ? `<tspan x="250" dy="0">${event.name.slice(0, event.name.lastIndexOf(" ", 20))}</tspan>
+                    <tspan x="250" dy="20">${event.name.slice(event.name.lastIndexOf(" ", 20) + 1)}</tspan>`
+                    : `<tspan x="250" dy="0">${event.name}</tspan>`}</text>
+
+                    <text x="250" y="90" font-size="14">Date: ${new Date(event.start).toUTCString()}</text>
+                    <text x="250" y="110" font-size="14">Location: ${event.location_name}</text>
+                    <text x="250" y="130" font-size="14">Category: ${event.category}</text>
+                    <text x="250" y="150" font-size="14">Organizer: ${event.owner.name}</text>
+                </svg>
             `;
             eventsContainer.appendChild(eventDiv);
         });
@@ -28,27 +45,51 @@ document.addEventListener("DOMContentLoaded", function () {
         paginationContainer.innerHTML = "";
         const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
         if (totalPages <= 1) return;
-
-        const createButton = (text, page) => {
+    
+        const createButton = (text, page, isActive = false) => {
             const btn = document.createElement("button");
             btn.textContent = text;
             btn.classList.add("page-btn");
-            if (page === currentPage) btn.classList.add("active");
+            if (isActive) btn.classList.add("active");
             btn.addEventListener("click", () => changePage(page));
             return btn;
         };
-
-        paginationContainer.appendChild(createButton("⏮", 1));
-        paginationContainer.appendChild(createButton("◀", Math.max(1, currentPage - 1)));
-
-        for (let i = 1; i <= totalPages; i++) {
-            paginationContainer.appendChild(createButton(i, i));
+    
+        // Always show first page
+        paginationContainer.appendChild(createButton(1, 1, currentPage === 1));
+    
+        // Ellipses if needed
+        if (currentPage > 3) {
+            paginationContainer.appendChild(document.createTextNode("..."));
         }
-
-        paginationContainer.appendChild(createButton("▶", Math.min(totalPages, currentPage + 1)));
-        paginationContainer.appendChild(createButton("⏭", totalPages));
+    
+        // Show previous page if it's not 1
+        if (currentPage > 2) {
+            paginationContainer.appendChild(createButton(currentPage - 1, currentPage - 1));
+        }
+    
+        // Show the current page
+        if (currentPage !== 1 && currentPage !== totalPages) {
+            paginationContainer.appendChild(createButton(currentPage, currentPage, true));
+        }
+    
+        // Show next page if it's not the last one
+        if (currentPage < totalPages - 1) {
+            paginationContainer.appendChild(createButton(currentPage + 1, currentPage + 1));
+        }
+    
+        // Ellipses if needed
+        if (currentPage < totalPages - 2) {
+            paginationContainer.appendChild(document.createTextNode("..."));
+        }
+    
+        // Always show the last page
+        if (totalPages > 1) {
+            paginationContainer.appendChild(createButton(totalPages, totalPages, currentPage === totalPages));
+        }
     }
-
+    
+    
     function changePage(page) {
         const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
         if (page < 1 || page > totalPages) return;
@@ -104,6 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 currentPage = 1;
                 events = await api.search.search_events_with_owner(search);
+                filteredEvents = [...events];
                 changePage(1);
             } while (mycount != count);
         } catch (e) {
