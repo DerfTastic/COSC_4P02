@@ -326,8 +326,6 @@
             id = eventId;
             const profileLink = document.getElementById('profileLink');
 
-            // Update the href dynamically
-            profileLink.href = `/user/profile?id=${eventId}`;
 
 
             // Check if event ID is provided
@@ -338,6 +336,8 @@
             try {
                 // Fetch event details
                 const get_event = await api.events.get_event_with_owner(eventId);
+
+            profileLink.href = `/user/profile?id=${get_event.owner.id}`;
                 
                 const event = get_event;
                 const tags = get_event.tags;
