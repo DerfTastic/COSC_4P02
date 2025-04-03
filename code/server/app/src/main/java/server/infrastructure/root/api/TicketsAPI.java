@@ -31,7 +31,7 @@ public class TicketsAPI {
             stmt.setLong(":id", event_id);
             var rs = stmt.executeQuery();
             if (!rs.next() || rs.getLong("owner_id") != session.user_id())
-                throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
+                throw new Unauthorized("Cannot find specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
         try (var stmt = trans.namedPreparedStatement("insert into tickets values (null, :event_id, '', 0, null) returning id")) {
@@ -48,10 +48,10 @@ public class TicketsAPI {
             stmt.setLong(":ticket_id", ticket_id);
             var rs = stmt.executeQuery();
             if (!rs.next())
-                throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
+                throw new Unauthorized("Cannot find specified event, it either doesn't exist or you do not have ownership of it");
             var og_id = rs.getLong("owner_id");
             if(og_id != session.user_id())
-                throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
+                throw new Unauthorized("Cannot find specified event, it either doesn't exist or you do not have ownership of it");
         }
         long result;
         try (var stmt = trans.namedPreparedStatement("update tickets set name=:name, price=:price, total_tickets=:total_tickets where id=:id")) {
@@ -73,11 +73,11 @@ public class TicketsAPI {
             var rs = stmt.executeQuery();
 
             if (!rs.next())
-                throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
+                throw new Unauthorized("Cannot find specified event, because it doesn't exist");
             var draft = rs.getBoolean("draft");
             var og_id = rs.getLong("owner_id");
             if(draft&&og_id!=(session==null?0: session.user_id()))
-                throw new Unauthorized("Cannot modify specified event, it either doesn't exist or you do not have ownership of it");
+                throw new Unauthorized("Cannot find specified event, because it's a draft and you do not have ownership over it");
         }
         List<Ticket> result;
         try (var stmt = trans.namedPreparedStatement("select * from tickets where event_id=:event_id")) {

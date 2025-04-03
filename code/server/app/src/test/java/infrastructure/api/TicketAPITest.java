@@ -3,6 +3,7 @@
  */
 package infrastructure.api;
 
+import framework.web.annotations.url.Path;
 import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
@@ -11,8 +12,10 @@ import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import org.opentest4j.AssertionFailedError;
 import server.infrastructure.DbManagerImpl;
+import server.infrastructure.param.NotRequired;
 import server.infrastructure.root.api.EventAPI;
 import server.infrastructure.root.api.TicketsAPI;
+import server.infrastructure.session.UserSession;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -30,7 +33,10 @@ public class TicketAPITest {
     ArrayList<Long> tickets;
 
     private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+    private final TestingUser o2 = new TestingUser("Organizer2", "organizer2@gmail.com", "password7");
     private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
+
+    private UserSession userSesh;
 
     @BeforeAll
     public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
@@ -39,6 +45,7 @@ public class TicketAPITest {
         // Make fake users
         u1.register(mail, db, false);
         u1.login(mail, db, false);
+        userSesh = u1.userSession(db, null);
         o1.register(mail, db, false);
         o1.login(mail, db, false);
         o1.makeOrganizer(db, null, mail);
@@ -46,8 +53,12 @@ public class TicketAPITest {
             o1.makeOrganizer(db, null, mail);
             Assertions.fail("Can't make a user an organizer if they're already an organizer.");
         }catch (Exception ignore){}
+        o2.register(mail, db, false);
+        o2.login(mail, db, false);
+        o2.makeOrganizer(db, null, mail);
 
-        // Make fake event(s)
+        // Make fake event 0    ("Hello, world")
+
         var auth = o1.organizerSession(db, null);
         events = new ArrayList<>();
         try(var trans = db.rw_transaction(null)){
@@ -67,16 +78,41 @@ public class TicketAPITest {
             EventAPI.update_event(auth, trans, events.getLast(), update);
             trans.tryCommit();
         }
+
+        // Make fake event 1    ("A second event")
+
         try(var trans = db.rw_transaction(null)){
             events.add(EventAPI.create_event(auth, trans));
             trans.tryCommit();
         }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), false); // Event can't be a draft if we want to attach a ticket to it
+            trans.tryCommit();
+        }
         update = new EventAPI.UpdateEvent();
         try(var trans = db.rw_transaction(null)){
-            update.name = Optional.of("A second event");
+            update.name = Optional.of("A second event of id 1");
             update.description = Optional.of("oooo the world of second events");
             update.type = Optional.of("Conference");
             update.category = Optional.of("Science");
+            EventAPI.update_event(auth, trans, events.getLast(), update);
+            trans.tryCommit();
+        }
+
+        // Make fake event 2    (is a draft)
+
+        try(var trans = db.rw_transaction(null)){
+            events.add(EventAPI.create_event(auth, trans));
+            trans.tryCommit();
+        }
+        try(var trans = db.rw_transaction(null)){
+            EventAPI.set_draft(auth, trans, events.getLast(), true); // Make sure event is a draft
+            trans.tryCommit();
+        }
+        update = new EventAPI.UpdateEvent();
+        try(var trans = db.rw_transaction(null)){
+            update.name = Optional.of("WIP draft event");
+            update.description = Optional.of("uhh idk i'm still working on this");
             EventAPI.update_event(auth, trans, events.getLast(), update);
             trans.tryCommit();
         }
@@ -92,37 +128,60 @@ public class TicketAPITest {
             long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
             trans.tryCommit();
             tickets.add(ticket_id);
-            Assertions.assertEquals(1, tickets.size());
         }
+        Assertions.assertEquals(1, tickets.size());
         try (var trans = db.rw_transaction(null)) {
             long event_id = events.get(1);
             long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
             trans.tryCommit();
             tickets.add(ticket_id);
         }
-        try (var trans = db.rw_transaction(null)) { // Add two tickets to the same event
+        try (var trans = db.rw_transaction(null)) { // Add a second ticket to that same event
             Long event_id = events.get(1);
             Long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
             trans.tryCommit();
             tickets.add(ticket_id);
-            Assertions.assertEquals(3, tickets.size());
+        }
+        Assertions.assertEquals(3, tickets.size());
+
+        // Adding a ticket to a draft event that does belong to the organizer adding the ticket
+        try (var trans = db.rw_transaction(null)) {
+            long event_id = events.get(2);
+            long ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+            tickets.add(ticket_id);
+        }
+        if (tickets.size() < 4) {
+            throw new AssertionFailedError("Wasn't able to add ticket to my draft event, even tho it was mine");
+        }
+
+        // Try to add a ticket to a draft event that doesn't belong to the organizer of that draft event
+        var o2sesh = o2.organizerSession(db, null);
+        try (var trans = db.rw_transaction(null)) {
+            long event_id = events.get(2);
+            long ticket_id = TicketsAPI.create_ticket(o2sesh, trans, event_id);
+            trans.tryCommit();
+            Assertions.fail("Shouldn't be able to add tickets to other organizer's draft events since they're not yours");
+        } catch (Exception ignore) {}
+
+    }
+
+    public static List<TicketsAPI.Ticket> tryToGetTickets(@NotRequired UserSession session, @Path long event_id) throws SQLException, BadRequest, Unauthorized {
+        try (var trans = db.ro_transaction(null)) {
+            return TicketsAPI.get_tickets(session, trans, event_id);
         }
     }
 
     @Test
     @Order(2)
     public void testGettingTickets() throws SQLException, Unauthorized, BadRequest {
-        var userSesh = u1.userSession(db, null);
+        var orgSesh = o1.organizerSession(db, null);
         List<TicketsAPI.Ticket> list1;
         List<TicketsAPI.Ticket> list2;
-        try (var trans = db.ro_transaction(null)) {
-            long event_id = events.get(0);
-            list1 = TicketsAPI.get_tickets(userSesh, trans, event_id);
-        }
-        try (var trans = db.ro_transaction(null)) {
-            long event_id = events.get(1);
-            list2 = TicketsAPI.get_tickets(userSesh, trans, event_id);
-        }
+        long event_id = events.get(0);
+        list1 = tryToGetTickets(orgSesh, event_id);
+        event_id = events.get(1);
+        list2 = tryToGetTickets(orgSesh, event_id);
         List<TicketsAPI.Ticket> bothLists = new ArrayList<>();
         bothLists.addAll(list1);
         bothLists.addAll(list2);
@@ -130,24 +189,40 @@ public class TicketAPITest {
         if (bothLists.isEmpty()) {
             throw new AssertionFailedError("No tickets were returned when trying to get_tickets(...)");
         }
+
+        try {
+            List<TicketsAPI.Ticket> list3;
+            event_id = events.get(2);
+            list3 = tryToGetTickets(userSesh, event_id);
+            Assertions.fail("Shouldn't be able to get tickets from a draft event that is not yours.");
+        } catch (Exception ignore){}
     }
 
     @Test
     @Order(3)
     public void testUpdatingTickets() throws SQLException, Unauthorized, BadRequest {
         var session = o1.organizerSession(db, null);
+        Long tid = tickets.get(0);
+        String name = "General Admission";
         try (var trans = db.rw_transaction(null)) {
-            Long tid = tickets.get(0);
-            TicketsAPI.Ticket ticketObj = new TicketsAPI.Ticket(tid, "General Admission", 9_990000, 10L);
+            TicketsAPI.Ticket ticketObj = new TicketsAPI.Ticket(tid, name, 9_990000, 10L);
             TicketsAPI.update_ticket(session, ticketObj, tid, trans);
             trans.tryCommit();
         }
+        // See if event was updated
+        var list = tryToGetTickets(userSesh, tid);
+        Assertions.assertEquals(name, list.getFirst().name());
+
+        String name2 = "VIP";
         try (var trans = db.rw_transaction(null)) {
-            Long tid = tickets.get(0);
-            TicketsAPI.Ticket ticketObj = new TicketsAPI.Ticket(tid, "VIP", 49_990000, 5L);
+            TicketsAPI.Ticket ticketObj = new TicketsAPI.Ticket(tid, name2, 49_990000, 5L);
             TicketsAPI.update_ticket(session, ticketObj, tid, trans);
             trans.tryCommit();
         }
+        // See if event was updated
+        var list2 = tryToGetTickets(userSesh, tid);
+        Assertions.assertEquals(name2, list2.getFirst().name());
+
     }
 
     @Test
@@ -157,30 +232,26 @@ public class TicketAPITest {
         var userSesh = u1.userSession(db, null);
         List<TicketsAPI.Ticket> list;
         try (var trans = db.ro_transaction(null)) {
-            Long event_id = events.getFirst();
+            Long event_id = events.get(1);
             Assertions.assertNotNull(event_id);
             list = TicketsAPI.get_tickets(userSesh, trans, event_id);
         }
-        System.out.println("Test: " + list.getFirst().id());
+        int initialSize = list.size();
 
         // Actually try to delete the ticket
         var session = o1.organizerSession(db, null);
         try (var trans = db.rw_transaction(null)) {
-            TicketsAPI.delete_ticket(session, trans, tickets.getLast());
+            TicketsAPI.delete_ticket(session, trans, tickets.get(1));
             trans.tryCommit();
         }
 
         // See if ticket was really deleted
-        list = new ArrayList<>();
         try (var trans = db.ro_transaction(null)) {
-            Long event_id = events.getFirst();
+            Long event_id = events.get(1);
             Assertions.assertNotNull(event_id);
             list = TicketsAPI.get_tickets(userSesh, trans, event_id);
         }
-//        if (list.isEmpty()) {
-//            throw new AssertionFailedError("No tickets were returned when trying to get_tickets(...)");
-//        }
-        System.out.println("Test: " + list.getFirst().id());
+        Assertions.assertEquals(initialSize - 1, list.size()); // Make sure there is one less ticket now after deleting
     }
 
     @AfterAll
