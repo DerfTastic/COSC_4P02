@@ -91,7 +91,8 @@ document.addEventListener("DOMContentLoaded", function () {
             paginationContainer.appendChild(createButton(totalPages, totalPages, currentPage === totalPages));
         }
     }
-    
+
+    document.getElementById("filterName").value = new URLSearchParams(window.location.search).get("search");
     
     function changePage(page) {
         const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
