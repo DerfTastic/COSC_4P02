@@ -7,6 +7,7 @@ import framework.web.error.BadRequest;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.*;
 import framework.db.DbManager;
 import server.infrastructure.DbManagerImpl;
@@ -27,12 +28,18 @@ public class PaymentAPITest {
 
     static ArrayList<Long> events;
     private static PaymentAPI.Ticket paymentTicket;
-    private static TicketsAPI.Ticket ticketTicket;
+    private static List<TicketsAPI.Ticket> ticketTickets = new ArrayList<>();
 
     // This user will make payments
     private final static TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
     // This organizer will make things the user can pay for
     private final static TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+
+    private static PaymentAPI.PaymentInfo paymentInfo;
+
+    // Order
+    private List<PaymentAPI.OrderItem> orderItemList = new ArrayList<>();
+    private static PaymentAPI.Order order;
 
     @BeforeAll
     public static void setup() throws BadRequest, SQLException, UnknownHostException, Unauthorized {
@@ -48,6 +55,9 @@ public class PaymentAPITest {
         o1.register(mail, db, false);
         o1.login(mail, db, false);
         o1.makeOrganizer(db, null, mail);
+
+        // Add payment info
+        paymentInfo = new PaymentAPI.PaymentInfo("John Doe", "123 Doe Street", "0987654312345678", "09/12", "999");
 
         // Make fake event(s)
         var auth = o1.organizerSession(db, null);
@@ -70,37 +80,121 @@ public class PaymentAPITest {
             trans.tryCommit();
         }
 
-        // Create a fake ticket for the fake event
+        // Create fake tickets for the fake event
+
         var session = o1.organizerSession(db, null);
-        Long ticket_id;
+        long ticket_id;
         try (var trans = db.rw_transaction(null)) {
             Long event_id = events.getFirst();
             ticket_id = TicketsAPI.create_ticket(session, trans, event_id);
             trans.tryCommit();
         }
         try (var trans = db.rw_transaction(null)) {
-            ticketTicket = new TicketsAPI.Ticket(ticket_id, "General Admission", 9_990000, 10L);
-            TicketsAPI.update_ticket(session, ticketTicket, ticket_id, trans);
+            var newTicket = new TicketsAPI.Ticket(ticket_id, "General Admission", 9_990000, 30L);
+            ticketTickets.add(newTicket);
+            TicketsAPI.update_ticket(session, ticketTickets.getLast(), ticket_id, trans);
+            trans.tryCommit();
+        }
+        long ticket_id2;
+        try (var trans = db.rw_transaction(null)) {
+            Long event_id = events.getFirst();
+            ticket_id2 = TicketsAPI.create_ticket(session, trans, event_id);
+            trans.tryCommit();
+        }
+        try (var trans = db.rw_transaction(null)) {
+            var newTicket = new TicketsAPI.Ticket(ticket_id2, "VIP", 39_990000, 10L);
+            ticketTickets.add(newTicket);
+            TicketsAPI.update_ticket(session, ticketTickets.getLast(), ticket_id2, trans);
             trans.tryCommit();
         }
     }
 
     @Test
     @Order(1)
-    public void testMakingPurchase() throws SQLException, Unauthorized {
+    public void testCreatingEstimates() throws SQLException, Unauthorized {
         var userSesh = u1.userSession(db, null);
-        // Make payment
-        PaymentAPI.PaymentInfo payment = new PaymentAPI.PaymentInfo("John Doe", "123 Doe Street", "0987654312345678", "09/12", "999");
+
         // Make order
-        List<PaymentAPI.OrderItem> ticketList = new ArrayList<>();
-        ticketList.add(new PaymentAPI.Ticket(ticketTicket.id()));
-        PaymentAPI.Order order = new PaymentAPI.Order(ticketList, payment);
+        orderItemList.add(new PaymentAPI.Ticket(ticketTickets.get(0).id()));
+        orderItemList.add(new PaymentAPI.Ticket(ticketTickets.get(1).id()));
+        orderItemList.add(new PaymentAPI.AccountOrganizerUpgrade());
+
+        // Create that estimate
+        PaymentAPI.Estimate est;
+        try (var trans = db.ro_transaction(null)) {
+            PaymentAPI.OrderItem[] orderListArr = new PaymentAPI.OrderItem[orderItemList.size()];
+            for (int i = 0; i < orderItemList.size(); i++) {
+                orderListArr[i] = orderItemList.get(i);
+            }
+            est = PaymentAPI.create_estimate(userSesh, trans, orderListArr);
+            System.out.println("\033[4;1mEstimate:\033[0m");
+            System.out.println("Items:");
+            for (PaymentAPI.ReceiptItem ri : est.items())
+                System.out.println("\t" + ri);
+
+            Assertions.assertNotEquals(0, est.subtotal());
+            System.out.println("Subtotal:\t" + PaymentAPI.formatPrice(est.subtotal()));
+            System.out.println("Fees:\t\t" + PaymentAPI.formatPrice(est.fees()));
+            System.out.println("GST:\t\t" + PaymentAPI.formatPrice(est.gst()));
+            System.out.println("\033[1mTotal:\033[0m\t\t" + PaymentAPI.formatPrice(est.total()));
+            Assertions.assertNotEquals(0, est.total());
+        }
+    }
+
+    @Test
+    @Order(2)
+    public void testMakingPurchase() throws SQLException, Unauthorized, BadRequest {
+        var userSesh = u1.userSession(db, null);
+
+        //TODO check how many tickets there are before the purchase so we can see if it decreases after
+
+        // Make an actual order
+        order = new PaymentAPI.Order(orderItemList, paymentInfo);
 
         // Make purchase
+        PaymentAPI.Receipt receipt;
         try (var trans = db.rw_transaction(null)) {
-            var receipt = PaymentAPI.make_purchase(userSesh, trans, order, null, mail);
-            System.out.println(receipt);
+            receipt = PaymentAPI.make_purchase(userSesh, trans, order, null, mail);
+            Assertions.assertNotNull(receipt);
+            System.out.println("Receipt 1 after purchase: " + receipt);
         }
+        // Make a second purchase with just an account upgrade in it
+        PaymentAPI.Order order2 = new PaymentAPI.Order(List.of(new PaymentAPI.AccountOrganizerUpgrade()), paymentInfo);
+        try (var trans = db.rw_transaction(null)) {
+            receipt = PaymentAPI.make_purchase(userSesh, trans, order2, null, mail);
+            Assertions.assertNotNull(receipt);
+            System.out.println("Receipt 2 after purchase: " + receipt);
+        }
+
+        //TODO Check that there are less tickets left now after purchasing (need to wait until there is a way to detect this)
+        TicketsAPI.Ticket ticket1, ticket2;
+        Long event_id;
+        try (var trans = db.ro_transaction(null)) {
+            event_id = events.getFirst();
+            Assertions.assertNotNull(event_id);
+            List<TicketsAPI.Ticket> list = TicketsAPI.get_tickets(userSesh, trans, event_id);
+            ticket1 = list.get(0);
+            ticket2 = list.get(1);
+        }
+        System.out.println("Tickets left for ticket \"" + ticket1.name() + "\" in event " + event_id + ": " + ticket1.total_tickets());
+//        Assertions.assertNotEquals(30, ticket.total_tickets());
+        System.out.println("Tickets left for ticket \"" + ticket2.name() + "\" in event " + event_id + ": " + ticket2.total_tickets());
+//        Assertions.assertNotEquals(10, ticket.total_tickets());
+    }
+
+    @Test
+    @Order(3)
+    public void testListingReceipts() throws SQLException, Unauthorized {
+        var userSesh = u1.userSession(db, null);
+        List<PaymentAPI.Receipt> rList;
+        try (var trans = db.ro_transaction(null)) {
+            rList = PaymentAPI.list_receipts(userSesh, trans);
+        }
+        Assertions.assertNotNull(rList);
+        Assertions.assertEquals(2, rList.size()); // Make sure both orders show up
+        System.out.println("\033[4;1mReceipt List:\033[0m");
+        for (var i : rList)
+            System.out.println("\t" + i);
     }
 
     @AfterAll

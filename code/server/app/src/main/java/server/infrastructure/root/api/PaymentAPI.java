@@ -277,7 +277,7 @@ public class PaymentAPI {
         return receipt;
     }
 
-    private static String formatPrice(long price) {
+    public static String formatPrice(long price) {
         return "$" + (price / 1000000) + "." + String.format("%06d", price % 1000000);
     }
 }
