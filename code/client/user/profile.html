@@ -12,6 +12,7 @@
 
     <!-- Cropper.js JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="/js/api.js"></script>
     <style>
         /* body {
             font-family: Arial, sans-serif;
@@ -358,8 +359,7 @@
             });
 
             document.querySelector(".go-pro-btn").addEventListener("click", function () {
-                // Redirect to Pro sign-up page
-                window.location.href = ""; // Replace with actual link
+                window.location.href = `/shop/checkout?items=${encodeURI(JSON.stringify([new AccountOrganizerUpgradeOrderItem()]))}`
             });
         });
         function openModal() {
@@ -427,17 +427,24 @@
             }
         }
 
-        function applyCrop() {
+        async function applyCrop() {
             const croppedCanvas = cropper.getCroppedCanvas();
 
             if (croppedCanvas) {
-                const croppedImageURL = croppedCanvas.toDataURL("image/png");
+                // console.log(croppedCanvas);
+                // const croppedImageURL = croppedCanvas.toData("image/png");
+                croppedCanvas.toBlob(async function(blob){
+                    if (currentImageType === "profile") {
+                        var id = await api.user.set_user_picture(blob);
+                        console.log(id);
+                        document.getElementById("profilePic").style.backgroundImage = `url(/media/${id})`;
+                    } else if (currentImageType === "banner") {
+                        var id = await api.user.set_user_banner_picture(blob);
+                        document.querySelector(".profile-banner").style.backgroundImage = `url(/media/${id})`;
+                    }
+                },'image/png'); 
 
-                if (currentImageType === "profile") {
-                    document.getElementById("profilePic").style.backgroundImage = `url(${croppedImageURL})`;
-                } else if (currentImageType === "banner") {
-                    document.querySelector(".profile-banner").style.backgroundImage = `url(${croppedImageURL})`;
-                }
+     
 
                 // Close the modal
                 closeImageCropper();
