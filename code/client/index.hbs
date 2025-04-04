@@ -36,7 +36,7 @@
             type="text/x-handlebars-template">
             {{#each @root}}
             <div class="carousel">
-                <div class="heading "><button class="arrow left" id="prev">&#10094;</button><a href="">{{title}}</a><button class="arrow right" id="next">&#10095;</button></div>
+                <div class="heading "><button class="arrow left" id="prev">&#10094;</button><a href="#" onclick="redirectToSearch('{{title}}')">{{title}}</a><button class="arrow right" id="next">&#10095;</button></div>
                 
                 <div class="product-container">
                     {{#each events}}
@@ -60,6 +60,11 @@
 
     </div>
     <div src="/partials/footer.html" type="text/x-html-template"></div>
+    <script>function redirectToSearch(title) {
+            const firstWord = title.split(' ')[0];
+            window.location.href = `event/search?search=${firstWord}`;
+        }
+    </script>
 </body>
 
 </html>
