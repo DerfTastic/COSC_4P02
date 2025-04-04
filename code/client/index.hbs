@@ -61,8 +61,9 @@
     </div>
     <div src="/partials/footer.html" type="text/x-html-template"></div>
     <script>function redirectToSearch(title) {
-            const firstWord = title.split(' ')[0];
-            window.location.href = `event/search?search=${firstWord}`;
+            const firstWord = title.split(' ')[0].split('/')[0];
+            const encodedWord = encodeURIComponent(firstWord);
+            window.location.href = `event/search?search=${encodedWord}`;
         }
     </script>
 </body>
