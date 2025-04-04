@@ -771,3 +771,57 @@ nav a:hover {
         font-size: 3em;
     }
 }
+
+/* 
+@media (max-width:1180px) {
+    .logo-and-title h1 {
+        display: none;
+    }
+}
+
+@media(max-width:870px) {
+    .search-bar {
+        margin-left: auto;
+    }
+
+    nav {
+        padding: auto;
+        margin: auto;
+    }
+
+    nav a,
+    .search-bar input {
+        font-size: 0.6em;
+    }
+
+    header,
+    .search-bar,
+    nav,
+    .logo-and-title img {
+        margin: 0;
+        padding: 0;
+        gap: 2px;
+    }
+
+    .logo-and-title img {
+        width: 3em;
+    }
+
+    .logo-and-title,
+    .search-bar {
+        justify-content: flex-start;
+        margin: 0;
+    }
+}
+
+@media(max-width:670px) {
+
+    nav a,
+    .search-bar input {
+        font-size: 0.5em;
+    }
+
+    .logo-and-title img {
+        width: 3em;
+    }
+} */
