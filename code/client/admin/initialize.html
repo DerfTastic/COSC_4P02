@@ -17,7 +17,7 @@
 </head>
 <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
-<body>
+<body onload="get_purchaser_ID()">
     <div class="content">
         <button onclick="delete_database_stuff()">Nuke DB (needs to be logged into admin)</button>
         <p>This isn't magic and doesn't run automatically it literally exists to "pretend" to be a bunch of users who
@@ -28,10 +28,20 @@
             Into The Text Box An Running It There</button>
         <button onclick="create_all_user_defined()">Populate From Json In Text Box</button>
         <textarea id="json"></textarea>
-        <br>
+        <br><br>
 
+        <form action="javascript:login_as_user('admin@localhost', 'admin')">
+            <button type="submit" class="btn-login">Login as admin and reload</button>
+        </form>
+        <form action="javascript:login_as_user('hichem@ben.el', 'hichem')">
+            <button type="submit" class="btn-login">Login as hichem and reload</button>
+        </form>
         <!-- To test random purchases -->
-        <button onclick="make_purchases()">Make 5 purchases</button>
+        <h4><u>For testing purchases:</u></h4>
+        <p>You will be creating an event as an organizer with userID #<span style="color:lightcoral; border: 2px solid lightcoral; padding: 2px" class="userID"></span></p>
+        <button onclick="make_event_and_ticket()">Make 1 event with 1 ticket with userID <span class="userID"></span></button>
+        <p>You will be purchasing as userID #<span style="color:lightcoral; border: 2px solid lightcoral; padding: 2px" class="userID"></span></p>
+        <button onclick="make_purchases()">Make 5 purchases with user ID <span class="userID"></span></button>
         <img id="qr" src="" />
         <br>
     </div>

@@ -249,6 +249,53 @@ async function create_tickets(tickets, event_id, session) {
     }));
 }
 
+async function get_purchaser_ID() {
+    var userInfo = await page.account.userinfo();
+    var id = userInfo.id;
+    for (const ele of document.getElementsByClassName("userID")) {
+        ele.innerHTML = id;
+    }
+}
+
+async function login_as_user(email, pass) {
+    var sesh;
+    try {
+        cookies.deleteSessionToken();
+        sesh = await api.user.login(email, pass)
+        cookies.setSession(sesh);
+    } catch ({ error, code }) {
+        alert(error);
+    }
+    location.reload(); 
+    if (utility.is_session_id_current(sesh)) {
+        get_purchaser_ID();
+    }
+}
+
+async function make_event_and_ticket() {
+    var eventID, ticketID;
+    session = cookies.getSession();
+    var eventTicketDiv = document.getElementById("eventTicketDiv");
+    try {
+        eventID = await api.events.create_event(session);
+        await api.events.set_draft(eventID, false, session);
+        ticketID = await api.tickets.create_ticket(eventID, session);
+        await api.tickets.update_ticket(ticketID, {
+            name: "General Admission",
+            price: 10000000,
+            total_tickets: 5
+        }, session);
+
+        const para = document.createElement("p");
+        const node = document.createTextNode("New event and ticket created. event: " + eventID + ",   ticket: " + ticketID);
+        para.appendChild(node);
+        eventTicketDiv.appendChild(para);
+    } catch(e){
+        console.log(e);
+        alert(e);
+    }
+}
+
 async function make_purchases() {
     try {
         var rand_items = []
@@ -257,9 +304,6 @@ async function make_purchases() {
         for(var i = 1; i <= 5; i++) {
             rand_items.push(new TicketOrderItem(i));
         }
-
-        // Make an admin session who's going to purchase these tickets
-        const session = await api.user.login("admin@localhost", "admin"); 
 
         const receipt_item = await api.payment.make_purchase({
             payment: {
@@ -272,8 +316,10 @@ async function make_purchases() {
             items: rand_items
         }, session);
 
+        console.log("Receipt:")
         console.log(receipt_item);
 
+        console.log("IDs of purchased_tickets:")
         // Make a QR for each purchased item
         for (var item of receipt_item.items) {
             var ptID = { // PurchasedTicketId
