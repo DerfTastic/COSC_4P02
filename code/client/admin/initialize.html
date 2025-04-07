@@ -33,15 +33,13 @@
         <form action="javascript:login_as_user('admin@localhost', 'admin')">
             <button type="submit" class="btn-login">Login as admin and reload</button>
         </form>
-        <form action="javascript:login_as_user('hichem@ben.el', 'hichem')">
-            <button type="submit" class="btn-login">Login as hichem and reload</button>
-        </form>
         <!-- To test random purchases -->
         <h4><u>For testing purchases:</u></h4>
         <p>You will be creating an event as an organizer with userID #<span style="color:lightcoral; border: 2px solid lightcoral; padding: 2px" class="userID"></span></p>
         <button onclick="make_event_and_ticket()">Make 1 event with 1 ticket with userID <span class="userID"></span></button>
+        <div id="eventTicketDiv"></div>
         <p>You will be purchasing as userID #<span style="color:lightcoral; border: 2px solid lightcoral; padding: 2px" class="userID"></span></p>
-        <button onclick="make_purchases()">Make 5 purchases with user ID <span class="userID"></span></button>
+        <button onclick="make_purchases()">Purchase the created ticket (above) with user ID <span class="userID"></span></button>
         <img id="qr" src="" />
         <br>
     </div>

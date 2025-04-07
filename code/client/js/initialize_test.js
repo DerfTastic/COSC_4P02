@@ -272,23 +272,23 @@ async function login_as_user(email, pass) {
     }
 }
 
+var createdEventID, createdTicketID;
+
 async function make_event_and_ticket() {
-    var eventID, ticketID;
     session = cookies.getSession();
     var eventTicketDiv = document.getElementById("eventTicketDiv");
     try {
-        eventID = await api.events.create_event(session);
-        await api.events.set_draft(eventID, false, session);
-        ticketID = await api.tickets.create_ticket(eventID, session);
-        await api.tickets.update_ticket(ticketID, {
+        createdEventID = await api.events.create_event(session);
+        await api.events.set_draft(createdEventID, false, session);
+        createdTicketID = await api.tickets.create_ticket(createdEventID, session);
+        await api.tickets.update_ticket(createdTicketID, {
             name: "General Admission",
             price: 10000000,
             total_tickets: 5
         }, session);
 
-        const para = document.createElement("p");
-        const node = document.createTextNode("New event and ticket created. event: " + eventID + ",   ticket: " + ticketID);
-        para.appendChild(node);
+        const para = document.createElement("div");
+        para.innerHTML = `<p>New event and ticket created. event: <span style="color:lime;">${createdEventID}</span>, ticket: <span style="color:lime;">${createdTicketID}</span></p>`
         eventTicketDiv.appendChild(para);
     } catch(e){
         console.log(e);
@@ -297,13 +297,13 @@ async function make_event_and_ticket() {
 }
 
 async function make_purchases() {
+    if (typeof window.createdTicketID === 'undefined') {
+        console.log("didn't make an event and ticket :(")
+        alert("didn't make an event and ticket :(")
+        return
+    }
     try {
-        var rand_items = []
-
-        // Assumes there are tickets for all ids bewteen 1-10
-        for(var i = 1; i <= 5; i++) {
-            rand_items.push(new TicketOrderItem(i));
-        }
+        var createdItems = [new TicketOrderItem(window.createdTicketID)]
 
         const receipt_item = await api.payment.make_purchase({
             payment: {
@@ -313,7 +313,7 @@ async function make_purchases() {
                 expiration: "25/45",
                 name: "Dw about it"
             },
-            items: rand_items
+            items: createdItems
         }, session);
 
         console.log("Receipt:")
@@ -328,7 +328,7 @@ async function make_purchases() {
             }
             console.log(item.id.pid);
             var QRimgsrc = gen_qr(JSON.stringify(ptID), 200);
-            appendImage(QRimgsrc);
+            appendQR(QRimgsrc, createdEventID, ptID);
         }
 
     }catch(e){
@@ -337,10 +337,13 @@ async function make_purchases() {
     }
 }
 
-/** Puts new <img> elements inside the ".content" div
- * @param {String} imgsrc The src attribute of the image
+/** Appends a new QR code, event info and purchasedTicketID information 
+ * (id and salt) inside the ".content" div
+ * @param {String} imgsrc The src attribute of the QR code image
+ * @param {integer} eventID The ID of the event associated with this QR code
+ * @param {PurchasedTicketId} PTIDinfo The purchased ticket id info
  */
-function appendImage(imgsrc) {
+function appendQR(imgsrc, eventID, PTIDinfo) {
     const contentDivs = document.getElementsByClassName("content");
     if (contentDivs.length === 0) {
         console.error("No content div");
@@ -355,5 +358,9 @@ function appendImage(imgsrc) {
     const newImageEle = document.createElement("img");
     newImageEle.src = imgsrc;
     contentDiv.appendChild(newImageEle.cloneNode(true));
+    const newInfoEle = document.createElement("p");
+    newInfoEle.innerHTML = "QR for event ID: <span style='color:lime'>" + eventID + "</span>";
+    newInfoEle.innerHTML += "\n" + JSON.stringify(PTIDinfo);
+    contentDiv.appendChild(newInfoEle.cloneNode(true));
     contentDiv.appendChild(document.createElement("br"));
 }
