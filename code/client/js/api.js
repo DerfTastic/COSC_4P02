@@ -1150,7 +1150,19 @@ const page = {
             try {
                 cookies.deleteSessionToken();
                 cookies.setSession(await api.user.login(email, password));
-                window.location.href = '/account';
+
+                // Check if user wants to go back to previous page after looging in instead of going to their account page
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.size > 0) {
+                    const paramValue = urlParams.get('goBack'); // Replace 'paramName' with your desired parameter name
+                    if (paramValue == 1) {
+                        window.history.back(); // Go back to user's previous page that they needed the account for
+                        window.location.reload();
+                    }
+                }
+                else {
+                    window.location.href = '/account';
+                }
             } catch ({ error, code }) {
                 alert(error);
             }
