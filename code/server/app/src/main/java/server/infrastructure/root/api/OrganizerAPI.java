@@ -46,6 +46,13 @@ public class OrganizerAPI {
                     rs.getLong("price"),
                     SqlSerde.nullableLong(rs, "total_tickets")
             ));
+        } catch (SQLException e) {
+            if (e.getMessage().equals("Expected a single result got none")) {
+                return new ScanResult(null, null, null, false, List.of());
+            }
+            else {
+                throw e;
+            }
         }
 
         EventAPI.Event event;
