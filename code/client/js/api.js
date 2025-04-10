@@ -1,6 +1,8 @@
 const apiRoot = "/api";
 
-
+/** 
+ * Payment Information such as credit card details, billing, and name. 
+ */
 class UserPayment{
     /** @type{string} */name
     /** @type{string} */billing
@@ -9,6 +11,9 @@ class UserPayment{
     /** @type{string} */code
 }
 
+/**
+ * A Ticket to an event that can be ordered and purchased.
+ */
 class TicketOrderItem{
     type = "Ticket"
     /** @type{number} */id
@@ -18,17 +23,29 @@ class TicketOrderItem{
     }
 }
 
+/**
+ * An account upgrade from user to organizer that can be ordered and purchased.
+ */
 class AccountOrganizerUpgradeOrderItem{
     type = "AccountOrganizerUpgrade"
 }
 
-/** @typedef{(TicketOrderItem|AccountOrganizerUpgradeOrderItem)} UserOrderItem */
+/** 
+ * @typedef{(TicketOrderItem|AccountOrganizerUpgradeOrderItem)} UserOrderItem Represents anything a user can purchase (one of two possible items denoted by "id" in its children types).
+*/
 
+/**
+ * A list of things a user orders (items) well as the UserPayment that they're paying with.
+ */
 class UserOrder{
     /** @type{UserPayment} */ payment
     /** @type{UserOrderItem[]} */ items
 }
 
+/**
+ * When a user purchases an order, this is returned.
+ * It contains the items they ordered, the payment_id, date, and cost information.
+ */
 class Receipt{
     /** @type{number} */payment_id
     /** @type{ReceiptItem[]} */items
@@ -57,11 +74,17 @@ class QRCodeScan{
     /** @type{PurchasedTicketId} */id
 }
 
+/** 
+ * Used for referencing rows in the database table named "purchased_tickets"
+ */
 class PurchasedTicketId{
     /** @type{number} */ id
     /** @type{string} */ salt
 }
 
+/**
+ * When a user purchases an order, the Receipt has a list of these to show what the user bought.
+ */
 class ReceiptItem{
     /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
     /** @type{string?} */name
@@ -69,6 +92,9 @@ class ReceiptItem{
     /** @type{number?} */purchase_price
 }
 
+/**
+ * Cost information if an order were to be purchased.
+ */
 class BillEstimate{
     /** @type{ReceiptItem[]} */items
     /** @type{number} */subtotal
@@ -1124,7 +1150,19 @@ const page = {
             try {
                 cookies.deleteSessionToken();
                 cookies.setSession(await api.user.login(email, password));
-                window.location.href = '/account';
+
+                // Check if user wants to go back to previous page after looging in instead of going to their account page
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.size > 0) {
+                    const paramValue = urlParams.get('goBack'); // Replace 'paramName' with your desired parameter name
+                    if (paramValue == 1) {
+                        window.history.back(); // Go back to user's previous page that they needed the account for
+                        window.location.reload();
+                    }
+                }
+                else {
+                    window.location.href = '/account';
+                }
             } catch ({ error, code }) {
                 alert(error);
             }
@@ -1353,6 +1391,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         Handlebars.registerHelper('json', function(context) {
             return JSON.stringify(context);
+        });
+        Handlebars.registerHelper('formatPrice', function(context) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context/1000000);
         });
         
     }

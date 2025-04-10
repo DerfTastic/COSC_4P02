@@ -3,90 +3,63 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    gap: 5px;
+    margin: 15px 0;
     border-bottom: #eeeef0 3px solid;
-  }
-
-  .footer-logo-container {
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 10px;
+    width: 100%;
   }
 
   .footer-logo {
-    width: 183px;
-    height: 180px;
-    flex-shrink: 0;
-  }
-
-  .text {
-    gap: 5px;
+    height: 20vh;
   }
 
   .text h1 {
-    font-size: 40px;
-    margin: 0;
-    margin-left: -25px;
+    margin: 0 0 0 -25px;
   }
 
   .contact {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: wrap;
   }
-  
-  .social-media{
-    gap:5px;
+
+  .social-media {
+    margin: 10px;
   }
 
   .contact-bottom {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    gap: 20px;
     flex-wrap: wrap;
   }
 
   .contact p {
-    text-align: left;
-    align-self: stretch;
     margin: 5px;
-  }
-
-  .contact-b-left {
-    float: left;
-    gap: 5px;
   }
 
   .tiny {
     display: flex;
-    justify-self: center;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    flex-wrap: wrap;
     font-size: 11px;
-  }
-
-  .tiny-left {
-    gap: 5px;
+    width: 100%;
   }
 
   .tiny a {
     color: #eeeef0;
     text-decoration: none;
   }
+
+  @media (max-width: 512px) {
+    .tiny {
+      justify-content: center;
+    }
+  }
 </style>
 
 <footer>
   <div class="main">
-    <div class="footer-logo-container">
-      <img src="/images/logo.png" class="footer-logo" alt="Logo" onclick="window.location.href='/'">
-    </div>
+    <img src="/images/logo.png" class="footer-logo" alt="Logo" onclick="window.location.href='/'">
     <div class="text">
       <h1 onclick="window.location.href='/'">TICKET EXPRESS</h1>
       <div class="contact">
@@ -112,7 +85,6 @@
       </div>
     </div>
   </div>
-
   <div class="tiny">
     <div class="tiny-left">
       <a href="/privacy">Privacy Policy •</a>

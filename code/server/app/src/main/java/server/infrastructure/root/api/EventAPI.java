@@ -72,7 +72,7 @@ public class EventAPI {
                 this.location_lat = rs.getDouble("location_lat");
                 this.location_long = rs.getDouble("location_long");
                 this.tags = new ArrayList<>();
-                this.owner = read_user? AccountAPI.PublicUserInfo.make(rs):null;
+                this.owner = read_user? AccountAPI.PublicUserInfo.make(rs, this.owner_id):null;
             }
     }
 

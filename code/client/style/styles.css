@@ -48,11 +48,14 @@ html {
 
 footer {
     position: relative;
-    justify-self: center;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
     border-top: 1px solid rgba(238, 238, 240, 0.2);
-    background: transparent;
+    background: rgba(42, 62, 89, 0.3);
+    backdrop-filter: blur(15px);
     color: #eeeef0;
     text-align: center;
     font-size: 18px;
@@ -97,13 +100,16 @@ nav {
 
 .logo-and-title {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
     gap: 5px;
     white-space: nowrap;
     max-width: 100%;
     flex: 0.3;
     padding: 0;
+    margin: 0;
+    margin-right: auto;
+    text-align: left;
 }
 
 .logo-and-title h1 {
@@ -133,8 +139,8 @@ nav {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     min-width: 300px;
-    margin-left: auto;
     height: 40px;
     outline: none;
     background: rgba(238, 238, 240, 0.15);
@@ -168,6 +174,7 @@ nav {
 
 input::selection {
     background-color: #1b263b;
+    color: #eeeef0;
     font-size: large;
 }
 
@@ -216,6 +223,7 @@ nav a {
     border-radius: 5px;
     gap: 5px;
     margin: 10px 0;
+    margin-left: auto;
 }
 
 nav a:has(> svg) {
@@ -428,6 +436,8 @@ nav a:hover {
 .login-form h2,
 .register-form h2,
 .reset-form h2 {
+    display: flex;
+    justify-content: center;
     margin: 0 0 20px;
     text-align: center;
 }
@@ -493,8 +503,8 @@ nav a:hover {
     font-family: 'Times New Roman', Times, serif;
     width: 100%;
     padding: 10px;
-    background-color: transparent;
-    border: 1px solid #eeeef0;
+    background-color: #2a3e59;
+    border: none;
     border-radius: 5px;
     color: #eeeef0;
     font-size: 20px;
@@ -583,72 +593,6 @@ nav a:hover {
     max-width: 100%;
     max-height: 300px;
     object-fit: cover;
-}
-
-.upload-container {
-    min-height: 50vh;
-    border: 2px dashed #eeeef0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    transition: border-color 0.3s ease-in-out;
-}
-
-.upload-container:hover {
-    border-color: #778da9;
-}
-
-.upload-container input {
-    display: none;
-}
-
-.upload-text {
-    font-size: 16px;
-    color: #eeeef0;
-    margin-top: 10px;
-}
-
-.preview-item {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #eeeef0;
-    cursor: pointer;
-    position: relative;
-}
-
-.create-event-container .remove-btn {
-    background: red;
-    color: #eeeef0;
-    border: none;
-    cursor: pointer;
-    padding: 3px 6px;
-    font-size: 12px;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    border-radius: 50%;
-}
-
-.upload-status {
-    font-size: 14px;
-    color: #415a77;
-    margin-top: 10px;
-    text-align: center;
-}
-
-.upload-preview {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: none;
 }
 
 @keyframes fadeIn {
@@ -828,9 +772,56 @@ nav a:hover {
     }
 }
 
-@media (max-width:694px) {
-    .search-bar {
-        margin: auto;
-        justify-content: center;
+/* 
+@media (max-width:1180px) {
+    .logo-and-title h1 {
+        display: none;
     }
 }
+
+@media(max-width:870px) {
+    .search-bar {
+        margin-left: auto;
+    }
+
+    nav {
+        padding: auto;
+        margin: auto;
+    }
+
+    nav a,
+    .search-bar input {
+        font-size: 0.6em;
+    }
+
+    header,
+    .search-bar,
+    nav,
+    .logo-and-title img {
+        margin: 0;
+        padding: 0;
+        gap: 2px;
+    }
+
+    .logo-and-title img {
+        width: 3em;
+    }
+
+    .logo-and-title,
+    .search-bar {
+        justify-content: flex-start;
+        margin: 0;
+    }
+}
+
+@media(max-width:670px) {
+
+    nav a,
+    .search-bar input {
+        font-size: 0.5em;
+    }
+
+    .logo-and-title img {
+        width: 3em;
+    }
+} */
