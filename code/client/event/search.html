@@ -154,7 +154,7 @@
             align-items: center;
             justify-content: center;
             transition: 0.3s ease-in-out;
-            box-shadow: 4px 4px 4px #f7f7f9;
+            box-shadow: 0px 2px 3px #f7f7f9;
         }
 
         .page-btn:hover {
@@ -241,10 +241,6 @@
             <label for="filterTag">Tag:</label>
             <input class="input-field" type="text" id="filterTag">
 
-            <label for="priceRange">Price Range:</label><br>
-            <input class="input-field" type="text" id="minPrice" placeholder="Min. price">
-            <input class="input-field" type="text" id="maxPrice" placeholder="Max. price"><br>
-
             <label for="dateRange">Event Date:</label><br>
             <input type="date" id="startDate">
             <input type="date" id="endDate"><br><br>
@@ -252,8 +248,6 @@
             <label for="sort">Sort By:</label>
             <select class="select-field" id="sort">
                 <option selected value="Select">---</option>
-                <option value="MinPrice">Price: Low to High</option>
-                <option value="MaxPrice">Price: High to Low</option>
                 <option value="TicketsAvailable">Tickets Available (Ascending)</option>
                 <option value="Closest">Closest Event</option>
                 <option value="StartTime">Start Time</option>

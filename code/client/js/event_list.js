@@ -135,8 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const locationFilter = document.getElementById("filterLocation").value.toLowerCase().trim();
                 const categoryFilter = document.getElementById("filterCategory").value.toLowerCase().trim();
                 const tagFilter = document.getElementById("filterTag").value.toLowerCase().trim();
-                const minPrice = parseFloat(document.getElementById("minPrice").value) || 0;
-                const maxPrice = parseFloat(document.getElementById("maxPrice").value) || Number.MAX_VALUE;
                 const startDate = document.getElementById("startDate").value;
                 const endDate = document.getElementById("endDate").value;
                 const sortBy = document.getElementById("sort").value;
