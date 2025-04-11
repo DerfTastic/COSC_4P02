@@ -110,7 +110,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    document.getElementById("filterName").value = new URLSearchParams(window.location.search).get("search");
+    document.getElementById("filterName").value = new URLSearchParams(window.location.search).get("name");
+    document.getElementById("filterCategory").value = new URLSearchParams(window.location.search).get("category");
+    document.getElementById("filterTag").value = new URLSearchParams(window.location.search).get("tags");
+    document.getElementById("filterLocation").value = new URLSearchParams(window.location.search).get("location");
 
     function changePage(page) {
         const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
@@ -134,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const nameFilter = document.getElementById("filterName").value.toLowerCase().trim();
                 const locationFilter = document.getElementById("filterLocation").value.toLowerCase().trim();
                 const categoryFilter = document.getElementById("filterCategory").value.toLowerCase().trim();
-                const tagFilter = document.getElementById("filterTag").value.toLowerCase().trim();
+                const tagFilter = document.getElementById("filterTag").value.split(" ").map(t => t.trim()).filter(t => t.length!=0).map(t => `%${t}%`);
                 const startDate = document.getElementById("startDate").value;
                 const endDate = document.getElementById("endDate").value;
                 const sortBy = document.getElementById("sort").value;
@@ -153,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     search.category_fuzzy = `%${categoryFilter}%`
                 }
                 if (tagFilter.length > 0) {
-                    search.tags = [tagFilter];
+                    search.tags = tagFilter;
                 }
                 if (startDate.length > 0) {
                     search.date_start = new Date(startDate).getTime()
