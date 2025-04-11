@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function changePage(page) {
         const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-        if (page < 1 || page > totalPages) return;
+        // if (page < 1 || page > totalPages) return;
         currentPage = page;
         const start = (currentPage - 1) * eventsPerPage;
         const end = start + eventsPerPage;
