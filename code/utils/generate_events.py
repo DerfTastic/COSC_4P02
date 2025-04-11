@@ -87,7 +87,7 @@ imgfileext = ".jpg"
 # just randomize in parts, like getting a good description
 AImodel = "gpt-4o-mini"
 client = OpenAI(
-  api_key="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"
+  api_key="" # in secrets file
 )
 
 # Function defintions
