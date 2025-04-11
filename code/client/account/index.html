@@ -118,11 +118,34 @@
             font-size: 24px;
             font-weight: bold;
             text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
+        
+        .user-bio {
+            margin-top: 8px;
+            text-align: left;
+            font-weight: normal;
+            font-size: 14px;
+            color: #fdfdfd;
+            white-space: pre-wrap;
+        }
+
+        #bioInput {
+            margin-top: 8px;
+            font-size: 14px;
+            width: 600px;
+            height: 300px;
+            padding: 8px;
+            box-sizing: border-box;
+            resize: vertical;
         }
 
         .go-pro-btn {
-            background: #ffcc00;
-            color: black;
+            background: linear-gradient(to right, #ff8a00, #e52e71);
+            color: white;
             padding: 10px 20px;
             border: none;
             cursor: pointer;
@@ -130,6 +153,14 @@
             position: absolute;
             right: 20px;
             top: 30px;
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        #goProBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
         }
 
         .tabs {
@@ -238,7 +269,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
     </style>
@@ -259,7 +290,7 @@
                     <button id="change-profile-btn" class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
                 </div>
                 
-                <button class="go-pro-btn">Go Pro</button>
+                <button class="go-pro-btn" id="goProBtn">Go Pro</button>
             </div>
 
             <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'profile')">
@@ -272,8 +303,8 @@
                         <img id="cropperImage" src="" alt="Crop Preview">
                     </div>
                     <div class="image-modal-buttons">
-                        <button onclick="applyCrop()">Save</button>
                         <button onclick="closeImageCropper()">Cancel</button>
+                        <button onclick="applyCrop()">Save</button>
                     </div>
                 </div>
             </div>
@@ -283,6 +314,9 @@
                     <button id="editProfileBtn" class="edit-profile-btn" onclick="toggleEditMode()"></button>
                     <span id="displayName">John Doe</span>
                     <input type="text" id="nameInput" value="John Doe" class="edit-field">
+
+                    <div id="displayBio" class="user-bio">This is a sample bio.</div>
+                    <textarea id="bioInput" class="edit-field"></textarea>
                 </div>
                 <div class="contact-info">
                     <div>
@@ -302,10 +336,10 @@
                         
 
             <div class="tabs">
-                <div class="tab active" data-tab="hosted">Events Hosted</div>
+                <div class="tab active" data-tab="hosted" id="hostedTab">Events Hosted</div>
                 <div class="tab" data-tab="history">Ticket History</div>
                 <div class="tab" data-tab="upcoming">Upcoming Events</div>
-                <div class="tab" data-tab="drafts">Drafts</div>
+                <div class="tab" data-tab="drafts" id="draftsTab">Drafts</div>
             </div>
 
             <div class="tab-content active" id="hosted">
@@ -352,7 +386,6 @@
         document.addEventListener("DOMContentLoaded", function () {
             const tabs = document.querySelectorAll(".tab");
             const contents = document.querySelectorAll(".tab-content");
-
             tabs.forEach(tab => {
                 tab.addEventListener("click", function () {
                     tabs.forEach(t => t.classList.remove("active"));
@@ -438,7 +471,23 @@
             document.getElementById("emailInput").value = info.disp_email==undefined?"":info.disp_email;
             document.getElementById("displayPhone").textContent = `${info.disp_phone_number}`;
             document.getElementById("phoneInput").value = info.disp_phone_number==undefined?"":info.disp_phone_number;
+            document.getElementById("displayBio").textContent = info.bio || "No bio yet.";
+            document.getElementById("bioInput").value = info.bio || "";
 
+            // Pro status logic
+            if (info.organizer){
+                // Show pro tabs
+                document.getElementById("hostedTab").classList.remove("hidden");
+                document.getElementById("draftsTab").classList.remove("hidden");
+                // Hide Go Pro button
+                document.getElementById("goProBtn").classList.add("hidden");
+            } else {
+                // Hide pro-only tabs
+                document.getElementById("hostedTab").classList.add("hidden");
+                document.getElementById("draftsTab").classList.add("hidden");
+                // Show Go Pro button
+                document.getElementById("goProBtn").classList.remove("hidden");
+            }
         }
         document.addEventListener("DOMContentLoaded", async () => {
             await load();
@@ -478,8 +527,8 @@
             let editBtn = document.getElementById("editProfileBtn");
             let isEditing = editBtn.classList.toggle("saving"); // Toggle "saving" state
 
-            let displayElements = ["displayName", "displayEmail", "displayPhone"];
-            let inputElements = ["nameInput", "emailInput", "phoneInput"];
+            let displayElements = ["displayName", "displayEmail", "displayPhone", "displayBio"];
+            let inputElements = ["nameInput", "emailInput", "phoneInput", "bioInput"];
 
             editBtn.innerHTML = isEditing ? saveIconSVG : editIconSVG;
 
@@ -492,6 +541,8 @@
                 document.getElementById("displayName").textContent = document.getElementById("nameInput").value;
                 document.getElementById("displayEmail").textContent = document.getElementById("emailInput").value;
                 document.getElementById("displayPhone").textContent = document.getElementById("phoneInput").value;
+                document.getElementById("displayBio").textContent = document.getElementById("bioInput").value;
+
 
                 displayElements.forEach(id => document.getElementById(id).style.display = "inline");
                 inputElements.forEach(id => document.getElementById(id).style.display = "none");
@@ -499,12 +550,14 @@
                 let newName = document.getElementById("nameInput").value;
                 let newEmail = document.getElementById("emailInput").value;
                 let newPhone = document.getElementById("phoneInput").value;
+                let newBio = document.getElementById("bioInput").value;
 
 
                 api.user.update_user({
                     name: newName,
                     disp_email: newEmail,
                     disp_phone_number: newPhone,
+                    bio: newBio,
                 });
             }
         }
