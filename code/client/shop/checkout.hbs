@@ -369,7 +369,7 @@
                         </div>
                         <div class="item">
                             {{#each items}}
-                            <p>{{purchase_price}}</p>
+                            <p>{{formatPrice purchase_price}}</p>
                             {{/each}}
                         </div>
                     </div>
@@ -378,7 +378,7 @@
                             <h4>Subtotal</h4>
                         </div>
                         <div class="item">
-                            <p>{{subtotal}}</p>
+                            <p>{{formatPrice subtotal}}</p>
                         </div>
                     </div>
                     <div class="price">
@@ -387,8 +387,8 @@
                             <p>Tax</p>
                         </div>
                         <div class="item">
-                            <p>{{fees}}</p>
-                            <p>{{gst}}</p>
+                            <p>{{formatPrice fees}}</p>
+                            <p>{{formatPrice gst}}</p>
                         </div>
                     </div>
                     <div class="sub-total total">
@@ -396,7 +396,7 @@
                             <h4>Total</h4>
                         </div>
                         <div class="item">
-                            <p>{{total}}</p>
+                            <p>{{formatPrice total}}</p>
                         </div>
                     </div>
                 </div>

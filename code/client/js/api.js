@@ -1393,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return JSON.stringify(context);
         });
         Handlebars.registerHelper('formatPrice', function(context) {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context/1000000);
+            return format_currency(context);
         });
         
     }
@@ -1406,6 +1406,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     document.dispatchEvent(new Event("dynamic_content_finished"));
 });
+
+function format_currency(number){
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(number/1000000);
+}
 
 function gen_qr(data, size=150){
     return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=`+encodeURI(data);
