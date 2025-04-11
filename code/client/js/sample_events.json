@@ -14,14 +14,14 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Creative",
-                    "New York City",
-                    "Hands-On",
-                    "Family-Friendly",
-                    "Artisanal",
-                    "Workshops"
+                    "diy",
+                    "crafts",
+                    "creative",
+                    "newyorkcity",
+                    "handson",
+                    "familyfriendly",
+                    "artisanal",
+                    "workshops"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=397",
                 "location_name": "Chelsea Market in New York City, New York",
@@ -49,13 +49,13 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Workshops",
-                    "Creativity",
-                    "Philadelphia",
-                    "Fun",
-                    "Handmade"
+                    "diy",
+                    "crafts",
+                    "workshops",
+                    "creativity",
+                    "philadelphia",
+                    "fun",
+                    "handmade"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=40",
                 "location_name": "The Crafty Nest in Philadelphia, Pennsylvania",
@@ -83,12 +83,12 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Creativity",
-                    "Hands-On",
-                    "Family-Friendly",
-                    "New York City"
+                    "diy",
+                    "crafts",
+                    "creativity",
+                    "handson",
+                    "familyfriendly",
+                    "newyorkcity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=414",
                 "location_name": "The Crafty Corner in New York City, New York",
@@ -121,12 +121,12 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Creative Projects",
-                    "Handmade",
-                    "Family Fun",
-                    "Chicago Events"
+                    "diy",
+                    "craftfair",
+                    "creativeprojects",
+                    "handmade",
+                    "familyfun",
+                    "chicagoevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=195",
                 "location_name": "The Makers Hall in Chicago, Illinois",
@@ -159,14 +159,14 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Creative Workshop",
-                    "St. Catharines",
-                    "Handmade",
-                    "Art",
-                    "Community",
-                    "Fun"
+                    "diy",
+                    "craftfair",
+                    "creativeworkshop",
+                    "stcatharines",
+                    "handmade",
+                    "art",
+                    "community",
+                    "fun"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=423",
                 "location_name": "Craft Haven Community Center in St. Catharines, Ontario",
@@ -199,13 +199,13 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Family-Friendly",
-                    "Handmade",
-                    "Workshops",
-                    "Los Angeles",
-                    "Creativity"
+                    "diy",
+                    "craftfair",
+                    "familyfriendly",
+                    "handmade",
+                    "workshops",
+                    "losangeles",
+                    "creativity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=217",
                 "location_name": "The Arts District Pavilion in Los Angeles, California",
@@ -238,12 +238,12 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "New York City",
-                    "Creative Community",
-                    "Hands-On Fun",
-                    "Family-Friendly"
+                    "diy",
+                    "craftfair",
+                    "newyorkcity",
+                    "creativecommunity",
+                    "handsonfun",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=429",
                 "location_name": "Maker Space NYC in New York City, New York",
@@ -276,14 +276,14 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Workshop",
-                    "Chicago",
-                    "Handmade",
-                    "Creative",
-                    "Fun",
-                    "Artisan"
+                    "diy",
+                    "crafts",
+                    "workshop",
+                    "chicago",
+                    "handmade",
+                    "creative",
+                    "fun",
+                    "artisan"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=150",
                 "location_name": "The Crafty Corner in Chicago, Illinois",
@@ -311,12 +311,12 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Craft Workshop",
-                    "Creative Fun",
-                    "Handmade",
-                    "Toronto",
-                    "Artisan Skills"
+                    "diy",
+                    "craftworkshop",
+                    "creativefun",
+                    "handmade",
+                    "toronto",
+                    "artisanskills"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=487",
                 "location_name": "Toronto Art Studio in Toronto, Ontario",
@@ -349,14 +349,14 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Workshop",
-                    "Crafting",
-                    "Fun",
-                    "Creative",
-                    "San Diego",
-                    "Hands-on",
-                    "Arts and Crafts"
+                    "diy",
+                    "workshop",
+                    "crafting",
+                    "fun",
+                    "creative",
+                    "sandiego",
+                    "handson",
+                    "artsandcrafts"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=410",
                 "location_name": "Sunny Art Studio in San Diego, California",
@@ -384,13 +384,13 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Craft",
-                    "Workshop",
-                    "Calgary",
-                    "Creativity",
-                    "Hands-On",
-                    "Arts and Crafts"
+                    "diy",
+                    "craft",
+                    "workshop",
+                    "calgary",
+                    "creativity",
+                    "handson",
+                    "artsandcrafts"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=175",
                 "location_name": "Calgary Craft Studio in Calgary, Alberta",
@@ -418,14 +418,14 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "Crafting",
-                    "DIY",
-                    "Toronto Events",
-                    "Makers",
-                    "Art",
-                    "Creativity",
-                    "Family Fun",
-                    "Workshops"
+                    "crafting",
+                    "diy",
+                    "torontoevents",
+                    "makers",
+                    "art",
+                    "creativity",
+                    "familyfun",
+                    "workshops"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=145",
                 "location_name": "Toronto Artisans Hall in Toronto, Ontario",
@@ -458,13 +458,13 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Los Angeles",
-                    "Handmade",
-                    "Family Fun",
-                    "Art",
-                    "Workshops"
+                    "diy",
+                    "craftfair",
+                    "losangeles",
+                    "handmade",
+                    "familyfun",
+                    "art",
+                    "workshops"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=162",
                 "location_name": "The Creative Hub in Los Angeles, California",
@@ -497,14 +497,14 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Creative",
-                    "New York City",
-                    "Hands-On",
-                    "Family-Friendly",
-                    "Artisanal",
-                    "Workshops"
+                    "diy",
+                    "crafts",
+                    "creative",
+                    "newyorkcity",
+                    "handson",
+                    "familyfriendly",
+                    "artisanal",
+                    "workshops"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=186",
                 "location_name": "Chelsea Market in New York City, New York",
@@ -532,13 +532,13 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Workshops",
-                    "Creativity",
-                    "Philadelphia",
-                    "Fun",
-                    "Handmade"
+                    "diy",
+                    "crafts",
+                    "workshops",
+                    "creativity",
+                    "philadelphia",
+                    "fun",
+                    "handmade"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=141",
                 "location_name": "The Crafty Nest in Philadelphia, Pennsylvania",
@@ -566,12 +566,12 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Creativity",
-                    "Hands-On",
-                    "Family-Friendly",
-                    "New York City"
+                    "diy",
+                    "crafts",
+                    "creativity",
+                    "handson",
+                    "familyfriendly",
+                    "newyorkcity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=300",
                 "location_name": "The Crafty Corner in New York City, New York",
@@ -604,12 +604,12 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Creative Projects",
-                    "Handmade",
-                    "Family Fun",
-                    "Chicago Events"
+                    "diy",
+                    "craftfair",
+                    "creativeprojects",
+                    "handmade",
+                    "familyfun",
+                    "chicagoevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=27",
                 "location_name": "The Makers Hall in Chicago, Illinois",
@@ -642,14 +642,14 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Creative Workshop",
-                    "St. Catharines",
-                    "Handmade",
-                    "Art",
-                    "Community",
-                    "Fun"
+                    "diy",
+                    "craftfair",
+                    "creativeworkshop",
+                    "stcatharines",
+                    "handmade",
+                    "art",
+                    "community",
+                    "fun"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=223",
                 "location_name": "Craft Haven Community Center in St. Catharines, Ontario",
@@ -682,13 +682,13 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Family-Friendly",
-                    "Handmade",
-                    "Workshops",
-                    "Los Angeles",
-                    "Creativity"
+                    "diy",
+                    "craftfair",
+                    "familyfriendly",
+                    "handmade",
+                    "workshops",
+                    "losangeles",
+                    "creativity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=130",
                 "location_name": "The Arts District Pavilion in Los Angeles, California",
@@ -721,12 +721,12 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "New York City",
-                    "Creative Community",
-                    "Hands-On Fun",
-                    "Family-Friendly"
+                    "diy",
+                    "craftfair",
+                    "newyorkcity",
+                    "creativecommunity",
+                    "handsonfun",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=305",
                 "location_name": "Maker Space NYC in New York City, New York",
@@ -759,14 +759,14 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Crafts",
-                    "Workshop",
-                    "Chicago",
-                    "Handmade",
-                    "Creative",
-                    "Fun",
-                    "Artisan"
+                    "diy",
+                    "crafts",
+                    "workshop",
+                    "chicago",
+                    "handmade",
+                    "creative",
+                    "fun",
+                    "artisan"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=238",
                 "location_name": "The Crafty Corner in Chicago, Illinois",
@@ -794,12 +794,12 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Craft Workshop",
-                    "Creative Fun",
-                    "Handmade",
-                    "Toronto",
-                    "Artisan Skills"
+                    "diy",
+                    "craftworkshop",
+                    "creativefun",
+                    "handmade",
+                    "toronto",
+                    "artisanskills"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=31",
                 "location_name": "Toronto Art Studio in Toronto, Ontario",
@@ -832,14 +832,14 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Workshop",
-                    "Crafting",
-                    "Fun",
-                    "Creative",
-                    "San Diego",
-                    "Hands-on",
-                    "Arts and Crafts"
+                    "diy",
+                    "workshop",
+                    "crafting",
+                    "fun",
+                    "creative",
+                    "sandiego",
+                    "handson",
+                    "artsandcrafts"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=453",
                 "location_name": "Sunny Art Studio in San Diego, California",
@@ -867,13 +867,13 @@
                 "category": "Workshop",
                 "type": "Workshop",
                 "tags": [
-                    "DIY",
-                    "Craft",
-                    "Workshop",
-                    "Calgary",
-                    "Creativity",
-                    "Hands-On",
-                    "Arts and Crafts"
+                    "diy",
+                    "craft",
+                    "workshop",
+                    "calgary",
+                    "creativity",
+                    "handson",
+                    "artsandcrafts"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=500",
                 "location_name": "Calgary Craft Studio in Calgary, Alberta",
@@ -901,14 +901,14 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "Crafting",
-                    "DIY",
-                    "Toronto Events",
-                    "Makers",
-                    "Art",
-                    "Creativity",
-                    "Family Fun",
-                    "Workshops"
+                    "crafting",
+                    "diy",
+                    "torontoevents",
+                    "makers",
+                    "art",
+                    "creativity",
+                    "familyfun",
+                    "workshops"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=265",
                 "location_name": "Toronto Artisans Hall in Toronto, Ontario",
@@ -941,13 +941,13 @@
                 "category": "Workshop",
                 "type": "Project fair",
                 "tags": [
-                    "DIY",
-                    "Craft Fair",
-                    "Los Angeles",
-                    "Handmade",
-                    "Family Fun",
-                    "Art",
-                    "Workshops"
+                    "diy",
+                    "craftfair",
+                    "losangeles",
+                    "handmade",
+                    "familyfun",
+                    "art",
+                    "workshops"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=92",
                 "location_name": "The Creative Hub in Los Angeles, California",
@@ -991,12 +991,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Artistic Vision",
-                    "Emerging Filmmakers",
-                    "St. Catharines",
-                    "Cultural Experience"
+                    "filmfestival",
+                    "cinematography",
+                    "artisticvision",
+                    "emergingfilmmakers",
+                    "stcatharines",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=489",
                 "location_name": "The Merli Tour Theatre in St. Catharines, Ontario",
@@ -1029,11 +1029,11 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "San Diego",
-                    "Cinematic Experience",
-                    "Independent Films",
-                    "Film Screening"
+                    "filmfestival",
+                    "sandiego",
+                    "cinematicexperience",
+                    "independentfilms",
+                    "filmscreening"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=452",
                 "location_name": "The Balboa Theatre in San Diego, California",
@@ -1066,13 +1066,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Artistic Showcases",
-                    "Independent Films",
-                    "Chicago Events",
-                    "Screening Night",
-                    "Cultural Experiences"
+                    "filmfestival",
+                    "cinematography",
+                    "artisticshowcases",
+                    "independentfilms",
+                    "chicagoevents",
+                    "screeningnight",
+                    "culturalexperiences"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=312",
                 "location_name": "The Grand Luxe Theatre in Chicago, Illinois",
@@ -1105,14 +1105,14 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "C cinema",
-                    "Toronto",
-                    "Short Films",
-                    "Documentaries",
-                    "Cinematic Experience",
-                    "Filmmaking",
-                    "Artistry"
+                    "filmfestival",
+                    "ccinema",
+                    "toronto",
+                    "shortfilms",
+                    "documentaries",
+                    "cinematicexperience",
+                    "filmmaking",
+                    "artistry"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=411",
                 "location_name": "Royal Cinema in Toronto, Ontario",
@@ -1145,13 +1145,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematic Arts",
-                    "St. Catharines",
-                    "Screening",
-                    "Cultural Event",
-                    "Independent Films",
-                    "Artistry"
+                    "filmfestival",
+                    "cinematicarts",
+                    "stcatharines",
+                    "screening",
+                    "culturalevent",
+                    "independentfilms",
+                    "artistry"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=163",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
@@ -1179,12 +1179,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematic Art",
-                    "Toronto",
-                    "Screening",
-                    "Cultural Event",
-                    "Short Films"
+                    "filmfestival",
+                    "cinematicart",
+                    "toronto",
+                    "screening",
+                    "culturalevent",
+                    "shortfilms"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=17",
                 "location_name": "Royal Alexandra Theatre in Toronto, Ontario",
@@ -1217,14 +1217,14 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Artistic Expression",
-                    "St. Catharines",
-                    "Cultural Event",
-                    "Screening",
-                    "Independent Films",
-                    "Film Lovers"
+                    "filmfestival",
+                    "cinematography",
+                    "artisticexpression",
+                    "stcatharines",
+                    "culturalevent",
+                    "screening",
+                    "independentfilms",
+                    "filmlovers"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=113",
                 "location_name": "St. Catharines Performing Arts Centre in St. Catharines, Ontario",
@@ -1257,14 +1257,14 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "Art",
-                    "Cultural Event",
-                    "Houston",
-                    "Screening",
-                    "Independent Film",
-                    "Filmmaking"
+                    "filmfestival",
+                    "cinema",
+                    "art",
+                    "culturalevent",
+                    "houston",
+                    "screening",
+                    "independentfilm",
+                    "filmmaking"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=196",
                 "location_name": "The Historic Rice Theatre in Houston, Texas",
@@ -1297,11 +1297,11 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "Screening",
-                    "Film Lovers",
-                    "Philadelphia Events"
+                    "filmfestival",
+                    "cinema",
+                    "screening",
+                    "filmlovers",
+                    "philadelphiaevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=65",
                 "location_name": "The Kimmel Center for the Performing Arts in Philadelphia, Pennsylvania",
@@ -1329,13 +1329,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematic Experience",
-                    "Toronto",
-                    "Artistry",
-                    "Screening",
-                    "Cultural Event",
-                    "Independent Films"
+                    "filmfestival",
+                    "cinematicexperience",
+                    "toronto",
+                    "artistry",
+                    "screening",
+                    "culturalevent",
+                    "independentfilms"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=108",
                 "location_name": "Royal Cinema in Toronto, Ontario",
@@ -1363,12 +1363,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "Film Screening",
-                    "Artistic Innovation",
-                    "Independent Films",
-                    "Cultural Experience"
+                    "filmfestival",
+                    "cinema",
+                    "filmscreening",
+                    "artisticinnovation",
+                    "independentfilms",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=53",
                 "location_name": "Lincoln Theatre in St. Catharines, Ontario",
@@ -1401,12 +1401,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Houston Events",
-                    "Cinematic Art",
-                    "Independent Films",
-                    "Cultural Celebration",
-                    "Film Screening"
+                    "filmfestival",
+                    "houstonevents",
+                    "cinematicart",
+                    "independentfilms",
+                    "culturalcelebration",
+                    "filmscreening"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=471",
                 "location_name": "Archer City Theater in Houston, Texas",
@@ -1434,14 +1434,14 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Cultural Event",
-                    "Ottawa",
-                    "Film Screening",
-                    "Independent Films",
-                    "Storytelling",
-                    "Visual Arts"
+                    "filmfestival",
+                    "cinematography",
+                    "culturalevent",
+                    "ottawa",
+                    "filmscreening",
+                    "independentfilms",
+                    "storytelling",
+                    "visualarts"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=271",
                 "location_name": "The ByTowne Cinema in Ottawa, Ontario",
@@ -1474,11 +1474,11 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Indie Films",
-                    "Screenings",
-                    "Cultural Event"
+                    "filmfestival",
+                    "cinematography",
+                    "indiefilms",
+                    "screenings",
+                    "culturalevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=204",
                 "location_name": "Royal Geographical Society in London, UK",
@@ -1511,13 +1511,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematic Experience",
-                    "Storytelling",
-                    "Calgary",
-                    "Independent Films",
-                    "Cultural Event",
-                    "Art House Films"
+                    "filmfestival",
+                    "cinematicexperience",
+                    "storytelling",
+                    "calgary",
+                    "independentfilms",
+                    "culturalevent",
+                    "arthousefilms"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=474",
                 "location_name": "The Calgary Performing Arts Centre in Calgary, Alberta",
@@ -1550,13 +1550,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematic Artistry",
-                    "Ottawa Events",
-                    "Storytelling",
-                    "Film Screening",
-                    "Cultural Experience",
-                    "Independent Film"
+                    "filmfestival",
+                    "cinematicartistry",
+                    "ottawaevents",
+                    "storytelling",
+                    "filmscreening",
+                    "culturalexperience",
+                    "independentfilm"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=338",
                 "location_name": "Ottawa Arts Centre in Ottawa, Ontario",
@@ -1589,11 +1589,11 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Emerging Filmmakers",
-                    "Artistic Expression",
-                    "Calgary Events"
+                    "filmfestival",
+                    "cinematography",
+                    "emergingfilmmakers",
+                    "artisticexpression",
+                    "calgaryevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=173",
                 "location_name": "Calgary Art Centre in Calgary, Alberta",
@@ -1626,12 +1626,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "Independent Films",
-                    "Cultural Event",
-                    "San Diego",
-                    "Artisan Screenings"
+                    "filmfestival",
+                    "cinema",
+                    "independentfilms",
+                    "culturalevent",
+                    "sandiego",
+                    "artisanscreenings"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=427",
                 "location_name": "The Historic Balboa Theatre in San Diego, California",
@@ -1664,11 +1664,11 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "St. Catharines",
-                    "Cultural Event",
-                    "Artistic Showcase"
+                    "filmfestival",
+                    "cinema",
+                    "stcatharines",
+                    "culturalevent",
+                    "artisticshowcase"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=102",
                 "location_name": "The Cinematic Arts Theatre in St. Catharines, Ontario",
@@ -1696,13 +1696,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "Calgary",
-                    "Art House",
-                    "Cinematic Experience",
-                    "Cultural Event",
-                    "Screening"
+                    "filmfestival",
+                    "cinema",
+                    "calgary",
+                    "arthouse",
+                    "cinematicexperience",
+                    "culturalevent",
+                    "screening"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=343",
                 "location_name": "Royal Canadian Legion, Calgary in Calgary, Alberta",
@@ -1730,11 +1730,11 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Philadelphia",
-                    "Art",
-                    "Cultural Experience"
+                    "filmfestival",
+                    "cinematography",
+                    "philadelphia",
+                    "art",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=473",
                 "location_name": "The Grand Hall at the Masonic Temple in Philadelphia, Pennsylvania",
@@ -1762,12 +1762,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Toronto Events",
-                    "Film Screening",
-                    "Arts and Culture",
-                    "Independent Films"
+                    "filmfestival",
+                    "cinematography",
+                    "torontoevents",
+                    "filmscreening",
+                    "artsandculture",
+                    "independentfilms"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=235",
                 "location_name": "Royal Ontario Museum in Toronto, Ontario",
@@ -1800,13 +1800,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematic Experience",
-                    "Ottawa",
-                    "Art House",
-                    "Short Films",
-                    "Independent Film",
-                    "Cultural Event"
+                    "filmfestival",
+                    "cinematicexperience",
+                    "ottawa",
+                    "arthouse",
+                    "shortfilms",
+                    "independentfilm",
+                    "culturalevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=194",
                 "location_name": "National Arts Centre in Ottawa, Ontario",
@@ -1839,13 +1839,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinematography",
-                    "Art House",
-                    "Independent Films",
-                    "Film Screening",
-                    "St. Catharines",
-                    "Cultural Event"
+                    "filmfestival",
+                    "cinematography",
+                    "arthouse",
+                    "independentfilms",
+                    "filmscreening",
+                    "stcatharines",
+                    "culturalevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=408",
                 "location_name": "The Meridian Centre in St. Catharines, Ontario",
@@ -1878,13 +1878,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "Artistic Films",
-                    "San Diego",
-                    "Independent Cinema",
-                    "Cultural Events",
-                    "Film Screening"
+                    "filmfestival",
+                    "cinema",
+                    "artisticfilms",
+                    "sandiego",
+                    "independentcinema",
+                    "culturalevents",
+                    "filmscreening"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=49",
                 "location_name": "Crown Theatre in San Diego, California",
@@ -1917,12 +1917,12 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "New York City",
-                    "Cinema",
-                    "Artistic Expression",
-                    "Independent Films",
-                    "Cultural Experience"
+                    "filmfestival",
+                    "newyorkcity",
+                    "cinema",
+                    "artisticexpression",
+                    "independentfilms",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=440",
                 "location_name": "The Rooftop at The Morgan in New York City, New York",
@@ -1955,13 +1955,13 @@
                 "category": "Film",
                 "type": "Film festival",
                 "tags": [
-                    "Film Festival",
-                    "Cinema",
-                    "St. Catharines",
-                    "Cultural Event",
-                    "Art and Film",
-                    "Screening",
-                    "International Films"
+                    "filmfestival",
+                    "cinema",
+                    "stcatharines",
+                    "culturalevent",
+                    "artandfilm",
+                    "screening",
+                    "internationalfilms"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=201",
                 "location_name": "The Grand Theatre in St. Catharines, Ontario",
@@ -2005,11 +2005,11 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Summer Camp",
-                    "Kids Activities",
-                    "Outdoor Fun",
-                    "Crafts",
-                    "Games"
+                    "summercamp",
+                    "kidsactivities",
+                    "outdoorfun",
+                    "crafts",
+                    "games"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=49",
                 "location_name": "Sunnydale Park in San Diego, California",
@@ -2037,12 +2037,12 @@
                 "category": "Family",
                 "type": "School play",
                 "tags": [
-                    "School Play",
-                    "Kids Event",
-                    "Family Fun",
-                    "Theater",
-                    "Silly",
-                    "Philadelphia"
+                    "schoolplay",
+                    "kidsevent",
+                    "familyfun",
+                    "theater",
+                    "silly",
+                    "philadelphia"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=262",
                 "location_name": "Rainbow Theater in Philadelphia, Pennsylvania",
@@ -2075,13 +2075,13 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Summer Camp",
-                    "Kids Activities",
-                    "Fun",
-                    "Outdoor Adventures",
-                    "Crafts",
-                    "Games",
-                    "New York City"
+                    "summercamp",
+                    "kidsactivities",
+                    "fun",
+                    "outdooradventures",
+                    "crafts",
+                    "games",
+                    "newyorkcity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=62",
                 "location_name": "Central Park Adventure Zone in New York City, New York",
@@ -2119,7 +2119,7 @@
                     "practice",
                     "fun",
                     "active",
-                    "London",
+                    "london",
                     "outdoors",
                     "play"
                 ],
@@ -2154,12 +2154,12 @@
                 "category": "Family",
                 "type": "Birthday Party",
                 "tags": [
-                    "Birthday Party",
-                    "Kids",
-                    "Fun",
-                    "Games",
-                    "Cake",
-                    "Celebration"
+                    "birthdayparty",
+                    "kids",
+                    "fun",
+                    "games",
+                    "cake",
+                    "celebration"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=402",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
@@ -2192,13 +2192,13 @@
                 "category": "Family",
                 "type": "Magic show",
                 "tags": [
-                    "Magic",
-                    "Kids",
-                    "Fun",
-                    "Show",
-                    "Illusions",
-                    "Entertainment",
-                    "Family"
+                    "magic",
+                    "kids",
+                    "fun",
+                    "show",
+                    "illusions",
+                    "entertainment",
+                    "family"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=476",
                 "location_name": "Ottawa Community Center in Ottawa, Ontario",
@@ -2231,13 +2231,13 @@
                 "category": "Family",
                 "type": "Magic show",
                 "tags": [
-                    "Magic Show",
-                    "Kids",
-                    "Fun",
-                    "Chicago",
-                    "Family Event",
-                    "Interactive",
-                    "Entertainment"
+                    "magicshow",
+                    "kids",
+                    "fun",
+                    "chicago",
+                    "familyevent",
+                    "interactive",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=149",
                 "location_name": "Chicago Children's Theater in Chicago, Illinois",
@@ -2270,12 +2270,12 @@
                 "category": "Family",
                 "type": "School play",
                 "tags": [
-                    "School Play",
-                    "Kids Event",
-                    "Family Fun",
-                    "Houston",
-                    "Theater",
-                    "Live Performance"
+                    "schoolplay",
+                    "kidsevent",
+                    "familyfun",
+                    "houston",
+                    "theater",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=161",
                 "location_name": "Houston Community School Auditorium in Houston, Texas",
@@ -2303,13 +2303,13 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Summer Camp",
-                    "Kids Activities",
-                    "Fun in the Sun",
-                    "San Diego",
-                    "Crafts",
-                    "Games",
-                    "Outdoor Adventures"
+                    "summercamp",
+                    "kidsactivities",
+                    "funinthesun",
+                    "sandiego",
+                    "crafts",
+                    "games",
+                    "outdooradventures"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=45",
                 "location_name": "Sunny Day Park in San Diego, California",
@@ -2342,13 +2342,13 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Summer Camp",
-                    "Kids Fun",
-                    "Adventure",
-                    "Games",
-                    "Ice Cream",
-                    "New York",
-                    "Outdoor Activities"
+                    "summercamp",
+                    "kidsfun",
+                    "adventure",
+                    "games",
+                    "icecream",
+                    "newyork",
+                    "outdooractivities"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=407",
                 "location_name": "Central Park Kids Zone in New York City, New York",
@@ -2381,7 +2381,7 @@
                     "fun",
                     "games",
                     "cake",
-                    "San Diego"
+                    "sandiego"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=424",
                 "location_name": "Sunshine Park in San Diego, California",
@@ -2414,13 +2414,13 @@
                 "category": "Family",
                 "type": "School play",
                 "tags": [
-                    "School Play",
-                    "Kids Event",
-                    "Family Fun",
-                    "Theater",
-                    "St. Catharines",
-                    "Silly",
-                    "Youth Performance"
+                    "schoolplay",
+                    "kidsevent",
+                    "familyfun",
+                    "theater",
+                    "stcatharines",
+                    "silly",
+                    "youthperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=441",
                 "location_name": "St. Catharines Performing Arts Centre in St. Catharines, Ontario",
@@ -2455,9 +2455,9 @@
                 "tags": [
                     "magic",
                     "kids",
-                    "family fun",
+                    "familyfun",
                     "entertainment",
-                    "St. Catharines"
+                    "stcatharines"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=402",
                 "location_name": "The Enchanted Theater in St. Catharines, Ontario",
@@ -2490,14 +2490,14 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Kids",
-                    "Summer Camp",
-                    "Adventure",
-                    "Fun",
-                    "Outdoor Activities",
-                    "Calgary",
-                    "Crafts",
-                    "Games"
+                    "kids",
+                    "summercamp",
+                    "adventure",
+                    "fun",
+                    "outdooractivities",
+                    "calgary",
+                    "crafts",
+                    "games"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=413",
                 "location_name": "Calgary Sunshine Park in Calgary, Alberta",
@@ -2530,12 +2530,12 @@
                 "category": "Family",
                 "type": "Magic show",
                 "tags": [
-                    "Magic",
-                    "Kids",
-                    "Family Fun",
-                    "San Diego",
-                    "Illusion",
-                    "Entertainment"
+                    "magic",
+                    "kids",
+                    "familyfun",
+                    "sandiego",
+                    "illusion",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=264",
                 "location_name": "Giggles & Glamour Theater in San Diego, California",
@@ -2568,14 +2568,14 @@
                 "category": "Family",
                 "type": "Magic show",
                 "tags": [
-                    "Magic",
-                    "Kids",
-                    "Family Fun",
-                    "Philadelphia",
-                    "Entertainment",
-                    "Comedy",
-                    "Show",
-                    "Illusion"
+                    "magic",
+                    "kids",
+                    "familyfun",
+                    "philadelphia",
+                    "entertainment",
+                    "comedy",
+                    "show",
+                    "illusion"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=51",
                 "location_name": "Philadelphia Magic Theater in Philadelphia, Pennsylvania",
@@ -2603,12 +2603,12 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Kids Camp",
-                    "Summer Fun",
-                    "Adventure",
-                    "Crafts",
-                    "Games",
-                    "Outdoor Activities"
+                    "kidscamp",
+                    "summerfun",
+                    "adventure",
+                    "crafts",
+                    "games",
+                    "outdooractivities"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=233",
                 "location_name": "Central Park Adventure Zone in New York City, New York",
@@ -2641,13 +2641,13 @@
                 "category": "Family",
                 "type": "Birthday Party",
                 "tags": [
-                    "Kids Party",
-                    "Birthday Bash",
-                    "Houston Events",
-                    "Fun",
-                    "Celebration",
-                    "Games",
-                    "Activities"
+                    "kidsparty",
+                    "birthdaybash",
+                    "houstonevents",
+                    "fun",
+                    "celebration",
+                    "games",
+                    "activities"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=307",
                 "location_name": "Jolly Jumper Park in Houston, Texas",
@@ -2680,13 +2680,13 @@
                 "category": "Family",
                 "type": "Magic show",
                 "tags": [
-                    "Magic",
-                    "Kids",
-                    "Fun",
-                    "Family",
-                    "Philadelphia",
-                    "Illusion",
-                    "Laughter"
+                    "magic",
+                    "kids",
+                    "fun",
+                    "family",
+                    "philadelphia",
+                    "illusion",
+                    "laughter"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=495",
                 "location_name": "Philadelphia Children's Theater in Philadelphia, Pennsylvania",
@@ -2719,11 +2719,11 @@
                 "category": "Family",
                 "type": "Magic show",
                 "tags": [
-                    "Magic Show",
-                    "Kids Event",
-                    "Family Fun",
-                    "San Diego",
-                    "Live Entertainment"
+                    "magicshow",
+                    "kidsevent",
+                    "familyfun",
+                    "sandiego",
+                    "liveentertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=354",
                 "location_name": "Wonderland Theatre in San Diego, California",
@@ -2756,12 +2756,12 @@
                 "category": "Family",
                 "type": "School play",
                 "tags": [
-                    "School Play",
-                    "Kids",
-                    "Fun",
-                    "Theater",
-                    "Adventure",
-                    "Family-Friendly"
+                    "schoolplay",
+                    "kids",
+                    "fun",
+                    "theater",
+                    "adventure",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=296",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
@@ -2794,11 +2794,11 @@
                 "category": "Family",
                 "type": "School play",
                 "tags": [
-                    "School Play",
-                    "Kids Event",
-                    "Family Fun",
-                    "Theater",
-                    "New York City"
+                    "schoolplay",
+                    "kidsevent",
+                    "familyfun",
+                    "theater",
+                    "newyorkcity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=261",
                 "location_name": "Manhattan School Auditorium in New York City, New York",
@@ -2831,11 +2831,11 @@
                 "category": "Family",
                 "type": "Birthday Party",
                 "tags": [
-                    "Birthday Party",
-                    "Kids Fun",
-                    "Games",
-                    "Chicago",
-                    "Celebration"
+                    "birthdayparty",
+                    "kidsfun",
+                    "games",
+                    "chicago",
+                    "celebration"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=324",
                 "location_name": "FunZone Chicago in Chicago, Illinois",
@@ -2868,13 +2868,13 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Summer Camp",
-                    "Kids Activities",
-                    "London",
-                    "Fun",
-                    "Adventure",
-                    "Crafts",
-                    "Games"
+                    "summercamp",
+                    "kidsactivities",
+                    "london",
+                    "fun",
+                    "adventure",
+                    "crafts",
+                    "games"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=22",
                 "location_name": "Sunny Days Park in London, UK",
@@ -2902,11 +2902,11 @@
                 "category": "Family",
                 "type": "School play",
                 "tags": [
-                    "School Play",
-                    "Kids Event",
-                    "Theater",
-                    "Family Fun",
-                    "Toronto"
+                    "schoolplay",
+                    "kidsevent",
+                    "theater",
+                    "familyfun",
+                    "toronto"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=131",
                 "location_name": "Toronto Community Theatre in Toronto, Ontario",
@@ -2939,12 +2939,12 @@
                 "category": "Family",
                 "type": "Sports practice",
                 "tags": [
-                    "Kids",
-                    "Sports",
-                    "Practice",
-                    "Fun",
-                    "Philadelphia",
-                    "Activities"
+                    "kids",
+                    "sports",
+                    "practice",
+                    "fun",
+                    "philadelphia",
+                    "activities"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=201",
                 "location_name": "Philly Sports Arena in Philadelphia, Pennsylvania",
@@ -2977,11 +2977,11 @@
                 "category": "Family",
                 "type": "Summer Daycamp",
                 "tags": [
-                    "Summer Camp",
-                    "Kids Activities",
-                    "Philadelphia",
-                    "Fun",
-                    "Adventure"
+                    "summercamp",
+                    "kidsactivities",
+                    "philadelphia",
+                    "fun",
+                    "adventure"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=407",
                 "location_name": "Sunny Days Play Park in Philadelphia, Pennsylvania",
@@ -3025,13 +3025,13 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Show",
-                    "Chicago",
-                    "Laughter",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveshow",
+                    "chicago",
+                    "laughter",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=89",
                 "location_name": "The Laugh Factory Chicago in Chicago, Illinois",
@@ -3064,13 +3064,13 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Performance",
-                    "Entertainment",
-                    "St. Catharines",
-                    "Laughter"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveperformance",
+                    "entertainment",
+                    "stcatharines",
+                    "laughter"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=279",
                 "location_name": "The Chuckle House in St. Catharines, Ontario",
@@ -3098,12 +3098,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-up",
-                    "Toronto",
-                    "Puns",
-                    "Laughter",
-                    "Live Performance"
+                    "comedy",
+                    "standup",
+                    "toronto",
+                    "puns",
+                    "laughter",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=174",
                 "location_name": "Toronto Comedy Club in Toronto, Ontario",
@@ -3136,12 +3136,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-up",
-                    "Houston",
-                    "Laughter",
-                    "Live Show",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "houston",
+                    "laughter",
+                    "liveshow",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=202",
                 "location_name": "Laugh Dome Theater in Houston, Texas",
@@ -3174,12 +3174,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Performance",
-                    "Ottawa",
-                    "Laugh Fest"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveperformance",
+                    "ottawa",
+                    "laughfest"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=454",
                 "location_name": "Laugh City Theatre in Ottawa, Ontario",
@@ -3212,12 +3212,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Entertainment",
-                    "London",
-                    "Night Out"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveentertainment",
+                    "london",
+                    "nightout"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=86",
                 "location_name": "The Chuckle Hut in London, UK",
@@ -3250,12 +3250,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Live Performance",
-                    "Puns",
-                    "Entertainment",
-                    "St. Catharines"
+                    "comedy",
+                    "standup",
+                    "liveperformance",
+                    "puns",
+                    "entertainment",
+                    "stcatharines"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=209",
                 "location_name": "The Giggle Garden in St. Catharines, Ontario",
@@ -3288,12 +3288,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-up",
-                    "Puns",
-                    "Toronto",
-                    "Laughs",
-                    "Live Event"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "toronto",
+                    "laughs",
+                    "liveevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=324",
                 "location_name": "The Laughing Bean Cafe in Toronto, Ontario",
@@ -3326,12 +3326,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Toronto",
-                    "Live Entertainment",
-                    "Laughter"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "toronto",
+                    "liveentertainment",
+                    "laughter"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=460",
                 "location_name": "Laugh Haven Theatre in Toronto, Ontario",
@@ -3364,12 +3364,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Live Show",
-                    "Laughs",
-                    "Los Angeles",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "liveshow",
+                    "laughs",
+                    "losangeles",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=439",
                 "location_name": "Laugh Factory LA in Los Angeles, California",
@@ -3402,15 +3402,15 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-up",
-                    "Live Performance",
-                    "Laughter",
-                    "St. Catharines",
-                    "Fun Night Out",
-                    "Jokes",
-                    "Funny",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "liveperformance",
+                    "laughter",
+                    "stcatharines",
+                    "funnightout",
+                    "jokes",
+                    "funny",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=398",
                 "location_name": "St. Catharines Comedy Club in St. Catharines, Ontario",
@@ -3443,11 +3443,11 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Calgary",
-                    "Puns",
-                    "Live Performance"
+                    "comedy",
+                    "standup",
+                    "calgary",
+                    "puns",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=409",
                 "location_name": "Calgary Comedy Club in Calgary, Alberta",
@@ -3475,14 +3475,14 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Entertainment",
-                    "St. Catharines",
-                    "Laughter",
-                    "Funny",
-                    "Night Out"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveentertainment",
+                    "stcatharines",
+                    "laughter",
+                    "funny",
+                    "nightout"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=341",
                 "location_name": "The Giggle Box Theatre in St. Catharines, Ontario",
@@ -3515,12 +3515,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Stand-Up Comedy",
-                    "London",
-                    "Live Entertainment",
-                    "Laughter",
-                    "Puns",
-                    "Comedy Show"
+                    "standupcomedy",
+                    "london",
+                    "liveentertainment",
+                    "laughter",
+                    "puns",
+                    "comedyshow"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=322",
                 "location_name": "The Chuckle Factory in London, UK",
@@ -3548,11 +3548,11 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "San Diego",
-                    "Puns",
-                    "Live Entertainment"
+                    "comedy",
+                    "standup",
+                    "sandiego",
+                    "puns",
+                    "liveentertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=171",
                 "location_name": "Laughing Lobster Theater in San Diego, California",
@@ -3586,12 +3586,12 @@
                 "type": "Stand-up show",
                 "tags": [
                     "comedy",
-                    "stand-up",
-                    "San Diego",
+                    "standup",
+                    "sandiego",
                     "laughs",
                     "humor",
                     "punny",
-                    "live performance"
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=213",
                 "location_name": "Pacific Comedy Club in San Diego, California",
@@ -3624,13 +3624,13 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Laughter",
-                    "Puns",
-                    "St. Catharines",
-                    "Live Performance",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "laughter",
+                    "puns",
+                    "stcatharines",
+                    "liveperformance",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=67",
                 "location_name": "The Comedy Cove in St. Catharines, Ontario",
@@ -3663,12 +3663,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Calgary",
-                    "Laughs",
-                    "Live Performance",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "calgary",
+                    "laughs",
+                    "liveperformance",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=420",
                 "location_name": "The Giggle Factory in Calgary, Alberta",
@@ -3696,12 +3696,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "San Diego",
-                    "Laughs",
-                    "Live Performance"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "sandiego",
+                    "laughs",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=3",
                 "location_name": "The Giggle Garage in San Diego, California",
@@ -3734,12 +3734,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Laughter",
-                    "Toronto",
-                    "Puns",
-                    "Live Entertainment"
+                    "comedy",
+                    "standup",
+                    "laughter",
+                    "toronto",
+                    "puns",
+                    "liveentertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=49",
                 "location_name": "The Chuckle Hut in Toronto, Ontario",
@@ -3772,11 +3772,11 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Performance",
-                    "London Events"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveperformance",
+                    "londonevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=128",
                 "location_name": "The Giggling Goat in London, UK",
@@ -3809,11 +3809,11 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "New York",
-                    "Live Entertainment",
-                    "Humor"
+                    "comedy",
+                    "standup",
+                    "newyork",
+                    "liveentertainment",
+                    "humor"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=246",
                 "location_name": "Laugh Factory NYC in New York City, New York",
@@ -3846,12 +3846,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-up",
-                    "Laughter",
-                    "Houston",
-                    "Puns",
-                    "Live Entertainment"
+                    "comedy",
+                    "standup",
+                    "laughter",
+                    "houston",
+                    "puns",
+                    "liveentertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=234",
                 "location_name": "The Chuckle Hut in Houston, Texas",
@@ -3884,12 +3884,12 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Los Angeles",
-                    "Live Show",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "losangeles",
+                    "liveshow",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=26",
                 "location_name": "Laugh Factory LA in Los Angeles, California",
@@ -3922,13 +3922,13 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Live Show",
-                    "Toronto",
-                    "Puns",
-                    "Laughter",
-                    "Night Out"
+                    "comedy",
+                    "standup",
+                    "liveshow",
+                    "toronto",
+                    "puns",
+                    "laughter",
+                    "nightout"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=134",
                 "location_name": "The Giggle Factory in Toronto, Ontario",
@@ -3956,13 +3956,13 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Live Performance",
-                    "Chicago",
-                    "Laughter",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "liveperformance",
+                    "chicago",
+                    "laughter",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=393",
                 "location_name": "Laugh Factory Chicago in Chicago, Illinois",
@@ -3990,11 +3990,11 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "stand-up comedy",
+                    "standupcomedy",
                     "puns",
-                    "L.A. events",
-                    "comedy night",
-                    "live performance"
+                    "laevents",
+                    "comedynight",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=114",
                 "location_name": "Laugh Factory in Los Angeles, California",
@@ -4027,13 +4027,13 @@
                 "category": "Comedy",
                 "type": "Stand-up show",
                 "tags": [
-                    "Comedy",
-                    "Stand-Up",
-                    "Puns",
-                    "Laughter",
-                    "Live Show",
-                    "Houston",
-                    "Entertainment"
+                    "comedy",
+                    "standup",
+                    "puns",
+                    "laughter",
+                    "liveshow",
+                    "houston",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=383",
                 "location_name": "The Chuckle Factory in Houston, Texas",
@@ -4077,11 +4077,11 @@
                 "category": "Community/Culture",
                 "type": "Support group",
                 "tags": [
-                    "Support Group",
-                    "Community",
-                    "Connection",
-                    "Ottawa Events",
-                    "Mental Health Awareness"
+                    "supportgroup",
+                    "community",
+                    "connection",
+                    "ottawaevents",
+                    "mentalhealthawareness"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=261",
                 "location_name": "Ottawa Community Centre in Ottawa, Ontario",
@@ -4114,13 +4114,13 @@
                 "category": "Community/Culture",
                 "type": "Town hall",
                 "tags": [
-                    "Community",
-                    "Culture",
-                    "Local Event",
-                    "Ottawa",
-                    "Town Hall",
-                    "Neighborhood",
-                    "Gathering"
+                    "community",
+                    "culture",
+                    "localevent",
+                    "ottawa",
+                    "townhall",
+                    "neighborhood",
+                    "gathering"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=237",
                 "location_name": "Ottawa Community Centre in Ottawa, Ontario",
@@ -4148,11 +4148,11 @@
                 "category": "Community/Culture",
                 "type": "Support group",
                 "tags": [
-                    "Support Group",
-                    "Community",
-                    "Connection",
-                    "Wellness",
-                    "Toronto"
+                    "supportgroup",
+                    "community",
+                    "connection",
+                    "wellness",
+                    "toronto"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=48",
                 "location_name": "The Friendly Hall in Toronto, Ontario",
@@ -4181,10 +4181,10 @@
                 "type": "Town hall",
                 "tags": [
                     "community",
-                    "local culture",
-                    "town hall",
-                    "St. Catharines",
-                    "family-friendly"
+                    "localculture",
+                    "townhall",
+                    "stcatharines",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=239",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
@@ -4217,11 +4217,11 @@
                 "category": "Community/Culture",
                 "type": "Support group",
                 "tags": [
-                    "Support Group",
-                    "Community",
-                    "Wellness",
-                    "New York City",
-                    "Culture"
+                    "supportgroup",
+                    "community",
+                    "wellness",
+                    "newyorkcity",
+                    "culture"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=343",
                 "location_name": "The Gathering Place in New York City, New York",
@@ -4249,12 +4249,12 @@
                 "category": "Community/Culture",
                 "type": "Festival",
                 "tags": [
-                    "Culture",
-                    "Community",
-                    "Festival",
-                    "Arts and Crafts",
-                    "Local Music",
-                    "Food Trucks"
+                    "culture",
+                    "community",
+                    "festival",
+                    "artsandcrafts",
+                    "localmusic",
+                    "foodtrucks"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=482",
                 "location_name": "Meridian Centre Park in St. Catharines, Ontario",
@@ -4287,12 +4287,12 @@
                 "category": "Community/Culture",
                 "type": "Festival",
                 "tags": [
-                    "Community Festival",
-                    "Culture",
-                    "Artisan Market",
-                    "Live Music",
-                    "Family-Friendly",
-                    "Toronto Events"
+                    "communityfestival",
+                    "culture",
+                    "artisanmarket",
+                    "livemusic",
+                    "familyfriendly",
+                    "torontoevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=414",
                 "location_name": "Trinity Bellwoods Park in Toronto, Ontario",
@@ -4325,11 +4325,11 @@
                 "category": "Community/Culture",
                 "type": "Town hall",
                 "tags": [
-                    "Community",
-                    "Culture",
-                    "San Diego",
-                    "Networking",
-                    "Local Events"
+                    "community",
+                    "culture",
+                    "sandiego",
+                    "networking",
+                    "localevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=64",
                 "location_name": "Oceanview Community Center in San Diego, California",
@@ -4357,13 +4357,13 @@
                 "category": "Community/Culture",
                 "type": "Festival",
                 "tags": [
-                    "Festival",
-                    "Community",
-                    "Culture",
-                    "Ottawa",
-                    "Family-Friendly",
-                    "Local Art",
-                    "Music"
+                    "festival",
+                    "community",
+                    "culture",
+                    "ottawa",
+                    "familyfriendly",
+                    "localart",
+                    "music"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=174",
                 "location_name": "Confederation Park in Ottawa, Ontario",
@@ -4396,12 +4396,12 @@
                 "category": "Community/Culture",
                 "type": "Festival",
                 "tags": [
-                    "Community",
-                    "Culture",
-                    "Local Art",
-                    "Food Festival",
-                    "Family Friendly",
-                    "Toronto"
+                    "community",
+                    "culture",
+                    "localart",
+                    "foodfestival",
+                    "familyfriendly",
+                    "toronto"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=495",
                 "location_name": "Trinity Bellwoods Park in Toronto, Ontario",
@@ -4436,9 +4436,9 @@
                 "tags": [
                     "community",
                     "culture",
-                    "Calgary",
-                    "town hall",
-                    "family-friendly",
+                    "calgary",
+                    "townhall",
+                    "familyfriendly",
                     "local",
                     "gathering"
                 ],
@@ -4468,13 +4468,13 @@
                 "category": "Community/Culture",
                 "type": "Festival",
                 "tags": [
-                    "Community",
-                    "Culture",
-                    "Festival",
-                    "Local Art",
-                    "Food",
-                    "Calgary",
-                    "Family-Friendly"
+                    "community",
+                    "culture",
+                    "festival",
+                    "localart",
+                    "food",
+                    "calgary",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=324",
                 "location_name": "Calgary Civic Park in Calgary, Alberta",
@@ -4502,12 +4502,12 @@
                 "category": "Community/Culture",
                 "type": "Festival",
                 "tags": [
-                    "Community",
-                    "Culture",
-                    "Art",
-                    "Food",
-                    "Family-Friendly",
-                    "Festival"
+                    "community",
+                    "culture",
+                    "art",
+                    "food",
+                    "familyfriendly",
+                    "festival"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=457",
                 "location_name": "Balboa Park in San Diego, California",
@@ -4540,11 +4540,11 @@
                 "category": "Community/Culture",
                 "type": "Support group",
                 "tags": [
-                    "Community",
-                    "Support Group",
-                    "Wellness",
-                    "Connection",
-                    "Mental Health"
+                    "community",
+                    "supportgroup",
+                    "wellness",
+                    "connection",
+                    "mentalhealth"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=168",
                 "location_name": "Ocean View Community Center in San Diego, California",
@@ -4572,11 +4572,11 @@
                 "category": "Community/Culture",
                 "type": "Support group",
                 "tags": [
-                    "Support Group",
-                    "Community",
-                    "Wellness",
-                    "Mental Health",
-                    "Social Gathering"
+                    "supportgroup",
+                    "community",
+                    "wellness",
+                    "mentalhealth",
+                    "socialgathering"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=424",
                 "location_name": "Ottawa Community Centre in Ottawa, Ontario",
@@ -4604,12 +4604,12 @@
                 "category": "Community/Culture",
                 "type": "Support group",
                 "tags": [
-                    "Community",
-                    "Support",
-                    "Wholesome",
-                    "Mental Health",
-                    "Houston",
-                    "Connection"
+                    "community",
+                    "support",
+                    "wholesome",
+                    "mentalhealth",
+                    "houston",
+                    "connection"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=113",
                 "location_name": "Harmony Center in Houston, Texas",
@@ -4648,12 +4648,12 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Artistic Performance",
-                    "London",
-                    "Evening Entertainment",
-                    "Cultural Experience"
+                    "concert",
+                    "livemusic",
+                    "artisticperformance",
+                    "london",
+                    "eveningentertainment",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=33",
                 "location_name": "Royal Albert Hall in London, UK",
@@ -4686,11 +4686,11 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Houston Events",
-                    "Local Artists",
-                    "Artistic Community"
+                    "music",
+                    "meetandgreet",
+                    "houstonevents",
+                    "localartists",
+                    "artisticcommunity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=141",
                 "location_name": "The Sound Lounge in Houston, Texas",
@@ -4723,12 +4723,12 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "New York City",
-                    "Artistic Expression",
-                    "Music Lovers",
-                    "Nightlife"
+                    "concert",
+                    "livemusic",
+                    "newyorkcity",
+                    "artisticexpression",
+                    "musiclovers",
+                    "nightlife"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=2",
                 "location_name": "The Harmonic Hall in New York City, New York",
@@ -4761,13 +4761,13 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet & Greet",
-                    "Chicago",
-                    "Live Performance",
-                    "Artistry",
-                    "Community",
-                    "Networking"
+                    "music",
+                    "meet&greet",
+                    "chicago",
+                    "liveperformance",
+                    "artistry",
+                    "community",
+                    "networking"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=484",
                 "location_name": "The Sound Lounge in Chicago, Illinois",
@@ -4800,13 +4800,13 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Live Performance",
-                    "London",
-                    "Artists",
-                    "Networking",
-                    "Intimate Events"
+                    "music",
+                    "meetandgreet",
+                    "liveperformance",
+                    "london",
+                    "artists",
+                    "networking",
+                    "intimateevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=48",
                 "location_name": "The Sound Lounge in London, UK",
@@ -4839,13 +4839,13 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Local Artists",
-                    "Los Angeles",
-                    "Nightlife",
-                    "Arts Festival",
-                    "Outdoor Event"
+                    "concert",
+                    "livemusic",
+                    "localartists",
+                    "losangeles",
+                    "nightlife",
+                    "artsfestival",
+                    "outdoorevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=157",
                 "location_name": "Echo Park Amphitheater in Los Angeles, California",
@@ -4878,13 +4878,13 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Live Music",
-                    "San Diego",
-                    "Concert",
-                    "Artistic Experience",
-                    "Nightlife",
-                    "Melodic Fusion",
-                    "Outdoor Event"
+                    "livemusic",
+                    "sandiego",
+                    "concert",
+                    "artisticexperience",
+                    "nightlife",
+                    "melodicfusion",
+                    "outdoorevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=252",
                 "location_name": "Skyline Pavilion in San Diego, California",
@@ -4917,13 +4917,13 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "London",
-                    "Artistic Experience",
-                    "Music Night",
-                    "Indie",
-                    "Relaxation"
+                    "concert",
+                    "livemusic",
+                    "london",
+                    "artisticexperience",
+                    "musicnight",
+                    "indie",
+                    "relaxation"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=238",
                 "location_name": "The Royal Botanic Gardens in London, UK",
@@ -4956,12 +4956,12 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Local Artists",
-                    "St. Catharines",
-                    "Live Music",
-                    "Artistic Expression"
+                    "music",
+                    "meetandgreet",
+                    "localartists",
+                    "stcatharines",
+                    "livemusic",
+                    "artisticexpression"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=181",
                 "location_name": "The Music Box in St. Catharines, Ontario",
@@ -4994,11 +4994,11 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Local Artists",
-                    "Ottawa Events",
-                    "Cultural Experience"
+                    "music",
+                    "meetandgreet",
+                    "localartists",
+                    "ottawaevents",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=311",
                 "location_name": "Ottawa Arts Centre in Ottawa, Ontario",
@@ -5026,13 +5026,13 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Live Music",
-                    "Concert",
-                    "Artistic Experience",
-                    "New York City",
-                    "Soulful Melodies",
-                    "Evening Event",
-                    "Music Lovers"
+                    "livemusic",
+                    "concert",
+                    "artisticexperience",
+                    "newyorkcity",
+                    "soulfulmelodies",
+                    "eveningevent",
+                    "musiclovers"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=423",
                 "location_name": "Central Park Band Shell in New York City, New York",
@@ -5065,13 +5065,13 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Meet and Greet",
-                    "Live Music",
-                    "New York City",
-                    "Artistic Evening",
-                    "Music Lovers",
-                    "Networking",
-                    "Intimate Concert"
+                    "meetandgreet",
+                    "livemusic",
+                    "newyorkcity",
+                    "artisticevening",
+                    "musiclovers",
+                    "networking",
+                    "intimateconcert"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=379",
                 "location_name": "The Harmony Lounge in New York City, New York",
@@ -5104,11 +5104,11 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Toronto",
-                    "Artistic Experience",
-                    "Nightlife"
+                    "concert",
+                    "livemusic",
+                    "toronto",
+                    "artisticexperience",
+                    "nightlife"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=91",
                 "location_name": "The Toronto Music Hall in Toronto, Ontario",
@@ -5136,12 +5136,12 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Los Angeles",
-                    "Artistic Experience",
-                    "Evening Out",
-                    "Melodic Vibes"
+                    "concert",
+                    "livemusic",
+                    "losangeles",
+                    "artisticexperience",
+                    "eveningout",
+                    "melodicvibes"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=339",
                 "location_name": "Echo Park Amphitheater in Los Angeles, California",
@@ -5169,12 +5169,12 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Artistic Experience",
-                    "New York City",
-                    "Indie Artists",
-                    "Nightlife"
+                    "concert",
+                    "livemusic",
+                    "artisticexperience",
+                    "newyorkcity",
+                    "indieartists",
+                    "nightlife"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=344",
                 "location_name": "The Celestial Theatre in New York City, New York",
@@ -5207,13 +5207,13 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Live Music",
-                    "Concert",
-                    "Local Artists",
-                    "Night Out",
-                    "Outdoor Event",
-                    "San Diego",
-                    "Music Festival"
+                    "livemusic",
+                    "concert",
+                    "localartists",
+                    "nightout",
+                    "outdoorevent",
+                    "sandiego",
+                    "musicfestival"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=187",
                 "location_name": "Moonlit Gardens in San Diego, California",
@@ -5246,14 +5246,14 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Artistic",
-                    "London",
-                    "Live Performance",
-                    "Connection",
-                    "Artists",
-                    "Community"
+                    "music",
+                    "meetandgreet",
+                    "artistic",
+                    "london",
+                    "liveperformance",
+                    "connection",
+                    "artists",
+                    "community"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=395",
                 "location_name": "The Melody Lounge in London, UK",
@@ -5286,12 +5286,12 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Philadelphia",
-                    "Artistic",
-                    "Culture",
-                    "Nightlife"
+                    "concert",
+                    "livemusic",
+                    "philadelphia",
+                    "artistic",
+                    "culture",
+                    "nightlife"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=488",
                 "location_name": "Liberty Bell Amphitheater in Philadelphia, Pennsylvania",
@@ -5324,12 +5324,12 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "Artistic Experience",
-                    "San Diego",
-                    "Outdoor Event",
-                    "Music Festival"
+                    "concert",
+                    "livemusic",
+                    "artisticexperience",
+                    "sandiego",
+                    "outdoorevent",
+                    "musicfestival"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=216",
                 "location_name": "Oceanview Pavilion in San Diego, California",
@@ -5362,12 +5362,12 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Calgary",
-                    "Live Performance",
-                    "Artistic Connection",
-                    "Local Artists"
+                    "music",
+                    "meetandgreet",
+                    "calgary",
+                    "liveperformance",
+                    "artisticconnection",
+                    "localartists"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=447",
                 "location_name": "Calgary Arts Centre in Calgary, Alberta",
@@ -5395,13 +5395,13 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Live Performance",
-                    "New York City",
-                    "Rising Artists",
-                    "Networking",
-                    "Nightlife"
+                    "music",
+                    "meetandgreet",
+                    "liveperformance",
+                    "newyorkcity",
+                    "risingartists",
+                    "networking",
+                    "nightlife"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=215",
                 "location_name": "The Soundstage Lounge in New York City, New York",
@@ -5429,12 +5429,12 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Houston",
-                    "Live Performance",
-                    "Artistic Experience",
-                    "Networking"
+                    "music",
+                    "meetandgreet",
+                    "houston",
+                    "liveperformance",
+                    "artisticexperience",
+                    "networking"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=290",
                 "location_name": "The Art House in Houston, Texas",
@@ -5464,10 +5464,10 @@
                 "tags": [
                     "music",
                     "concert",
-                    "local artists",
-                    "Calgary",
-                    "live performance",
-                    "artistic experience",
+                    "localartists",
+                    "calgary",
+                    "liveperformance",
+                    "artisticexperience",
                     "nightlife"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=125",
@@ -5501,11 +5501,11 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Artistic",
-                    "San Diego",
-                    "Live Performance"
+                    "music",
+                    "meetandgreet",
+                    "artistic",
+                    "sandiego",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=490",
                 "location_name": "The Coastal Creative Space in San Diego, California",
@@ -5538,13 +5538,13 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Los Angeles",
-                    "Live Music",
-                    "Artistic Community",
-                    "Networking",
-                    "Concerts"
+                    "music",
+                    "meetandgreet",
+                    "losangeles",
+                    "livemusic",
+                    "artisticcommunity",
+                    "networking",
+                    "concerts"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=284",
                 "location_name": "Rhythmic Arts Studio in Los Angeles, California",
@@ -5577,14 +5577,14 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Art",
-                    "New York City",
-                    "Live Music",
-                    "Community",
-                    "Artists",
-                    "Networking"
+                    "music",
+                    "meetandgreet",
+                    "art",
+                    "newyorkcity",
+                    "livemusic",
+                    "community",
+                    "artists",
+                    "networking"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=236",
                 "location_name": "The Sound Studio in New York City, New York",
@@ -5617,13 +5617,13 @@
                 "category": "Music",
                 "type": "Concert",
                 "tags": [
-                    "Concert",
-                    "Live Music",
-                    "New York City",
-                    "Artistic",
-                    "Summer Nights",
-                    "Music Festival",
-                    "Emerging Artists"
+                    "concert",
+                    "livemusic",
+                    "newyorkcity",
+                    "artistic",
+                    "summernights",
+                    "musicfestival",
+                    "emergingartists"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=423",
                 "location_name": "Skyline Music Park in New York City, New York",
@@ -5656,14 +5656,14 @@
                 "category": "Music",
                 "type": "Meet and greet",
                 "tags": [
-                    "Music",
-                    "Meet and Greet",
-                    "Los Angeles",
-                    "Live Performance",
-                    "Artistic Connection",
-                    "Networking",
-                    "Community",
-                    "Artist Interaction"
+                    "music",
+                    "meetandgreet",
+                    "losangeles",
+                    "liveperformance",
+                    "artisticconnection",
+                    "networking",
+                    "community",
+                    "artistinteraction"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=35",
                 "location_name": "The Echo in Los Angeles, California",
@@ -5707,15 +5707,15 @@
                 "category": "STEM",
                 "type": "Conference",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Conference",
-                    "Networking",
-                    "Calgary",
-                    "Sustainability",
-                    "Future",
-                    "Research"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "conference",
+                    "networking",
+                    "calgary",
+                    "sustainability",
+                    "future",
+                    "research"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=427",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
@@ -5748,13 +5748,13 @@
                 "category": "STEM",
                 "type": "Tradeshow",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Tradeshow",
-                    "Networking",
-                    "Chicago",
-                    "STEM"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "tradeshow",
+                    "networking",
+                    "chicago",
+                    "stem"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=288",
                 "location_name": "McCormick Place in Chicago, Illinois",
@@ -5782,13 +5782,13 @@
                 "category": "STEM",
                 "type": "Tradeshow",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Networking",
-                    "Philadelphia",
-                    "Tradeshows",
-                    "Industry Leaders"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "networking",
+                    "philadelphia",
+                    "tradeshows",
+                    "industryleaders"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=8",
                 "location_name": "The Philadelphia Convention Center in Philadelphia, Pennsylvania",
@@ -5821,13 +5821,13 @@
                 "category": "STEM",
                 "type": "Exhibition",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Exhibition",
-                    "Calgary",
-                    "STEM",
-                    "Networking"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "exhibition",
+                    "calgary",
+                    "stem",
+                    "networking"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=190",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
@@ -5860,13 +5860,13 @@
                 "category": "STEM",
                 "type": "Tradeshow",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Tradeshow",
-                    "Networking",
-                    "Calgary",
-                    "Industry Leaders"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "tradeshow",
+                    "networking",
+                    "calgary",
+                    "industryleaders"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=202",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
@@ -5894,12 +5894,12 @@
                 "category": "STEM",
                 "type": "Exhibition",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Exhibition",
-                    "St. Catharines",
-                    "Networking"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "exhibition",
+                    "stcatharines",
+                    "networking"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=280",
                 "location_name": "St. Catharines Conference Centre in St. Catharines, Ontario",
@@ -5932,13 +5932,13 @@
                 "category": "STEM",
                 "type": "Tradeshow",
                 "tags": [
-                    "Innovation",
-                    "Technology",
-                    "Science",
-                    "Networking",
-                    "Tradeshow",
-                    "London",
-                    "Future Trends"
+                    "innovation",
+                    "technology",
+                    "science",
+                    "networking",
+                    "tradeshow",
+                    "london",
+                    "futuretrends"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=433",
                 "location_name": "London ExCeL Centre in London, UK",
@@ -5971,13 +5971,13 @@
                 "category": "STEM",
                 "type": "Tradeshow",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Tradeshow",
-                    "Networking",
-                    "Calgary",
-                    "Industry Leaders"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "tradeshow",
+                    "networking",
+                    "calgary",
+                    "industryleaders"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=255",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
@@ -6010,14 +6010,14 @@
                 "category": "STEM",
                 "type": "Tradeshow",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Networking",
-                    "Industry Leaders",
-                    "New York City",
-                    "Trade Show",
-                    "Future"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "networking",
+                    "industryleaders",
+                    "newyorkcity",
+                    "tradeshow",
+                    "future"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=222",
                 "location_name": "New York Convention Center in New York City, New York",
@@ -6050,12 +6050,12 @@
                 "category": "STEM",
                 "type": "Conference",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Conference",
-                    "Networking",
-                    "Chicago"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "conference",
+                    "networking",
+                    "chicago"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=345",
                 "location_name": "Chicago Conference Center in Chicago, Illinois",
@@ -6088,14 +6088,14 @@
                 "category": "STEM",
                 "type": "Exhibition",
                 "tags": [
-                    "Science",
-                    "Technology",
-                    "Innovation",
-                    "Exhibition",
-                    "Education",
-                    "Philadelphia",
-                    "STEM",
-                    "Inspiration"
+                    "science",
+                    "technology",
+                    "innovation",
+                    "exhibition",
+                    "education",
+                    "philadelphia",
+                    "stem",
+                    "inspiration"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=193",
                 "location_name": "The Franklin Institute in Philadelphia, Pennsylvania",
@@ -6140,12 +6140,12 @@
                 "type": "Sports game",
                 "tags": [
                     "hockey",
-                    "live sports",
-                    "Toronto Maple Leafs",
-                    "Scotiabank Arena",
+                    "livesports",
+                    "torontomapleleafs",
+                    "scotiabankarena",
                     "sports",
-                    "NHL",
-                    "family-friendly"
+                    "nhl",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=318",
                 "location_name": "Scotiabank Arena in Toronto, Ontario",
@@ -6178,12 +6178,12 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Autographs",
-                    "Fans",
-                    "Philadelphia",
-                    "Athletes"
+                    "sports",
+                    "meetandgreet",
+                    "autographs",
+                    "fans",
+                    "philadelphia",
+                    "athletes"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=13",
                 "location_name": "Liberty Bell Center in Philadelphia, Pennsylvania",
@@ -6216,12 +6216,12 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "LA",
-                    "Football",
-                    "Live Event",
-                    "Competition",
-                    "Team Spirit"
+                    "sports",
+                    "la",
+                    "football",
+                    "liveevent",
+                    "competition",
+                    "teamspirit"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=31",
                 "location_name": "Los Angeles Coliseum in Los Angeles, California",
@@ -6254,12 +6254,12 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Autographs",
-                    "Ottawa",
-                    "Local Stars",
-                    "Fan Interaction"
+                    "sports",
+                    "meetandgreet",
+                    "autographs",
+                    "ottawa",
+                    "localstars",
+                    "faninteraction"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=408",
                 "location_name": "Ottawa Sports Centre in Ottawa, Ontario",
@@ -6292,13 +6292,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "NFL",
-                    "Chicago Bears",
-                    "Green Bay Packers",
-                    "Football",
-                    "Sports",
-                    "Rivalry",
-                    "Game Day"
+                    "nfl",
+                    "chicagobears",
+                    "greenbaypackers",
+                    "football",
+                    "sports",
+                    "rivalry",
+                    "gameday"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=243",
                 "location_name": "Soldier Field in Chicago, Illinois",
@@ -6331,12 +6331,12 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Meet and Greet",
-                    "Sports",
-                    "Los Angeles",
-                    "Athletes",
-                    "Autographs",
-                    "Fan Experience"
+                    "meetandgreet",
+                    "sports",
+                    "losangeles",
+                    "athletes",
+                    "autographs",
+                    "fanexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=410",
                 "location_name": "L.A. Sports Complex in Los Angeles, California",
@@ -6369,13 +6369,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Hockey",
-                    "Calgary Flames",
-                    "Sports",
-                    "Edmonton Oilers",
-                    "Live Event",
-                    "Family-Friendly",
-                    "Competition"
+                    "hockey",
+                    "calgaryflames",
+                    "sports",
+                    "edmontonoilers",
+                    "liveevent",
+                    "familyfriendly",
+                    "competition"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=84",
                 "location_name": "Scotiabank Saddledome in Calgary, Alberta",
@@ -6408,13 +6408,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Houston Hawks",
-                    "Dallas Dynamos",
-                    "Sports",
-                    "Family Event",
-                    "Live Game",
-                    "Local Rivalry",
-                    "Football"
+                    "houstonhawks",
+                    "dallasdynamos",
+                    "sports",
+                    "familyevent",
+                    "livegame",
+                    "localrivalry",
+                    "football"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=324",
                 "location_name": "NRG Stadium in Houston, Texas",
@@ -6447,14 +6447,14 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athletes",
-                    "Chicago",
-                    "Fan Experience",
-                    "Autographs",
-                    "Photos",
-                    "Community"
+                    "sports",
+                    "meetandgreet",
+                    "athletes",
+                    "chicago",
+                    "fanexperience",
+                    "autographs",
+                    "photos",
+                    "community"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=280",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
@@ -6487,13 +6487,13 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athletes",
-                    "Fan Interaction",
-                    "St. Catharines",
-                    "Autographs",
-                    "Community Event"
+                    "sports",
+                    "meetandgreet",
+                    "athletes",
+                    "faninteraction",
+                    "stcatharines",
+                    "autographs",
+                    "communityevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=83",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
@@ -6526,12 +6526,12 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "Football",
-                    "Live Event",
-                    "NYC",
-                    "Family Friendly",
-                    "Competition"
+                    "sports",
+                    "football",
+                    "liveevent",
+                    "nyc",
+                    "familyfriendly",
+                    "competition"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=24",
                 "location_name": "Madison Square Garden in New York City, New York",
@@ -6564,11 +6564,11 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athlete Interaction",
-                    "San Diego",
-                    "Family Friendly"
+                    "sports",
+                    "meetandgreet",
+                    "athleteinteraction",
+                    "sandiego",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=78",
                 "location_name": "San Diego Convention Center in San Diego, California",
@@ -6601,12 +6601,12 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "Live Game",
-                    "Football",
-                    "Los Angeles",
-                    "Team Rivalry",
-                    "Family Friendly"
+                    "sports",
+                    "livegame",
+                    "football",
+                    "losangeles",
+                    "teamrivalry",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=250",
                 "location_name": "Los Angeles Stadium in Los Angeles, California",
@@ -6639,13 +6639,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Football",
-                    "Sports",
-                    "Live Event",
-                    "Wembley",
-                    "Competition",
-                    "London",
-                    "Team Spirit"
+                    "football",
+                    "sports",
+                    "liveevent",
+                    "wembley",
+                    "competition",
+                    "london",
+                    "teamspirit"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=115",
                 "location_name": "Wembley Stadium in London, UK",
@@ -6678,12 +6678,12 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athletes",
-                    "Autographs",
-                    "Chicago",
-                    "Family-friendly"
+                    "sports",
+                    "meetandgreet",
+                    "athletes",
+                    "autographs",
+                    "chicago",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=331",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
@@ -6711,12 +6711,12 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "Toronto",
-                    "Live Game",
-                    "Family Friendly",
-                    "Competition",
-                    "Local Teams"
+                    "sports",
+                    "toronto",
+                    "livegame",
+                    "familyfriendly",
+                    "competition",
+                    "localteams"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=21",
                 "location_name": "Scotiabank Arena in Toronto, Ontario",
@@ -6749,13 +6749,13 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Autographs",
-                    "New York City",
-                    "Fan Event",
-                    "Athletes",
-                    "Interaction"
+                    "sports",
+                    "meetandgreet",
+                    "autographs",
+                    "newyorkcity",
+                    "fanevent",
+                    "athletes",
+                    "interaction"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=423",
                 "location_name": "Madison Square Garden in New York City, New York",
@@ -6783,13 +6783,13 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athletes",
-                    "Fan Experience",
-                    "Chicago",
-                    "Autographs",
-                    "Q&A"
+                    "sports",
+                    "meetandgreet",
+                    "athletes",
+                    "fanexperience",
+                    "chicago",
+                    "autographs",
+                    "q&a"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=104",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
@@ -6822,13 +6822,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "Ottawa",
-                    "Hawks",
-                    "Live Event",
-                    "Rivalry",
-                    "Family-Friendly",
-                    "Game Day"
+                    "sports",
+                    "ottawa",
+                    "hawks",
+                    "liveevent",
+                    "rivalry",
+                    "familyfriendly",
+                    "gameday"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=201",
                 "location_name": "Ottawa Sports Arena in Ottawa, Ontario",
@@ -6861,13 +6861,13 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athletes",
-                    "Los Angeles",
-                    "Fan Event",
-                    "Autographs",
-                    "Photo Opportunities"
+                    "sports",
+                    "meetandgreet",
+                    "athletes",
+                    "losangeles",
+                    "fanevent",
+                    "autographs",
+                    "photoopportunities"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=389",
                 "location_name": "L.A. Sports Arena in Los Angeles, California",
@@ -6895,12 +6895,12 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Player Autographs",
-                    "Fan Experience",
-                    "Houston",
-                    "Athletes"
+                    "sports",
+                    "meetandgreet",
+                    "playerautographs",
+                    "fanexperience",
+                    "houston",
+                    "athletes"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=462",
                 "location_name": "Houston Sports Complex in Houston, Texas",
@@ -6933,12 +6933,12 @@
                 "category": "Sports",
                 "type": "Player meet and greet",
                 "tags": [
-                    "Sports",
-                    "Meet and Greet",
-                    "Athletes",
-                    "Autographs",
-                    "Toronto",
-                    "Fan Event"
+                    "sports",
+                    "meetandgreet",
+                    "athletes",
+                    "autographs",
+                    "toronto",
+                    "fanevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=314",
                 "location_name": "Toronto Sports Complex in Toronto, Ontario",
@@ -6971,14 +6971,14 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Basketball",
-                    "NBA",
-                    "Toronto Raptors",
-                    "Boston Celtics",
-                    "Sports",
-                    "Live Event",
-                    "Family Friendly",
-                    "Toronto"
+                    "basketball",
+                    "nba",
+                    "torontoraptors",
+                    "bostonceltics",
+                    "sports",
+                    "liveevent",
+                    "familyfriendly",
+                    "toronto"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=204",
                 "location_name": "Scotiabank Arena in Toronto, Ontario",
@@ -7011,12 +7011,12 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "Basketball",
-                    "Community Event",
-                    "Local Teams",
-                    "St. Catharines",
-                    "Family Friendly"
+                    "sports",
+                    "basketball",
+                    "communityevent",
+                    "localteams",
+                    "stcatharines",
+                    "familyfriendly"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=378",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
@@ -7049,13 +7049,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Hockey",
-                    "NHL",
-                    "Ottawa",
-                    "Sports",
-                    "Live Event",
-                    "Family Friendly",
-                    "Local Team"
+                    "hockey",
+                    "nhl",
+                    "ottawa",
+                    "sports",
+                    "liveevent",
+                    "familyfriendly",
+                    "localteam"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=166",
                 "location_name": "Canadian Tire Centre in Ottawa, Ontario",
@@ -7088,13 +7088,13 @@
                 "category": "Sports",
                 "type": "Sports game",
                 "tags": [
-                    "Sports",
-                    "Live Game",
-                    "Football",
-                    "Los Angeles",
-                    "Tigers",
-                    "Hawks",
-                    "Competition"
+                    "sports",
+                    "livegame",
+                    "football",
+                    "losangeles",
+                    "tigers",
+                    "hawks",
+                    "competition"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=193",
                 "location_name": "LA Sports Arena in Los Angeles, California",
@@ -7138,13 +7138,13 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Los Angeles",
-                    "Live Performance",
-                    "Entertainment",
-                    "Arts",
-                    "Culture"
+                    "theater",
+                    "premiere",
+                    "losangeles",
+                    "liveperformance",
+                    "entertainment",
+                    "arts",
+                    "culture"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=149",
                 "location_name": "The Los Angeles Playhouse in Los Angeles, California",
@@ -7177,12 +7177,12 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theater",
-                    "Los Angeles",
-                    "Live Performance",
-                    "Drama",
-                    "Art",
-                    "Culture"
+                    "theater",
+                    "losangeles",
+                    "liveperformance",
+                    "drama",
+                    "art",
+                    "culture"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=377",
                 "location_name": "The El Dorado Theater in Los Angeles, California",
@@ -7215,13 +7215,13 @@
                 "category": "Theater",
                 "type": "Rehearsal",
                 "tags": [
-                    "Theatre",
-                    "Rehearsal",
-                    "Performing Arts",
-                    "Live Performance",
-                    "London",
-                    "Creativity",
-                    "Talent Showcase"
+                    "theatre",
+                    "rehearsal",
+                    "performingarts",
+                    "liveperformance",
+                    "london",
+                    "creativity",
+                    "talentshowcase"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=317",
                 "location_name": "The Royal Playhouse in London, UK",
@@ -7254,13 +7254,13 @@
                 "category": "Theater",
                 "type": "Rehearsal",
                 "tags": [
-                    "Theater",
-                    "Rehearsal",
-                    "Performing Arts",
-                    "Local Talent",
-                    "St. Catharines",
-                    "Community Event",
-                    "Live Performance"
+                    "theater",
+                    "rehearsal",
+                    "performingarts",
+                    "localtalent",
+                    "stcatharines",
+                    "communityevent",
+                    "liveperformance"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=248",
                 "location_name": "The St. Catharines Performing Arts Centre in St. Catharines, Ontario",
@@ -7288,12 +7288,12 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Live Performance",
-                    "Toronto Events",
-                    "Arts",
-                    "Entertainment"
+                    "theater",
+                    "premiere",
+                    "liveperformance",
+                    "torontoevents",
+                    "arts",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=170",
                 "location_name": "Royal Alexandra Theatre in Toronto, Ontario",
@@ -7326,11 +7326,11 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Live Performance",
-                    "Ottawa Events",
-                    "Arts & Culture"
+                    "theater",
+                    "premiere",
+                    "liveperformance",
+                    "ottawaevents",
+                    "arts&culture"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=499",
                 "location_name": "Ottawa Grand Theatre in Ottawa, Ontario",
@@ -7363,12 +7363,12 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premier Show",
-                    "Live Performance",
-                    "Houston",
-                    "Artistry",
-                    "Cultural Event"
+                    "theater",
+                    "premiershow",
+                    "liveperformance",
+                    "houston",
+                    "artistry",
+                    "culturalevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=234",
                 "location_name": "Houston Grand Theatre in Houston, Texas",
@@ -7404,9 +7404,9 @@
                     "theater",
                     "rehearsal",
                     "performance",
-                    "Los Angeles",
+                    "losangeles",
                     "art",
-                    "live show",
+                    "liveshow",
                     "creativity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=342",
@@ -7440,12 +7440,12 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theatre",
-                    "Drama",
-                    "Live Performance",
-                    "Philadelphia",
-                    "Arts",
-                    "Cultural Event"
+                    "theatre",
+                    "drama",
+                    "liveperformance",
+                    "philadelphia",
+                    "arts",
+                    "culturalevent"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=392",
                 "location_name": "Philadelphia Arts Center in Philadelphia, Pennsylvania",
@@ -7478,13 +7478,13 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theatre",
-                    "Drama",
-                    "Live Performance",
-                    "Philadelphia",
-                    "Cultural Event",
-                    "Arts",
-                    "Entertainment"
+                    "theatre",
+                    "drama",
+                    "liveperformance",
+                    "philadelphia",
+                    "culturalevent",
+                    "arts",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=34",
                 "location_name": "Downtown Playhouse in Philadelphia, Pennsylvania",
@@ -7517,11 +7517,11 @@
                 "category": "Theater",
                 "type": "Rehearsal",
                 "tags": [
-                    "Theater",
-                    "Rehearsal",
-                    "Live Performance",
-                    "Arts",
-                    "Chicago Events"
+                    "theater",
+                    "rehearsal",
+                    "liveperformance",
+                    "arts",
+                    "chicagoevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=59",
                 "location_name": "The Chicago Playhouse in Chicago, Illinois",
@@ -7549,12 +7549,12 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theater",
-                    "Live Performance",
-                    "Drama",
-                    "Philadelphia",
-                    "Arts",
-                    "Entertainment"
+                    "theater",
+                    "liveperformance",
+                    "drama",
+                    "philadelphia",
+                    "arts",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=58",
                 "location_name": "The Classic Playhouse in Philadelphia, Pennsylvania",
@@ -7587,11 +7587,11 @@
                 "category": "Theater",
                 "type": "Rehearsal",
                 "tags": [
-                    "Theater",
-                    "Rehearsal",
-                    "Performance Art",
-                    "Local Talent",
-                    "Toronto Events"
+                    "theater",
+                    "rehearsal",
+                    "performanceart",
+                    "localtalent",
+                    "torontoevents"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=330",
                 "location_name": "The Studio Theatre in Toronto, Ontario",
@@ -7624,12 +7624,12 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theater",
-                    "Drama",
-                    "Live Performance",
-                    "Calgary Arts",
-                    "Cultural Event",
-                    "Entertainment"
+                    "theater",
+                    "drama",
+                    "liveperformance",
+                    "calgaryarts",
+                    "culturalevent",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=241",
                 "location_name": "Calgary Arts Centre in Calgary, Alberta",
@@ -7662,12 +7662,12 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Live Performance",
-                    "San Diego",
-                    "Arts & Culture",
-                    "Entertainment"
+                    "theater",
+                    "premiere",
+                    "liveperformance",
+                    "sandiego",
+                    "arts&culture",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=469",
                 "location_name": "Ocean View Theater in San Diego, California",
@@ -7700,12 +7700,12 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere Show",
-                    "Live Performance",
-                    "Chicago Arts",
-                    "Cultural Event",
-                    "Entertainment"
+                    "theater",
+                    "premiereshow",
+                    "liveperformance",
+                    "chicagoarts",
+                    "culturalevent",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=439",
                 "location_name": "Chicago Grand Theater in Chicago, Illinois",
@@ -7738,11 +7738,11 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theater",
-                    "Live Performance",
-                    "Drama",
-                    "Chicago Arts",
-                    "Cultural Experience"
+                    "theater",
+                    "liveperformance",
+                    "drama",
+                    "chicagoarts",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=423",
                 "location_name": "Chicago Grand Theater in Chicago, Illinois",
@@ -7775,14 +7775,14 @@
                 "category": "Theater",
                 "type": "Rehearsal",
                 "tags": [
-                    "Theater",
-                    "Rehearsal",
-                    "Performing Arts",
-                    "Behind the Scenes",
-                    "Los Angeles",
-                    "Live Performance",
-                    "Art",
-                    "Creativity"
+                    "theater",
+                    "rehearsal",
+                    "performingarts",
+                    "behindthescenes",
+                    "losangeles",
+                    "liveperformance",
+                    "art",
+                    "creativity"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=221",
                 "location_name": "The Grand Stage in Los Angeles, California",
@@ -7815,13 +7815,13 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Broadway",
-                    "Live Performance",
-                    "New York City",
-                    "Art",
-                    "Entertainment"
+                    "theater",
+                    "premiere",
+                    "broadway",
+                    "liveperformance",
+                    "newyorkcity",
+                    "art",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=39",
                 "location_name": "The Grand Theater in New York City, New York",
@@ -7854,13 +7854,13 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Live Performance",
-                    "Ottawa Events",
-                    "Cultural Experience",
-                    "Art",
-                    "Entertainment"
+                    "theater",
+                    "premiere",
+                    "liveperformance",
+                    "ottawaevents",
+                    "culturalexperience",
+                    "art",
+                    "entertainment"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=316",
                 "location_name": "Ottawa Grand Theatre in Ottawa, Ontario",
@@ -7893,14 +7893,14 @@
                 "category": "Theater",
                 "type": "Rehearsal",
                 "tags": [
-                    "Theater",
-                    "Performance",
-                    "Rehearsal",
-                    "Live Show",
-                    "Chicago",
-                    "Arts",
-                    "Creativity",
-                    "Ensemble"
+                    "theater",
+                    "performance",
+                    "rehearsal",
+                    "liveshow",
+                    "chicago",
+                    "arts",
+                    "creativity",
+                    "ensemble"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=36",
                 "location_name": "Chicago Arts Center in Chicago, Illinois",
@@ -7933,13 +7933,13 @@
                 "category": "Theater",
                 "type": "Premiere Show",
                 "tags": [
-                    "Theater",
-                    "Premiere",
-                    "Performing Arts",
-                    "Live Show",
-                    "Entertainment",
-                    "Ottawa Events",
-                    "Cultural Experience"
+                    "theater",
+                    "premiere",
+                    "performingarts",
+                    "liveshow",
+                    "entertainment",
+                    "ottawaevents",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=239",
                 "location_name": "Ottawa Grand Theatre in Ottawa, Ontario",
@@ -7972,13 +7972,13 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theater",
-                    "Play",
-                    "Live Performance",
-                    "Houston Events",
-                    "Drama",
-                    "Arts",
-                    "Cultural Experience"
+                    "theater",
+                    "play",
+                    "liveperformance",
+                    "houstonevents",
+                    "drama",
+                    "arts",
+                    "culturalexperience"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=330",
                 "location_name": "Houston Grand Theater in Houston, Texas",
@@ -8006,13 +8006,13 @@
                 "category": "Theater",
                 "type": "Play",
                 "tags": [
-                    "Theater",
-                    "Live Performance",
-                    "Houston Events",
-                    "Drama",
-                    "Artistic Expression",
-                    "Community",
-                    "Culture"
+                    "theater",
+                    "liveperformance",
+                    "houstonevents",
+                    "drama",
+                    "artisticexpression",
+                    "community",
+                    "culture"
                 ],
                 "picture": "https://picsum.photos/1366/768?random=319",
                 "location_name": "Houston Performing Arts Center in Houston, Texas",
