@@ -102,7 +102,8 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            padding: 50px 20px 0;
+            padding: 50px 0 0;
+            gap: 10px;
         }
 
         .user-info {
@@ -111,7 +112,9 @@
 
         .contact-info {
             margin-top: 5px;
-            text-align: right;
+            text-align: left;
+            max-width: 40%;
+            padding: 10px;
         }
 
         .user-name {
@@ -122,6 +125,8 @@
             flex-direction: column;
             align-items: flex-start;
             position: relative;
+            max-width: 60%;
+            padding: 10px;
         }
         
         .user-bio {
@@ -336,29 +341,29 @@
                         
 
             <div class="tabs">
-                <div class="tab active" data-tab="hosted" id="hostedTab">Events Hosted</div>
-                <div class="tab" data-tab="history">Ticket History</div>
+                <div class="tab active" data-tab="history">Ticket History</div>
                 <div class="tab" data-tab="upcoming">Upcoming Events</div>
+                <div class="tab" data-tab="hosted" id="hostedTab">Events Hosted</div>
                 <div class="tab" data-tab="drafts" id="draftsTab">Drafts</div>
             </div>
 
-            <div class="tab-content active" id="hosted">
+            <div class="tab-content active" id="history">
                 <ul class="event-list">
                     <!--Events go here-->
-                    <li></li>
-                    <li></li>
-                </ul>
-            </div>
-
-            <div class="tab-content" id="history">
-                <ul class="event-list">
-                    <!--Events go here-->
-                    <li></li>
-                    <li></li>
+                    <li>Past event 1</li>
+                    <li>Past event 2</li>
                 </ul>
             </div>
 
             <div class="tab-content" id="upcoming">
+                <ul class="event-list">
+                    <!--Events go here-->
+                    <li>Upcoming event right here</li>
+                    <li>Another upcoming event, coming soon</li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="hosted">
                 <ul class="event-list">
                     <!--Events go here-->
                     <li></li>
