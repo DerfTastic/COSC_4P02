@@ -17,9 +17,11 @@ class UserPayment{
 class TicketOrderItem{
     type = "Ticket"
     /** @type{number} */id
+    /** @type{number} */tktTypeID
 
-    constructor(id){
+    constructor(id,tktTypeID){
         this.id = id;
+        this.tktTypeID =- tktTypeID;
     }
 }
 
