@@ -1,38 +1,54 @@
-function getItemsPerView() {
-    if (window.innerWidth <= 480) return 1;
-    if (window.innerWidth <= 768) return 2;
-    return 4; 
-}
-
-document.addEventListener("dynamic_content_finished", e => {
+document.addEventListener("dynamic_content_finished", () => {
     document.querySelectorAll('.carousel').forEach((carousel) => {
-        let currentIndex = 0;
         const productContainer = carousel.querySelector('.product-container');
         const productBoxes = carousel.querySelectorAll('.product-box');
         const totalSlides = productBoxes.length;
-        let animationTimeout;
-    
-        const updateCarousel = () => {
-            const slideWidth = productBoxes[0].offsetWidth + parseInt(getComputedStyle(productContainer).gap);
-            productContainer.style.animation= 'none';
-            productContainer.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-            productContainer.style.transition = 'transform 0.3s ease';
-            clearTimeout(animationTimeout);
-            animationTimeout = setTimeout(() => {
-                productContainer.style.animation = 'scroll 20s infinite linear';
-            }, 3000);
+
+        let currentIndex = 0;
+
+        const getSlideWidth = () => {
+            const box = productBoxes[0];
+            const gap = parseInt(getComputedStyle(productContainer).gap || 0);
+            return box.getBoundingClientRect().width + gap;
         };
-      
-    
+
+        const scrollToIndex = (index) => {
+            const slideWidth = getSlideWidth();
+            productContainer.scrollTo({
+                left: index * slideWidth,
+                behavior: 'smooth'
+            });
+        };
+
+        // Arrow click handlers
         carousel.querySelector('.arrow.left').addEventListener('click', () => {
-            currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalSlides - getItemsPerView();
-            updateCarousel();
+            if (currentIndex > 0) {
+                currentIndex--;
+                scrollToIndex(currentIndex);
+            }
         });
-    
+
         carousel.querySelector('.arrow.right').addEventListener('click', () => {
-            currentIndex = (currentIndex < totalSlides - getItemsPerView()) ? currentIndex + 1 : 0;  
-            updateCarousel();
+            const slideWidth = getSlideWidth();
+            const visibleItems = Math.floor(productContainer.offsetWidth / slideWidth);
+            if (currentIndex < totalSlides - visibleItems) {
+                currentIndex++;
+                scrollToIndex(currentIndex);
+            }
+        });
+
+        // Sync currentIndex when user scrolls manually (e.g., touchpad or drag)
+        productContainer.addEventListener('scroll', () => {
+            const slideWidth = getSlideWidth();
+            const newIndex = Math.round(productContainer.scrollLeft / slideWidth);
+            if (newIndex !== currentIndex) {
+                currentIndex = newIndex;
+            }
+        });
+
+        // Resize event: just re-align to current index
+        window.addEventListener('resize', () => {
+            scrollToIndex(currentIndex);
         });
     });
-    
-})
+});
