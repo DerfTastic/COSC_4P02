@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Black+Ops+One&family=Klee+One&family=Marhey:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
 body {
@@ -6,7 +6,6 @@ body {
     background: linear-gradient(135deg, #1b263b 0%, #2a3e59 40%, #415a77 75%, #778da9 100%);
     font-family: "Times New Roman", Times, serif;
     margin: 0;
-    font-size: 20px;
     width: 100%;
     padding: 0;
     min-height: 100vh;
@@ -14,6 +13,7 @@ body {
 
 html {
     scroll-behavior: smooth;
+    font-size: 20px;
 }
 
 ::-webkit-scrollbar {
@@ -40,12 +40,6 @@ html {
     min-height: 85vh;
 }
 
-.sticky {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-}
-
 footer {
     position: relative;
     display: flex;
@@ -57,13 +51,13 @@ footer {
     background: rgba(42, 62, 89, 0.3);
     backdrop-filter: blur(15px);
     color: #eeeef0;
-    text-align: center;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
-footer nav {
-    justify-content: center;
-    align-items: center;
+.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 header {
@@ -97,7 +91,6 @@ nav {
     flex: 0.3;
 }
 
-
 .logo-and-title {
     display: flex;
     justify-content: flex-start;
@@ -114,14 +107,11 @@ nav {
 
 .logo-and-title h1 {
     display: flex;
-    /* font-family: "Black Ops One", serif; */
     font-weight: 600;
-    font-size: clamp(30px, 3vw, 50px);
+    font-size: 2rem;
     font-style: normal;
     color: #eeeef0;
     margin: 0;
-    margin: auto;
-    padding: 0;
 }
 
 .logo {
@@ -140,7 +130,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    min-width: 300px;
+    min-width: 200px;
     height: 40px;
     outline: none;
     background: rgba(238, 238, 240, 0.15);
@@ -150,8 +140,12 @@ nav {
     flex: 0.35;
 }
 
+input{
+    font-family: 'Times New Roman', Times, serif;
+}
+
 .search-bar input {
-    font-size: 17px;
+    font-size: 0.8rem;
     padding-left: 10px;
     border: none;
     outline: none;
@@ -175,9 +169,7 @@ nav {
 input::selection {
     background-color: #1b263b;
     color: #eeeef0;
-    font-size: large;
 }
-
 
 .search-bar button {
     position: absolute;
@@ -192,15 +184,13 @@ input::selection {
     z-index: 10;
 }
 
-.search-bar button:hover {
-    background: #1b263b;
+.search-bar button .fa-solid {
+    font-size: 125%;
+    color: #eeeef0;
 }
 
-.search-bar button svg {
-    display: block;
-    height: 25px;
-    margin: auto;
-    color: #eeeef0;
+.search-bar button:hover {
+    background: #1b263b;
 }
 
 .search-container {
@@ -209,11 +199,14 @@ input::selection {
     justify-content: center;
 }
 
-nav a {
-    text-decoration: none;
+a {
     color: #eeeef0;
+    text-decoration: none;
+}
+
+nav a {
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 100;
     padding: 15px 25px;
     display: block;
@@ -221,13 +214,13 @@ nav a {
     transition: all 0.3s ease;
     border: none;
     border-radius: 5px;
-    gap: 5px;
     margin: 10px 0;
     margin-left: auto;
 }
 
-nav a:has(> svg) {
-    padding: 0px 25px;
+nav a .fa-solid {
+    font-size: 1.5rem;
+    color: #eeeef0;
 }
 
 nav a:hover {
@@ -237,34 +230,34 @@ nav a:hover {
 .product-container {
     display: flex;
     flex-wrap: nowrap;
+    width: 100%;
     gap: 20px;
-    padding: 20px;
-    will-change: transform;
-    transition: transform 0.3s ease;
+    padding: 20px 0;
     box-sizing: border-box;
-    margin: 50px;
-    animation: scroll 20s infinite linear;
+    margin: 50px 10px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    align-items: center;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
 }
 
-@keyframes scroll {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-50%);
-    }
+.product-container::-webkit-scrollbar {
+    display: none;
 }
 
 .product-box {
     background: #eeeef0;
-    width: calc((100% - (20px * 3)) / 4);
-    height: 450px;
+    width: calc((100% - (20px * 4)) / 4);
+    aspect-ratio: 3 / 4;
+    /* width : height ratio */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     align-items: center;
     text-align: center;
     position: relative;
@@ -272,89 +265,72 @@ nav a:hover {
     box-sizing: border-box;
 }
 
-@keyframes pixelReveal {
-    0% {
-        filter: blur(10px);
-        opacity: 1;
-    }
-
-    100% {
-        filter: blur(0);
-        opacity: 1;
-    }
-}
-
-@keyframes polaroidEntry {
-    from {
-        transform: translateY(100px) rotate(-10deg);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0) rotate(0);
-        opacity: 1;
-    }
-}
-
-@keyframes fallingPolaroid {
-    0% {
-        transform: translateY(-100px) rotate(-15deg);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateY(0) rotate(0);
-        opacity: 1;
-    }
-}
-
 .product-box:hover {
     transform: scale(1.05);
     cursor: pointer;
-    filter: sepia(30%) brightness(1.1) contrast(85%);
 }
 
 .product-box img {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
     padding: 20px;
     padding-bottom: 0;
+    flex: 0 0 50%;
 }
 
 .product-box .caption {
-    padding: 20px;
-    padding-top: 0;
+    padding: 0px 20px 15px 20px;
     background-color: #eeeef0;
     width: 100%;
-    text-align: left;
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 5px;
+    justify-content: space-evenly;
+    align-items: stretch;
+    flex: 0 0 40%;
 }
 
-.product-box .caption h2 {
-    font-size: 22px;
+.product-box .caption h4 {
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     margin: 5px 0;
     color: #28282a;
-    text-align: center;
 }
 
 .product-box .caption p {
-    font-size: 18px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.8rem;
     color: #28282a;
     margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.product-box .caption .subtext {
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
+    font-style: italic;
+    font-size: 0.8em;
+    font-weight: 350;
+    color: #415a77;
+
+}
+
+.fa-solid {
+    color: #415a77;
 }
 
 .carousel {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
     width: 100%;
-    margin: 0 auto;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-    background: none;
-    /* overflow-x: scroll; */
 }
 
 .arrow {
@@ -367,7 +343,7 @@ nav a:hover {
     border: none;
     padding: 5px 15px;
     cursor: pointer;
-    font-size: 35px;
+    font-size: 1.75rem;
     font-weight: 600;
     z-index: 1;
     margin: 20px;
@@ -398,7 +374,7 @@ nav a:hover {
     display: flex;
     color: #eeeef0;
     text-decoration: none;
-    font-size: 40px;
+    font-size: 2rem;
     /* font-family: "Marhey", sans-serif; */
     font-optical-sizing: auto;
     font-weight: 600;
@@ -454,7 +430,7 @@ nav a:hover {
 .reset-form p {
     padding-top: 10px;
     text-align: left;
-    font-size: 18px;
+    font-size: 0.8rem;
     color: #1b263b;
     font-weight: bold;
 }
@@ -468,7 +444,7 @@ nav a:hover {
 .form-group label {
     z-index: 1;
     position: relative;
-    font-size: 12px;
+    font-size: 0.7rem;
     margin-bottom: 5px;
     font-weight: 600;
     text-transform: uppercase;
@@ -482,7 +458,7 @@ nav a:hover {
     border: 1px solid rgba(238, 238, 240, 0.3);
     border-radius: 5px;
     color: #eeeef0;
-    font-size: 16px;
+    font-size: 0.8rem;
     outline: none;
     transition: box-shadow 0.3s ease;
 }
@@ -507,7 +483,7 @@ nav a:hover {
     border: none;
     border-radius: 5px;
     color: #eeeef0;
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 600;
     letter-spacing: 1px;
     cursor: pointer;
@@ -541,7 +517,7 @@ nav a:hover {
     border: none;
     border-radius: 5px;
     color: #eeeef0;
-    font-size: 16px;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease-in-out;
     text-align: center;
@@ -650,7 +626,7 @@ nav a:hover {
     border: none;
     border-radius: 5px;
     color: #28282a;
-    font-size: 14px;
+    font-size: 0.7rem;
     outline: none;
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
@@ -698,23 +674,65 @@ nav a:hover {
     display: inline-block;
     background-color: #415a77;
     color: #eeeef0;
+    text-decoration: none;
     padding: 5px 10px;
     margin: 2px;
     border-radius: 15px;
-    font-size: 20px;
+    font-size: 1rem;
 }
 
 .event-tag:hover {
     background-color: #778da9;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1606px) {
 
-
+    html {
+        font-size: 20px;
+    }
 
     .product-box {
-        width: calc((100% / 2));
-        height: smaller;
+        width: calc(((100% - (20px * 4)) / 4));
+    }
+
+    .product-container {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1380px) {
+
+    html {
+        font-size: 18px;
+    }
+
+    .product-box {
+        width: calc(((100% - (20px * 3)) / 3));
+    }
+
+    .product-container {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1320px) {
+    .logo-and-title h1 {
+        display: none;
+    }
+
+    .search-bar {
+        flex: auto;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    html {
+        font-size: 13px;
+    }
+
+    .product-box {
+        width: calc(((100% - (10px * 3)) / 3));
     }
 
     .product-container {
@@ -722,17 +740,72 @@ nav a:hover {
     }
 }
 
+@media (max-width:930px) {
+
+    .logo-and-title {
+        font-size: 1rem;
+    }
+
+    nav a,
+    nav {
+        padding: 10px;
+        margin: 0;
+        gap: 3px;
+    }
+
+    .logo {
+        width: 60px;
+    }
+}
+
+@media (max-width:760px) {
+    header {
+        padding: 0;
+    }
+
+    .logo-and-title {
+        flex: 0;
+    }
+
+    nav {
+        padding: 0;
+    }
+
+}
+
+@media (max-width: 680px) {
+
+    html {
+        font-size: 14px;
+    }
+
+    .product-box {
+        width: calc(((100% - (10px * 2)) / 2));
+    }
+
+    .product-container {
+        gap: 10px;
+    }
+
+    .search-bar {
+        margin: 0 5px;
+    }
+}
+
 @media (max-width: 480px) {
 
-    .heading a,
-    .logo-and-title h1,
-    nav a {
-        font-size: 1.5em;
+    html {
+        font-size: 20px;
+    }
+
+    .heading a {
+        font-size: 1rem;
     }
 
     nav a,
     .search-bar input {
-        font-size: 0.7em;
+        padding: 10px;
+        font-size: 0.75rem;
     }
 
     .product-box {
@@ -743,11 +816,6 @@ nav a:hover {
         gap: 10px;
         width: 100%;
         margin: 0;
-        animation: none;
-    }
-
-    .carousel {
-        overflow-x: scroll;
     }
 
     .arrow {
@@ -757,71 +825,12 @@ nav a:hover {
     }
 }
 
-@media (min-width:1537px) {
+@media (min-width:1606px) {
     .product-box {
-        width: calc((100% / 5));
+        width: calc(((100% - (20px * 5)) / 5));
     }
 
-
-    header nav a {
-        font-size: 1.5em;
-    }
-
-    .logo-and-title h1 {
-        font-size: 3em;
+    html {
+        font-size: 25px;
     }
 }
-
-/* 
-@media (max-width:1180px) {
-    .logo-and-title h1 {
-        display: none;
-    }
-}
-
-@media(max-width:870px) {
-    .search-bar {
-        margin-left: auto;
-    }
-
-    nav {
-        padding: auto;
-        margin: auto;
-    }
-
-    nav a,
-    .search-bar input {
-        font-size: 0.6em;
-    }
-
-    header,
-    .search-bar,
-    nav,
-    .logo-and-title img {
-        margin: 0;
-        padding: 0;
-        gap: 2px;
-    }
-
-    .logo-and-title img {
-        width: 3em;
-    }
-
-    .logo-and-title,
-    .search-bar {
-        justify-content: flex-start;
-        margin: 0;
-    }
-}
-
-@media(max-width:670px) {
-
-    nav a,
-    .search-bar input {
-        font-size: 0.5em;
-    }
-
-    .logo-and-title img {
-        width: 3em;
-    }
-} */
