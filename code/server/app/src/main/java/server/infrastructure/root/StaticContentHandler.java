@@ -32,7 +32,7 @@ public class StaticContentHandler implements RequestHandler {
         this.rootPath = static_content_path;
         this.doCache = cache_static_content;
         urlMap.put("/account", "/partials/profile");
-        urlMap.put("/users/profile", "/partials/profile");
+        urlMap.put("/user/profile", "/partials/profile");
     }
 
     @Override
