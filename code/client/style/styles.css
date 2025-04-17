@@ -272,13 +272,12 @@ nav a:hover {
 
 .product-box img {
     width: 100%;
-    padding: 20px;
-    padding-bottom: 0;
-    flex: 0 0 50%;
+    padding: 15px 15px 5px;
+    flex: 0 0 60%;
 }
 
 .product-box .caption {
-    padding: 0px 20px 15px 20px;
+    padding: 0px 15px 15px;
     background-color: #eeeef0;
     width: 100%;
     display: flex;
@@ -292,7 +291,7 @@ nav a:hover {
     font-family: "Playfair Display", serif;
     font-optical-sizing: auto;
     font-style: normal;
-    margin: 5px 0;
+    margin: 0 0 3px;
     color: #28282a;
 }
 
@@ -767,11 +766,20 @@ nav a:hover {
 }
 
 @media (min-width:1606px) {
+    html {
+        font-size: 25px;
+    }
+
     .product-box {
         width: calc(((100% - (20px * 5)) / 5));
     }
 
-    html {
-        font-size: 25px;
+    .product-box .caption h4 {
+        font-size: 0.7rem;
     }
+
+    .product-box .caption p {
+        font-size: 0.6rem;
+    }
+
 }
