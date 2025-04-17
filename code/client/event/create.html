@@ -11,109 +11,110 @@
     <style>
         .content {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 2rem;
         }
 
         .container h1 {
-            padding: 10px;
-            font-family: 'Times New Roman', Times, serif, sans-serif;
-            align-items: center;
-            margin: 0;
+            display: flex;
+            font-family: "Playfair Display", serif;
+            font-optical-sizing: auto;
+            font-style: normal;
         }
 
         .container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
-
-            width: 60%;
-            padding: 20px;
-            box-sizing: border-box;
+            width: 70%;
+            padding: 1rem;
             background: rgba(238, 238, 240, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            color: #eeeef0;
-            margin: 0;
-            height: auto;
         }
 
         .form-outer {
             display: flex;
             flex-direction: column;
-            height: auto;
-            position: relative;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: 0;
-            margin-top: 0;
             width: 100%;
-            box-sizing: border-box;
             overflow: hidden;
-        }
-
-        .form-outer button {
-            font-size: 16px;
-            display: inline-block;
-            justify-content: center;
-            align-items: center;
-            margin-left: 50px;
-            padding: auto;
-        }
-
-        .form-outer p,
-        .form p {
-            padding: 10px;
         }
 
         .form {
             width: 400%;
-            position: relative;
             display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: stretch;
-            margin: 0;
-            height: 100%;
         }
 
         .form-page {
             position: relative;
-            background-color: #1b263b;
+            /* background-color: #1b263b; */
+            background-color: transparent;
             width: 100%;
-            height: auto;
-            color: #eeeef0;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 12px;
         }
 
         .form-page .title {
-            margin: 10px;
-            font-size: 20px;
+            margin: 0.5rem;
+            font-size: 1.5rem;
             display: flex;
             justify-content: center;
+            font-family: "Playfair Display", serif;
+            font-optical-sizing: auto;
+            font-style: normal;
         }
 
+        .form-page .label {
+            margin-bottom: 5px;
+            font-size: 0.75rem;
+            font-weight: 1000;
+            text-transform: uppercase;
+        }
+
+        .form-page input,
+        .form-page select,
+        .form-page textarea {
+            padding: 10px;
+            background: rgba(238, 238, 240, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(238, 238, 240, 0.3);
+            border-radius: 5px;
+            color: #eeeef0;
+            transition: box-shadow 0.3s ease;
+            font-family: 'Times New Roman', Times, serif;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        select:focus {
+            /* background when clicked */
+            background-color: #eeeef0;
+            color: #1b263b;
+        }
+
+
         .fields-wrapper {
-            position: relative;
-            margin: 30px;
-            height: auto;
+            margin: 1rem;
             display: flex;
-            justify-content: space-between;
             gap: 10px;
             flex-wrap: wrap;
-            overflow: visible;
         }
 
         .fields-wrapper>* {
             flex: 1 1 45%;
-            /* Each child takes about 45% width */
-            min-width: 300px;
-            /* Prevents items from shrinking too much */
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-gap,
+        .field-gap-1 {
+            display: flex;
+            gap: 1rem;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+
+        .field-gap-1 {
+            justify-content: space-between;
         }
 
         .fields-wrapper>*:has(textarea),
@@ -124,115 +125,115 @@
         }
 
         .fields-wrapper textarea {
-            min-width: 100%;
-            max-width: 100%;
             resize: vertical;
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .map-location {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        #map-frame {
+            height: 100%;
         }
 
         .btn-container,
         #top {
-            margin: 10px 10px;
-            padding: 0;
+            margin: 0.5rem;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: space-between;
             align-self: center;
-            gap: 30px;
-            width: 100%;
+            width: calc(100% - 0.5rem);
+            text-decoration: none;
         }
 
-        .btn-container button {
+        .btn-container button,
+        .ticket-type button {
             min-width: fit-content;
             width: 20%;
-            margin: 0;
-            padding: 10px;
+            padding: 0.5rem;
             background-color: transparent;
             border: 1px solid #eeeef0;
             border-radius: 5px;
             color: #eeeef0;
-            font-size: 20px;
+            font-size: 1.2rem;
             font-weight: 600;
             letter-spacing: 1px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
         .btn-container button:hover {
             background: #1b263b;
         }
 
-        #top {
-            text-decoration: none;
-        }
-
-
         .progress-bar {
-            position: relative;
             display: flex;
             justify-content: center;
-            align-items: center;
-            align-self: center;
-            padding: 0;
             margin: 10px 0;
-            width: 50%;
-            gap: 40px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
         .progress-bar .step {
-            text-align: center;
-            min-width: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
-        }
-
-        .progress-bar .step p {
-            font-weight: 500;
-            font-size: 25px;
-            color: #eeeef0;
-            margin-bottom: 8px;
-            padding-left: 0;
+            flex: 1;
         }
 
         .progress-bar .step .bullet {
-            height: 50px;
-            width: 50px;
+            aspect-ratio: 1;
+            width: 3rem;
+            background-color: #415a77;
             border: 2px solid #eeeef0;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             border-radius: 50%;
-            position: relative;
             transition: 0.2s;
             font-weight: 600;
-            font-size: 20px;
-            line-height: 45px;
         }
 
+        .progress-bar .step .bullet.current,
         .progress-bar .step .bullet.active {
             border-color: #1b263b;
             background: #1b263b;
         }
 
+        .progress-bar .step .bullet.current::after {
+            transform: scaleX(1);
+            animation: none;
+        }
+
         .progress-bar .step .bullet span {
             position: absolute;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -2px);
             color: #eeeef0;
-            font-size: larger;
+            font-size: 1.2rem;
         }
-
 
         .progress-bar .step .bullet:before,
         .progress-bar .step .bullet:after {
+            content: "";
             position: absolute;
-            content: '';
-            bottom: 16px;
-            right: -85px;
-            height: 4px;
-            width: 70px;
+            width: 100%;
+            height: 0.4rem;
             background: #eeeef0;
+            z-index: -1;
         }
 
-        .progress-bar .step .bullet.active:after {
+        .progress-bar .step .bullet.active::after {
             background: #1b263b;
-            border-color: #1b263b;
             transform: scaleX(0);
             transform-origin: left;
             animation: animate 0.3s linear forwards;
@@ -249,60 +250,25 @@
             display: none;
         }
 
-        .progress-bar .step p.active {
-            color: #eeeef0;
-            transition: 0.2s linear;
-        }
-
         .progress-bar .step .check {
-            position: absolute;
             left: 50%;
-            top: 70%;
-            font-size: 15px;
-            transform: translate(-50%, -50%);
             display: none;
         }
 
         .progress-bar .step .check.active {
-            display: block;
-            color: transparent;
+            display: flex;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 2;
+            background-color: #1b263b;
         }
 
         .ticket-type {
-            position: relative;
-            margin: 10px 0;
             padding: 10px;
-            border-radius: 5px;
             display: flex;
             align-items: center;
-            justify-content: center;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .ticket-type button {
-            margin: 0;
-            width: 30%;
-            padding: 10px;
-            background-color: transparent;
-            border: 1px solid #eeeef0;
-            border-radius: 5px;
-            color: #eeeef0;
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        input,
-        textarea {
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid rgba(238, 238, 240, 0.2);
-            font-size: 16px;
-            font-family: "Times New Roman", Times, serif;
-            transition: all 0.3s ease;
+            gap: 1rem;
         }
 
         textarea {
@@ -311,103 +277,60 @@
 
         .upload-create-container {
             position: relative;
-            border: 2px solid #ccc;
+            border: 2px dashed #eeeef0;
             padding: 10px;
-            cursor: pointer;
             text-align: center;
-            width: 100%;
             height: 300px;
-            margin-top: 10px;
+            margin-top: 0.5rem;
+            border-radius: 12px;
         }
 
-        #smallPreviewContainer {
-            position: relative;
-            margin-top: 10px;
-            display: inline-block;
+        #eventImage {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            left: 0;
             cursor: pointer;
         }
 
-        #smallPreviewContainer img {
+        #removeImageBtn {
+            display: none;
             cursor: pointer;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: transparent;
+            color: yellow;
+            font-weight: 900;
+            border: none;
+            padding: 0 5px;
+            font-size: 1.5rem;
         }
 
         @media (max-width: 768px) {
+
             .container {
-                width: 90vw;
+                min-width: 95vw;
             }
 
-            .progress-bar {
-                gap: 65px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                width: 95vw;
-                padding: 15px;
+            .fields-wrapper>* {
+                flex: 1 1 100%;
             }
 
-            .progress-bar .step .bullet {
-                height: 40px;
-                width: 40px;
-                border: 2px solid #eeeef0;
-                display: inline-block;
-                border-radius: 50%;
-                position: relative;
-                transition: 0.2s;
-                font-weight: 400;
-                font-size: 16px;
-                line-height: 34px;
+            .btn-container button,
+            .ticket-type button {
+                justify-content: space-around;
+                font-size: 0.5rem;
             }
 
-            .progress-bar .step .bullet:before,
-            .progress-bar .step .bullet:after {
-                position: absolute;
-                content: '';
-                bottom: 16px;
-                right: -48px;
-                height: 4px;
-                width: 40px;
-                background: #eeeef0;
-            }
-
-            .progress-bar .step p {
-                font-size: 15px;
-
-            }
-
-            .form-outer p,
-            .form p {
-                padding: 10px;
-            }
-
-            .fields-wrapper {
-                padding: 0;
-                margin: 10px;
-            }
-
-            .progress-bar {
-                gap: 50px;
-            }
-
-            .ticket-type {
-                margin: 10px 0;
-                padding: 0px;
-                border-radius: 5px;
-                display: flex;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 10px;
-            }
         }
     </style>
 </head>
-<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
+    <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
     <div class="content">
-        <div class=container>
+        <div class="container">
             <h1>
                 Create an Event
             </h1>
@@ -417,32 +340,32 @@
                         <p>Info</p>
                         <div class="bullet">
                             <span>1</span>
+                            <div class="check fas fa-check"></div>
                         </div>
-                        <div class="check fas fa-check"></div>
                     </div>
                     <div class="step">
                         <p>Media</p>
                         <div class="bullet">
                             <span>2</span>
+                            <div class="check fas fa-check"></div>
                         </div>
-                        <div class="check fas fa-check"></div>
                     </div>
                     <div class="step">
                         <p>Tickets</p>
                         <div class="bullet">
                             <span>3</span>
+                            <div class="check fas fa-check"></div>
                         </div>
-                        <div class="check fas fa-check"></div>
                     </div>
                     <div class="step">
                         <p>Review</p>
                         <div class="bullet">
                             <span>4</span>
+                            <div class="check fas fa-check"></div>
                         </div>
-                        <div class="check fas fa-check"></div>
                     </div>
                 </div>
-                <div class=form>
+                <div class="form">
 
                     <div class=form-page>
                         <div class="title">Event Details:</div>
@@ -460,37 +383,43 @@
                             </div>
                             <div class="field">
                                 <div class="label">Event Location</div>
-                                <input type="text" id="eventLocation" placeholder="Enter Event Location"
-                                    class="input-field" required>
+                                <div class="map-location">
+                                    <input type="text" id="eventLocation" placeholder="Enter Event Location"
+                                        class="input-field" required>
+                                    <iframe id="map-frame" frameborder="0" scrolling="no" marginheight="0"
+                                        marginwidth="0"
+                                        src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=$BrockUniversity&t=m&z=14&ie=UTF8&iwloc=B&output=embed">
+                                    </iframe>
+                                </div>
                             </div>
-                            <div class="field">
-                                <div class="label">Event Date</div>
-                                <input type="date" id="eventDate" class="input-field" required><br><br>
+                            <div class="field-gap-1">
+                                <div class="field">
+                                    <div class="label">Event Date</div>
+                                    <input type="date" id="eventDate" class="input-field" required><br><br>
 
-                                <div class="label">Event Start and End Time</div>
-                                <input type="time" id="eventStartTime" class="input-field" required>
-                                <input type="time" id="eventEndTime" class="input-field" required>
-                            </div>
-                            <div class="field">
-                                <div class="label">Event Type</div>
-                                <select id="eventType" class="select-field">
-                                    <option value="" disabled selected>Select Event Type</option>
-                                    <option value="concert">Concert</option>
-                                    <option value="conference">Conference</option>
-                                    <option value="workshop">Workshop</option>
-                                    <option value="festival">Festival</option>
-                                </select>
-                            </div>
-                            <div class="field">
-                                <div class="label">Event Category</div>
-                                <select id="eventCategory" class="select-field">
-                                    <option value="" disabled selected>Select Event Category</option>
-                                    <option value="sports">Sports</option>
-                                    <option value="music">Music</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="education">Education</option>
-                                    <option value="art">Art</option>
-                                </select>
+                                    <div class="label">Event Start and End Time</div>
+                                    <div class="time-inputs">
+                                        <input type="time" id="eventStartTime" class="input-field" required>
+                                        <input type="time" id="eventEndTime" class="input-field" required>
+                                    </div>
+
+                                </div>
+                                <div class="field">
+                                    <div class="label">Event Category</div>
+                                    <select id="eventCategory" class="select-field">
+                                        <option value="" disabled selected>Select Event Category</option>
+                                        <option value="comedy">Comedy</option>
+                                        <option value="community-culture">Community/Culture</option>
+                                        <option value="family">Family</option>
+                                        <option value="film">Film</option>
+                                        <option value="music">Music</option>
+                                        <option value="stem">STEM</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="theater">Theater</option>
+                                        <option value="workshop">Workshop</option>
+                                    </select>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -500,20 +429,13 @@
                         <div class="fields-wrapper">
                             <div class="field">
                                 <div class="label">Upload Image</div>
-                                <div class="upload-create-container create-container" id="uploadBox"
-                                    onclick="document.getElementById('eventImage').click();">
+                                <div class="upload-create-container" id="uploadBox">
                                     <span id="uploadText">Click to upload an image</span>
+                                    <button id="removeImageBtn" onclick="removeImage()">X</button>
                                     <input type="file" id="eventImage" accept="image/*" onchange="handleFileUpload()"
-                                        class="input-field" style="display: none;">
+                                        class="input-field">
                                 </div>
 
-                                <!-- Small preview container -->
-                                <div id="smallPreviewContainer" style="display: none;">
-                                    <img id="smallPreviewImage" src="" alt="Image Preview"
-                                        style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ccc;">
-                                    <button id="removeImageBtn" onclick="removeImage()"
-                                        style="position: absolute; top: 0; right: 0; background: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 5px;">X</button>
-                                </div>
                             </div>
                             <div class="field">
                                 <div class="label">Event Tags</div>
@@ -525,16 +447,28 @@
                     <div class=form-page>
                         <div class="title">Tickets & Pricing:</div>
                         <div class="fields-wrapper">
-                            <div class="field">
-                                <div class="label">Ticket Type</div>
-                                <select id="ticketTypeSelect" class="select-field">
-                                    <option value="" selected disabled>Select Ticket Type</option>
-                                    <option value="free">Free</option>
-                                    <option value="vip">VIP</option>
-                                    <option value="general">General Admission</option>
-                                    <option value="other">Other</option>
-                                </select>
+                            <div class="field-gap">
+                                <div class="field">
+                                    <div class="label">Ticket Type</div>
+                                    <select id="ticketTypeSelect" class="select-field">
+                                        <option value="" selected disabled>Select Ticket Type</option>
+                                        <option value="free">Free</option>
+                                        <option value="vip">VIP</option>
+                                        <option value="general">General Admission</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <div class="label">Ticket Release Date</div>
+                                    <input type="date" id="ticketReleaseDate" class="input-field" required>
+                                </div>
+                                <div class="field">
+                                    <div class="label">Ticket Release Time</div>
+                                    <input type="time" id="ticketReleaseTime" class="input-field" required>
+                                </div>
                             </div>
+
                             <!-- Container for dynamically added ticket types -->
                             <div id="ticketTypesContainer">
                                 <!-- Dynamically added ticket types will appear here -->
@@ -572,10 +506,10 @@
                                 <div class="label">Event Date & Time:</div>
                                 <div id="reviewEventDate"></div>
                             </div>
-                            <div class="field">
+                            <!-- <div class="field">
                                 <div class="label">Event Type:</div>
                                 <div id="reviewEventType"></div>
-                            </div>
+                            </div> -->
                             <div class="field">
                                 <div class="label">Event Category:</div>
                                 <div id="reviewEventCategory"></div>
@@ -588,6 +522,10 @@
                                 <div class="label">Tickets:</div>
                                 <div id="reviewTicketType"></div>
                             </div>
+                            <div class="field">
+                                <div class="label">Ticket Release Date:</div>
+                                <div id="reviewTicketReleaseDT"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -598,6 +536,9 @@
                         <button class="next">
                             Next
                         </button>
+                        <button
+                            onclick="localStorage.clear(); document.querySelectorAll('input, select, textarea').forEach(el => el.type === 'checkbox' || el.type === 'radio' ? el.checked = false : el.value = '');">Clear
+                            Form</button>
                         <button id="saveButton" onclick="handleSave()">Save</button>
                         <button id="submitButton" onclick="handleSubmit()" style="display: none;">Submit</button></a>
                 </div>
@@ -625,6 +566,23 @@
             }
         });
 
+        const locationInput = document.getElementById('eventLocation');
+        const mapFrame = document.getElementById('map-frame');
+
+        let debounceTimeout;
+
+        locationInput.addEventListener('input', () => {
+            clearTimeout(debounceTimeout);
+
+            debounceTimeout = setTimeout(() => {
+                const location = encodeURIComponent(locationInput.value.trim());
+                if (location) {
+                    const mapUrl = `https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${location}&t=k&z=14&ie=UTF8&iwloc=B&output=embed`;
+                    mapFrame.src = mapUrl;
+                }
+            }, 500);
+        });
+
         const formPages = document.querySelectorAll(".form-page");
         const nbtn = document.querySelector(".next"); // Next button
         const pbtn = document.querySelector(".previous"); // Previous button
@@ -638,21 +596,26 @@
         // Function to update progress bar
         function updateProgressBar() {
             bullets.forEach((bullet, index) => {
+                // For bullets before the current step
                 if (index < currentStep) {
                     bullet.classList.add("active"); // Mark previous steps as active
+                    bullet.classList.remove("current"); // Ensure it's not marked as 'current'
                     if (checks[index]) checks[index].classList.add("active"); // Show checkmark
                 } else {
                     bullet.classList.remove("active"); // Remove active class from upcoming steps
+                    bullet.classList.remove("current"); // Remove current class from steps ahead
                     if (checks[index]) checks[index].classList.remove("active"); // Hide checkmark
                 }
             });
 
-            // Ensure the current step is highlighted but not checked
+            // Ensure the current step is highlighted, but not checked
             if (bullets[currentStep]) {
-                bullets[currentStep].classList.add("active");
-                if (checks[currentStep]) checks[currentStep].classList.remove("active");
+                bullets[currentStep].classList.add("current"); // Mark it as the current bullet
+                bullets[currentStep].classList.remove("active"); // Don't mark it as active (to prevent connector animation)
+                if (checks[currentStep]) checks[currentStep].classList.remove("active"); // Remove checkmark for the current step
             }
         }
+
 
         // Function to handle button visibility
         function updateButtonVisibility() {
@@ -712,25 +675,24 @@
             const ticketTypeSelect = document.getElementById("ticketTypeSelect");
             const selectedTicketType = ticketTypeSelect.value;
 
-            if (!selectedTicketType) return; // Ensure a ticket type is selected
-            if (addedTicketTypes.includes(selectedTicketType)) return; // Prevent duplicate ticket types
+            if (!selectedTicketType) return;
+            if (addedTicketTypes.includes(selectedTicketType)) return;
 
-            // Add the selected ticket type to the array of added types
             addedTicketTypes.push(selectedTicketType);
 
             const container = document.getElementById('ticketTypesContainer');
+            const isFree = selectedTicketType.toLowerCase() === 'free';
 
-            // Create a new ticket row
             const newTicketType = document.createElement('div');
             newTicketType.classList.add('ticket-type');
             newTicketType.innerHTML = `
         <div class="field">
             <div class="label">Ticket Type: ${selectedTicketType.charAt(0).toUpperCase() + selectedTicketType.slice(1)}</div>
-            <input type="number" class="ticketQuantity" placeholder="Quantity" onchange="updateTotalTickets()" required>
+            <input type="number" class="ticketQuantity" value="0" min="0" placeholder="Quantity" onchange="updateTotalTickets()" required>
         </div>
         <div class="field">
             <div class="label">Price</div>
-            <input type="number" class="ticketPrice" placeholder="Price" onchange="updateTotalTickets()" required>
+            <input type="number" class="ticketPrice" value="0" min="0" placeholder="Price" onchange="updateTotalTickets()" ${isFree ? 'disabled' : ''} required>
         </div>
         <button type="button" class="removeTicketType" onclick="removeTicketType(this)">Remove</button>
     `;
@@ -738,6 +700,7 @@
             container.appendChild(newTicketType);
             updateTotalTickets();
         }
+
 
         // Remove ticket type row
         function removeTicketType(button) {
@@ -774,16 +737,19 @@
                 eventDate: document.getElementById('eventDate').value,
                 eventStartTime: document.getElementById('eventStartTime').value,
                 eventEndTime: document.getElementById('eventEndTime').value,
-                eventType: document.getElementById('eventType').value,
+                // eventType: document.getElementById('eventType').value,
                 eventCategory: document.getElementById('eventCategory').value,
                 eventTags: document.getElementById('eventTags').value,
+                ticketReleaseDate: document.getElementById('ticketReleaseDate').value,
+                ticketReleaseTime: document.getElementById('ticketReleaseTime').value,
             };
         }
+
         const tickets = []; // Array to hold all tickets data
         // Function to populate review section
         function populateReviewSection() {
 
-            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventType, eventCategory, eventTags } = getEventDetails();
+            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventCategory, eventTags, ticketReleaseDate, ticketReleaseTime } = getEventDetails();
 
             // Get ticket details
             let ticketDetails = '';
@@ -811,23 +777,36 @@
             document.getElementById('reviewEventLocation').textContent = eventLocation || 'N/A';
             document.getElementById('reviewEventDate').textContent =
                 eventDate && eventStartTime && eventEndTime
-                    ? `${new Date(eventDate).toLocaleString('en-US', {
+                    ? `${new Date(eventDate).toLocaleString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
-                    })} - ${new Date(`${eventDate}T${eventStartTime}`).toLocaleString('en-US', {
+                    })} - ${new Date(`${eventDate}T${eventStartTime}`).toLocaleString(undefined, {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
-                    })} to ${new Date(`${eventDate}T${eventEndTime}`).toLocaleString('en-US', {
+                    })} to ${new Date(`${eventDate}T${eventEndTime}`).toLocaleString(undefined, {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    })}`
+                    : 'N/A';
+            document.getElementById('reviewTicketReleaseDT').textContent =
+                ticketReleaseDate && ticketReleaseTime
+                    ? `${new Date(ticketReleaseDate).toLocaleString(undefined, {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                    })} at ${new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).toLocaleString(undefined, {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
                     })}`
                     : 'N/A';
 
-            document.getElementById('reviewEventType').textContent = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1) : 'N/A';
+            // document.getElementById('reviewEventType').textContent = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1) : 'N/A';
             document.getElementById('reviewEventCategory').textContent = eventCategory ? eventCategory.charAt(0).toUpperCase() + eventCategory.slice(1) : 'N/A';
             document.getElementById('reviewEventTags').textContent = eventTags || 'N/A'; // Add event tags to review section
             document.getElementById('reviewTotalTickets').textContent = document.getElementById('totalTicketsAllotted').textContent;
@@ -854,73 +833,63 @@
             const fileList = fileInput.files;
             const uploadBox = document.getElementById('uploadBox');
             const uploadText = document.getElementById('uploadText');
-            const smallPreviewContainer = document.getElementById('smallPreviewContainer');
-            const smallPreviewImage = document.getElementById('smallPreviewImage');
+            const removeBtn = document.getElementById('removeImageBtn');
 
-            // Limit to only 1 file
+            // Allow only 1 file
             if (fileList.length > 1) {
                 alert('You can only upload 1 image.');
+                fileInput.value = ''; // Reset input
                 return;
             }
 
             if (fileList.length > 0) {
                 const file = fileList[0];
-                uploadedFile = file;
 
-                // Update the upload text and hide the upload box
-                uploadText.textContent = 'Image uploaded';
-                //uploadBox.style.display = 'none'; // Hide upload button after upload
-
-                // Show small preview container
-                smallPreviewContainer.style.display = 'block';
-
-                // Check if the file is an image
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        smallPreviewImage.src = event.target.result; // Set the preview source to the uploaded image
-                        uploadedImageUrl = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    alert('Please upload an image file.');
+                // Ensure file is an image
+                if (!file.type.startsWith('image/')) {
+                    alert('Please upload a valid image file.');
+                    fileInput.value = ''; // Reset input
+                    return;
                 }
+
+                uploadedFile = file;
+                uploadText.textContent = 'Image uploaded';
+
+                // Read the file and display it in the uploadBox
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    uploadedImageUrl = event.target.result;
+                    uploadBox.style.backgroundImage = `url(${uploadedImageUrl})`;
+                    uploadBox.style.backgroundSize = "cover";
+                    uploadBox.style.backgroundPosition = "center";
+                    uploadBox.style.borderStyle = "solid";
+                    removeBtn.style.display = "block";
+                    // Hide text once image is uploaded
+                    uploadText.style.display = "none";
+                };
+                reader.readAsDataURL(file);
             }
         }
 
-        // Function to remove image and show the upload button again
+        // Function to remove image and reset upload box
         function removeImage() {
             const fileInput = document.getElementById('eventImage');
             const uploadBox = document.getElementById('uploadBox');
-            const smallPreviewContainer = document.getElementById('smallPreviewContainer');
-            const smallPreviewImage = document.getElementById('smallPreviewImage');
+            const uploadText = document.getElementById('uploadText');
+            const removeBtn = document.getElementById('removeImageBtn');
 
-            // Reset the input and hide preview
+            // Reset file input and upload box
             fileInput.value = '';
-            uploadBox.style.display = 'block'; // Show upload button again
-            smallPreviewContainer.style.display = 'none'; // Hide small preview
-            smallPreviewImage.src = ''; // Clear preview image
+            uploadBox.style.backgroundImage = "none"; // Remove image
+            removeBtn.style.display = "none";
+            uploadBox.style.borderStyle = 'dashed'; // Reset border
+            uploadText.textContent = 'Upload an image.';
+            uploadText.style.display = 'block'; // Show text again
         }
 
-        // Expand image on click to fill the upload container
-        document.getElementById('smallPreviewImage').addEventListener('click', function () {
-            const uploadBox = document.getElementById('uploadBox');
-            const smallPreviewImage = document.getElementById('smallPreviewImage');
-
-            // Toggle the expanded preview
-            if (uploadBox.style.display === 'none') {
-                uploadBox.style.display = 'block'; // Show upload button again
-                smallPreviewImage.style.width = '100px'; // Reset small size
-                smallPreviewImage.style.height = '100px';
-            } else {
-                smallPreviewImage.style.width = '100%'; // Expand preview to full size
-                smallPreviewImage.style.height = 'auto';
-                uploadBox.style.display = 'none'; // Hide upload button
-            }
-        });
 
         async function createEvent(action) {
-            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventType, eventCategory, eventTags } = getEventDetails();
+            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventCategory, eventTags, ticketReleaseDate, ticketReleaseTime } = getEventDetails();
 
             // Get event details   
             const updateEvent = new UpdateOrganizerEvent();
@@ -933,7 +902,7 @@
             // updateEvent.available_total_tickets = totalTickets || 0;
             updateEvent.location_name = eventLocation;
             updateEvent.category = eventCategory;
-            updateEvent.type = eventType;
+            updateEvent.release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime();
 
             console.log(updateEvent);
             await api.events.update_event(eventId, updateEvent);
@@ -1056,22 +1025,9 @@
                 }
             });
 
-            // Optional: handle file inputs (display file name as a preview, if needed)
-            document.querySelectorAll("input[type='file']").forEach((fileInput) => {
-                const fileName = localStorage.getItem(fileInput.id);
-                if (fileName) {
-                    // For displaying the filename or a preview image (you cannot store file itself in localStorage)
-                    const previewContainer = document.getElementById(fileInput.id + "-preview");
-                    if (previewContainer) {
-                        previewContainer.textContent = fileName;
-                    }
-                }
-            });
         });
 
     </script>
-    <script src="/js/api.js"></script>
-    <script src="/js/ui.js"></script>
 </body>
 
 </html>

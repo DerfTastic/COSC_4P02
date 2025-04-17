@@ -9,28 +9,26 @@
     <script src="/js/ui.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-</head>
-<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
-
-<script>
-    async function get_events(...meow) {
-        for (let i = 0; i < meow.length; i++) {
-            const val = meow[i];
-            meow[i] = (async () => {
-                return {
-                    title: val + " Events",
-                    events: await api.search.search_events_with_owner({ category_fuzzy: val.toLowerCase() })
-                }
-            })();
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
+    <script>
+        async function get_events(...meow) {
+            for (let i = 0; i < meow.length; i++) {
+                const val = meow[i];
+                meow[i] = (async () => {
+                    return {
+                        title: val + " Events",
+                        events: await api.search.search_events_with_owner({ category_fuzzy: val.toLowerCase() })
+                    }
+                })();
+            }
+            return Promise.all(meow);
         }
-        return Promise.all(meow);
-    }
-</script>
+    </script>
+</head>
 
 <body>
-
+    <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
     <div class="content">
-
         <script
             src="get_events('Music', 'Sports', 'Family', 'Comedy', 'STEM', 'Theater', 'Workshop', 'Community/Culture', 'Film')"
             type="text/x-handlebars-template">
@@ -38,33 +36,36 @@
             <div class="carousel">
                 <div class="heading "><button class="arrow left" id="prev">&#10094;</button><a href="#" onclick="redirectToSearch('{{title}}')">{{title}}</a><button class="arrow right" id="next">&#10095;</button></div>
                 
-                <div class="product-container">
+                <div class="product-container scroll-active">
                     {{#each events}}
                     <div class="product-box" onclick="window.location.href = '/event?id={{id}}'">
 
                         <img src="/media/{{picture}}" alt="{{name}}">
-                        <div class="caption">
-                            <h2>{{name}}</h2>
-                            <p> {{formatTime start}}</p>
-                            <p> {{location_name}}</p>
-                            <p> {{owner.name}}</p>
+                        <div  class="caption">
+                            <h4>{{splitTitle name "main"}}{{#if (splitTitle name "sub")}}<br><span class="subtext">{{splitTitle name "sub"}}</span>{{/if}}</h4>        
+                            <p><i class="fa-solid fa-calendar"></i>{{formatTime start}}</p>
+                            <p><i class="fa-solid fa-location-dot"></i>{{location_name}}</p>
+                            <p><i class="fa-solid fa-user"></i>{{owner.name}}</p>
                         </div>
                     </div>
                     {{/each}}
                 </div>
-                
             </div>
             {{/each}}
         </script>
         <div></div>
-
     </div>
     <div src="/partials/footer.html" type="text/x-html-template"></div>
-    <script>function redirectToSearch(title) {
+    <script>
+        function redirectToSearch(title) {
             const firstWord = title.split(' ')[0].split('/')[0];
             const encodedWord = encodeURIComponent(firstWord);
-            window.location.href = `event/search?search=${encodedWord}`;
+            window.location.href = `event/search?category=${encodedWord}`;
         }
+        Handlebars.registerHelper('splitTitle', function (name, part) {
+            const parts = name.split(/[:\-]/);
+            return part === 'main' ? parts[0].trim() : (parts[1] || "").trim();
+        });
     </script>
 </body>
 

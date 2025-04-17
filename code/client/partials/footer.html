@@ -21,8 +21,10 @@
     flex-direction: column;
   }
 
-  .social-media {
-    margin: 10px;
+  .social-media,
+  .contact-b-left {
+    padding: 0 0 10px 0;
+    flex-grow: 1;
   }
 
   .contact-bottom {
@@ -41,27 +43,31 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    font-size: 11px;
+    font-size: 0.5rem;
     width: 100%;
   }
 
-  a {
-    color: #eeeef0;
-    text-decoration: none;
+  .fa-brands {
+    font-size: 1.5rem;
+    padding: 2px;
   }
 
-  @media (max-width: 512px) {
+  @media(max-width:480px) {
+    .text h1 {
+      margin: 0;
+    }
+
     .tiny {
-      justify-content: center;
+      justify-content: space-around;
     }
   }
 </style>
 
 <footer>
   <div class="main">
-    <img src="/images/logo.png" class="footer-logo" alt="Logo" onclick="window.location.href='/'">
+    <a href="/"><img src="/images/logo.png" class="footer-logo" alt="Logo"></a>
     <div class="text">
-      <h1 onclick="window.location.href='/'">TICKET EXPRESS</h1>
+      <h1><a href="/">TICKET EXPRESS</a></h1>
       <div class="contact">
         <p>
           00 Example Rd. City, Provice, X0X 0X0
@@ -96,8 +102,7 @@
   <div class="tiny">
     <div class="tiny-left">
       <a href="/privacy">Privacy Policy •</a>
-      <a href="/tos">Terms of Service •</a>
-      <a href="/cookie">Manage Cookie Preferences</a>
+      <a href="/tos">Terms of Service</a>
     </div>
     <p>© 2025 Ticket Express. All rights reserved.</p>
   </div>
