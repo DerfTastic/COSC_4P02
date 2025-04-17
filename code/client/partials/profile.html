@@ -61,8 +61,6 @@
             left: 20px;
         }
 
-        
-
         .change-profile-btn {
             position: absolute;
             width: 30px;
@@ -98,9 +96,12 @@
         .profile-actions {
             display: flex;
             justify-content: flex-end;
+            align-items: center;
             gap: 10px;
             margin-top: 10px;
+            padding-right: 20px;
         }
+
 
         .editIcon{
             color: #eeeef0;
@@ -151,7 +152,7 @@
             margin-top: 8px;
             text-align: left;
             font-weight: normal;
-            font-size: 14px;
+            font-size: 16px;
             color: #fdfdfd;
             white-space: pre-wrap;
         }
@@ -173,14 +174,11 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
-            position: absolute;
-            right: 20px;
-            top: 30px;
             border-radius: 25px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
-        
+
         #goProBtn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
@@ -295,15 +293,14 @@
                 <!-- Change Banner Button -->
                 <button id="change-banner-btn" class="change-banner-btn" onclick="document.getElementById('bannerPicInput').click()"></button>
             </div>
-
+            <div class="profile-actions">
+                <button id="editProfileBtn" class="edit-profile-btn" onclick="toggleEditMode()"></button>
+                <button class="go-pro-btn" id="goProBtn">Go Pro</button>
+            </div>
             <div class="profile-container">
                 <div class="profile-picture" id="profilePic">
                     <!-- Change Profile Picture Button -->
                     <button id="change-profile-btn" class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
-                </div>
-                <div class="profile-actions">
-                    <button id="editProfileBtn" class="edit-profile-btn" onclick="toggleEditMode()"></button>
-                    <button class="go-pro-btn" id="goProBtn">Go Pro</button>
                 </div>
             </div>
 
@@ -515,6 +512,12 @@
                 document.getElementById("editProfileBtn").classList.add("hidden");
                 document.getElementById("change-banner-btn").classList.add("hidden");
                 document.getElementById("change-profile-btn").classList.add("hidden");
+
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                document.getElementById("hostedTab").classList.add("active");
+                document.getElementById("hosted").classList.add("active");
             }
         }
         document.addEventListener("DOMContentLoaded", async () => {
