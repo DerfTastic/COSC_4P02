@@ -349,8 +349,8 @@
                         
 
             <div class="tabs">
-                <div class="tab active" data-tab="history">Ticket History</div>
-                <div class="tab" data-tab="upcoming">Upcoming Events</div>
+                <div class="tab active" data-tab="history" id="historyTab">Ticket History</div>
+                <div class="tab" data-tab="upcoming" id="upcomingTab">Upcoming Events</div>
                 <div class="tab" data-tab="hosted" id="hostedTab">Events Hosted</div>
                 <div class="tab" data-tab="drafts" id="draftsTab">Drafts</div>
             </div>
@@ -469,9 +469,14 @@
 
         async function load(){
             const urlParams = new URLSearchParams(window.location.search);
-            const id = parseInt(urlParams.get('id'), 10);
-            var info = await api.user.userinfo();
-            console.log(info);
+            var info;
+            if(window.location.pathname.startsWith("/account")){
+                info = await api.user.userinfo();
+            }else{
+                const id = parseInt(urlParams.get('id'), 10);
+                info = await api.user.userinfo(id);
+            }
+            // console.log(info);
             if(info.picture&&info.picture!=0)
                 document.getElementById("profilePic").style.backgroundImage = `url(/media/${info.picture})`;
             if(info.banner&&info.banner!=0)
@@ -500,6 +505,16 @@
                 document.getElementById("draftsTab").classList.add("hidden");
                 // Show Go Pro button
                 document.getElementById("goProBtn").classList.remove("hidden");
+            }
+
+            if(!window.location.pathname.startsWith("/account")){
+                document.getElementById("upcomingTab").classList.add("hidden");
+                document.getElementById("draftsTab").classList.add("hidden");
+                document.getElementById("historyTab").classList.add("hidden");
+                document.getElementById("goProBtn").classList.add("hidden");
+                document.getElementById("editProfileBtn").classList.add("hidden");
+                document.getElementById("change-banner-btn").classList.add("hidden");
+                document.getElementById("change-profile-btn").classList.add("hidden");
             }
         }
         document.addEventListener("DOMContentLoaded", async () => {
