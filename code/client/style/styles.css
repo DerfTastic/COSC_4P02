@@ -2,7 +2,7 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
 body {
-    color: #f4f4f9;
+    color: #eeeef0;
     background: linear-gradient(135deg, #1b263b 0%, #2a3e59 40%, #415a77 75%, #778da9 100%);
     font-family: "Times New Roman", Times, serif;
     margin: 0;
@@ -19,7 +19,7 @@ html {
 ::-webkit-scrollbar {
     width: 15px;
     transition: opacity 0.3s ease;
-    background-color: #f4f4f9;
+    background-color: #eeeef0;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -140,7 +140,7 @@ nav {
     flex: 0.35;
 }
 
-input{
+input {
     font-family: 'Times New Roman', Times, serif;
 }
 
@@ -476,7 +476,6 @@ nav a:hover {
 .btn-login,
 .btn-register,
 .btn-reset {
-    font-family: 'Times New Roman', Times, serif;
     width: 100%;
     padding: 10px;
     background-color: #2a3e59;
@@ -488,6 +487,7 @@ nav a:hover {
     letter-spacing: 1px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .btn-login:hover,
@@ -500,17 +500,6 @@ nav a:hover {
     box-sizing: border-box;
 }
 
-.create-event-container {
-    display: grid;
-    grid-template-areas:
-        "top-section right-section"
-        "media-preview right-section"
-        "left-section right-section";
-    grid-template-columns: 2fr 1fr;
-    padding: 5px;
-}
-
-.create-event-container button,
 .edit-btn {
     padding: 12px;
     background-color: #415a77;
@@ -521,54 +510,6 @@ nav a:hover {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease-in-out;
     text-align: center;
-}
-
-.create-event-container button:hover,
-.edit-btn:hover {
-    background-color: #415a77;
-    transform: translateY(-3px);
-}
-
-.create-event-container button:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(85, 110, 224, 0.8);
-}
-
-.top-section {
-    grid-area: top-section;
-    padding: 10px;
-    height: 100%;
-    flex-direction: column;
-}
-
-.media-preview {
-    grid-area: media-preview;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    padding: 10px;
-    text-align: center;
-}
-
-.left-section {
-    grid-area: left-section;
-    padding: 10px;
-    height: 100%;
-}
-
-.right-section {
-    grid-area: right-section;
-    padding: 10px;
-    height: 100%;
-}
-
-.top-section img {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: cover;
 }
 
 @keyframes fadeIn {
