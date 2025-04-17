@@ -268,22 +268,22 @@
                 <form class="form" action="/save_somewhere"> <!---CHANGE ACTION!!!-->
                     <div class="input-container">
                         <label for="cc-num">*Card Number</label>
-                        <input type="text" id="cc-num" name="cc-num" required>
+                        <input type="number" id="cc-num" name="cc-num" class="no-spinners" required>
                     </div>
                     <div class="input-row">
                         <div class="input-container">
                             <label for="cc-e-Month">*Expiry Month</label>
-                            <input type="text" id="cc-e-Month" name="cc-e-Month" required>
+                            <input type="number" id="cc-e-Month" name="cc-e-Month" pattern="(0[1-9]|1[0-2])" placeholder="MM" class="no-spinners" required>
                         </div>
                         <div class="input-container">
                             <label for="cc-e-Day">*Expiry Day</label>
-                            <input type="text" id="cc-e-Day" name="cc-e-Day" required>
+                            <input type="number" id="cc-e-Day" name="cc-e-Day" pattern="(0[1-9]|[12][0-9]|3[01])])" placeholder="DD" class="no-spinners" required>
                         </div>
                     </div>
                     <div class="input-row">
                         <div class="input-container">
                             <label for="cc-cvv">*CVV</label>
-                            <input type="text" id="cc-cvv" name="cc-cvv" required>
+                            <input type="number" id="cc-cvv" name="cc-cvv" pattern="\d{3}" maxlength="3" class="no-spinners" required>
                         </div>
                         <div class="cvv-description input-container">
                             <p>This 3 or 4 digit is on the back or front of your card</p>
@@ -307,11 +307,11 @@
                     <div class="input-row">
                         <div class="input-container">
                             <label for="phone">*Phone Number</label>
-                            <input type="text" id="phone" name="phone" required>
+                            <input type="tel" id="phone" name="phone" required>
                         </div>
                         <div class="input-container">
                             <label for="phone-ext">Ext (optional)</label>
-                            <input type="text" id="phone-ext" name="phone-ext">
+                            <input type="number" id="phone-ext" name="phone-ext" class="no-spinners">
                         </div>
                     </div>
                     <div class="input-container">
@@ -330,12 +330,12 @@
                             </div>
                             <div class="input-container">
                                 <label for="postal">*Postal Code</label>
-                                <input type="text" id="postal" name="postal" required>
+                                <input type="text" id="postal" name="postal" placeholder="X0X 0X0" required>
                             </div>
                         </div>
                     </div>
                     <div class="input-container">
-                        <label for="contry">*Contry</label>
+                        <label for="contry">*Country</label>
                         <input type="text" id="contry" name="contry" required>
                     </div>
                 </form>
@@ -355,6 +355,39 @@
                 const response = await api.payment.make_purchase({ payment, items });
                 window.location.href = `/shop/receipt?receipt_id=${response.payment_id}`;
             }
+            function checkEmptyFields() {
+                const fieldIds = [
+                    "cc-num",
+                    "cc-e-Month",
+                    "cc-e-Day",
+                    "cc-cvv",
+                    "fname",
+                    "lname",
+                    "phone",
+                    "address",
+                    "city",
+                    "province",
+                    "postal",
+                    "contry"
+                ];
+
+                let emptyFields = [];
+
+                fieldIds.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (!element || element.value.trim() === "") {
+                        emptyFields.push(id);
+                    }
+                });
+
+                if (emptyFields.length === 0) {
+                    place_order();
+                } else {
+                    alert("Please fill in all required fields before placing your order.");
+                }
+            }
+          
+
         </script>
         <div class="payment order-summary">
 
@@ -405,7 +438,7 @@
                 </div>
             </script>
             <div class="pay-info"></div>
-            <button type="button" onclick="place_order()">Place Order</button>
+            <button type="button" onclick="checkEmptyFields()">Place Order</button>
             <h4>Security & Privacy</h4>
             <p>Every transaction on Ticket Express is secure. Any personal information you give us will be handled
                 according to our <a href="/privacy.html">Privacy Policy</a>.</p>
