@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .content {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .payment {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: flex-start;
+        background: rgba(238, 238, 240, 0.1);
+        backdrop-filter: blur(15px);
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        color: #eeeef0;
+        padding: 15px;
+        gap: 30px;
+        width: 70vw;
+    }
+
+    h1 {
+        color: var(--Light, #eeeef0);
+        font-size: 48px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    
+    p {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .pay-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        align-self: stretch;
+    }
+    
+    .order-summary {
+        width: 80vw;
+        gap: 15px;
+    }
+
+    h4 {
+        color: var(--Light, #E6E6E8);
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin: 5px 0;
+    }
+
+    .price {
+        display: flex;
+        padding: 0px 15px;
+        justify-content: space-between;
+        align-items: flex-start;
+        align-self: stretch;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .sub-total {
+        display: flex;
+        padding: 5px 15px 5px 0px;
+        justify-content: space-between;
+        align-items: flex-start;
+        align-self: stretch;
+    }
+
+    .total {
+        border-top: 3px solid var(--L-Blue, #778DA9);
+    }
+</style>
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <script src="/js/api.js"></script>
+    <link rel="stylesheet" href="/style/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+</head>
+<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
+
+<body>
+    <div class="content">
+        <script>
+            async function get_estamate(){
+                var id = new URLSearchParams(window.location.search).get("receipt_id");
+                id = JSON.parse(id);
+                return api.payment.get_receipt(id);
+            }
+        </script>
+        <div class="payment order-summary">
+
+            <script src="get_estamate()" type="text/x-handlebars-template">
+                <h1>Order Summary</h1>
+                <!--<div class="sumary-title">
+                    <h4>Event Name</h4>
+                </div>---> 
+                <div class="pay-info">
+                    <div class="price">
+                        <div class="item">
+                            {{#each items}}
+                            <p>{{name}}</p>
+                            {{/each}}
+                        </div>
+                        <div class="item">
+                            {{#each items}}
+                            <p>{{formatPrice purchase_price}}</p>
+                            {{/each}}
+                        </div>
+                    </div>
+                    <div class="sub-total">
+                        <div class="item">
+                            <h4>Subtotal</h4>
+                        </div>
+                        <div class="item">
+                            <h4>{{formatPrice subtotal}}</h4>
+                        </div>
+                    </div>
+                    <div class="price">
+                        <div class="item">
+                            <p>Service Fee</p>
+                            <p>Tax</p>
+                        </div>
+                        <div class="item">
+                            <p>{{formatPrice fees}}</p>
+                            <p>{{formatPrice gst}}</p>
+                        </div>
+                    </div>
+                    <div class="sub-total total">
+                        <div class="item">
+                            <h4>Total</h4>
+                        </div>
+                        <div class="item">
+                            <h4>{{formatPrice total}}</h4>
+                        </div>
+                    </div>
+                </div>
+            </script>
+            <div class="pay-info"></div>
+            <h4>Purchase Successful</h4>
+            <p>Thanks for placing an order with Ticket Express, you will recieve an email with your ticket attached, please remeber to scan the QR code to enter the venue.</p>
+        </div>
+    </div>
+    </div>
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
+</body>
+
+</html>

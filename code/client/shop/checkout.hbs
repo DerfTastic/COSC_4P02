@@ -47,7 +47,7 @@
         margin-top: 15px;
         margin-bottom: 15px;
     }
-    
+
     p {
         margin-top: 10px;
         margin-bottom: 10px;
@@ -113,7 +113,7 @@
     .input-row {
         display: flex;
         align-items: flex-start;
-        align-self: stretch;        
+        align-self: stretch;
         justify-content: space-between;
         gap: 10px;
         width: 100%;
@@ -228,6 +228,7 @@
         text-decoration: none;
         color: #eeeef0;
     }
+
     .order-summary a:visited {
         text-decoration: none;
         color: #eeeef0;
@@ -288,6 +289,7 @@
                             <p>This 3 or 4 digit is on the back or front of your card</p>
                         </div>
                     </div>
+                </form>
             </div>
             <div class="pay-info">
                 <h2>Billing Information</h2>
@@ -340,17 +342,18 @@
             </div>
         </div>
         <script>
-            async function get_estamate(){
+            async function get_estamate() {
                 var items = new URLSearchParams(window.location.search).get("items");
                 items = JSON.parse(items);
                 return api.payment.create_estimate(items);
             }
 
-            async function place_order(){
+            async function place_order() {
                 const payment = {};
                 var items = new URLSearchParams(window.location.search).get("items");
                 items = JSON.parse(items);
-                return api.payment.make_purchase({payment, items});
+                const response = await api.payment.make_purchase({ payment, items });
+                window.location.href = `/shop/receipt?receipt_id=${response.payment_id}`;
             }
         </script>
         <div class="payment order-summary">
@@ -378,7 +381,7 @@
                             <h4>Subtotal</h4>
                         </div>
                         <div class="item">
-                            <p>{{formatPrice subtotal}}</p>
+                            <h4>{{formatPrice subtotal}}</h4>
                         </div>
                     </div>
                     <div class="price">
@@ -396,7 +399,7 @@
                             <h4>Total</h4>
                         </div>
                         <div class="item">
-                            <p>{{formatPrice total}}</p>
+                            <h4>{{formatPrice total}}</h4>
                         </div>
                     </div>
                 </div>

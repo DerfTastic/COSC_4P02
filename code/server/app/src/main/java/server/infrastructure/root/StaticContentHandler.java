@@ -1,5 +1,6 @@
 package server.infrastructure.root;
 
+import framework.web.error.ClientError;
 import framework.web.request.RequestHandler;
 import framework.web.annotations.Handler;
 import framework.web.request.Request;
@@ -16,12 +17,13 @@ public class StaticContentHandler implements RequestHandler {
 
     public final boolean checkCachedSources = true;
 
-    private final static class CachedItem{
+    public final static class CachedItem{
         Path resolved;
         long last_modified;
         byte[] content;
     }
 
+    private final HashMap<String, String> urlMap = new HashMap<>();
     private final HashMap<String, CachedItem> cache = new HashMap<>();
     private final String rootPath;
     private final boolean doCache;
@@ -29,22 +31,41 @@ public class StaticContentHandler implements RequestHandler {
     public StaticContentHandler(@Config String static_content_path, @Config boolean cache_static_content){
         this.rootPath = static_content_path;
         this.doCache = cache_static_content;
+        urlMap.put("/account", "/partials/profile");
+        urlMap.put("/users/profile", "/partials/profile");
     }
 
     @Override
     public void handle(Request request) throws IOException {
-        String requestedPath = request.exchange.getRequestURI().getPath();
+        String reqPath = request.exchange.getRequestURI().getPath();
         if(!request.exchange.getRequestMethod().equalsIgnoreCase("GET")){
             request.sendResponse(405, "Invalid Method Specified");
             return;
         }
+        if(urlMap.containsKey(reqPath))
+            reqPath = urlMap.get(reqPath);
 
-        var cached = cache.get(requestedPath);
+        CachedItem cached;
+        try{
+            cached = get(reqPath);
+        }catch (ClientError e){
+            request.sendResponse(e.code, e.getMessage());
+            return;
+        }
+
+        request.exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
+        if(doCache)
+            request.exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
+        request.sendResponse(200, cached.content);
+    }
+
+    public CachedItem get(String reqPath) throws ClientError, IOException {
+        var cached = cache.get(reqPath);
         cached:
         if(cached != null){
             if(checkCachedSources){
                 if(!Files.exists(cached.resolved)){
-                    cache.remove(requestedPath);
+                    cache.remove(reqPath);
                     break cached;
                 }
                 var time = Files.getLastModifiedTime(cached.resolved).toMillis();
@@ -55,7 +76,7 @@ public class StaticContentHandler implements RequestHandler {
             }
         }
         if(cached==null){
-            StringBuilder builder = new StringBuilder(requestedPath);
+            StringBuilder builder = new StringBuilder(reqPath);
             if(builder.toString().endsWith("/"))
                 builder.append("index");
             else if(Files.isDirectory(Path.of(rootPath +builder)))
@@ -68,28 +89,20 @@ public class StaticContentHandler implements RequestHandler {
 
             var path = Path.of(rootPath + builder);
 
-            if(requestedPath.contains("..")){
-                request.sendResponse(400, "");
-            }
-            if(Files.isDirectory(path)){
-                request.sendResponse(400, "Not a File");
-            }
-            if (!Files.exists(path)) {
-                request.sendResponse(404, "Not Found");
-                return;
-            }else{
-                cached = new CachedItem();
-                cached.resolved = path;
-                cached.last_modified = Files.getLastModifiedTime(cached.resolved).toMillis();
-                cached.content = Files.readAllBytes(cached.resolved);
-                cache.put(requestedPath, cached);
-            }
-        }
+            if(reqPath.contains(".."))
+                throw new ClientError(400, "Not a File");
+            if(Files.isDirectory(path))
+                throw new ClientError(400, "Not a File");
+            if (!Files.exists(path))
+                throw new ClientError(404, "Not Found");
 
-        request.exchange.getResponseHeaders().add("Content-Type", getContentType(cached.resolved.getFileName().toString()));
-        if(doCache)
-            request.exchange.getResponseHeaders().add("Cache-Control", "max-age=604800");
-        request.sendResponse(200, cached.content);
+            cached = new CachedItem();
+            cached.resolved = path;
+            cached.last_modified = Files.getLastModifiedTime(cached.resolved).toMillis();
+            cached.content = Files.readAllBytes(cached.resolved);
+            cache.put(reqPath, cached);
+        }
+        return cached;
     }
 
     private static String getContentType(String fileName) {
