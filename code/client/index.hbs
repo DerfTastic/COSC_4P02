@@ -60,7 +60,7 @@
         function redirectToSearch(title) {
             const firstWord = title.split(' ')[0].split('/')[0];
             const encodedWord = encodeURIComponent(firstWord);
-            window.location.href = `event/search?category=${encodedWord}`;
+            window.location.href = `/event/search?category=${encodedWord}`;
         }
         Handlebars.registerHelper('splitTitle', function (name, part) {
             const parts = name.split(/[:\-]/);

@@ -352,7 +352,8 @@
                 const payment = {};
                 var items = new URLSearchParams(window.location.search).get("items");
                 items = JSON.parse(items);
-                return api.payment.make_purchase({ payment, items });
+                const response = await api.payment.make_purchase({ payment, items });
+                window.location.href = `/shop/receipt?receipt_id=${response.payment_id}`;
             }
         </script>
         <div class="payment order-summary">

@@ -207,7 +207,6 @@ public class PaymentAPI {
                             (select name from tickets where id=:ticket_id),
                             (select name from events where id IN (select event_id from tickets where id=:ticket_id)),
                             (select event_id from tickets where id=:ticket_id),
-                            (select name from tickets where id=:ticket_id),
                             (select price from tickets where id=:ticket_id),
                             id
                         """);

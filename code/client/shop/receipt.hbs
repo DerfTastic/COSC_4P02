@@ -102,9 +102,9 @@
     <div class="content">
         <script>
             async function get_estamate(){
-                var items = new URLSearchParams(window.location.search).get("items");
-                items = JSON.parse(items);
-                return api.payment.create_estimate(items);
+                var id = new URLSearchParams(window.location.search).get("receipt_id");
+                id = JSON.parse(id);
+                return api.payment.get_receipt(id);
             }
         </script>
         <div class="payment order-summary">
