@@ -8,6 +8,7 @@ import framework.db.RwTransaction;
 import framework.util.SqlSerde;
 import framework.web.Util;
 import framework.web.annotations.*;
+import framework.web.annotations.url.Path;
 import server.infrastructure.session.SessionCache;
 import server.infrastructure.session.UserSession;
 import server.mail.MailServer;
@@ -69,7 +70,7 @@ public class PaymentAPI {
     }
 
     @JSONType(typeName = "Ticket")
-    public record TicketReceipt(String name, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
+    public record TicketReceipt(String name, long ticket_id, String event_name, long event_id, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
     }
 
     public record PurchasedTicketId(long pid, String salt) {
@@ -88,6 +89,26 @@ public class PaymentAPI {
 
     public static void verify_payment(PaymentInfo payment, long amount) {
         //TODO
+    }
+
+    @Route("/get_receipt/<receipt_id>")
+    public static @Json Receipt get_receipt(UserSession auth, RoTransaction trans, @Path int receipt_id) throws SQLException {
+        Receipt res;
+        try (var stmt = trans.namedPreparedStatement("select * from payments where user_id=:user_id AND id=:receipt_id order by payment_date desc")) {
+            stmt.setLong(":user_id", auth.user_id());
+            stmt.setLong(":receipt_id", receipt_id);
+            res = SqlSerde.sqlSingle(stmt.executeQuery(), rs -> new Receipt(
+                    rs.getLong("id"),
+                    JSON.parseArray(rs.getString("receipt"), ReceiptItem.class),
+                    rs.getLong("payment_date"),
+                    rs.getLong("subtotal"),
+                    rs.getLong("fees"),
+                    rs.getLong("gst"),
+                    rs.getLong("total")
+            ));
+        }
+        trans.commit();
+        return res;
     }
 
     @Route
@@ -122,7 +143,15 @@ public class PaymentAPI {
     public static @Json Estimate create_estimate(UserSession auth, RoTransaction trans, @Body @Json OrderItem[] order) throws SQLException {
         ArrayList<ReceiptItem> items = new ArrayList<>();
         long subtotal = 0;
-        try (var ticket = trans.namedPreparedStatement("select name, price from tickets where id=:ticket_id AND event_id IN (select id from events where draft=false)");) {
+        try (var ticket = trans.namedPreparedStatement("""
+            select
+                name,
+                (select name from events where id=event_id),
+                event_id,
+                price
+            from tickets where
+                id=:ticket_id AND event_id IN (select id from events where draft=false)
+            """)) {
             for (var item : order) {
                 switch (item) {
                     case AccountOrganizerUpgrade ignore -> items.add(new AccountOrganizerUpgradeReceipt(50_000000));
@@ -131,7 +160,10 @@ public class PaymentAPI {
                         items.add(SqlSerde.sqlSingle(ticket.executeQuery(),
                                 rs -> new TicketReceipt(
                                         rs.getString(1),
-                                        rs.getLong(2),
+                                        id,
+                                        rs.getString(2),
+                                        rs.getLong(3),
+                                        rs.getLong(4),
                                         null
                                 ))
                         );
@@ -173,6 +205,9 @@ public class PaymentAPI {
                             (null, :user_id, :ticket_id, :payment_id, (select price from tickets where id=:ticket_id), :salt)
                         returning
                             (select name from tickets where id=:ticket_id),
+                            (select name from events where id IN (select event_id from tickets where id=:ticket_id)),
+                            (select event_id from tickets where id=:ticket_id),
+                            (select name from tickets where id=:ticket_id),
                             (select price from tickets where id=:ticket_id),
                             id
                         """);
@@ -208,8 +243,11 @@ public class PaymentAPI {
                         items.add(SqlSerde.sqlSingle(ticket.executeQuery(),
                                 rs -> new TicketReceipt(
                                         rs.getString(1),
-                                        rs.getLong(2),
-                                        new PurchasedTicketId(rs.getLong(3), salt)
+                                        id,
+                                        rs.getString(2),
+                                        rs.getLong(3),
+                                        rs.getLong(4),
+                                        new PurchasedTicketId(rs.getLong(5), salt)
                                 )));
                     }
                 }
@@ -258,7 +296,7 @@ public class PaymentAPI {
                     case AccountOrganizerUpgradeReceipt(long purchase_price) -> {
                         str.append("<p>Account Upgrade: ").append(formatPrice(purchase_price)).append("</p>");
                     }
-                    case TicketReceipt(String name, long purchase_price, PurchasedTicketId id) -> {
+                    case TicketReceipt(String name, long ticketId, String eventName, long eventId, long purchase_price, PurchasedTicketId id) -> {
                         str.append("<p>Ticket: ")
                                 .append(name).append(" ")
                                 .append(formatPrice(purchase_price))

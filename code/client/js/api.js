@@ -88,6 +88,9 @@ class PurchasedTicketId{
 class ReceiptItem{
     /** @type{"Ticket"|"AccountOrganizerUpgrade"} */type
     /** @type{string?} */name
+    /** @type{string?} */event_name
+    /** @type{number?} */ticket_id
+    /** @type{number?} */event_id
     /** @type{PurchasedTicketId?} */id
     /** @type{number?} */purchase_price
 }
@@ -331,6 +334,23 @@ const api = {
             )).json();
         },
 
+        /**
+         * @param {number} receipt_id 
+         * @param {Session} session 
+         * @returns {Promise<Receipt>}
+         */
+        get_receipt: async function(receipt_id, session = cookies.getSession()){
+            return await (await api.api_call(
+                `/get_receipt/${encodeURI(receipt_id)}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-UserAPIToken': session
+                    },
+                },
+                "An error occured when fetching the receipt"
+            )).json();
+        },
         /**
          * @param {Session} session 
          * @returns {Promise<Receipt>}
