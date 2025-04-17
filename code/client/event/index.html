@@ -445,7 +445,7 @@
                 const maxQuantity = Math.min(10, ticket.availableQuantity);
 
                 ticketContainer.innerHTML = `
-                    <span class="ticket-name">${ticket.name} - $${ticket.price}</span>
+                    <span class="ticket-name">${ticket.name} - ${format_currency(ticket.price)}</span>
                     <div class="ticket-buttons">
                         <button class="decrease" onclick="updateTicketQuantity(${ticket.id}, -1)">-</button>
                         <input 
