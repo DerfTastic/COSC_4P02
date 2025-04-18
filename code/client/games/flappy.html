@@ -61,8 +61,11 @@
     let score = 0, highScore = 0, gameOver = false, paused = false, gameStarted = false;
 
     const flapSound = new Audio('res/flappy/clap.mp3');
+    flapSound.preload = 'auto'; flapSound.load();
     const crashSound = new Audio('res/flappy/crash.mp3');
+    crashSound.preload = 'auto'; crashSound.load();
     const bgMusic = new Audio('res/flappy/bgm.mp3');
+    crashSound.preload = 'auto'; crashSound.load();
     bgMusic.loop = true;
 
     const ticketSVG = new Image();
@@ -235,7 +238,7 @@
         createBeam(beams[beams.length - 1].x + 300);
       }
       for (const beam of beams) {
-        beam.x -= (2 + score * 0.05)*dtime*60;
+        beam.x -= (2 + score * 0.05) * dtime * 60;
         if (!beam.scored && beam.x < bird.x) {
           beam.scored = true
           score++;
@@ -346,12 +349,13 @@
     }
 
     function updateParticles(dtime) {
-      particles = particles.filter(p => p.life-=dtime*60 > 0);
-      for (const p of particles) {
-        p.x += p.vx*dtime*60;
-        p.y += p.vy*dtime*60;
-        p.vy += 0.1*dtime*60;
-      }
+      particles = particles.filter(p => {
+        p.life -= dtime;
+        p.x += p.vx * dtime * 60;
+        p.y += p.vy * dtime * 60;
+        p.vy += 0.1 * dtime * 60;
+        return p.life > 0;
+      });
     }
 
     function drawUI() {
@@ -392,17 +396,17 @@
 
     let lastTime = 0;
     function gameLoop(time) {
-      const dtime = (time-lastTime)/1000;
+      const dtime = (time - lastTime) / 1000;
       lastTime = time;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (!paused && gameStarted && !gameOver) {
-        bird.velocity += gravity*dtime*60;
-        bird.y += bird.velocity*dtime*60;
+        bird.velocity += gravity * dtime * 60;
+        bird.y += bird.velocity * dtime * 60;
         updateBeams(dtime);
         checkCollision();
       }
-      meow = jmpScaler-1;
-      jmpScaler = 1+meow-meow*10*dtime;
+      meow = jmpScaler - 1;
+      jmpScaler = 1 + meow - meow * 10 * dtime;
       updateParticles(dtime);
 
       drawBackground(time);
@@ -418,14 +422,16 @@
     function input() {
       if (!gameStarted) {
         gameStarted = true;
-        bgMusic.play();
+        bgMusic.pause();
       } else if (gameOver) {
         resetGame();
-        bgMusic.play();
+        bgMusic.pause();
       } else if (!paused) {
+        bgMusic.play();
         bird.velocity = jump;
         var cl = flapSound.cloneNode(true);
         cl.volume = 0.4;
+        cl.currentTime = 0.01;
         cl.play();
 
         jmpScaler += 1;
@@ -436,7 +442,7 @@
             y: bird.y - bird.height * Math.random(),
             vx: (Math.random() - 0.5) * 6,
             vy: (Math.random() - 0.5) * 6 - 3,
-            life: 20 + Math.random() + 20,
+            life: 0.2 + Math.random() + 0.2,
             color: `hsl(${Math.random() * 360}, 100%, 60%)`,
           });
         }
@@ -446,10 +452,11 @@
     document.addEventListener("mousedown", e => {
       input();
     });
-
     document.addEventListener("touchstart", e => {
-      e.preventDefault();
       input();
+    });
+    document.addEventListener('touchend', event => {
+      event.preventDefault();
     });
     // Input Handling
     document.addEventListener('keydown', e => {
