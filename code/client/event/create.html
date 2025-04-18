@@ -1009,7 +1009,7 @@
         // Save form values to localStorage on input change
         document.querySelectorAll("input, textarea, select").forEach((input) => {
             // Skip file inputs
-            if (input.type !== "file") {
+            if (input.type !== "file" && input.id != "ticketTypeSelect") {
                 input.addEventListener("input", () => {
                     localStorage.setItem(input.id, input.value);
                 });
