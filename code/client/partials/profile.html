@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="/style/styles.css">
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
-
     <!-- Cropper.js JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
     <style>
         /* body {
             font-family: Arial, sans-serif;
@@ -38,7 +38,7 @@
             height: 250px;
             background: grey center/cover no-repeat;
             background-size: cover;
-            background-position: center; 
+            background-position: center;
         }
 
         .profile-container {
@@ -103,12 +103,12 @@
         }
 
 
-        .editIcon{
+        .editIcon {
             color: #eeeef0;
             font-size: 24px;
         }
 
-        .saveIcon{
+        .saveIcon {
             color: #eeeef0;
             font-size: 24px;
         }
@@ -147,7 +147,7 @@
             max-width: 60%;
             padding: 10px;
         }
-        
+
         .user-bio {
             margin-top: 8px;
             text-align: left;
@@ -281,17 +281,18 @@
         .hidden {
             display: none !important;
         }
-
     </style>
 </head>
 
 <body>
+    <div src="/partials/header.html" type="text/x-html-template"></div>
     <div class="content">
-        <div src="/partials/header.html" type="text/x-html-template"></div>
+
         <div class="profile">
             <div class="profile-banner">
                 <!-- Change Banner Button -->
-                <button id="change-banner-btn" class="change-banner-btn" onclick="document.getElementById('bannerPicInput').click()"></button>
+                <button id="change-banner-btn" class="change-banner-btn"
+                    onclick="document.getElementById('bannerPicInput').click()"></button>
             </div>
             <div class="profile-actions">
                 <button id="editProfileBtn" class="edit-profile-btn" onclick="toggleEditMode()"></button>
@@ -300,12 +301,15 @@
             <div class="profile-container">
                 <div class="profile-picture" id="profilePic">
                     <!-- Change Profile Picture Button -->
-                    <button id="change-profile-btn" class="change-profile-btn" onclick="document.getElementById('profilePicInput').click()"></button>
+                    <button id="change-profile-btn" class="change-profile-btn"
+                        onclick="document.getElementById('profilePicInput').click()"></button>
                 </div>
             </div>
 
-            <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'profile')">
-            <input type="file" id="bannerPicInput" accept="image/*" style="display: none;" onchange="openImageCropper(event, 'banner')">
+            <input type="file" id="profilePicInput" accept="image/*" style="display: none;"
+                onchange="openImageCropper(event, 'profile')">
+            <input type="file" id="bannerPicInput" accept="image/*" style="display: none;"
+                onchange="openImageCropper(event, 'banner')">
 
             <div id="imageCropperModal" class="image-modal">
                 <div class="image-modal-content">
@@ -338,12 +342,12 @@
                     </div>
                     <div>
                         Phone: <span id="displayPhone"></span>
-                        <input type="tel" id="phoneInput"  class="edit-field">
+                        <input type="tel" id="phoneInput" class="edit-field">
                     </div>
                 </div>
                 <!-- <button id="saveProfileBtn" class="hidden" onchange="test()">Save</button> -->
             </div>
-                        
+
 
             <div class="tabs">
                 <div class="tab active" data-tab="history" id="historyTab">Ticket History</div>
@@ -385,12 +389,165 @@
             </div>
 
         </div>
-        
+
     </div>
-    
-    <div src="/partials/footer.html" type="text/x-html-template"></div>
+
+
     <script>
-        function test(){
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            await loadHostedEvents();
+            await loadPastEvents();
+            await loadUpcomingEvents();
+            await loadDraftEvents();
+        });
+        async function loadHostedEvents() {
+            const params = new URLSearchParams(window.location.search);
+            let organizerId = params.get("id");
+
+            try {
+                if (!organizerId) {
+                    const organizerEvents = await api.organizer.get_events();
+                    if (organizerEvents.length > 0) {
+                        organizerId = organizerEvents[0].owner_id;
+                    } else {
+                        console.error("No events found to determine organizer ID");
+                        return;
+                    }
+                }
+
+                const search = new Search();
+                search.organizer_exact = parseInt(organizerId);
+                const events = await api.search.search_events_with_owner(search);
+
+                renderEvents(events, "#hosted .event-list");
+            } catch (error) {
+                console.error("Failed to load hosted events:", error);
+            }
+        }
+        async function loadPastEvents() {
+            try {
+                const organizerEvents = await api.organizer.get_events();
+                if (organizerEvents.length > 0) {
+                    organizerId = organizerEvents[0].owner_id;
+                } else {
+                    console.error("No events found to determine organizer ID for past events");
+                    return;
+                }
+
+                const now = Date.now();
+                const search = new Search();
+                search.organizer_exact = parseInt(organizerId);
+                search.date_end = now; // Only events that ended before now
+
+                const pastEvents = await api.search.search_events_with_owner(search);
+
+                renderEvents(pastEvents, "#history .event-list");
+            } catch (error) {
+                console.error("Failed to load past events:", error);
+            }
+        }
+        async function loadUpcomingEvents() {
+            try {
+                const organizerEvents = await api.organizer.get_events();
+                if (organizerEvents.length > 0) {
+                    let organizerId = organizerEvents[0].owner_id;
+
+                    const now = Date.now();
+                    const search = new Search();
+                    search.organizer_exact = parseInt(organizerId);
+                    search.date_start = now; // Only events that start after now
+
+                    const upcomingEvents = await api.search.search_events_with_owner(search);
+
+                    renderEvents(upcomingEvents, "#upcoming .event-list");
+                } else {
+                    console.error("No events found to determine organizer ID for upcoming events");
+                }
+            } catch (error) {
+                console.error("Failed to load upcoming events:", error);
+            }
+        }
+        async function loadDraftEvents() {
+            try {
+                const organizerEvents = await api.organizer.get_events();
+                if (organizerEvents.length > 0) {
+                    let organizerId = organizerEvents[0].owner_id;
+
+                    const search = new Search();
+                    search.organizer_exact = parseInt(organizerId);
+                    search.draft = true; // Only events that are drafts
+
+                    const draftEvents = await api.search.search_events_with_owner(search);
+
+                    renderEvents(draftEvents, "#drafts .event-list");
+                } else {
+                    console.error("No events found to determine organizer ID for draft events");
+                }
+            } catch (error) {
+                console.error("Failed to load draft events:", error);
+            }
+        }
+
+        function renderEvents(eventList, containerSelector) {
+            const container = document.querySelector(containerSelector);
+            container.innerHTML = ""; // Clear any old <li>
+
+            eventList.forEach(event => {
+                const listItem = document.createElement("li"); // Each event inside a <li>
+
+                const ticketSVG = document.createElement("div");
+                ticketSVG.classList.add("event-box");
+                ticketSVG.innerHTML = ` 
+            <svg id="ticket-svg" style="cursor: pointer;" width="100%" height="100%" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" fill="#eeeef0"/>
+                <image href="/media/${event.picture}" preserveAspectRatio="none" x="30" y="40" width="200" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
+                <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
+                <foreignObject x="250" y="25" width="230" height="140">
+                    <div style="height:100%; display:flex; flex-direction:column; justify-content:stretch; align-items:flex-start; padding:10px; gap:3px; overflow:hidden; box-sizing:border-box;">
+                        <div style="text-align:left; font-size:16px; font-weight:bold; color:#1b263b; margin-bottom:5px;">${event.name}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Date: ${new Date(event.start).toUTCString()}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Location: ${event.location_name}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Category: ${event.category}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Organizer: ${event.owner.name}</div>
+                    </div>
+                </foreignObject>
+            </svg>
+        `;
+
+                listItem.appendChild(ticketSVG);
+                container.appendChild(listItem); // Add each event to the container
+
+                if (!event.draft) {
+                    // If event is not a draft, add the event listener to redirect to the event details page
+                    ticketSVG.firstElementChild.addEventListener("click", () => {
+                        window.location.href = `/event?id=${event.id}`;
+                    });
+                } else {
+                    // If event is a draft, save the event data to localStorage and redirect to create event page
+
+                    ticketSVG.firstElementChild.addEventListener("click", () => {
+                        localStorage.clear();
+                        localStorage.setItem('draftEventData', JSON.stringify(event));
+                        window.location.href = '/event/create';  // Redirect to the create event page
+                    });
+                }
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function test() {
             console.log("here!");
         }
         document.addEventListener("DOMContentLoaded", function () {
@@ -464,33 +621,33 @@
             }
         }
 
-        async function load(){
+        async function load() {
             const urlParams = new URLSearchParams(window.location.search);
             var info;
-            if(window.location.pathname.startsWith("/account")){
+            if (window.location.pathname.startsWith("/account")) {
                 info = await api.user.userinfo();
-            }else{
+            } else {
                 const id = parseInt(urlParams.get('id'), 10);
                 info = await api.user.userinfo(id);
             }
             // console.log(info);
-            if(info.picture&&info.picture!=0)
+            if (info.picture && info.picture != 0)
                 document.getElementById("profilePic").style.backgroundImage = `url(/media/${info.picture})`;
-            if(info.banner&&info.banner!=0)
+            if (info.banner && info.banner != 0)
                 document.querySelector(".profile-banner").style.backgroundImage = `url(/media/${info.banner})`;
-        
+
             document.getElementById("email").textContent = info.email;
             document.getElementById("displayName").textContent = info.name;
             document.getElementById("nameInput").value = info.name;
             document.getElementById("displayEmail").textContent = info.disp_email;
-            document.getElementById("emailInput").value = info.disp_email==undefined?"":info.disp_email;
+            document.getElementById("emailInput").value = info.disp_email == undefined ? "" : info.disp_email;
             document.getElementById("displayPhone").textContent = `${info.disp_phone_number}`;
-            document.getElementById("phoneInput").value = info.disp_phone_number==undefined?"":info.disp_phone_number;
+            document.getElementById("phoneInput").value = info.disp_phone_number == undefined ? "" : info.disp_phone_number;
             document.getElementById("displayBio").textContent = info.bio || "No bio yet.";
             document.getElementById("bioInput").value = info.bio || "";
 
             // Pro status logic
-            if (info.organizer){
+            if (info.organizer) {
                 // Show pro tabs
                 document.getElementById("hostedTab").classList.remove("hidden");
                 document.getElementById("draftsTab").classList.remove("hidden");
@@ -504,14 +661,11 @@
                 document.getElementById("goProBtn").classList.remove("hidden");
             }
 
-            if(!window.location.pathname.startsWith("/account")){
-                document.getElementById("upcomingTab").classList.add("hidden");
-                document.getElementById("draftsTab").classList.add("hidden");
-                document.getElementById("historyTab").classList.add("hidden");
-                document.getElementById("goProBtn").classList.add("hidden");
-                document.getElementById("editProfileBtn").classList.add("hidden");
-                document.getElementById("change-banner-btn").classList.add("hidden");
-                document.getElementById("change-profile-btn").classList.add("hidden");
+            if (!window.location.pathname.startsWith("/account")) {
+                ["upcomingTab", "draftsTab", "historyTab", "goProBtn", "editProfileBtn", "change-banner-btn", "change-profile-btn"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add("hidden");
+                });
 
                 document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -531,7 +685,7 @@
             if (croppedCanvas) {
                 // console.log(croppedCanvas);
                 // const croppedImageURL = croppedCanvas.toData("image/png");
-                croppedCanvas.toBlob(async function(blob){
+                croppedCanvas.toBlob(async function (blob) {
                     if (currentImageType === "profile") {
                         var id = await api.user.set_user_picture(blob);
                         console.log(id);
@@ -540,9 +694,9 @@
                         var id = await api.user.set_user_banner_picture(blob);
                         document.querySelector(".profile-banner").style.backgroundImage = `url(/media/${id})`;
                     }
-                },'image/png'); 
+                }, 'image/png');
 
-     
+
 
                 // Close the modal
                 closeImageCropper();
@@ -599,7 +753,7 @@
         document.getElementById("change-profile-btn").innerHTML = editIcon;
         document.getElementById("editProfileBtn").innerHTML = editIcon;  
     </script>
-
+    <div src="/partials/footer.html" type="text/x-html-template"></div>
 </body>
 
 </html>
