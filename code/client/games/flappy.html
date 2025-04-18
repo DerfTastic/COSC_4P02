@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +11,7 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       background: radial-gradient(ellipse at center, #1e1e2f 0%, #0a0a0a 100%);
       display: flex;
@@ -18,76 +20,23 @@
       height: 100vh;
       overflow: hidden;
     }
+
     canvas {
       background: linear-gradient(to bottom, #111, #333);
       box-shadow: 0 0 20px #00ffff55, 0 0 10px #ffd70088;
       border-radius: 20px;
     }
-    #backgroundCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
   </style>
 </head>
+
 <body>
-    <canvas id="gameCanvas" width="400" height="600"></canvas>
-    <script>
-      const bgCanvas = document.getElementById('gameCanvas');
-      const bgCtx = bgCanvas.getContext('2d');
-  
-      class AnimatedWave {
-      constructor(options) {
-        this.color = options.color;
-        this.amplitude = options.amplitude;
-        this.speed = options.speed;
-        this.offsetY = options.offsetY;
-        this.phase = Math.random() * Math.PI * 2;
-        this.angle = options.angle || 0;
-        this.complexity = options.complexity || 1;
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <script>
+    const bgCanvas = document.getElementById('gameCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
 
-        this.f = [];
-        for(let i = 0; i < this.complexity*3; i ++){
-            this.f.push(Math.random()*2)
-            this.f.push(Math.random()*1)
-            this.f.push(Math.random())
-        }
-      }
 
-      draw(ctx, time) {
-        ctx.save();
-        ctx.translate(bgCanvas.width / 2, bgCanvas.height / 2);
-        ctx.rotate(this.angle);
-        ctx.translate(-bgCanvas.width / 2, -bgCanvas.height / 2);
-
-        ctx.beginPath();
-        for (let x = 0; x <= bgCanvas.width; x+=1) {
-            let y = 0;
-            for(let i = 0; i < this.f.length; i += 3){
-                const v = this.f[i]*Math.sin(x*Math.PI/180*this.f[i+1] + time*this.speed + i/Math.PI/180*0 + this.phase + this.f[i+2]);
-                y += this.amplitude * v;
-            }
-            y /= this.f.length/3;
-            y += this.offsetY;
-
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-
-    const lines = [
-      new AnimatedWave({ color: '#ff008060', amplitude: 30*3, speed: 0.002, offsetY: 150, angle: 0, complexity: 7 }),
-      new AnimatedWave({ color: '#00ffff60', amplitude: 25*3, speed: 0.003, offsetY: 250, angle: Math.PI / 12, complexity: 7 }),
-      new AnimatedWave({ color: '#ffd70060', amplitude: 20*3, speed: 0.004, offsetY: 350, angle: -Math.PI / 10, complexity: 7 })
-    ];
-  
-    const DEBUG = true; // Enable debug visuals
+    const DEBUG = false; // Enable debug visuals
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -97,34 +46,137 @@
     const beamWidth = 70;
     const gapHeight = 180;
 
+    let jmpScaler = 1;
+
     let bird = {
       x: 80,
       y: 200,
-      width: 60*1.2,
-      height: 30*1.2,
+      width: 60 * 1.2,
+      height: 30 * 1.2,
       velocity: 0
     };
 
     let beams = [];
-    let score = 0;
-    let gameOver = false;
+    particles = [];
+    let score = 0, highScore = 0, gameOver = false, paused = false, gameStarted = false;
+
+    const flapSound = new Audio('res/flappy/clap.mp3');
+    const crashSound = new Audio('res/flappy/crash.mp3');
+    const bgMusic = new Audio('res/flappy/bgm.mp3');
+    bgMusic.loop = true;
 
     const ticketSVG = new Image();
     ticketSVG.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-      <svg width="400" height="200" viewBox="0 6 40 20" xmlns="http://www.w3.org/2000/svg"><path style="fill:#ff6000" d="M39.5 23h.5v1h-1a2 2 0 0 0-2 2v1H3v-1a2 2 0 0 0-2-2H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0V9h1a2 2 0 0 0 2-2V6h34v1a2 2 0 0 0 2 2h1v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1M36 11a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2zm-2 12H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h28a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1m-22.613-9.012H7.414v.59h1.652V19h.664v-4.422h1.656zm1.381 0h-.664V19h.664zm1.991 1.502q.157-.468.546-.744.387-.277.965-.277.503 0 .834.25.333.25.506.797l.652-.154q-.201-.693-.714-1.076c-.513-.383-.764-.383-1.265-.383q-.663 0-1.215.303c-.552.303-.651.497-.852.886q-.299.584-.299 1.365 0 .718.266 1.344c.266.626.434.736.771.956q.508.33 1.318.33.782 0 1.324-.429c.542-.429.611-.701.75-1.246l-.664-.168q-.137.633-.522.955a1.43 1.43 0 0 1-.943.321q-.458 0-.851-.236c-.393-.236-.455-.395-.579-.713s-.187-.69-.187-1.117q.002-.498.159-.964m8.604-1.502h-.898l-2.488 2.48v-2.48h-.664V19h.664v-1.738l.822-.795L22.582 19h.875l-2.195-2.98zm4.575 4.422h-3.074v-1.707h2.77v-.59h-2.77v-1.535h2.957v-.59H24.2V19h3.738zm4.687-4.422h-3.973v.59h1.652V19h.664v-4.422h1.656z"/></svg>
-      `);
+  <svg width="400" height="200" viewBox="0 6 40 20" xmlns="http://www.w3.org/2000/svg"><path style="fill:#ff6000" d="M39.5 23h.5v1h-1a2 2 0 0 0-2 2v1H3v-1a2 2 0 0 0-2-2H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0v-1h.5a.5.5 0 0 0 0-1H0V9h1a2 2 0 0 0 2-2V6h34v1a2 2 0 0 0 2 2h1v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1h.5v1h-.5a.5.5 0 0 0 0 1M36 11a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2zm-2 12H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h28a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1m-22.613-9.012H7.414v.59h1.652V19h.664v-4.422h1.656zm1.381 0h-.664V19h.664zm1.991 1.502q.157-.468.546-.744.387-.277.965-.277.503 0 .834.25.333.25.506.797l.652-.154q-.201-.693-.714-1.076c-.513-.383-.764-.383-1.265-.383q-.663 0-1.215.303c-.552.303-.651.497-.852.886q-.299.584-.299 1.365 0 .718.266 1.344c.266.626.434.736.771.956q.508.33 1.318.33.782 0 1.324-.429c.542-.429.611-.701.75-1.246l-.664-.168q-.137.633-.522.955a1.43 1.43 0 0 1-.943.321q-.458 0-.851-.236c-.393-.236-.455-.395-.579-.713s-.187-.69-.187-1.117q.002-.498.159-.964m8.604-1.502h-.898l-2.488 2.48v-2.48h-.664V19h.664v-1.738l.822-.795L22.582 19h.875l-2.195-2.98zm4.575 4.422h-3.074v-1.707h2.77v-.59h-2.77v-1.535h2.957v-.59H24.2V19h3.738zm4.687-4.422h-3.973v.59h1.652V19h.664v-4.422h1.656z"/></svg>
+  `);
 
     const spotlightSVG = new Image();
     spotlightSVG.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="70" height="600">
-        <defs>
-          <linearGradient id="beamBoxGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#00ffff" stop-opacity="0.8" />
-            <stop offset="100%" stop-color="#00ccff" stop-opacity="0.2" />
-          </linearGradient>
-        </defs>
-        <rect width="70" height="600" fill="url(#beamBoxGradient)" />
-      </svg>`);
+  <svg xmlns="http://www.w3.org/2000/svg" width="70" height="600">
+    <defs>
+      <linearGradient id="beamBoxGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#00ffff" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="#00ccff" stop-opacity="0.2" />
+      </linearGradient>
+    </defs>
+    <rect width="70" height="600" fill="url(#beamBoxGradient)" />
+  </svg>`);
+
+    class AnimatedWave {
+      constructor(options) {
+        this.color = options.color;
+        this.amplitude = options.amplitude;
+        this.offsetY = options.offsetY;
+        this.angle = options.angle || 0;
+        this.complexity = options.complexity || 1;
+
+        const xx = Math.cos(this.angle) * bgCanvas.width;
+        const yy = Math.sin(this.angle) * bgCanvas.height;
+        this.width = Math.sqrt(xx * xx + yy * yy);
+
+        this.f = [];
+        for (let i = 0; i < this.complexity * 3; i++) {
+          this.f.push(Math.random())
+          this.f.push(Math.random() * 50 * Math.PI / 180)
+          this.f.push(Math.random() * 2 * Math.PI)
+        }
+      }
+
+      draw(ctx, time) {
+        ctx.save();
+        ctx.translate(0, this.offsetY);
+        ctx.rotate(this.angle);
+        // ctx.translate(-bgCanvas.width / 2, -bgCanvas.height / 2 - this.offsetY);
+
+        ctx.beginPath();
+        for (let x = 0; x <= this.width; x += 1) {
+          let y = 0;
+          for (let i = 0; i < this.f.length; i += 3) {
+            const cmp = this.f[i];
+            const freq = this.f[i + 1];
+            const phase = this.f[i + 2];
+            const v = cmp * Math.sin((x + time / 5) * freq + time / 200 + phase);
+            y += this.amplitude * v;
+          }
+          y /= this.f.length / 3;
+          y *= jmpScaler * 1.5 - 0.5;
+
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+
+        ctx.translate(0, this.offsetY);
+        ctx.restore();
+      }
+    }
+
+    const lines = [
+      new AnimatedWave({ color: '#ff008060', amplitude: 30 * 6, offsetY: 150 + 70, angle: 0, complexity: 10 }),
+      new AnimatedWave({ color: '#00ffff60', amplitude: 25 * 6, offsetY: 250 + 70, angle: Math.PI / 12, complexity: 10 }),
+      new AnimatedWave({ color: '#ffd70060', amplitude: 20 * 6, offsetY: 350 + 70, angle: -Math.PI / 10, complexity: 10 })
+    ];
+
+
+    class VisualizerBar {
+      constructor(x, isTop) {
+        this.x = x;
+        this.width = 14;
+        this.height = 0;
+        this.baseHeight = 10;
+        this.maxHeight = 100;
+        this.color = `hsl(${Math.random() * 360}, 100%, 60%, 40%)`;
+        this.phase = Math.random() * Math.PI * 2;
+        this.speed = 0.04 + Math.random() * 0.8;
+        this.isTop = isTop;
+      }
+
+      update(time) {
+        const sine = Math.sin(this.phase + time / 180 * Math.PI * this.speed);
+        this.height = this.baseHeight + (sine + 1) / 2 * this.maxHeight * (jmpScaler / 2 + 0.5);
+      }
+
+      draw(ctx) {
+        ctx.fillStyle = this.color;
+        if (this.isTop) {
+          ctx.fillRect(this.x, 0, this.width, this.height);
+        } else {
+          ctx.fillRect(this.x, canvas.height - this.height, this.width, this.height);
+        }
+      }
+    }
+
+    const barSpacing = 2;
+    const visualBarsTop = [];
+    const visualBarsBottom = [];
+
+    for (let x = 0; x < canvas.width; x += barSpacing + 14) {
+      visualBarsTop.push(new VisualizerBar(x, true));
+      visualBarsBottom.push(new VisualizerBar(x, false));
+    }
 
     function resetGame() {
       bird.y = 200;
@@ -132,6 +184,7 @@
       beams = [];
       score = 0;
       gameOver = false;
+      particles = [];
     }
 
     function drawBird() {
@@ -149,7 +202,11 @@
 
     function drawBeams() {
       for (let beam of beams) {
-        ctx.drawImage(spotlightSVG, beam.x, 0, beamWidth, beam.top);
+        ctx.save();
+        ctx.translate(beam.x + beamWidth / 2, beam.top / 2);
+        ctx.rotate(Math.PI);
+        ctx.drawImage(spotlightSVG, -beamWidth / 2, -beam.top / 2, beamWidth, beam.top);
+        ctx.restore();
         ctx.drawImage(spotlightSVG, beam.x, beam.bottom, beamWidth, canvas.height - beam.bottom);
 
         if (DEBUG) {
@@ -160,22 +217,36 @@
       }
     }
 
-    function createBeam() {
+    function createBeam(x) {
       const top = Math.random() * (canvas.height - gapHeight - 100) + 30;
       beams.push({
-        x: canvas.width,
+        x: x === undefined ? canvas.width : x,
         top: top,
-        bottom: top + gapHeight
+        bottom: top + gapHeight,
+        scored: false,
       });
     }
 
     function updateBeams() {
-      for (let beam of beams) {
-        beam.x -= 2;
+      if (beams.length == 0) {
+        createBeam();
       }
-      if (beams.length > 0 && beams[0].x + beamWidth < 0) {
+      while (beams.length < 5) {
+        createBeam(beams[beams.length - 1].x + 300);
+      }
+      for (const beam of beams) {
+        beam.x -= 2 + score * 0.05;
+        if (!beam.scored && beam.x < bird.x) {
+          beam.scored = true
+          score++;
+          if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('ticketHighScore', highScore);
+          }
+        }
+      }
+      if (beams.length && beams[0].x + beamWidth < 0) {
         beams.shift();
-        score++;
       }
     }
 
@@ -184,10 +255,10 @@
       const cx = bird.x + bird.width / 2;
       const cy = bird.y + bird.height / 2;
       const corners = [
-        { x: -bird.width/2, y: -bird.height/2 },
-        { x: bird.width/2, y: -bird.height/2 },
-        { x: bird.width/2, y: bird.height/2 },
-        { x: -bird.width/2, y: bird.height/2 }
+        { x: -bird.width / 2, y: -bird.height / 2 },
+        { x: bird.width / 2, y: -bird.height / 2 },
+        { x: bird.width / 2, y: bird.height / 2 },
+        { x: -bird.width / 2, y: bird.height / 2 }
       ];
       return corners.map(p => {
         const x = p.x * Math.cos(angle) - p.y * Math.sin(angle);
@@ -248,66 +319,153 @@
         const topRect = { x: beam.x, y: 0, width: beamWidth, height: beam.top };
         const bottomRect = { x: beam.x, y: beam.bottom, width: beamWidth, height: canvas.height - beam.bottom };
         if (checkSATCollision(birdCorners, topRect) || checkSATCollision(birdCorners, bottomRect)) {
-          gameOver = true;
+          // gameOver = true;
+          triggerCollision();
           return;
         }
       }
       if (bird.y + bird.height > canvas.height || bird.y < 0) {
-        gameOver = true;
+        // gameOver = true;
+        triggerCollision();
       }
     }
 
-    function drawScore() {
-      ctx.fillStyle = '#FFF';
-      ctx.font = '24px sans-serif';
+    function triggerCollision() {
+      gameOver = true;
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      crashSound.currentTime = 0.7
+      crashSound.play();
+    }
+
+    function drawParticles() {
+      for (const p of particles) {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 2, 2);
+      }
+    }
+
+    function updateParticles() {
+      particles = particles.filter(p => p.life-- > 0);
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.1;
+      }
+    }
+
+    function drawUI() {
+      ctx.fillStyle = '#fff';
+      ctx.font = '20px sans-serif';
       ctx.fillText(`Score: ${score}`, 10, 30);
+      ctx.fillText(`High Score: ${highScore}`, 10, 60);
+      if (paused) {
+        ctx.fillText('Paused', canvas.width / 2 - 40, canvas.height / 2);
+      }
+      if (!gameStarted) {
+        ctx.font = '28px sans-serif';
+        ctx.fillText('Press Space to Start', canvas.width / 2 - 120, canvas.height / 2);
+      }
+      if (gameOver) {
+        ctx.font = '28px sans-serif';
+        ctx.fillText('Game Over', canvas.width / 2 - 80, canvas.height / 2);
+        ctx.font = '20px sans-serif';
+        ctx.fillText('Press Space to Restart', canvas.width / 2 - 100, canvas.height / 2 + 40);
+      }
+    }
+
+    function drawBackground(time) {
+      for (let line of lines) {
+        line.draw(bgCtx, time);
+      }
+
+      // Draw visualizer bars (background)
+      for (let bar of visualBarsTop) {
+        bar.update(time);
+        bar.draw(ctx);
+      }
+      for (let bar of visualBarsBottom) {
+        bar.update(time);
+        bar.draw(ctx);
+      }
     }
 
     function gameLoop(time) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let line of lines) {
-          line.draw(bgCtx, time);
-        }
-
-      if (!gameOver) {
+      if (!paused && gameStarted && !gameOver) {
         bird.velocity += gravity;
         bird.y += bird.velocity;
-
-        if (frame % 100 === 0) {
-          createBeam();
-        }
-
         updateBeams();
         checkCollision();
       }
+      jmpScaler = (1 + jmpScaler * 9) / 10;
+      updateParticles();
 
+      drawBackground(time);
       drawBeams();
       drawBird();
-      drawScore();
-
-      if(gameOver){
-        ctx.fillStyle = '#F00';
-        ctx.font = '32px sans-serif';
-        ctx.fillText('Game Over', canvas.width / 2 - 80, canvas.height / 2);
-        ctx.font = '20px sans-serif';
-        ctx.fillText('Press Any Key to Restart', canvas.width / 2 - 115, canvas.height / 2 + 40);
-      }
+      drawParticles();
+      drawUI();
 
       frame++;
       requestAnimationFrame(gameLoop);
     }
 
-    document.addEventListener('keydown', () => {
-      if (gameOver) {
+    function input() {
+      if (!gameStarted) {
+        gameStarted = true;
+        bgMusic.play();
+      } else if (gameOver) {
         resetGame();
-      } else {
+        bgMusic.play();
+      } else if (!paused) {
         bird.velocity = jump;
+        var cl = flapSound.cloneNode(true);
+        cl.volume = 0.4;
+        cl.play();
+
+        jmpScaler += 1;
+
+        for (let i = 0; i < 20; i++) {
+          particles.push({
+            x: bird.x + bird.width * Math.random(),
+            y: bird.y - bird.height * Math.random(),
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6 - 3,
+            life: 20 + Math.random() + 20,
+            color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+          });
+        }
+      }
+    }
+
+    document.addEventListener("mousedown", e => {
+      input();
+    });
+
+    document.addEventListener("touchstart", e => {
+      input();
+    });
+    // Input Handling
+    document.addEventListener('keydown', e => {
+      if (e.code === 'KeyP') {
+        paused = !paused;
+        if (paused)
+          bgMusic.pause();
+        else if (gameStarted && !gameOver)
+          bgMusic.play();
+      } else {
+        input();
       }
     });
+
+
+    // Load High Score
+    highScore = parseInt(localStorage.getItem('ticketHighScore')) || 0;
 
     let frame = 0;
     gameLoop(0);
   </script>
 </body>
+
 </html>
