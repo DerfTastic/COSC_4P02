@@ -109,7 +109,7 @@
         // ctx.translate(-bgCanvas.width / 2, -bgCanvas.height / 2 - this.offsetY);
 
         ctx.beginPath();
-        for (let x = 0; x <= this.width; x += 1) {
+        for (let x = 0; x <= this.width; x += 2) {
           let y = 0;
           for (let i = 0; i < this.f.length; i += 3) {
             const cmp = this.f[i];
@@ -227,7 +227,7 @@
       });
     }
 
-    function updateBeams() {
+    function updateBeams(dtime) {
       if (beams.length == 0) {
         createBeam();
       }
@@ -235,7 +235,7 @@
         createBeam(beams[beams.length - 1].x + 300);
       }
       for (const beam of beams) {
-        beam.x -= 2 + score * 0.05;
+        beam.x -= (2 + score * 0.05)*dtime*60;
         if (!beam.scored && beam.x < bird.x) {
           beam.scored = true
           score++;
@@ -338,19 +338,19 @@
       crashSound.play();
     }
 
-    function drawParticles() {
+    function drawParticles(dtime) {
       for (const p of particles) {
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x, p.y, 2, 2);
       }
     }
 
-    function updateParticles() {
-      particles = particles.filter(p => p.life-- > 0);
+    function updateParticles(dtime) {
+      particles = particles.filter(p => p.life-=dtime*60 > 0);
       for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.1;
+        p.x += p.vx*dtime*60;
+        p.y += p.vy*dtime*60;
+        p.vy += 0.1*dtime*60;
       }
     }
 
@@ -390,16 +390,20 @@
       }
     }
 
+    let lastTime = 0;
     function gameLoop(time) {
+      const dtime = (time-lastTime)/1000;
+      lastTime = time;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (!paused && gameStarted && !gameOver) {
-        bird.velocity += gravity;
-        bird.y += bird.velocity;
-        updateBeams();
+        bird.velocity += gravity*dtime*60;
+        bird.y += bird.velocity*dtime*60;
+        updateBeams(dtime);
         checkCollision();
       }
-      jmpScaler = (1 + jmpScaler * 9) / 10;
-      updateParticles();
+      meow = jmpScaler-1;
+      jmpScaler = 1+meow-meow*10*dtime;
+      updateParticles(dtime);
 
       drawBackground(time);
       drawBeams();
