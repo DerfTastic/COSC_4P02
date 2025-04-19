@@ -3,7 +3,7 @@
 
 <body>
     <!-- Main Email Container -->
-    <table role="presentation" border="2" width="90%" align="center">
+    <table role="presentation" border="2" align="center">
         <tbody>
             <tr>
                 <td>
@@ -75,43 +75,48 @@
                         <tbody>
                             {{#each items}}
                             {{type}}
-                                {{#if (isTicket this)}}
-                                    <tr>
-                                        <td align="center" bgcolor="#2a3e59">
-                                            <h3 style="color: #eeeef0;"><strong>Type:</strong> {{name}}</h3>
-                                            <h3 style="color: #eeeef0;"><strong>Price:</strong> {{formatPrice purchase_price}}</h3>
-                                            <svg id="ticket-svg" width="900" height="400" viewbox="0 0 500 200"
-                                                 xmlns="http://www.w3.org/2000/svg" preserveaspectratio="xMidYMid meet">
-                                                <!-- Ticket Shape -->
-                                                <path
-                                                        d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z"
-                                                        fill="#eeeef0"></path>
+                            {{#if (isTicket this)}}
+                            <tr>
+                                <td align="center" bgcolor="#2a3e59">
+                                    <h3 style="color: #eeeef0;"><strong>Type:</strong> {{name}}</h3>
+                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> {{formatPrice purchase_price}}
+                                    </h3>
+                                    <table role="presentation" bgcolor="#eeeef0" cellspacing="0"
+                                        cellpadding="30" style="border-radius: 10px;">
+                                        <tr>
+                                            <!-- QR Code Column -->
+                                            <td align="center">
+                                                <img 
+                                                    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={{encodeURI (json id)}}"
+                                                    alt="QR Code">
+                                            </td>
 
+                                            <!-- Event Info Column -->
+                                            <td style="color: #2a3e59;">
+                                                <h2 align="left" style="margin: 0;">{{event_name}}</h2>
+                                                <p align="left">
+                                                    <font size="4">Date: {{formatDate event_date}}</font>
+                                                </p>
+                                                <p align="left">
+                                                    <font size="4">Location: {{location_name}}</font>
+                                                </p>
+                                                <p align="left">
+                                                    <font size="4">Category: {{category_name}}</font>
+                                                </p>
+                                                <p align="left">
+                                                    <font size="4">Organizer: {{organizer_name}}</font>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
 
-                                                <!-- QR Code Inside the SVG -->
-                                                <image href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={{encodeURI (json id)}}"
-                                                        x="60" y="40" width="120" height="120"></image>
-
-
-                                                <!-- Event Details -->
-                                                <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5"
-                                                      stroke-dasharray="5,5"></line>
-
-                                                <text x="250" y="50" font-size="18" font-weight="bold" fill="#333">
-                                                    {{event_name}}
-                                                </text>
-                                                <text x="250" y="100" font-size="14">Date: {{formatDate event_date}}</text>
-                                                <text x="250" y="120" font-size="14">Location: {{location_name}}</text>
-                                                <text x="250" y="140" font-size="14">Organizer: {{organizer_name}}</text>
-
-                                            </svg>
-                                        </td>
-                                    </tr>
-                                {{else}}
-                                    <tr>
-                                        Account Organizer Upgrade
-                                    </tr>
-                                {{/if}}
+                                </td>
+                            </tr>
+                            {{else}}
+                            <tr>
+                                Account Organizer Upgrade
+                            </tr>
+                            {{/if}}
                             {{/each}}
                         </tbody>
                     </table>
