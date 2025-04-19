@@ -8,7 +8,7 @@ body {
     margin: 0;
     width: 100%;
     padding: 0;
-    min-height: 100vh;
+    min-height: 40rem;
 }
 
 html {
@@ -37,7 +37,7 @@ html {
     justify-content: center;
     align-items: center;
     padding: 0px 10px;
-    min-height: 85vh;
+    min-height: 40rem;
 }
 
 footer {
@@ -389,7 +389,7 @@ nav a:hover {
     justify-content: center;
     align-items: center;
     background-color: transparent;
-    min-height: 85vh;
+    min-height: 40rem;
 }
 
 .login-container,
@@ -399,7 +399,10 @@ nav a:hover {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 25rem;
+    height: auto;
+    aspect-ratio: 1;
+
     padding: 20px;
     background: rgba(238, 238, 240, 0.1);
     backdrop-filter: blur(15px);
@@ -762,6 +765,11 @@ nav a:hover {
         margin: 0;
         padding: 6px 10px;
         font-size: 1em;
+    }
+
+    .content,
+    .container {
+        min-height: 30rem;
     }
 }
 
