@@ -1373,7 +1373,6 @@ document.addEventListener('dynamic_content_finished', () => {
     document.body.style = "";
 });
 
-
 document.addEventListener('DOMContentLoaded', async () => {
     document.body.style = "display:none";
     if (typeof Handlebars !== 'undefined') {
@@ -1417,7 +1416,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         Handlebars.registerHelper('formatPrice', function(context) {
             return format_currency(context);
         });
-        
     }
 
     await page.load_dynamic_content(document);

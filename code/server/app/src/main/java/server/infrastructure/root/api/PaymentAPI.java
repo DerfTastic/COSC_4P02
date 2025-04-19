@@ -9,13 +9,13 @@ import framework.util.SqlSerde;
 import framework.web.Util;
 import framework.web.annotations.*;
 import framework.web.annotations.url.Path;
+import server.handlebars.Hbs;
 import server.infrastructure.session.SessionCache;
 import server.infrastructure.session.UserSession;
 import server.mail.MailServer;
 
 import javax.mail.Message;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class PaymentAPI {
     }
 
     @JSONType(typeName = "Ticket")
-    public record TicketReceipt(String name, long ticket_id, String event_name, long event_id, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
+    public record TicketReceipt(String name, long ticket_id, String event_name, long event_id, String organizer_name, String location_name, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
     }
 
     public record PurchasedTicketId(long pid, String salt) {
@@ -148,6 +148,8 @@ public class PaymentAPI {
                 name,
                 (select name from events where id=event_id),
                 event_id,
+                (select location_name from events where id=event_id),
+                (select full_name from users where id IN (select owner_id from events where id=event_id)),
                 price
             from tickets where
                 id=:ticket_id AND event_id IN (select id from events where draft=false)
@@ -163,7 +165,9 @@ public class PaymentAPI {
                                         id,
                                         rs.getString(2),
                                         rs.getLong(3),
-                                        rs.getLong(4),
+                                        rs.getString(4),
+                                        rs.getString(5),
+                                        rs.getLong(6),
                                         null
                                 ))
                         );
@@ -207,6 +211,8 @@ public class PaymentAPI {
                             (select name from tickets where id=:ticket_id),
                             (select name from events where id IN (select event_id from tickets where id=:ticket_id)),
                             (select event_id from tickets where id=:ticket_id),
+                            (select name from events where id IN (select event_id from tickets where id=:ticket_id)),
+                            (select full_name from users where id IN (select owner_id from events where id IN (select event_id from tickets where id=:ticket_id))),
                             (select price from tickets where id=:ticket_id),
                             id
                         """);
@@ -245,8 +251,10 @@ public class PaymentAPI {
                                         id,
                                         rs.getString(2),
                                         rs.getLong(3),
-                                        rs.getLong(4),
-                                        new PurchasedTicketId(rs.getLong(5), salt)
+                                        rs.getString(4),
+                                        rs.getString(5),
+                                        rs.getLong(6),
+                                        new PurchasedTicketId(rs.getLong(7), salt)
                                 )));
                     }
                 }
@@ -284,31 +292,12 @@ public class PaymentAPI {
         mail.sendMail(message -> {
             message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(auth.email()));
             message.setSubject("Purchase");
-            var str = new StringBuilder();
-            str.append("<p>Sub Total: ").append(formatPrice(receipt.subtotal)).append("</p>");
-            str.append("<p>Fees: ").append(formatPrice(receipt.fees)).append("</p>");
-            str.append("<p>GST: ").append(formatPrice(receipt.gst)).append("</p>");
-            str.append("<p>Total: ").append(formatPrice(receipt.total)).append("</p>");
-            for (var item : receipt.items) {
-                str.append("<div>");
-                switch (item) {
-                    case AccountOrganizerUpgradeReceipt(long purchase_price) -> {
-                        str.append("<p>Account Upgrade: ").append(formatPrice(purchase_price)).append("</p>");
-                    }
-                    case TicketReceipt(String name, long ticketId, String eventName, long eventId, long purchase_price, PurchasedTicketId id) -> {
-                        str.append("<p>Ticket: ")
-                                .append(name).append(" ")
-                                .append(formatPrice(purchase_price))
-                                .append("</p>");
-                        str.append("<img width=\"200\" height=\"200\" src=\"")
-                                .append("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=")
-                                .append(URLEncoder.encode(JSON.toJSONString(id), StandardCharsets.UTF_8))
-                                .append("\"></img>");
-                    }
-                }
-                str.append("</div>");
+
+            try {
+                message.setContent(Hbs.run("email_receipt", receipt), "text/html");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            message.setContent(str.toString(), "text/html");
         });
 
         return receipt;

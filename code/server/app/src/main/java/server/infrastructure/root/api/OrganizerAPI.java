@@ -30,7 +30,7 @@ public class OrganizerAPI {
     ){}
 
     @Route
-    public static @Json ScanResult scan_ticket(OrganizerSession auth, RwTransaction trans, @Body@Json Scan scan) throws SQLException, BadRequest {
+    public static @Json ScanResult scan_ticket(OrganizerSession auth, RwTransaction trans, @Body@Json Scan scan) throws SQLException {
         AccountAPI.PublicUserInfo info;
         try(var stmt = trans.namedPreparedStatement("select * from users where id=(select user_id from purchased_tickets where id=:pid)")){
             stmt.setLong(":pid", scan.id.pid());
