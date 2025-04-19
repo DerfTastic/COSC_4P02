@@ -1,0 +1,13 @@
+name: Sample Event Managing
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-manually:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Events with Open AI API key
+        run: python "/code/utils/generate_events.py"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

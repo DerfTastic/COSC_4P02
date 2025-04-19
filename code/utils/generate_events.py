@@ -16,8 +16,9 @@ import traceback
 import random as rng
 from openai import OpenAI
 import webbrowser # just to test photos
+import os
 
-maxEvents = 10000
+maxEvents = 200
 
 # Output file
 filename = "sample_events.json"
@@ -26,37 +27,29 @@ f = open(filename, "w")
 # Parameters for event generation
 
 # Categories sorted by how often they occur (first = most events in this category)
-categories = ["Music",
-              "Sports",
-              "Kids'",
-              "Comedy",
-              "Science/Technology",
-              "Theater",
-              "DIY",
-              "Community/Culture",
-              "Film Screening"]
+categories = ['Music', 'Sports', 'Family', 'Comedy', 'STEM', 'Theater', 'Workshop', 'Community/Culture', 'Film']
 # types of events for each category (also pictures)
 types = [["Concert", "Meet and greet"],              # Music
          ["Sports game", "Player meet and greet"],   # Sports
-         ["Sports practice", "Summer Daycamp", "School play", "Magic show", "Birthday Party"],  # Kids'
+         ["Sports practice", "Summer Daycamp", "School play", "Magic show", "Birthday Party"],  # Family
          ["Stand-up show"],                          # Comedy
-         ["Conference", "Tradeshow", "Exhibition"],  # Science / Technology
+         ["Conference", "Tradeshow", "Exhibition"],  # STEM
          ["Premiere Show", "Rehearsal", "Play"],     # Theater
-         ["Workshop", "Project fair"],               # DIY
+         ["Workshop", "Project fair"],               # Workshop
          ["Festival", "Town hall", "Support group"], # Community/Culture
-         ["Film festival"]                           # Film Screening
+         ["Film festival"]                           # Film
          ]
 # The title and name of a given event will be written in its corresponding writing tone,
 # which matches the type of event it is. (eg. Kids' event -> "Fun or Silly" tone) 
 category_writing_tones = ["artistic",                # Music
                           "informative",             # Sports
-                          "fun or silly",            # Kids'
+                          "fun or silly",            # Family
                           "punny",                   # Comedy
-                          "professional or inspiring",# Science/Technology
+                          "professional or inspiring", # STEM
                           "riveting or Vibrant",     # Theater
-                          "crafty and fun",          # DIY
+                          "crafty and fun",          # Workshop
                           "wholesome and non-chalant", # Community/Culture
-                          "elegant and captivating"  # Film Screening
+                          "elegant and captivating"  # Film
                          ]
 # Cities
 cities = [
@@ -77,7 +70,7 @@ cities = [
 ticket_type_names = ["Free", "VIP", "General Admission", "Other"]
 
 # Images
-urlJPGFolder = "http://jacobswackyworld.ca/stuff/media/4p02-images/"
+urlJPGFolder = "/images/"
 imgfileext = ".jpg"
 
 
@@ -87,7 +80,7 @@ imgfileext = ".jpg"
 # just randomize in parts, like getting a good description
 AImodel = "gpt-4o-mini"
 client = OpenAI(
-  api_key="" # in secrets file
+    api_key = os.environ.get("OPENAI_API_KEY")
 )
 
 # Function defintions
@@ -240,7 +233,7 @@ for e in range(0, numOfEventsToGen):
     # Loading AI generated attributes into variables
     event_name = resp["name"]
     event_desc = resp["description"]
-    event_tags = resp["tags"]
+    event_tags = resp["tags"].lower()
     event_location_name = resp["venue"] + " in " + city["name"]
     # Ticket stuff
     event_total_tickets = resp["total_ticket_availability"]
