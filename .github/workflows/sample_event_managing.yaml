@@ -2,12 +2,17 @@ name: Sample Event Managing
 
 on:
   workflow_dispatch:
+    inputs:
+      message:
+        description: 'How many events to generate?'
+        required: false
+        default: 5
 
 jobs:
   run-manually:
     runs-on: ubuntu-latest
     steps:
       - name: Generate Events with Open AI API key
-        run: python "/code/utils/generate_events.py"
+        run: python "/code/utils/generate_events.py" ${{ inputs.message }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

@@ -17,6 +17,7 @@ import random as rng
 from openai import OpenAI
 import webbrowser # just to test photos
 import os
+import sys
 
 maxEvents = 200
 
@@ -131,20 +132,23 @@ for i in types:
 
 numOfEventsToGen = 0 # Initialize
 
-# Ask user how many events to generate
-validUserResponse = False
-while(not validUserResponse):
-    response = input("\033[33;1mHow many events do you want to generate? (1-{0}): \033[0m".format(maxEvents))
-    try:
-        numOfEventsToGen = int(response)
-    except ValueError:
-        print("\x1b[31;1mNot an integer, try again.\x1b[0m");
-    else:
-        print(numOfEventsToGen)
-        if not (1 <= numOfEventsToGen <= maxEvents):
-            print("\x1b[31;1mMust be between 1 and {0}\x1b[0m".format(maxEvents))
+if (len(sys.argv) > 0):
+    numOfEventsToGen = int(sys.argv[1])
+else:
+    # Ask user how many events to generate
+    validUserResponse = False
+    while(not validUserResponse):
+        response = input("\033[33;1mHow many events do you want to generate? (1-{0}): \033[0m".format(maxEvents))
+        try:
+            numOfEventsToGen = int(response)
+        except ValueError:
+            print("\x1b[31;1mNot an integer, try again.\x1b[0m");
         else:
-            validUserResponse = True
+            print(numOfEventsToGen)
+            if not (1 <= numOfEventsToGen <= maxEvents):
+                print("\x1b[31;1mMust be between 1 and {0}\x1b[0m".format(maxEvents))
+            else:
+                validUserResponse = True
 
 """
 # Testing
