@@ -1,239 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-    .content {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-    }
-
-    .payment {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        align-self: flex-start;
-        background: rgba(238, 238, 240, 0.1);
-        backdrop-filter: blur(15px);
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        color: #eeeef0;
-        padding: 15px;
-        gap: 30px;
-        width: 70vw;
-    }
-
-    .payment-top {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: flex-start;
-        gap: 5px;
-        align-self: stretch;
-        border-bottom: 3px solid var(--L-Blue, #778DA9);
-    }
-
-    .payment-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    h1 {
-        color: var(--Light, #eeeef0);
-        font-size: 48px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-
-    p {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    .cards {
-        font-size: 36px;
-    }
-
-    .card-container {
-        display: flex;
-        padding: 0px 15px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .credit-cards {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .pay-info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        align-self: stretch;
-    }
-
-    .card-info {
-        width: 50%;
-    }
-
-    .payment h2 {
-        color: var(--Light, #eeeef0);
-        font-size: 36px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin-top: 10px;
-        margin-bottom: 10px
-    }
-
-    .form {
-        display: flex;
-        padding: 0px 15px;
-        flex-direction: column;
-        align-items: flex-start;
-        align-self: stretch;
-        gap: 10px;
-    }
-
-    .input-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        align-self: stretch;
-        gap: 5px;
-        width: 100%;
-    }
-
-    .input-row {
-        display: flex;
-        align-items: flex-start;
-        align-self: stretch;
-        justify-content: space-between;
-        gap: 10px;
-        width: 100%;
-    }
-
-    .pay-info input {
-        background: rgba(238, 238, 240, 0.1);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(238, 238, 240, 0.3);
-        border-radius: 5px;
-        color: #eeeef0;
-        font-size: 16px;
-        outline: none;
-        transition: box-shadow 0.3s ease;
-        align-self: stretch;
-        height: 36px;
-
-    }
-
-    .cvv-description {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: flex-start;
-        gap: 5px;
-    }
-
-    .cvv-description p {
-        color: var(--Light, #E6E6E8);
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
-    }
-
-    .order-summary {
-        width: 30vw;
-        gap: 15px;
-    }
-
-    .summary-title {
-        display: flex;
-        padding-bottom: 10px;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: flex-start;
-        gap: 5px;
-    }
-
-    h4 {
-        color: var(--Light, #E6E6E8);
-        font-size: 24px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin: 5px 0;
-    }
-
-    .price {
-        display: flex;
-        padding: 0px 15px;
-        justify-content: space-between;
-        align-items: flex-start;
-        align-self: stretch;
-    }
-
-    .item {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-
-    .sub-total {
-        display: flex;
-        padding: 5px 15px 5px 0px;
-        justify-content: space-between;
-        align-items: flex-start;
-        align-self: stretch;
-    }
-
-    .total {
-        border-top: 3px solid var(--L-Blue, #778DA9);
-    }
-
-    .order-summary button {
-        display: flex;
-        padding: 5px;
-        justify-content: center;
-        align-self: center;
-        gap: 10px;
-        border-radius: 15px;
-        font-family: 'Times New Roman', Times, serif;
-        width: 50%;
-        padding: 10px;
-        background: #1b263b;
-        border: 1px solid #eeeef0;
-        border-radius: 5px;
-        color: #eeeef0;
-        font-size: 20px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .order-summary button:hover {
-        background: var(--L-Blue, #778DA9);
-    }
-
-    .order-summary a {
-        text-decoration: none;
-        color: #eeeef0;
-    }
-
-    .order-summary a:visited {
-        text-decoration: none;
-        color: #eeeef0;
-    }
-</style>
 
 
 <head>
@@ -243,10 +9,258 @@
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <style>
+        .content {
+            padding: 1rem;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+
+        .payment {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: stretch;
+            background: rgba(238, 238, 240, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            color: #eeeef0;
+            padding: 15px;
+            flex: 0.7;
+        }
+
+        .payment-top {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            gap: 5px;
+            align-self: stretch;
+            border-bottom: 3px solid var(--L-Blue, #778DA9);
+        }
+
+        .payment-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 {
+            color: var(--Light, #eeeef0);
+            font-size: 48px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cards {
+            font-size: 36px;
+        }
+
+        .card-container {
+            display: flex;
+            padding: 0px 15px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .credit-cards {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pay-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            align-self: stretch;
+        }
+
+        .card-info {
+            width: 50%;
+        }
+
+        .payment h2 {
+            color: var(--Light, #eeeef0);
+            font-size: 36px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            margin-top: 10px;
+            margin-bottom: 10px
+        }
+
+        .form {
+            display: flex;
+            padding: 0px 15px;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: stretch;
+            gap: 10px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: stretch;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: flex-start;
+            align-self: stretch;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .pay-info input {
+            background: rgba(238, 238, 240, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(238, 238, 240, 0.3);
+            border-radius: 5px;
+            color: #eeeef0;
+            font-size: 16px;
+            outline: none;
+            transition: box-shadow 0.3s ease;
+            align-self: stretch;
+            height: 36px;
+
+        }
+
+        .cvv-description {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .cvv-description p {
+            color: var(--Light, #E6E6E8);
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+        }
+
+        .order-summary {
+            display: flex;
+            flex: 0.3;
+            align-self: stretch;
+            justify-content: space-between;
+        }
+
+        .summary-title {
+            display: flex;
+            padding-bottom: 10px;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        h4 {
+            color: var(--Light, #E6E6E8);
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            margin: 5px 0;
+        }
+
+        .price {
+            display: flex;
+            padding: 0px 15px;
+            justify-content: space-between;
+            align-items: flex-start;
+            align-self: stretch;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .sub-total {
+            display: flex;
+            padding: 5px 15px 5px 0px;
+            justify-content: space-between;
+            align-items: flex-start;
+            align-self: stretch;
+        }
+
+        .total {
+            border-top: 3px solid var(--L-Blue, #778DA9);
+        }
+
+        .order-summary button {
+            display: flex;
+            padding: 5px;
+            justify-content: center;
+            align-self: center;
+            gap: 10px;
+            border-radius: 15px;
+            font-family: 'Times New Roman', Times, serif;
+            width: 50%;
+            padding: 10px;
+            background: #1b263b;
+            border: 1px solid #eeeef0;
+            border-radius: 5px;
+            color: #eeeef0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-summary button:hover {
+            background: var(--L-Blue, #778DA9);
+        }
+
+        .order-summary a {
+            text-decoration: none;
+            color: #eeeef0;
+        }
+
+        .order-summary a:visited {
+            text-decoration: none;
+            color: #eeeef0;
+        }
+
+        @media(max-width:1024px) {
+            .content {
+                flex-direction: column;
+            }
+        }
+
+        @media(max-width:760px) {
+            .input-row {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
-<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
+    <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
     <div class="content">
         <div class="payment">
             <div class="payment-top">
@@ -273,17 +287,20 @@
                     <div class="input-row">
                         <div class="input-container">
                             <label for="cc-e-Month">*Expiry Month</label>
-                            <input type="number" id="cc-e-Month" name="cc-e-Month" pattern="(0[1-9]|1[0-2])" placeholder="MM" class="no-spinners" required>
+                            <input type="number" id="cc-e-Month" name="cc-e-Month" pattern="(0[1-9]|1[0-2])"
+                                placeholder="MM" class="no-spinners" required>
                         </div>
                         <div class="input-container">
                             <label for="cc-e-Day">*Expiry Day</label>
-                            <input type="number" id="cc-e-Day" name="cc-e-Day" pattern="(0[1-9]|[12][0-9]|3[01])])" placeholder="DD" class="no-spinners" required>
+                            <input type="number" id="cc-e-Day" name="cc-e-Day" pattern="(0[1-9]|[12][0-9]|3[01])])"
+                                placeholder="DD" class="no-spinners" required>
                         </div>
                     </div>
                     <div class="input-row">
                         <div class="input-container">
                             <label for="cc-cvv">*CVV</label>
-                            <input type="number" id="cc-cvv" name="cc-cvv" pattern="\d{3}" maxlength="3" class="no-spinners" required>
+                            <input type="number" id="cc-cvv" name="cc-cvv" pattern="\d{3}" maxlength="3"
+                                class="no-spinners" required>
                         </div>
                         <div class="cvv-description input-container">
                             <p>This 3 or 4 digit is on the back or front of your card</p>
@@ -356,7 +373,7 @@
                 window.location.href = `/shop/receipt?receipt_id=${response.payment_id}`;
             }
             async function checkEmptyFields() {
-                    await place_order();
+                await place_order();
                 const fieldIds = [
                     "cc-num",
                     "cc-e-Month",
@@ -387,7 +404,7 @@
                     alert("Please fill in all required fields before placing your order.");
                 }
             }
-          
+
 
         </script>
         <div class="payment order-summary">
