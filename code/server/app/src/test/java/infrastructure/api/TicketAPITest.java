@@ -5,6 +5,7 @@ package infrastructure.api;
 
 import framework.web.annotations.url.Path;
 import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
@@ -39,7 +40,7 @@ public class TicketAPITest {
     private UserSession userSesh;
 
     @BeforeAll
-    public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
+    public void setup() throws SQLException, ClientError, UnknownHostException {
         db = new DbManagerImpl("ticket_api_test", true, true, true);
 
         // Make fake users

@@ -4,6 +4,7 @@
 package infrastructure.api;
 
 import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import framework.web.error.Unauthorized;
 import infrastructure.DynamicMediaHandlerSkeleton;
 import infrastructure.MailServerSkeleton;
@@ -34,7 +35,7 @@ public class EventAPITest {
     private final TestingUser u1 = new TestingUser("User", "user@gmail.com", "pass");
 
     @BeforeAll
-    public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
+    public void setup() throws SQLException, ClientError, UnknownHostException {
         db = new DbManagerImpl("event_api_test", true, true, true);
         o1.register(mail, db, false);
         o1.login(mail, db, false);

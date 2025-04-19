@@ -4,6 +4,7 @@
 package infrastructure.api;
 
 import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
@@ -30,7 +31,7 @@ public class SearchAPITest {
     private final TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
 
     @BeforeAll
-    public void setup() throws SQLException, BadRequest, UnknownHostException, Unauthorized {
+    public void setup() throws SQLException, ClientError, UnknownHostException {
         db = new DbManagerImpl("search_api_test", true, true, true);
 
         // Register the fake users

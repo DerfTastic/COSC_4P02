@@ -4,6 +4,7 @@ import com.sun.net.httpserver.*;
 import framework.db.DbManager;
 import framework.web.WebServer;
 import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import framework.web.error.Unauthorized;
 import framework.web.request.Request;
 import server.infrastructure.root.api.AccountAPI;
@@ -57,7 +58,7 @@ public class TestingUser {
     }
 
 
-    public void makeOrganizer(DbManager db, SessionCache cache, MailServer mail) throws SQLException, Unauthorized, BadRequest {
+    public void makeOrganizer(DbManager db, SessionCache cache, MailServer mail) throws SQLException, ClientError {
         var auth = this.userSession(db, cache);
         try(var conn = db.rw_transaction(null)){
             PaymentAPI.make_purchase(auth, conn,

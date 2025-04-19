@@ -6,6 +6,7 @@ package infrastructure.api;
 import framework.db.DbStatistics;
 import framework.db.RwConn;
 import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
@@ -40,7 +41,7 @@ public class AdminAPITest {
     private final static TestingUser ogAdmin = new TestingUser("admin", "admin@localhost", "admin");
 
     @BeforeAll
-    public static void setup() throws BadRequest, SQLException, UnknownHostException, Unauthorized {
+    public static void setup() throws ClientError, SQLException, UnknownHostException {
         try{
             db = new DbManagerImpl("admin_api_test", true, true, true);
         }catch (Exception e){

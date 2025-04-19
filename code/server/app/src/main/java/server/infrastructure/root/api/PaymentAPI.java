@@ -9,6 +9,8 @@ import framework.util.SqlSerde;
 import framework.web.Util;
 import framework.web.annotations.*;
 import framework.web.annotations.url.Path;
+import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import server.handlebars.Hbs;
 import server.infrastructure.session.SessionCache;
 import server.infrastructure.session.UserSession;
@@ -25,6 +27,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 @Routes
 public class PaymentAPI {
+
+    public static long Multiplier = 1_000000L;
 
     public record PaymentInfo(
             String name,
@@ -70,7 +74,7 @@ public class PaymentAPI {
     }
 
     @JSONType(typeName = "Ticket")
-    public record TicketReceipt(String name, long ticket_id, String event_name, long event_id, String organizer_name, String location_name, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
+    public record TicketReceipt(String name, long ticket_id, String event_name, long event_id, long event_date, String organizer_name, String location_name, long purchase_price, PurchasedTicketId id) implements ReceiptItem {
     }
 
     public record PurchasedTicketId(long pid, String salt) {
@@ -87,8 +91,10 @@ public class PaymentAPI {
     ) {
     }
 
-    public static void verify_payment(PaymentInfo payment, long amount) {
-        //TODO
+    public static void verify_payment(PaymentInfo payment, long amount) throws ClientError {
+        if(amount>500*Multiplier)throw new ClientError(406, "Insufficient Funds");
+        if(payment.name==null||payment.name.toLowerCase().startsWith("parker")) throw new ClientError(406, "Incorrect Card Information");
+        if(payment.card==null||payment.card.startsWith("3")) throw new ClientError(406, "Unrecognized Card");
     }
 
     @Route("/get_receipt/<receipt_id>")
@@ -148,6 +154,7 @@ public class PaymentAPI {
                 name,
                 (select name from events where id=event_id),
                 event_id,
+                (select start from events where id=event_id),
                 (select location_name from events where id=event_id),
                 (select full_name from users where id IN (select owner_id from events where id=event_id)),
                 price
@@ -165,9 +172,10 @@ public class PaymentAPI {
                                         id,
                                         rs.getString(2),
                                         rs.getLong(3),
-                                        rs.getString(4),
+                                        rs.getLong(4),
                                         rs.getString(5),
-                                        rs.getLong(6),
+                                        rs.getString(6),
+                                        rs.getLong(7),
                                         null
                                 ))
                         );
@@ -177,8 +185,8 @@ public class PaymentAPI {
             }
         }
 
-        long fees = (subtotal * 15000) / (1_000000L); // 0.015 1.5%
-        long gst = (subtotal * 50000) / (1_000000L); // 0.050 5.0%
+        long fees = (subtotal * 15000) / Multiplier; // 0.015 1.5%
+        long gst = (subtotal * 50000) / Multiplier; // 0.050 5.0%
         long total = subtotal + fees + gst;
         trans.commit();
 
@@ -192,7 +200,7 @@ public class PaymentAPI {
     }
 
     @Route
-    public static @Json Receipt make_purchase(UserSession auth, RwTransaction trans, @Body @Json Order order, SessionCache cache, MailServer mail) throws SQLException {
+    public static @Json Receipt make_purchase(UserSession auth, RwTransaction trans, @Body @Json Order order, SessionCache cache, MailServer mail) throws SQLException, ClientError {
 
         long date = System.currentTimeMillis();
         long payment_id;
@@ -211,6 +219,7 @@ public class PaymentAPI {
                             (select name from tickets where id=:ticket_id),
                             (select name from events where id IN (select event_id from tickets where id=:ticket_id)),
                             (select event_id from tickets where id=:ticket_id),
+                            (select start from events where id IN (select event_id from tickets where id=:ticket_id)),
                             (select name from events where id IN (select event_id from tickets where id=:ticket_id)),
                             (select full_name from users where id IN (select owner_id from events where id IN (select event_id from tickets where id=:ticket_id))),
                             (select price from tickets where id=:ticket_id),
@@ -251,10 +260,11 @@ public class PaymentAPI {
                                         id,
                                         rs.getString(2),
                                         rs.getLong(3),
-                                        rs.getString(4),
+                                        rs.getLong(4),
                                         rs.getString(5),
-                                        rs.getLong(6),
-                                        new PurchasedTicketId(rs.getLong(7), salt)
+                                        rs.getString(6),
+                                        rs.getLong(7),
+                                        new PurchasedTicketId(rs.getLong(8), salt)
                                 )));
                     }
                 }
@@ -262,8 +272,8 @@ public class PaymentAPI {
             }
         }
 
-        long fees = (subtotal * 15000) / (1_000000L); // 0.015 1.5%
-        long gst = (subtotal * 50000) / (1_000000L); // 0.050 5.0%
+        long fees = (subtotal * 15000) / Multiplier; // 0.015 1.5%
+        long gst = (subtotal * 50000) / Multiplier; // 0.050 5.0%
         long total = subtotal + fees + gst;
         try (var stmt = trans.namedPreparedStatement("update payments set receipt=:receipt, subtotal=:subtotal, fees=:fees, gst=:gst, total=:total where id=:payment_id")) {
             stmt.setLong(":payment_id", payment_id);

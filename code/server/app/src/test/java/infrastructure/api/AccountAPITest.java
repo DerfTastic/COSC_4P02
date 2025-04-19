@@ -3,6 +3,7 @@
  */
 package infrastructure.api;
 
+import framework.web.error.ClientError;
 import infrastructure.DynamicMediaHandlerSkeleton;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
@@ -57,7 +58,7 @@ public class AccountAPITest {
 
     @Test
     @Order(2)
-    public void testAccountLogin() throws SQLException, Unauthorized, UnknownHostException, BadRequest {
+    public void testAccountLogin() throws SQLException, ClientError, UnknownHostException {
         for(var user : new TestingUser[]{u1, u2, o1, o2}){
             user.login(mail, db, true);
         }

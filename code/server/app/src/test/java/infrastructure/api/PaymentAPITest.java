@@ -4,6 +4,7 @@
 package infrastructure.api;
 
 import framework.web.error.BadRequest;
+import framework.web.error.ClientError;
 import framework.web.error.Unauthorized;
 import infrastructure.MailServerSkeleton;
 import infrastructure.TestingUser;
@@ -42,7 +43,7 @@ public class PaymentAPITest {
     private static PaymentAPI.Order order;
 
     @BeforeAll
-    public static void setup() throws BadRequest, SQLException, UnknownHostException, Unauthorized {
+    public static void setup() throws ClientError, SQLException, UnknownHostException {
         try{
             db = new DbManagerImpl("payment_api_test", true, true, true);
         }catch (Exception e){
@@ -143,7 +144,7 @@ public class PaymentAPITest {
 
     @Test
     @Order(2)
-    public void testMakingPurchase() throws SQLException, Unauthorized, BadRequest {
+    public void testMakingPurchase() throws SQLException, ClientError {
         var userSesh = u1.userSession(db, null);
 
         //TODO check how many tickets there are before the purchase so we can see if it decreases after
