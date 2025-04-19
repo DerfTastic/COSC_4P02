@@ -549,6 +549,19 @@
     <div src="/partials/footer.html" type="text/x-html-template"></div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+
+            const session = cookies.getSession();
+
+            if (!session || session.length === 0) {
+                window.location.href = "/account/login"; // Redirect if no session
+            } else {
+                const userInfo = await page.account.userinfo();
+
+                if (!userInfo || !userInfo.organizer) {
+                    window.location.href = "/account/login"; // Redirect if not an organizer
+                }
+            }
+
             // Retrieve the eventId from localStorage
             let eventId = localStorage.getItem('eventId');
 
