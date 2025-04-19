@@ -1,107 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-    .content {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-    }
-
-    .payment {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        align-self: flex-start;
-        background: rgba(238, 238, 240, 0.1);
-        backdrop-filter: blur(15px);
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        color: #eeeef0;
-        padding: 15px;
-        gap: 30px;
-        width: 70vw;
-    }
-
-    h1 {
-        color: var(--Light, #eeeef0);
-        font-size: 48px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-    
-    p {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    .pay-info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        align-self: stretch;
-    }
-    
-    .order-summary {
-        width: 80vw;
-        gap: 15px;
-    }
-
-    h4 {
-        color: var(--Light, #E6E6E8);
-        font-size: 24px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin: 5px 0;
-    }
-
-    .price {
-        display: flex;
-        padding: 0px 15px;
-        justify-content: space-between;
-        align-items: flex-start;
-        align-self: stretch;
-    }
-
-    .item {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-
-    .sub-total {
-        display: flex;
-        padding: 5px 15px 5px 0px;
-        justify-content: space-between;
-        align-items: flex-start;
-        align-self: stretch;
-    }
-
-    .total {
-        border-top: 3px solid var(--L-Blue, #778DA9);
-    }
-</style>
-
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
+    <title>Order Summary</title>
     <script src="/js/api.js"></script>
     <link rel="stylesheet" href="/style/styles.css">
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <style>
+        .content {
+            display: flex;
+        }
+
+        .payment {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            background: rgba(238, 238, 240, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            color: #eeeef0;
+            padding: 15px;
+        }
+
+        h1 {
+            color: var(--Light, #eeeef0);
+            font-size: 2.8rem;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            margin: 10px 0;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .pay-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            align-self: stretch;
+        }
+
+        .order-summary {
+            gap: 15px;
+        }
+
+        h4 {
+            color: var(--Light, #eeeef0);
+            font-size: 1.2rem;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            margin: 5px 0;
+        }
+
+        .price {
+            display: flex;
+            padding: 0px 15px;
+            justify-content: space-between;
+            align-self: stretch;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sub-total {
+            display: flex;
+            padding: 5px 15px 5px 0px;
+            justify-content: space-between;
+            align-self: stretch;
+        }
+
+        .total {
+            border-top: 3px solid var(--L-Blue, #778DA9);
+        }
+    </style>
 </head>
-<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
+    <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
+
     <div class="content">
         <script>
-            async function get_estamate(){
+            async function get_estamate() {
                 var id = new URLSearchParams(window.location.search).get("receipt_id");
                 id = JSON.parse(id);
                 return api.payment.get_receipt(id);
@@ -156,8 +146,9 @@
                 </div>
             </script>
             <div class="pay-info"></div>
-            <h4>Purchase Successful</h4>
-            <p>Thanks for placing an order with Ticket Express, you will recieve an email with your ticket attached, please remeber to scan the QR code to enter the venue.</p>
+            <h4>Purchase Successful!</h4>
+            <p><i>Thanks for placing an order with Ticket Express, you will receive an email with your ticket attached,
+                    please remember to scan the QR code to enter the venue.</i></p>
         </div>
     </div>
     </div>
