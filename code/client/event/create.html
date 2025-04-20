@@ -746,15 +746,15 @@
             return {
                 eventTitle: document.getElementById('eventTitle').value,
                 eventDescription: document.getElementById('eventDescription').value,
-                eventLocation: document.getElementById('eventLocation').value,
-                eventDate: document.getElementById('eventDate').value,
-                eventStartTime: document.getElementById('eventStartTime').value,
-                eventEndTime: document.getElementById('eventEndTime').value,
+                eventLocation: document.getElementById('eventLocation').value||undefined,
+                eventDate: document.getElementById('eventDate').value||undefined,
+                eventStartTime: document.getElementById('eventStartTime').value||undefined,
+                eventEndTime: document.getElementById('eventEndTime').value||undefined,
                 // eventType: document.getElementById('eventType').value,
-                eventCategory: document.getElementById('eventCategory').value,
-                eventTags: document.getElementById('eventTags').value,
-                ticketReleaseDate: document.getElementById('ticketReleaseDate').value,
-                ticketReleaseTime: document.getElementById('ticketReleaseTime').value,
+                eventCategory: document.getElementById('eventCategory').value||undefined,
+                eventTags: document.getElementById('eventTags').value||undefined,
+                ticketReleaseDate: document.getElementById('ticketReleaseDate').value||undefined,
+                ticketReleaseTime: document.getElementById('ticketReleaseTime').value||undefined,
             };
         }
 
@@ -910,16 +910,16 @@
             console.log(eventId);
             updateEvent.name = eventTitle;
             updateEvent.description = eventDescription;
-            updateEvent.start = new Date(`${eventDate}T${eventStartTime}`).getTime();
-            updateEvent.duration = new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime();
+            updateEvent.start = new Date(`${eventDate}T${eventStartTime}`).getTime()||undefined;
+            updateEvent.duration = (new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime())||undefined;
             // updateEvent.available_total_tickets = totalTickets || 0;
             updateEvent.location_name = eventLocation;
             updateEvent.category = eventCategory;
-            updateEvent.release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime();
+            updateEvent.release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime()||undefined;
 
             console.log(updateEvent);
             await api.events.update_event(eventId, updateEvent);
-            const eTags = eventTags.split(',').map(tag => tag.trim()); // Removing extra spaces from each tag
+            const eTags = (eventTags||"").split(',').map(tag => tag.trim()).filter(v => v.length>0); // Removing extra spaces from each tag
 
 
             // Iterate over the eventTags array and add each tag using the add_event_tag API
