@@ -571,6 +571,31 @@
                 window.history.replaceState(null, '', newUrl);
             }
 
+            var event = await api.events.get_event(eventId);
+            console.log(event);
+            var tickets = await api.tickets.get_tickets(eventId);
+            console.log(tickets);
+
+            function formatTime(meow) {
+                if(meow==undefined || meow==null)return "";
+                return `${meow.getHours()}:${meow.getMinutes()}`;   
+            }
+
+            document.getElementById('eventTitle').value = event.name||"";
+            document.getElementById('eventDescription').value = event.description||"";
+            document.getElementById('eventLocation').value = event.location_name||"";
+
+            document.getElementById('eventCategory').value = event.category||"";
+
+            document.getElementById('eventDate').value = new Date(event.start).toLocaleDateString()||"";
+            document.getElementById('eventStartTime').value = formatTime(new Date(event.start))||"";
+            document.getElementById('eventEndTime').value = formatTime(new Date(event.start+event.duration))||"";
+            document.getElementById('eventDate').value = new Date(event.start+event.duration).toLocaleDateString()||"";
+
+            document.getElementById('eventTags').value = (event.tags||[]).join(" ");
+
+            document.getElementById('ticketReleaseDate').value = new Date(event.release_time).toLocaleDateString()||"";
+            document.getElementById('ticketReleaseTime').value = formatTime(new Date(event.release_time))||"";
 
         });
 
@@ -741,7 +766,6 @@
 
         const tickets = [];
         function populateReviewSection() {
-            yy
             const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventCategory, eventTags, ticketReleaseDate, ticketReleaseTime } = getEventDetails();
 
             // Get ticket details
