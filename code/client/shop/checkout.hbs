@@ -263,6 +263,10 @@
     <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
     <div class="content">
         <div class="payment">
+            <div class="payment-title">
+                <button type="button" onclick="autoFail()">fail</button>
+                <button type="button" onclick="autoPass()">success</button>
+            </div>
             <div class="payment-top">
                 <div class="payment-title">
                     <h1>Payment - credit card</h1>
@@ -411,7 +415,39 @@
                 }
             }
 
+            function autoFail() {
+                document.getElementById("fname").value = "Parker";
+                document.getElementById("lname").value = "TenBroeck";
+                document.getElementById("cc-num").value = "3000000000000000";
+                document.getElementById("cc-e-Month").value = "12";
+                document.getElementById("cc-e-Day").value = "31";
+                document.getElementById("cc-cvv").value = "123";
 
+                // Billing info
+                document.getElementById("address").value = "1812 Sir Isaac Brock Way";
+                document.getElementById("city").value = "St. Catharines";
+                document.getElementById("province").value = "ON";
+                document.getElementById("postal").value = "L2S 3A1";
+                document.getElementById("contry").value = "Canada";
+                document.getElementById("phone").value = "9056885550";
+            }
+
+            function autoPass() {
+                document.getElementById("fname").value = "John";
+                document.getElementById("lname").value = "Doe";
+                document.getElementById("cc-num").value = "4111111111111111";
+                document.getElementById("cc-e-Month").value = "12";
+                document.getElementById("cc-e-Day").value = "31";
+                document.getElementById("cc-cvv").value = "123";
+
+                // Billing info
+                document.getElementById("address").value = "1812 Sir Isaac Brock Way";
+                document.getElementById("city").value = "St. Catharines";
+                document.getElementById("province").value = "ON";
+                document.getElementById("postal").value = "L2S 3A1";
+                document.getElementById("contry").value = "Canada";
+                document.getElementById("phone").value = "9056885550";
+            }
         </script>
         <div class="payment order-summary">
 
