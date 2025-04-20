@@ -207,6 +207,7 @@
             padding: 10px;
             margin-bottom: 5px;
             flex: 0 0 calc(50% - 1rem);
+            align-content: end;
         }
 
         .image-modal {
@@ -275,13 +276,13 @@
             max-width: 100%;
         }
 
-        .fa-solid {
+        .profile .fa-solid {
             color: #eeeef0;
             padding-right: 10px;
             font-size: 1rem;
         }
 
-        .fa-trash {
+        .profile .fa-trash {
             padding: 0;
         }
 
@@ -420,7 +421,7 @@
 
         document.addEventListener("DOMContentLoaded", async function () {
             await loadHostedEvents();
-            await loadPastEvents();
+            await loadPurchasedEvents();
             await loadUpcomingEvents();
             await loadDraftEvents();
         });
@@ -448,28 +449,43 @@
                 console.error("Failed to load hosted events:", error);
             }
         }
-        async function loadPastEvents() {
+        async function loadPurchasedEvents() {
             try {
-                const organizerEvents = await api.organizer.get_events();
-                if (organizerEvents.length > 0) {
-                    organizerId = organizerEvents[0].owner_id;
-                } else {
-                    console.error("No events found to determine organizer ID for past events");
+                const receipt = await api.payment.list_receipts();
+
+                if (!receipt || !receipt.items || receipt.items.length === 0) {
+                    console.error("No purchases found");
                     return;
                 }
 
-                const now = Date.now();
-                const search = new Search();
-                search.organizer_exact = parseInt(organizerId);
-                search.date_end = now; // Only events that ended before now
+                // Step 1: Collect unique event IDs from receipt items
+                const eventIds = [...new Set(
+                    receipt.items
+                        .filter(item => item.event_id) // Only items linked to events
+                        .map(item => item.event_id)
+                )];
 
-                const pastEvents = await api.search.search_events_with_owner(search);
+                if (eventIds.length === 0) {
+                    console.error("No event purchases found in receipts");
+                    return;
+                }
 
-                renderEvents(pastEvents, "#history .event-list");
+                console.log("Purchased event IDs:", eventIds);
+
+                // Step 2: Fetch each event (assuming you have an API call for that)
+                const eventPromises = eventIds.map(id => api.event.get_event(id));
+                const events = await Promise.all(eventPromises);
+
+                console.log("Purchased Events:", events);
+
+                // Step 3: Render events
+                renderEvents(events, "#history .event-list");
+
             } catch (error) {
-                console.error("Failed to load past events:", error);
+                console.error("Failed to load purchased events:", error);
             }
         }
+
         async function loadUpcomingEvents() {
             try {
                 const organizerEvents = await api.organizer.get_events();
