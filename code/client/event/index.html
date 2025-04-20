@@ -6,13 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event</title>
     <script src="/js/api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/countdown@2.6.0/countdown.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <!-- optional -->
+
     <link rel="stylesheet" href="/style/styles.css">
     <style>
         .content {
             padding: 0;
         }
 
-        .eventPage {
+        .eventPage-1,
+        .eventPage-2 {
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -20,18 +25,18 @@
             /* background-color: #1b263b; */
         }
 
+        .eventPage-2 {
+            display: none;
+        }
+
+        .eventPage-2 .img-container {
+            min-height: 30rem;
+        }
+
         .img-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            align-self: center;
+            position: relative;
             width: 100%;
-            /* border-radius: 20px; */
             box-sizing: border-box;
-            /* background: rgba(238, 238, 240, 0.3); */
-            /* backdrop-filter: blur(10px); */
-            padding: 10px;
-            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
             transition: transform 0.3s ease-in-out;
             margin: 0;
             z-index: 1;
@@ -40,10 +45,11 @@
         #eventImage {
             position: relative;
             align-self: center;
-            max-width: 100%;
-            height: auto;
+            /* min-height: 30rem; */
             object-fit: cover;
             /* border-radius: 15px; */
+            width: 100%;
+            display: block;
         }
 
         .flex-container {
@@ -82,9 +88,10 @@
             font-style: normal;
         } */
 
+
         h1 {
             position: relative;
-            margin-top: 0;
+            text-align: center;
             font-optical-sizing: auto;
             font-weight: 600;
             font-style: normal;
@@ -129,11 +136,47 @@
             margin: 0;
         }
 
+        /* 
+        .eventTitle{
+            position: absolute;
+            bottom:0;
+            left: 0;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 10px;
+            border-radius: 0;
+            width: 100%;
+        } */
+
+
+        .eventTitle {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            /* optional: dark overlay */
+            color: white;
+            text-align: center;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .eventTitle h1 {
+            margin: 0;
+            font-size: 1.5em;
+            display: flex;
+        }
+
         .ticketInfo>*,
         .organizerInfo>* {
             display: flex;
             flex-direction: column;
             width: 100%;
+            align-items: stretch;
+            padding: 0 20px;
         }
 
         .organizerInfo {
@@ -175,22 +218,22 @@
             border-radius: 50%;
             cursor: pointer;
             transition: box-shadow 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
-            box-shadow: 0 4px 0 #0f1a2a, 0 6px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             position: relative;
             top: 0;
         }
 
         .ticket-buttons button:hover {
             background-color: #273a56;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #0f1a2a, 0 10px 15px rgba(0, 0, 0, 0.4);
-            cursor: pointer;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
 
         .ticket-buttons button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #0f1a2a, 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
         }
+
 
         .ticket-buttons button:disabled {
             background-color: #ccc;
@@ -210,6 +253,10 @@
             border-radius: 5px;
         }
 
+        .fa-solid {
+            color: #eeeef0;
+        }
+
         .purchase-button {
             background-color: #ffcc00;
             color: white;
@@ -223,36 +270,165 @@
                 transform 0.2s ease,
                 background-color 0.2s ease;
 
-            /* ✨ Initial shadow for 3D effect */
-            box-shadow: 0 6px 0 #dfb202, 0 10px 15px rgba(0, 0, 0, 0.2);
+            /* ✨ Softer shadow */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             position: relative;
             top: 0;
         }
 
-
         .purchase-button:hover {
             background-color: #ffcc00;
-            box-shadow: 0 8px 0 #dfb202, 0 15px 25px rgba(0, 0, 0, 0.4);
-            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
         }
 
-        /* Active (click): "Press" the button down */
+        /* Active (click): slight press down */
         .purchase-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 4px 0 #dfb202, 0 6px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
+
+        #countdown {
+            position: relative;
+            width: 30%;
+        }
+
+        #date-time {
+            margin-bottom: 20px;
+        }
+
+        #target-date,
+        #target-time {
+            font-size: 18px;
+            color: #fff;
+        }
+
+
+        #countdown-timer {
+            display: flex;
+            justify-content: space-between;
+            /* Space out countdown blocks */
+        }
+
+        #countdown-timer div {
+            text-align: center;
+            display: flex;
+            ;
+            flex-direction: column;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #eeeef0;
+            font-weight: lighter;
+        }
+
+        #day-value,
+        #hour-value,
+        #minute-value,
+        #second-value {
+            display: flex;
+            font-size: 3rem;
+            font-weight: bold;
+            background: radial-gradient(circle, #eeeeef 0%, #c2d1e3 50%, #6c7b8b 100%);
+            -webkit-background-clip: text;
+            /* For Safari */
+            background-clip: text;
+            /* Standard property for gradient text */
+            color: transparent;
+            /* Ensure the text color is transparent for the gradient effect */
+            margin-bottom: 5px;
+            /* Ensures correct spacing between value and label */
+        }
+
+        .release_info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .release_info>* {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+
+            margin: 0;
+        }
+
+        .game {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            display: flex;
+            background: none;
+            border: none;
+
+        }
+
+        .minigame {
+            font-size: 2rem;
+            /* Adjust the size as needed */
+            color: #eeeef0;
+            /* Icon color */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+            /* Add filter transition for lighting */
+            display: inline-block;
+            cursor: pointer;
+            /* Make it look clickable */
+            transform-origin: center;
+            /* Ensure rotation happens around the center of the icon */
+        }
+
+        /* Hover effect */
+        .minigame:hover {
+            transform: translateZ(5px) scale(1.1);
+            /* Rotate evenly along X & Y */
+            /* Stronger shadow to create depth */
+            filter: brightness(1.2);
+            /* Add a subtle lighting effect on hover */
+        }
+
+        /* Optional: Active state for a "pressing" effect */
+        .minigame:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        #gameOverlay {
+            position: relative;
+            width: 100%;
+            /* Full width of parent */
+            padding-top: 56.25%;
+            /* 16:9 Aspect Ratio (9 / 16 * 100 = 56.25%) */
+            height: 0;
+            /* Height is initially 0 */
+            overflow: hidden;
+        }
+
+        #gameOverlay iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /* Takes full width of the parent container */
+            height: 100%;
+            /* Height will adjust based on the aspect ratio */
+        }
+
+
+
+
+
+
+
 
         @media (max-width: 768px) {
-            .flex-container {
+            .eventPage-1 .flex-container {
                 flex-direction: column;
             }
         }
 
         @media (max-width: 480px) {
-            .flex-container {
-                flex-direction: column;
-            }
-
             #eventImage {
                 height: 40vh;
             }
@@ -266,18 +442,34 @@
                 ;
             }
         }
+
+
+        @media(max-width: 680px) {
+            .eventPage-2 .img-container {
+                min-height: auto;
+            }
+
+            .eventPage-2 .eventTitle {
+                flex-wrap: wrap;
+                flex-direction: column;
+            }
+
+        }
     </style>
 </head>
 <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
     <div class="content">
-        <div class="eventPage">
+        <div class="eventPage-1">
             <div class="flex-container">
                 <div class=" left-column">
 
                     <div class="img-container">
                         <img id="eventImage" src="" alt="Event Picture" />
+                        <div class="eventTitle">
+                            <h1 id="eventTitle"></h1>
+                        </div>
                     </div>
                 </div>
 
@@ -295,7 +487,7 @@
                 <div class="left-column eventDetails">
                     <!-- <span id="eventDate"></span>
                         <span id="eventTime"></span><br><br> -->
-                    <h1 class="eventTitle" id="eventTitle"></h1>
+
                     <!-- <h3>Date & Time:</h3> -->
                     <span id="eventDuration"></span>
                     <!-- <h3>Location:</h3> -->
@@ -330,70 +522,182 @@
             </div>
 
         </div>
+
+
+
+
+        <div class="eventPage-2">
+            <div class="flex-container">
+                <div class=" left-column">
+
+                    <div class="img-container">
+                        <button class="game" onclick="replaceImageWithGame()">
+                            <div class="minigame">🎮</div>
+                        </button>
+
+                        <div class="image-wrapper" style="display: flex;height: auto;">
+                            <img id="eventImage" src="" alt="Event Picture" />
+                            <div id="gameOverlay"
+                                style="display: none; position: relative; width: 100%; padding-top: 66.66%; overflow: hidden;">
+                                <iframe src="" width="100%" height="100%"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                                    allowfullscreen></iframe>
+                            </div>
+                            <div class="eventTitle">
+                                <div class="release_info">
+                                    <h1 id="eventTitle"></h1>
+                                    <h3 id="releaseDate"></h3>
+                                    <p id="loc"></p>
+                                </div>
+                                <div id="countdown"></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
     <script>
         let id;
         window.onload = async function () {
-            // Retrieve the event ID from the URL query parameters
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('id');
             id = eventId;
             const profileLink = document.getElementById('profileLink');
 
-
-
-            // Check if event ID is provided
             if (!eventId) {
                 console.log("No event ID found.");
                 return;
             }
+
             try {
-                // Fetch event details
                 const get_event = await api.events.get_event_with_owner(eventId);
 
+                // NEW LOGIC for release_time
+                if (get_event.release_time !== 0 && get_event.release_time > Date.now()) {
+                    // Hide eventPage-1 and show eventPage-2
+                    document.querySelector('.eventPage-1').style.display = 'none';
+                    document.querySelector('.eventPage-2').style.display = 'block';
+
+                    // Set only event image and event title inside eventPage-2
+                    const eventPage2 = document.querySelector('.eventPage-2');
+                    eventPage2.querySelector("#eventImage").src = get_event.picture ? `/media/${get_event.picture}` : '/media/default-image.jpg';
+                    eventPage2.querySelector("#eventTitle").textContent = get_event.name;
+
+                    document.getElementById("countdown").innerHTML = `
+                            
+                            <div id="countdown-timer">
+                            <div id="days">
+                                <div id="day-value">00</div>
+                                <div class="label">Days</div>
+                            </div>
+                            <div id="hours">
+                                <div id="hour-value">00</div>
+                                <div class="label">Hours</div>
+                            </div>
+                            <div id="minutes">
+                                <div id="minute-value">00</div>
+                                <div class="label">Minutes</div>
+                            </div>
+                            <div id="seconds">
+                                <div id="second-value">00</div>
+                                <div class="label">Seconds</div>
+                            </div>
+                            </div>
+                        `;
+
+                    const targetDate = get_event.release_time;
+
+                    // const targetDateObj = new Date(targetDate);
+                    // document.getElementById('target-date').textContent = "Target Date: " + targetDateObj.toLocaleDateString();
+                    // document.getElementById('target-time').textContent = "Target Time: " + targetDateObj.toLocaleTimeString();
+
+                    const eventDate = new Date(get_event.release_time);
+
+                    const intervalId = setInterval(() => {
+                        const now = new Date();
+                        const diff = eventDate - now;
+
+                        if (diff <= 0) {
+                            document.getElementById("countdown-timer").textContent = "🎉 It's happening!";
+                            clearInterval(intervalId);
+
+                            // Show game button (optional)
+                            document.querySelector('.game').style.display = 'block';
+
+                            // Confetti celebration
+                            confetti({
+                                particleCount: 100,
+                                spread: 70,
+                                origin: { y: 0.6 }
+                            });
+
+                            // ✨ THEN swap eventPage-2 with eventPage-1
+                            setTimeout(() => {
+                                location.reload();
+                            }, 3000); // wait 3 seconds after confetti
+                        }
+                        else {
+                            const parts = countdown(now, eventDate);
+
+                            document.getElementById("day-value").textContent = parts.days.toString().padStart(2, '0');
+                            document.getElementById("hour-value").textContent = parts.hours.toString().padStart(2, '0');
+                            document.getElementById("minute-value").textContent = parts.minutes.toString().padStart(2, '0');
+                            document.getElementById("second-value").textContent = parts.seconds.toString().padStart(2, '0');
+                        }
+                    }, 1000);
+
+
+                    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                    document.getElementById('releaseDate').innerText = `🎟️ Tickets available on ${eventDate.toLocaleDateString(undefined, options)}`;
+
+                    document.getElementById('loc').innerText = `📍 Location: ${get_event.location_name}`;
+
+                    return; // 🚨 Stop executing the rest of the normal logic
+                }
+
+                // If release_time is 0 (normal behavior)
                 profileLink.href = `/user/profile?id=${get_event.owner.id}`;
 
                 const event = get_event;
                 const tags = get_event.tags;
                 const owner = get_event.owner;
-                console.log(owner);
 
-                // Set event details on the page
                 document.getElementById("eventTitle").textContent = event.name;
                 document.getElementById("eventLocation").textContent = event.location_name;
-                // event.location_name = "Brock" // delete once we have real locations
+
                 document.getElementById("map").innerHTML = `
-                <iframe id="map-frame" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0"
-                            marginwidth="0"
-                            src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${encodeURI(event.location_name)}&t=k&z=14&ie=UTF8&iwloc=B&output=embed">
-                        </iframe>
-                        `;
+            <iframe id="map-frame" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0"
+                marginwidth="0"
+                src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${encodeURI(event.location_name)}&t=k&z=14&ie=UTF8&iwloc=B&output=embed">
+            </iframe>
+        `;
 
-                const eventStart = new Date(event.start);  // Event start date from the timestamp
-                const eventEnd = new Date(eventStart.getTime() + event.duration);  // Event end date from duration
+                const eventStart = new Date(event.start);
+                const eventEnd = new Date(eventStart.getTime() + event.duration);
 
-                // Function to format the time
                 const formatTime = (date) => {
                     const hours = date.getHours();
                     const minutes = date.getMinutes().toString().padStart(2, '0');
                     const ampm = hours >= 12 ? 'pm' : 'am';
-                    const formattedHours = hours % 12 || 12;  // Convert 24-hour to 12-hour format
+                    const formattedHours = hours % 12 || 12;
                     return `${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
                 };
 
-                // Format start and end time
                 const startFormatted = `${eventStart.toLocaleString('default', { month: 'long' })} ${eventStart.getDate()}, ${eventStart.getFullYear()} @ ${formatTime(eventStart)}`;
                 const endFormatted = `${eventEnd.toLocaleString('default', { month: 'long' })} ${eventEnd.getDate()}, ${eventEnd.getFullYear()} @ ${formatTime(eventEnd)}`;
 
-                // Display the formatted date and time
                 document.getElementById("eventDuration").textContent = `${startFormatted} - ${endFormatted}`;
 
                 document.getElementById("eventDescription").textContent = event.description;
 
-                // Display tags
                 const eventTagsElement = document.getElementById("eventTags");
                 tags.forEach(tag => {
-                    const tagElement = document.createElement("span");
+                    const tagElement = document.createElement("a");
+                    tagElement.href = `event/search?tags=${tag}`;
                     tagElement.textContent = `#${tag}`;
                     tagElement.classList.add("event-tag");
                     eventTagsElement.appendChild(tagElement);
@@ -402,18 +706,23 @@
                 if (event.picture) {
                     document.getElementById("eventImage").src = `/media/${event.picture}`;
                 } else {
-                    document.getElementById("eventImage").src = '/media/default-image.jpg';  // Fallback image
+                    document.getElementById("eventImage").src = '/media/default-image.jpg';
                 }
 
-                document.getElementById("owner").innerHTML = "Name: " + owner.name + "</p><p>Phone Number: " + owner.disp_phone_number + "</p><p>Email: " + owner.disp_email;
+                document.getElementById("owner").innerHTML = `
+  <p><i class="fa-solid fa-user"></i> ${owner.name}</p>
+  <p><i class="fa-solid fa-phone"></i> ${owner.disp_phone_number}</p>
+  <p><i class="fa-solid fa-envelope"></i> ${owner.disp_email}</p>
+`;
+
 
             } catch (error) {
                 console.error("Error fetching event:", error);
             }
 
-            // Fetch tickets
             fetchAndRenderTickets(id);
         };
+
 
         let tickets = [];  // Declare tickets globally to store the fetched tickets
 
@@ -530,6 +839,62 @@
             });
             if (items.length > 0) window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
         }
+
+
+        // Assuming this is the URL of your game
+
+
+        // function replaceImageWithGame() {
+        //     const gameDiv = document.querySelector('.gameDiv');
+
+        //     if (!gameDiv) {
+        //         console.error('Error: gameDiv not found');
+        //         return;
+        //     }
+
+        //     // Clear the inside of gameDiv
+        //     gameDiv.innerHTML = '';
+
+        //     // Create an iframe element
+        //     const iframe = document.createElement('iframe');
+        //     iframe.src = "/games/flappy"; // Set your game URL
+        //     iframe.width = "100%"; // Adjust width as needed
+        //     iframe.height = "500px"; // Adjust height as needed
+        //     iframe.style.border = "none"; // Optional: remove border
+
+        //     // Add the iframe to gameDiv
+        //     gameDiv.appendChild(iframe);
+        // }
+
+        function replaceImageWithGame() {
+            const gameOverlay = document.querySelector('.eventPage-2 #gameOverlay');
+            const iframe = gameOverlay ? gameOverlay.querySelector('iframe') : null;
+            const eventImage = document.querySelector('.eventPage-2 #eventImage');
+
+            if (!gameOverlay || !iframe || !eventImage) {
+                console.error('Error: gameOverlay, iframe, or eventImage not found inside .eventPage-2');
+                return;
+            }
+
+            if (gameOverlay.style.display === 'none' || gameOverlay.style.display === '') {
+                // Show the game overlay
+                iframe.src = "/games/flappy"; // Set your game URL
+                gameOverlay.style.display = 'block';
+                eventImage.style.display = 'none'; // Hide the event image
+            } else {
+                // Hide the game overlay
+                iframe.src = ""; // Clear the iframe
+                gameOverlay.style.display = 'none';
+                eventImage.style.display = 'block'; // Show the event image again
+            }
+        }
+
+
+
+
+
+
+
 
     </script>
 
