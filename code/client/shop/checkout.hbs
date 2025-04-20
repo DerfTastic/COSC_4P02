@@ -295,9 +295,9 @@
                                 placeholder="MM" class="no-spinners" required>
                         </div>
                         <div class="input-container">
-                            <label for="cc-e-Day">*Expiry Day</label>
-                            <input type="number" id="cc-e-Day" name="cc-e-Day" pattern="(0[1-9]|[12][0-9]|3[01])])"
-                                placeholder="DD" class="no-spinners" required>
+                            <label for="cc-e-Year">*Expiry Year</label>
+                            <input type="number" id="cc-e-Year" name="cc-e-Year" pattern="(0[1-9]|[12][0-9]|3[01])])"
+                                placeholder="YY" min=""25" max=""99" class="no-spinners" required>
                         </div>
                     </div>
                     <div class="input-row">
@@ -374,7 +374,7 @@
                     name: `${document.getElementById("fname").value} ${document.getElementById("lname").value}`,
                     billing: `${document.getElementById("address").value}, ${document.getElementById("city").value}, ${document.getElementById("province").value}, ${document.getElementById("postal").value}, ${document.getElementById("contry").value}`,
                     card: document.getElementById("cc-num").value,
-                    exparation: `${document.getElementById("cc-e-Month").value}/${document.getElementById("cc-e-Day").value}`,
+                    exparation: `${document.getElementById("cc-e-Month").value}/${document.getElementById("cc-e-Year").value}`,
                     code: document.getElementById("cc-cvv").value
                 };
                 var items = new URLSearchParams(window.location.search).get("items");
@@ -387,7 +387,7 @@
                 const fieldIds = [
                     "cc-num",
                     "cc-e-Month",
-                    "cc-e-Day",
+                    "cc-e-Year",
                     "cc-cvv",
                     "fname",
                     "lname",
@@ -420,7 +420,7 @@
                 document.getElementById("lname").value = "TenBroeck";
                 document.getElementById("cc-num").value = "3000000000000000";
                 document.getElementById("cc-e-Month").value = "12";
-                document.getElementById("cc-e-Day").value = "31";
+                document.getElementById("cc-e-Year").value = "35";
                 document.getElementById("cc-cvv").value = "123";
 
                 // Billing info
@@ -437,7 +437,7 @@
                 document.getElementById("lname").value = "Doe";
                 document.getElementById("cc-num").value = "4111111111111111";
                 document.getElementById("cc-e-Month").value = "12";
-                document.getElementById("cc-e-Day").value = "31";
+                document.getElementById("cc-e-Year").value = "35";
                 document.getElementById("cc-cvv").value = "123";
 
                 // Billing info
