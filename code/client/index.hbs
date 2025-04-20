@@ -40,7 +40,7 @@
                     {{#each events}}
                     <div class="product-box" onclick="window.location.href = '/event?id={{id}}'">
 
-                        <img src="/media/{{picture}}" alt="{{name}}">
+                       <div class="img-wrapper"> <img src="/media/{{picture}}" alt="{{name}}"></div>
                         <div  class="caption">
                             <h4>{{splitTitle name "main"}}{{#if (splitTitle name "sub")}}<br><span class="subtext">{{splitTitle name "sub"}}</span>{{/if}}</h4>        
                             <p><i class="fa-solid fa-calendar"></i>{{formatTime start}}</p>
