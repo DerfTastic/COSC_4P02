@@ -366,7 +366,13 @@
             }
 
             async function place_order() {
-                const payment = {};
+                const payment = {
+                    name: `${document.getElementById("fname").value} ${document.getElementById("lname").value}`,
+                    billing: `${document.getElementById("address").value}, ${document.getElementById("city").value}, ${document.getElementById("province").value}, ${document.getElementById("postal").value}, ${document.getElementById("contry").value}`,
+                    card: document.getElementById("cc-num").value,
+                    exparation: `${document.getElementById("cc-e-Month").value}/${document.getElementById("cc-e-Day").value}`,
+                    code: document.getElementById("cc-cvv").value
+                };
                 var items = new URLSearchParams(window.location.search).get("items");
                 items = JSON.parse(items);
                 const response = await api.payment.make_purchase({ payment, items });
