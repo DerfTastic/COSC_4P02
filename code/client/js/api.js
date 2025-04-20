@@ -15,9 +15,8 @@ class UserPayment{
  * A Ticket to an event that can be ordered and purchased.
  */
 class TicketOrderItem {
-    type = "Ticket";
+    type = "Ticket"; 
     /** @type{number} */ id;
-
     constructor(id) {
         this.id = id;
     }
@@ -317,8 +316,8 @@ const api = {
         },
 
         /**
-         * @param {UserOrderItem[]} order 
-         * @param {Session} session 
+         * @param {UserOrderItem[]} order An array of ticket IDs. See `EventTicket`.
+         * @param {Session} session Server side user identification.
          * @returns {Promise<BillEstimate>}
          */
         create_estimate: async function(order, session = cookies.getSession()){

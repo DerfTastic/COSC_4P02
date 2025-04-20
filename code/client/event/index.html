@@ -477,6 +477,9 @@
             purchaseButton.classList.add('purchase-button');
             purchaseButton.textContent = "Purchase Tickets";
             purchaseButton.onclick = purchaseTicketQuantity;
+            purchaseButton.disabled = getTotalTicketsSelected() <= 0;
+            purchaseButton.style.opacity = purchaseButton.disabled ? '0.5' : '1.0';
+            purchaseButton.style.cursor = purchaseButton.disabled ? 'not-allowed' : 'pointer';
 
             purchaseButtonContainer.appendChild(purchaseButton);
             eventTicketsDisplay.appendChild(purchaseButtonContainer);
@@ -509,6 +512,11 @@
             }
         }
 
+        // Calculate the total number of tickets a user has selected across all ticket types.
+        function getTotalTicketsSelected() {
+            return tickets.reduce((sum, t) => sum + (t.quantity || 0), 0);
+        }
+
         // Function to make an API call to purchase the tickets when user clicks 'purchase tickets'
         function purchaseTicketQuantity() {
             const items = [];
@@ -520,10 +528,8 @@
                     }
                 }
             });
-            window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
+            if (items.length > 0) window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
         }
-
-
 
     </script>
 
