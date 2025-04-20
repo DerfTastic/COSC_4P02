@@ -61,6 +61,7 @@
         .change-banner-btn {
             position: absolute;
             right: 10px;
+            bottom: 10px;
             background: none;
             border: none;
             cursor: pointer;
@@ -380,10 +381,11 @@
 
 
             <div class="tabs">
-                <div class="tab active" data-tab="history" id="historyTab">Ticket History</div>
+                <div class="tab active" data-tab="history" id="historyTab">Purchase History</div>
                 <div class="tab" data-tab="upcoming" id="upcomingTab">Upcoming Events</div>
                 <div class="tab" data-tab="hosted" id="hostedTab">Events Hosted</div>
                 <div class="tab" data-tab="drafts" id="draftsTab">Drafts</div>
+                <div class="tab" data-tab="futureEvents" id="futureEventsTab">Future Events</div>
             </div>
 
             <div class="tab-content active" id="history">
@@ -407,6 +409,14 @@
             </div>
 
             <div class="tab-content" id="drafts">
+                <ul class="event-list">
+                    <!--Events go here-->
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="futureEvents">
                 <ul class="event-list">
                     <!--Events go here-->
                     <li></li>
@@ -710,9 +720,9 @@
             document.getElementById("displayName").textContent = info.name;
             document.getElementById("nameInput").value = info.name;
             document.getElementById("displayEmail").textContent = info.disp_email;
-            document.getElementById("emailInput").value = info.disp_email == undefined ? "" : info.disp_email;
-            document.getElementById("displayPhone").textContent = `${info.disp_phone_number}`;
-            document.getElementById("phoneInput").value = info.disp_phone_number == undefined ? "" : info.disp_phone_number;
+            document.getElementById("emailInput").value = info.disp_email || "";
+            document.getElementById("displayPhone").textContent = info.disp_phone_number || "";
+            document.getElementById("phoneInput").value = info.disp_phone_number || "";
             document.getElementById("displayBio").textContent = info.bio || "No bio yet.";
             document.getElementById("bioInput").value = info.bio || "";
 
@@ -721,12 +731,14 @@
                 // Show pro tabs
                 document.getElementById("hostedTab").classList.remove("hidden");
                 document.getElementById("draftsTab").classList.remove("hidden");
+                document.getElementById("futureEventsTab").classList.remove("hidden");
                 // Hide Go Pro button
                 document.getElementById("goProBtn").classList.add("hidden");
             } else {
                 // Hide pro-only tabs
                 document.getElementById("hostedTab").classList.add("hidden");
                 document.getElementById("draftsTab").classList.add("hidden");
+                document.getElementById("futureEventsTab").classList.add("hidden");
                 // Show Go Pro button
                 document.getElementById("goProBtn").classList.remove("hidden");
             }
