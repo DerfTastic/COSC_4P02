@@ -315,6 +315,20 @@ public class EventAPI {
         trans.commit();
     }
 
+    @Route("/delete_all_event_tags/<event_id>")
+    public static void delete_all_event_tags(OrganizerSession session, RwTransaction trans, @Path long event_id) throws SQLException, BadRequest {
+        try(var stmt = trans.namedPreparedStatement("select owner_id from events where id=:event_id")){
+            stmt.setLong(":event_id", event_id);
+            if(stmt.executeQuery().getLong("owner_id")!= session.user_id())
+                throw new BadRequest("Could not add tag. Tag already exists or you do now own event");
+        }
+        try(var stmt = trans.namedPreparedStatement("delete from event_tags where event_id=:event_id")){
+            stmt.setLong(":event_id", event_id);
+            stmt.execute();
+        }
+        trans.commit();
+    }
+
     @Route("/set_draft/<id>/<draft>")
     public static void set_draft(OrganizerSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
         try(var stmt = trans.namedPreparedStatement("update events set draft=:draft where id=:id AND owner_id=:owner_id")){

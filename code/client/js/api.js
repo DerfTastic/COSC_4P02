@@ -713,6 +713,26 @@ const api = {
 
         /**
          * @param {number|string} id 
+         * @param {boolean} category 
+         * @param {Session} session 
+         * @returns {Promise<>}
+         */
+        delete_all_event_tags: async function(id, session = cookies.getSession()){
+            await api.api_call(
+                `/delete_all_event_tags/${encodeURI(id)}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-UserAPIToken': session
+                    }
+                },
+                "An error occured while deleting event tags"
+            );
+        },
+
+        /**
+         * @param {number|string} id 
          * @param {string} tag 
          * @param {boolean} category 
          * @param {Session} session 
@@ -722,7 +742,7 @@ const api = {
             await api.api_call(
                 `/delete_event_tag/${encodeURI(id)}/${encodeURI(tag)}`,
                 {
-                    method: "POST",
+                    method: "DELETE",
                     headers: {
                         'Content-Type': 'application/json',
                         'X-UserAPIToken': session

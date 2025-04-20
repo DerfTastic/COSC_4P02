@@ -87,8 +87,16 @@ public class AdminAPITest {
         UserSession notAdminSesh = a1.userSession(db, null);
         Assertions.assertFalse(notAdminSesh.admin());
 
+        ogAdminSesh = ogAdmin.adminSession(db, null);
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.set_account_admin(ogAdminSesh, trans, true, a1.email); // Set admin to true
+            trans.tryCommit();
+        }
+        a1.login(mail, db, false); // Need to log back in since AdminAPI.set_account_admin removes your session
+
+
         try {
-            var faultyAdminSesh = a1.adminSession(db, null);
+            var faultyAdminSesh = o1.adminSession(db, null);
             Assertions.fail("Shouldn't be able to make an admin session out if you're someone who's not an admin");
         } catch (Exception ignore) {}
 
@@ -99,9 +107,8 @@ public class AdminAPITest {
 //        }
         a1.login(mail, db, false);
         try {
-            var evilAdmin = a1.adminSession(db, null);
-            //TODO Make it impossible for a non-admin account to make someone admin
-//            Assertions.fail("Shouldn't be able to make someone an admin if you're not an admin yourself");
+            var evilAdmin = u1.adminSession(db, null);
+            Assertions.fail("Shouldn't be able to make someone an admin if you're not an admin yourself");
         } catch (Exception ignore) {}
     }
 
@@ -132,7 +139,7 @@ public class AdminAPITest {
     @Test
     @Order(3)
     public void testExecutingSQL() throws SQLException, Unauthorized {
-        var sesh = o1.adminSession(db, null);
+        var sesh = a1.adminSession(db, null);
         RwConn rw = new RwConn(db, null);
 
         String str;

@@ -428,13 +428,6 @@
 
     </div>
     <script>
-
-        document.addEventListener("DOMContentLoaded", async function () {
-            await loadHostedEvents();
-            await loadPurchasedEvents();
-            await loadUpcomingEvents();
-            await loadDraftEvents();
-        });
         async function loadHostedEvents() {
             const params = new URLSearchParams(window.location.search);
             let organizerId = params.get("id");
@@ -487,6 +480,21 @@
                 const events = await Promise.all(eventPromises);
 
                 console.log("Purchased Events:", events);
+
+                // Step 3: Render events
+                renderEvents(events, "#history .event-list");
+
+            } catch (error) {
+                console.error("Failed to load purchased events:", error);
+            }
+        }
+
+        async function loadPurchaseHistory() {
+            try {
+                const receipt = await api.payment.list_receipts();
+                receipt.forEach(e => {
+                    
+                });
 
                 // Step 3: Render events
                 renderEvents(events, "#history .event-list");
@@ -755,6 +763,10 @@
                 document.getElementById("hostedTab").classList.add("active");
                 document.getElementById("hosted").classList.add("active");
             }
+            if(!document.getElementById("hostedTab").classList.contains("hidden"))await loadHostedEvents();
+            if(!document.getElementById("historyTab").classList.contains("hidden"))await loadPurchaseHistory();
+            if(!document.getElementById("upcomingTab").classList.contains("hidden"))await loadUpcomingEvents();
+            if(!document.getElementById("draftsTab").classList.contains("hidden"))await loadDraftEvents();
         }
         document.addEventListener("DOMContentLoaded", async () => {
             await load();

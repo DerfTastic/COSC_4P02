@@ -548,35 +548,30 @@
 
     <div src="/partials/footer.html" type="text/x-html-template"></div>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
 
+        const urlParams = new URLSearchParams(window.location.search);
+        var eventId = parseInt(urlParams.get("id"), 10);
+
+        document.addEventListener('DOMContentLoaded', async () => {
             const session = cookies.getSession();
 
             if (!session || session.length === 0) {
-                window.location.href = "/account/login"; // Redirect if no session
+                window.location.href = "/account/login";
             } else {
                 const userInfo = await page.account.userinfo();
 
                 if (!userInfo || !userInfo.organizer) {
-                    window.location.href = "/account/login"; // Redirect if not an organizer
+                    window.location.href = "/account/login";
                 }
             }
 
-            // Retrieve the eventId from localStorage
-            let eventId = localStorage.getItem('eventId');
-
-            // Check if eventId exists in localStorage (first-time visit check)
-            if (!eventId) {
-                // If the eventId doesn't exist, call the API to create a new event
+            if (!urlParams.has("id")) {
                 eventId = await api.events.create_event();
-
-                // Save the newly created eventId to localStorage
-                localStorage.setItem('eventId', eventId);
-
-                console.log('New event created with ID:', eventId);
-            } else {
-                console.log('Event ID retrieved from localStorage:', eventId);
+                const newUrl = `${window.location.pathname}?id=${eventId}`;
+                window.history.replaceState(null, '', newUrl);
             }
+
+
         });
 
         const locationInput = document.getElementById('eventLocation');
@@ -584,7 +579,7 @@
 
         let debounceTimeout;
 
-        locationInput.addEventListener('input', () => {
+        locationInput.addEventListener('input', async () => {
             clearTimeout(debounceTimeout);
 
             debounceTimeout = setTimeout(() => {
@@ -594,6 +589,8 @@
                     mapFrame.src = mapUrl;
                 }
             }, 500);
+
+            await api.events.update_event(eventId, { location_name: locationInput.value.trim() });
         });
 
         const formPages = document.querySelectorAll(".form-page");
@@ -742,26 +739,9 @@
         // Listen for "add ticket" action
         document.getElementById('ticketTypeSelect').addEventListener('change', addTicketType);
 
-        function getEventDetails() {
-            return {
-                eventTitle: document.getElementById('eventTitle').value,
-                eventDescription: document.getElementById('eventDescription').value,
-                eventLocation: document.getElementById('eventLocation').value||undefined,
-                eventDate: document.getElementById('eventDate').value||undefined,
-                eventStartTime: document.getElementById('eventStartTime').value||undefined,
-                eventEndTime: document.getElementById('eventEndTime').value||undefined,
-                // eventType: document.getElementById('eventType').value,
-                eventCategory: document.getElementById('eventCategory').value||undefined,
-                eventTags: document.getElementById('eventTags').value||undefined,
-                ticketReleaseDate: document.getElementById('ticketReleaseDate').value||undefined,
-                ticketReleaseTime: document.getElementById('ticketReleaseTime').value||undefined,
-            };
-        }
-
-        const tickets = []; // Array to hold all tickets data
-        // Function to populate review section
+        const tickets = [];
         function populateReviewSection() {
-
+            yy
             const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventCategory, eventTags, ticketReleaseDate, ticketReleaseTime } = getEventDetails();
 
             // Get ticket details
@@ -841,7 +821,7 @@
         let uploadedFile;
 
         // Function to handle file upload
-        function handleFileUpload() {
+        async function handleFileUpload() {
             const fileInput = document.getElementById('eventImage');
             const fileList = fileInput.files;
             const uploadBox = document.getElementById('uploadBox');
@@ -881,135 +861,98 @@
                     uploadText.style.display = "none";
                 };
                 reader.readAsDataURL(file);
+
+                await api.events.set_picture(eventId, uploadedFile);
             }
         }
 
-        // Function to remove image and reset upload box
-        function removeImage() {
-            const fileInput = document.getElementById('eventImage');
-            const uploadBox = document.getElementById('uploadBox');
-            const uploadText = document.getElementById('uploadText');
-            const removeBtn = document.getElementById('removeImageBtn');
 
-            // Reset file input and upload box
-            fileInput.value = '';
-            uploadBox.style.backgroundImage = "none"; // Remove image
-            removeBtn.style.display = "none";
-            uploadBox.style.borderStyle = 'dashed'; // Reset border
-            uploadText.textContent = 'Upload an image.';
-            uploadText.style.display = 'block'; // Show text again
+        async function saved(){
+
         }
 
+        async function saving(){
 
-        async function createEvent(action) {
-            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventCategory, eventTags, ticketReleaseDate, ticketReleaseTime } = getEventDetails();
-
-            // Get event details   
-            const updateEvent = new UpdateOrganizerEvent();
-            eventId = parseInt(localStorage.getItem('eventId')?.trim(), 10);
-            console.log(eventId);
-            updateEvent.name = eventTitle;
-            updateEvent.description = eventDescription;
-            updateEvent.start = new Date(`${eventDate}T${eventStartTime}`).getTime()||undefined;
-            updateEvent.duration = (new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime())||undefined;
-            // updateEvent.available_total_tickets = totalTickets || 0;
-            updateEvent.location_name = eventLocation;
-            updateEvent.category = eventCategory;
-            updateEvent.release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime()||undefined;
-
-            console.log(updateEvent);
-            await api.events.update_event(eventId, updateEvent);
-            const eTags = (eventTags||"").split(',').map(tag => tag.trim()).filter(v => v.length>0); // Removing extra spaces from each tag
-
-
-            // Iterate over the eventTags array and add each tag using the add_event_tag API
-            for (let tag of eTags) {
-                try {
-                    await api.events.add_event_tag(eventId, tag);
-                } catch (error) {
-                    console.error(`Failed to add tag ${tag}:`, error);  // Log the error for debugging purposes
-                    continue;  // Skip to the next tag
-                }
-            }
-
-            await api.events.set_picture(eventId, uploadedFile);
-
-            if (Array.isArray(tickets) && tickets.length > 0) {
-                try {
-                    // Step 1: Get existing tickets
-                    const existingTickets = await api.tickets.get_tickets(eventId);
-                    console.log("Existing tickets fetched:", existingTickets);
-
-                    // Step 2: Delete all existing tickets
-                    for (let i = 0; i < existingTickets.length; i++) {  // Start from index 1 to skip the first ticket
-                        const ticket = existingTickets[i];
-                        try {
-                            await api.tickets.delete_ticket(ticket.id);  // Delete the ticket by its ID
-                            console.log(`Ticket ${ticket.id} deleted.`);
-                        } catch (error) {
-                            console.error(`Failed to delete ticket ${ticket.id}:`, error);
-                        }
+        }
+        
+        /** @type{Promise<>[]} */
+        queue_of_things = [];
+        async function loopie(){
+            while(true){
+                saving();
+                while(queue_of_things.length !=0 ){
+                    try{
+                        await queue_of_things.shift()();
+                    }catch({error, code}){
+                        alert(error);
                     }
-
-                    // Step 3: Create new tickets
-                    for (let ticket of tickets) {
-                        const newTicket = new EventTicketUpdate();
-                        newTicket.name = ticket.name;
-                        newTicket.price = ticket.price;
-                        newTicket.available_tickets = ticket.available_tickets;
-
-                        console.log("Creating new ticket:", newTicket);
-
-                        // Create the new ticket
-                        const ticket_id = await api.tickets.create_ticket(eventId);
-                        await api.tickets.update_ticket(ticket_id, newTicket);
-                        console.log("New ticket created.");
-                    }
-
-                    console.log("New tickets have been created.");
-
-                } catch (error) {
-                    console.error("Error occurred while managing tickets:", error);
                 }
-            } else {
-                console.warn("No tickets data available.");
-            }
-            // After event is created, reset button text and enable the button
-            if (action === 'save') {
-                updateButtonState('saveButton', 'Saved', true);
-                updateButtonState('saveButton', 'Save');
-                await api.events.set_draft(eventId, true);
-            } else {
-                updateButtonState('submitButton', 'Submitted', false);
-                await api.events.set_draft(eventId, false);
-                localStorage.clear();
-                window.location.reload();
+                saved();
+                await new Promise(r => setTimeout(r, 100));
             }
         }
-        // Function for handling "Save" button click
-        function handleSave() {
-            updateButtonState('saveButton', 'Saving...', true);  // Change button text and disable
-            createEvent('save');  // Create event and set it as a draft
+        loopie();
+
+        function update_event(meow){
+            queue_of_things.push(async () => api.events.update_event(eventId, meow));
         }
 
-        // Function for handling "Submit" button click
-        function handleSubmit() {
-            event.preventDefault();  // Prevent form submission
+        document.getElementById('eventTitle').addEventListener("input", e => {
+            update_event({name: e.target.value});
+        });
+        document.getElementById('eventDescription').addEventListener("input", e => {
+            update_event({description: e.target.value});
+        });
+        document.getElementById('eventLocation').addEventListener("input", e => {
+            update_event({location_name: e.target.value});
+        });
+        document.getElementById('eventCategory').addEventListener("input", e => {
+            update_event({category: e.target.value});
+        });
 
-            // Get all required fields
-            const requiredFields = document.querySelectorAll("input[required], textarea[required], select[required]");
+        document.getElementById('eventDate').addEventListener("input", change_start_dur);
+        document.getElementById('eventStartTime').addEventListener("input", change_start_dur);
+        document.getElementById('eventEndTime').addEventListener("input", change_start_dur);
+        document.getElementById('eventDate').addEventListener("input", change_start_dur);
 
-            // Check if any required field is empty
-            for (let field of requiredFields) {
-                if (!field.value.trim()) {
-                    alert('Please fill all required fields');
-                    return;  // Stop the function if a required field is empty
+        function change_start_dur(){
+            console.log("here");
+            const eventDate = document.getElementById('eventDate').value || undefined;
+            const eventStartTime = document.getElementById('eventStartTime').value || undefined;
+            const eventEndTime = document.getElementById('eventEndTime').value || undefined;
+
+            const start = new Date(`${eventDate}T${eventStartTime}`).getTime()||undefined;
+            const duration = (new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime())||undefined;
+            
+            console.log("here2");
+            update_event({start, duration});
+        }
+
+        document.getElementById('ticketReleaseDate').addEventListener("input", change_release_date);
+        document.getElementById('ticketReleaseTime').addEventListener("input", change_release_date);
+
+        function change_release_date(){
+            const ticketReleaseDate = document.getElementById('ticketReleaseDate').value || undefined;
+            const ticketReleaseTime = document.getElementById('ticketReleaseTime').value || undefined;
+            const release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime()||undefined;
+            update_event({release_time});
+        }
+
+        document.getElementById('eventTags').addEventListener("input", e => {
+            queue_of_things.push(async() => {
+                await api.events.delete_all_event_tags(eventId);
+                for(const v of e.target.value.split(" ").map(v => v.trim()).filter(v => v.length>0)){
+                    await api.events.add_event_tag(eventId, v);
                 }
-            }
-            updateButtonState('submitButton', 'Submitting...', true);  // Change button text and disable
-            createEvent('submit');  // Create event and publish it
-            // localStorage.clear();
-            // window.location.reload();
+            });
+        });
+
+        function setDraft() {
+            queue_of_things.push(async () => api.events.set_draft(eventId, true));
+        }
+
+        function setNotDraft() {
+            queue_of_things.push(async () => api.events.set_draft(eventId, false));
         }
 
         // Function to update button text and disable/enable it
@@ -1018,27 +961,6 @@
             button.innerText = text;
             button.disabled = disable;
         }
-
-        // Save form values to localStorage on input change
-        document.querySelectorAll("input, textarea, select").forEach((input) => {
-            // Skip file inputs
-            if (input.type !== "file" && input.id != "ticketTypeSelect") {
-                input.addEventListener("input", () => {
-                    localStorage.setItem(input.id, input.value);
-                });
-            }
-        });
-
-        // On page load, restore values from localStorage
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll("input, textarea, select").forEach((input) => {
-                const savedValue = localStorage.getItem(input.id);
-                if (savedValue && input.type !== "file") {  // Skip restoring file inputs
-                    input.value = savedValue;
-                }
-            });
-
-        });
 
     </script>
 </body>
