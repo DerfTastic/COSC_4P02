@@ -432,7 +432,7 @@
         document.addEventListener("DOMContentLoaded", async function () {
             await loadHostedEvents();
             await loadPurchasedEvents();
-            await loadUpcomingEvents();
+            await loadFutureEvents();
             await loadDraftEvents();
         });
         async function loadHostedEvents() {
@@ -496,7 +496,7 @@
             }
         }
 
-        async function loadUpcomingEvents() {
+        async function loadFutureEvents() {
             try {
                 const organizerEvents = await api.organizer.get_events();
                 if (organizerEvents.length > 0) {
@@ -507,14 +507,14 @@
                     search.organizer_exact = parseInt(organizerId);
                     search.date_start = now; // Only events that start after now
 
-                    const upcomingEvents = await api.search.search_events_with_owner(search);
+                    const futureEvents = await api.search.search_events_with_owner(search);
 
-                    renderEvents(upcomingEvents, "#upcoming .event-list");
+                    renderEvents(futureEvents, "#futureEvents .event-list");
                 } else {
-                    console.error("No events found to determine organizer ID for upcoming events");
+                    console.error("No events found to determine organizer ID for future events");
                 }
             } catch (error) {
-                console.error("Failed to load upcoming events:", error);
+                console.error("Failed to load future events:", error);
             }
         }
         async function loadDraftEvents() {
