@@ -11,6 +11,8 @@ import framework.web.annotations.*;
 import framework.web.annotations.url.Path;
 import framework.web.error.BadRequest;
 import framework.web.error.ClientError;
+import org.sqlite.SQLiteErrorCode;
+import org.sqlite.SQLiteException;
 import server.handlebars.Hbs;
 import server.infrastructure.session.SessionCache;
 import server.infrastructure.session.UserSession;
@@ -270,6 +272,12 @@ public class PaymentAPI {
                 }
                 subtotal += items.getLast().purchase_price();
             }
+        }catch (SQLiteException e){
+            if (e.getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT_TRIGGER){
+                var msg = e.getMessage().split("\\(")[1];
+                throw new BadRequest(msg.substring(0, msg.length()-1));
+            }
+            throw e;
         }
 
         long fees = (subtotal * 15000) / Multiplier; // 0.015 1.5%

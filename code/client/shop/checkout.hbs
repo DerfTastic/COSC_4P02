@@ -381,11 +381,14 @@
                 };
                 var items = new URLSearchParams(window.location.search).get("items");
                 items = JSON.parse(items);
-                const response = await api.payment.make_purchase({ payment, items });
-                window.location.href = `/shop/receipt?receipt_id=${response.payment_id}`;
+                try{
+                    const response = await api.payment.make_purchase({ payment, items });
+                    window.location.href = `/shop/receipt?receipt_id=${response.payment_id}`;
+                }catch({error, code}){
+                    alert(error);
+                }
             }
             async function checkEmptyFields() {
-                await place_order();
                 const fieldIds = [
                     "cc-num",
                     "cc-e-Month",
