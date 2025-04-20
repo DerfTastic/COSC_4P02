@@ -14,16 +14,17 @@ class UserPayment{
 /**
  * A Ticket to an event that can be ordered and purchased.
  */
-class TicketOrderItem{
-    type = "Ticket"
-    /** @type{number} */id
-    /** @type{number} */tktTypeID
+class TicketOrderItem {
+    type = "Ticket";
+    /** @type{number} */ id;
+    /** @type{string} */ name;
 
-    constructor(id,tktTypeID){
+    constructor(id, tktTypeID, name) {
         this.id = id;
-        this.tktTypeID =- tktTypeID;
+        this.name = name;
     }
 }
+
 
 /**
  * An account upgrade from user to organizer that can be ordered and purchased.

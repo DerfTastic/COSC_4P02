@@ -512,15 +512,29 @@
         // Function to make an API call to purchase the tickets when user clicks 'purchase tickets'
         function purchaseTicketQuantity() {
             const items = [];
+
+            // Map ticket names to fixed IDs
+            const ticketTypeMap = {
+                "General Admission": 1,
+                "VIP": 2,
+                "Free": 3
+                // Add more mappings as needed
+            };
+
             tickets.forEach(ticket => {
                 if (ticket.quantity > 0) {
+                    const typeId = ticketTypeMap[ticket.name] || 99;  // Use 99 for unknown types
                     for (let i = 0; i < ticket.quantity; i++) {
-                        items[i] = new TicketOrderItem(i+1,ticket.id);
+                        items.push(new TicketOrderItem(typeId, ticket.name));
                     }
                 }
             });
-            window.location.href = `/shop/checkout?items=${encodeURI(JSON.stringify(items))}`
+
+            console.log('Prepared tickets:', items);
+            window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
         }
+
+
 
     </script>
 

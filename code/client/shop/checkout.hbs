@@ -345,6 +345,7 @@
             async function get_estamate() {
                 var items = new URLSearchParams(window.location.search).get("items");
                 items = JSON.parse(items);
+                console.trace("get_estamate() called");
                 return api.payment.create_estimate(items);
             }
 
