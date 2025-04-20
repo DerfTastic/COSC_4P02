@@ -10,79 +10,7 @@
     <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <style>
-        .content {
-            display: flex;
-        }
 
-        .payment {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            background: rgba(238, 238, 240, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-            color: #eeeef0;
-            padding: 15px;
-        }
-
-        h1 {
-            color: var(--Light, #eeeef0);
-            font-size: 2.8rem;
-            font-style: normal;
-            font-weight: 700;
-            line-height: normal;
-            margin: 10px 0;
-        }
-
-        p {
-            margin: 10px 0;
-        }
-
-        .pay-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            align-self: stretch;
-        }
-
-        .order-summary {
-            gap: 15px;
-        }
-
-        h4 {
-            color: var(--Light, #eeeef0);
-            font-size: 1.2rem;
-            font-style: normal;
-            font-weight: 700;
-            line-height: normal;
-            margin: 5px 0;
-        }
-
-        .price {
-            display: flex;
-            padding: 0px 15px;
-            justify-content: space-between;
-            align-self: stretch;
-        }
-
-        .item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .sub-total {
-            display: flex;
-            padding: 5px 15px 5px 0px;
-            justify-content: space-between;
-            align-self: stretch;
-        }
-
-        .total {
-            border-top: 3px solid var(--L-Blue, #778DA9);
-        }
     </style>
 </head>
 
@@ -100,50 +28,136 @@
         <div class="payment order-summary">
 
             <script src="get_estamate()" type="text/x-handlebars-template">
-                <h1>Order Summary</h1>
-                <!--<div class="sumary-title">
-                    <h4>Event Name</h4>
-                </div>---> 
-                <div class="pay-info">
-                    <div class="price">
-                        <div class="item">
+                 <!-- Main Email Container -->
+    <table role="presentation" border="2" align="center">
+        <tbody>
+            <tr>
+                <td>
+                    <table role="presentation" width="100%" bgcolor="#eeeef0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table width="100%">
+                                        <tbody>
+                                            <tr>
+                                                <td align="left" width="37%"><a title="Ticket Express"
+                                                        href="https://ticketexpress.tpgc.me/"><img
+                                                            src="https://ticketexpress.tpgc.me/images/logo.png"
+                                                            alt="TICKET EXPRESS Logo" width="150px" height="150px"></a>
+                                                </td>
+                                                <td bgcolor="#eeeef0">
+                                                    <h1 style="color: #2a3e59;" align="left">Your Ticket Confirmation
+                                                    </h1>
+                                                    <p style="color: #2a3e59;" align="left">Thank you for your purchase.
+                                                        Below are your ticket details.</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#2a3e59">
+                    <h2 style="color: #eeeef0;" align="center">Invoice Summary</h2>
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="10" bgcolor="#2a3e59">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Sub Total:</strong> {{formatPrice subtotal}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Fees:</strong> {{formatPrice fees}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>GST:</strong> {{formatPrice gst}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Total:</strong> {{formatPrice total}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Payment Type:</strong> Credit Card
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#2a3e59">
+                    <h2 style="color: #eeeef0;" align="center">Your Tickets</h2>
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="10" bgcolor="#eeeef0">
+                        <tbody >
                             {{#each items}}
-                            <p>{{name}}</p>
+                            {{#if (eq type "Ticket")}}
+                            <tr>
+                                <td align="center" bgcolor="#2a3e59">
+                                    <h3 style="color: #eeeef0;"><strong>Type:</strong> {{name}}</h3>
+                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> {{formatPrice purchase_price}}
+                                    </h3>
+                                    <table role="presentation" bgcolor="#eeeef0" cellspacing="0"
+                                        cellpadding="30" style="border-radius: 10px;">
+                                        <tr>
+                                            <!-- QR Code Column -->
+                                            <td align="center">
+                                                <img 
+                                                    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={{encodeURI (json id)}}"
+                                                    alt="QR Code">
+                                            </td>
+
+                                            <!-- Event Info Column -->
+                                            <td style="color: #2a3e59;">
+                                                <h2 align="left" style="margin: 0;">{{event_name}}</h2>
+                                                <p align="left">
+                                                    <font size="4">Date: {{formatDate event_date}}</font>
+                                                </p>
+                                                <p align="left">
+                                                    <font size="4">Location: {{location_name}}</font>
+                                                </p>
+                                                <p align="left">
+                                                    <font size="4">Organizer: {{organizer_name}}</font>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+                            {{else}}
+                            <tr>
+                                Account Organizer Upgrade
+                            </tr>
+                            {{/if}}
                             {{/each}}
-                        </div>
-                        <div class="item">
-                            {{#each items}}
-                            <p>{{formatPrice purchase_price}}</p>
-                            {{/each}}
-                        </div>
-                    </div>
-                    <div class="sub-total">
-                        <div class="item">
-                            <h4>Subtotal</h4>
-                        </div>
-                        <div class="item">
-                            <h4>{{formatPrice subtotal}}</h4>
-                        </div>
-                    </div>
-                    <div class="price">
-                        <div class="item">
-                            <p>Service Fee</p>
-                            <p>Tax</p>
-                        </div>
-                        <div class="item">
-                            <p>{{formatPrice fees}}</p>
-                            <p>{{formatPrice gst}}</p>
-                        </div>
-                    </div>
-                    <div class="sub-total total">
-                        <div class="item">
-                            <h4>Total</h4>
-                        </div>
-                        <div class="item">
-                            <h4>{{formatPrice total}}</h4>
-                        </div>
-                    </div>
-                </div>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td bgcolor="#2a3e59">
+                    <blockquote>
+                        <p style="color: #eeeef0;" align="center">If you have any questions, please contact our support
+                            team.</p>
+                        <p style="color: #eeeef0;" align="center">Thank you for your purchase!</p>
+
+                        <p style="color: #eeeef0;" align="center">&copy; 2025 Ticket Express. All rights reserved.</p>
+                    </blockquote>
+                </td>
+            </tr>
+        </tbody>
+    </table>
             </script>
             <div class="pay-info"></div>
             <h4>Purchase Successful!</h4>

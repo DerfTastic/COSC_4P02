@@ -17,11 +17,9 @@ class UserPayment{
 class TicketOrderItem {
     type = "Ticket";
     /** @type{number} */ id;
-    /** @type{string} */ name;
 
-    constructor(id, tktTypeID, name) {
+    constructor(id) {
         this.id = id;
-        this.name = name;
     }
 }
 
@@ -1389,6 +1387,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()} @ ${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
         });
+        Handlebars.registerHelper('formatDate', function (millis) {
+            const date = new Date(millis);
+            const hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            const formattedHours = hours % 12 || 12; // Convert 24-hour to 12-hour format
+
+            return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()} @ ${formattedHours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+        });
         Handlebars.registerHelper('logColor', function(level) {
             const colors = { "SEVERE": "red", "WARNING": "yellow", "INFO": "blue", "CONFIG": "grey" };
             return colors[level] || "grey";
@@ -1416,6 +1423,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         Handlebars.registerHelper('formatPrice', function(context) {
             return format_currency(context);
+        });
+
+        Handlebars.registerHelper('encodeURI', function(context) {
+            return encodeURI(context);
         });
     }
 

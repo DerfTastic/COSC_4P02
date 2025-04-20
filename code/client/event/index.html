@@ -513,24 +513,13 @@
         function purchaseTicketQuantity() {
             const items = [];
 
-            // Map ticket names to fixed IDs
-            const ticketTypeMap = {
-                "General Admission": 1,
-                "VIP": 2,
-                "Free": 3
-                // Add more mappings as needed
-            };
-
             tickets.forEach(ticket => {
                 if (ticket.quantity > 0) {
-                    const typeId = ticketTypeMap[ticket.name] || 99;  // Use 99 for unknown types
                     for (let i = 0; i < ticket.quantity; i++) {
-                        items.push(new TicketOrderItem(typeId, ticket.name));
+                        items.push(new TicketOrderItem(ticket.id));
                     }
                 }
             });
-
-            console.log('Prepared tickets:', items);
             window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
         }
 
