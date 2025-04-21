@@ -579,15 +579,15 @@
 
             document.getElementById('eventCategory').value = event.category||"";
 
-            document.getElementById('eventDate').value = new Date(event.start).toLocaleDateString()||"";
-            document.getElementById('eventStartTime').value = formatTime(new Date(event.start))||"";
-            document.getElementById('eventEndTime').value = formatTime(new Date(event.start+event.duration))||"";
-            document.getElementById('eventDate').value = new Date(event.start+event.duration).toLocaleDateString()||"";
+            if(event.start&&event.duration)document.getElementById('eventDate').valueAsDate = new Date(event.start);
+            if(event.start&&event.duration)document.getElementById('eventStartTime').valueAsDate = new Date(event.start);
+            if(event.start&&event.duration)document.getElementById('eventEndTime').valueAsDate = new Date(event.start+event.duration);
+            if(event.start&&event.duration)document.getElementById('eventDate').valueAsDate = new Date(event.start+event.duration);
 
             document.getElementById('eventTags').value = (event.tags||[]).join(" ");
 
-            document.getElementById('ticketReleaseDate').value = new Date(event.release_time).toLocaleDateString()||"";
-            document.getElementById('ticketReleaseTime').value = formatTime(new Date(event.release_time))||"";
+            if(event.release_time)document.getElementById('ticketReleaseDate').valueAsDate = new Date(event.release_time);
+            if(event.release_time)document.getElementById('ticketReleaseTime').valueAsDate = new Date(event.release_time);
 
         });
 
