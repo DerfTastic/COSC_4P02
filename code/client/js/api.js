@@ -148,13 +148,13 @@ class EventTicket {
     /** @type{number} */id
     /** @type{string} */name
     /** @type{number} */price
-    /** @type{number} */available_tickets
+    /** @type{number} */total_tickets
 }
 
 class EventTicketUpdate {
     /** @type{string?} */name
     /** @type{number?} */price
-    /** @type{number?} */available_tickets
+    /** @type{number?} */total_tickets
 }
 
 class OrganizerEvent {

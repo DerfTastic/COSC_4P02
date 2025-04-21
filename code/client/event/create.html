@@ -448,17 +448,7 @@
                         <div class="title">Tickets & Pricing:</div>
                         <div class="fields-wrapper">
                             <div class="field-gap">
-                                <div class="field">
-                                    <div class="label">Ticket Type</div>
-                                    <select id="ticketTypeSelect" class="select-field">
-                                        <option value="" selected disabled>Select Ticket Type</option>
-                                        <option value="free">Free</option>
-                                        <option value="vip">VIP</option>
-                                        <option value="general">General Admission</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-
+    
                                 <div class="field">
                                     <div class="label">Ticket Release Date</div>
                                     <input type="date" id="ticketReleaseDate" class="input-field" required>
@@ -467,15 +457,20 @@
                                     <div class="label">Ticket Release Time</div>
                                     <input type="time" id="ticketReleaseTime" class="input-field" required>
                                 </div>
+
+                                <div class="field">
+                                    <div class="btn-container">
+                                        <button onclick="addTicket()" id="addTicketButton">
+                                            Add Ticket
+                                        </button>
+                                    </div>
+                                </div>
+                                
                             </div>
 
                             <!-- Container for dynamically added ticket types -->
                             <div id="ticketTypesContainer">
                                 <!-- Dynamically added ticket types will appear here -->
-                            </div>
-                            <div class="field">
-                                <div class="label">Total Tickets Allotted</div>
-                                <span id="totalTicketsAllotted">0</span>
                             </div>
                         </div>
                     </div>
@@ -506,18 +501,10 @@
                                 <div class="label">Event Date & Time:</div>
                                 <div id="reviewEventDate"></div>
                             </div>
-                            <!-- <div class="field">
-                                <div class="label">Event Type:</div>
-                                <div id="reviewEventType"></div>
-                            </div> -->
                             <div class="field">
                                 <div class="label">Event Category:</div>
                                 <div id="reviewEventCategory"></div>
                             </div>
-                            <!-- <div class="field">
-                                <div class="label">Total Tickets:</div>
-                                <div id="reviewTotalTickets"></div>
-                            </div> -->
                             <div class="field">
                                 <div class="label">Tickets:</div>
                                 <div id="reviewTicketType"></div>
@@ -536,9 +523,6 @@
                         <button class="next">
                             Next
                         </button>
-                        <button
-                            onclick="localStorage.clear(); document.querySelectorAll('input, select, textarea').forEach(el => el.type === 'checkbox' || el.type === 'radio' ? el.checked = false : el.value = '');">Clear
-                            Form</button>
                         <button id="saveButton" onclick="handleSave()">Save</button>
                         <button id="submitButton" onclick="handleSubmit()" style="display: none;">Submit</button></a>
                 </div>
@@ -551,6 +535,8 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         var eventId = parseInt(urlParams.get("id"), 10);
+
+        var tickets = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
             const session = cookies.getSession();
@@ -572,7 +558,8 @@
             }
 
             var event = await api.events.get_event(eventId);
-            var tickets = await api.tickets.get_tickets(eventId);
+            tickets = await api.tickets.get_tickets(eventId);
+            renderTickets();
 
             function formatTime(meow) {
                 if(meow==undefined || meow==null)return "";
@@ -599,6 +586,83 @@
             document.getElementById('ticketReleaseTime').value = formatTime(new Date(event.release_time))||"";
 
         });
+
+        function addTicket(){
+            queue_of_things.push(async () => {
+                const id = await api.tickets.create_ticket(eventId);
+                await api.tickets.update_ticket(id, {name: "general"});
+                tickets.push({
+                    id,
+                    name: "general",
+                });
+                renderTickets();
+            });
+        }
+
+        function updateTicket(id){
+            const ticket = tickets.find(v => v.id ==id);
+            queue_of_things.push(async () => {
+                await api.tickets.update_ticket(ticket.id, ticket);
+            });
+        }
+
+        function renderTickets(){
+            document.getElementById("ticketTypesContainer").innerHTML = "";
+            for(const t of tickets){
+                const el = document.createElement("div");
+                el.innerHTML = `<div class="field">
+                    <div class="label">Ticket Type</div>
+                    <select class="ticketTypeSelect" class="select-field">
+                        <option ${t.name=="free"?'selected':''} value="free">Free</option>
+                        <option ${t.name=="vip"?'selected':''} value="vip">VIP</option>
+                        <option ${t.name=="general"?'selected':''} value="general">General Admission</option>
+                        <option ${t.name=="other"?'selected':''} value="other">Other</option>
+                    </select>
+                </div>
+                <div class="field">
+                <div class="label">Ticket Type: ${t.name.charAt(0).toUpperCase() + t.name.slice(1)}</div>
+                    <input type="number" class="ticketQuantity" value="0" min="0" placeholder="Quantity" onchange="updateTotalTickets()">
+                </div>
+                <div class="field">
+                    <div class="label">Price</div>
+                    <input type="number" class="ticketPrice" value="0" min="0" placeholder="Price" onchange="updateTotalTickets()" ${t.name=='free' ? 'disabled' : ''} required>
+                </div>
+
+                <div class="field">
+                    <div class="btn-container">
+                        <button type="button" class="removeTicketType" onclick="removeTicket(${t.id})">Delete</button>
+                    </div>
+                </div>
+                `;
+                
+                el.querySelector(".ticketTypeSelect").value = t.name;
+                el.querySelector(".ticketQuantity").value = t.total_tickets;
+                el.querySelector(".ticketPrice").value = t.price;
+                
+                el.querySelector(".ticketTypeSelect").addEventListener("input", e => {
+                    tickets.find(v => v.id ==t.id).name = e.target.value;
+                    updateTicket(t.id);
+                });
+                el.querySelector(".ticketQuantity").addEventListener("input", e => {
+                    tickets.find(v => v.id ==t.id).total_tickets = e.target.value||null;
+                    updateTicket(t.id);
+                });
+                el.querySelector(".ticketPrice").addEventListener("input", e => {
+                    tickets.find(v => v.id ==t.id).price = e.target.value;
+                    updateTicket(t.id);
+                });
+
+                document.getElementById("ticketTypesContainer").append(el);
+            }
+        }
+
+        function removeTicket(id){
+            queue_of_things.push(async () => {
+                await api.tickets.delete_ticket(id);
+                tickets = tickets.filter(t => t.id!=id);
+                renderTickets();
+            });
+        }
 
         const locationInput = document.getElementById('eventLocation');
         const mapFrame = document.getElementById('map-frame');
@@ -704,93 +768,11 @@
         // Initialize progress bar
         updateProgressBar();
 
-        let addedTicketTypes = [];
-
-        // Add ticket type row with quantity and price input
-        function addTicketType() {
-            const ticketTypeSelect = document.getElementById("ticketTypeSelect");
-            const selectedTicketType = ticketTypeSelect.value;
-
-            if (!selectedTicketType) return;
-            if (addedTicketTypes.includes(selectedTicketType)) return;
-
-            addedTicketTypes.push(selectedTicketType);
-
-            const container = document.getElementById('ticketTypesContainer');
-            const isFree = selectedTicketType.toLowerCase() === 'free';
-
-            const newTicketType = document.createElement('div');
-            newTicketType.classList.add('ticket-type');
-            newTicketType.innerHTML = `
-        <div class="field">
-            <div class="label">Ticket Type: ${selectedTicketType.charAt(0).toUpperCase() + selectedTicketType.slice(1)}</div>
-            <input type="number" class="ticketQuantity" value="0" min="0" placeholder="Quantity" onchange="updateTotalTickets()" required>
-        </div>
-        <div class="field">
-            <div class="label">Price</div>
-            <input type="number" class="ticketPrice" value="0" min="0" placeholder="Price" onchange="updateTotalTickets()" ${isFree ? 'disabled' : ''} required>
-        </div>
-        <button type="button" class="removeTicketType" onclick="removeTicketType(this)">Remove</button>
-    `;
-
-            container.appendChild(newTicketType);
-            updateTotalTickets();
-        }
-
-
-        // Remove ticket type row
-        function removeTicketType(button) {
-            const ticketType = button.parentElement;
-            const ticketTypeName = ticketType.querySelector('.label').textContent.replace('Ticket Type: ', '').toLowerCase();
-
-            // Remove ticket type from the addedTicketTypes array
-            addedTicketTypes = addedTicketTypes.filter(type => type !== ticketTypeName);
-
-            ticketType.remove();
-            updateTotalTickets();
-        }
-        let totalTickets;
-        // Update total tickets allotted by summing all quantities
-        function updateTotalTickets() {
-            totalTickets = 0;
-            const quantities = document.querySelectorAll('.ticketQuantity');
-
-            quantities.forEach(input => {
-                totalTickets += parseInt(input.value) || 0;
-            });
-
-            document.getElementById('totalTicketsAllotted').textContent = totalTickets;
-        }
-
-        // Listen for "add ticket" action
-        document.getElementById('ticketTypeSelect').addEventListener('change', addTicketType);
-
-        const tickets = [];
         async function populateReviewSection() {
             var event = await api.events.get_event(eventId);
-            var tickets = await api.tickets.get_tickets(eventId);
+            tickets = await api.tickets.get_tickets(eventId);
+            renderTickets();
 
-            // Get ticket details
-            let ticketDetails = '';
-            const ticketTypes = document.querySelectorAll('.ticket-type');
-            ticketTypes.forEach(ticket => {
-                const ticketTypeName = ticket.querySelector('.label').textContent.replace('Ticket Type: ', '');
-                const ticketQuantity = ticket.querySelector('.ticketQuantity').value;
-                const ticketPrice = ticket.querySelector('.ticketPrice').value;
-
-                const formattedPrice = `$${ticketPrice}`;
-
-                // Store individual ticket data in the tickets array
-                tickets.push({
-                    name: ticketTypeName,
-                    price: ticketPrice,  // Storing raw price value, you can format it when needed
-                    available_tickets: ticketQuantity
-                });
-
-                ticketDetails += `<div><strong>${ticketTypeName.charAt(0).toUpperCase() + ticketTypeName.slice(1)}:</strong> Quantity: ${ticketQuantity}, Price: ${formattedPrice}</div>`;
-            });
-
-            // Update review section with event details
             document.getElementById('reviewEventTitle').textContent = event.name || 'N/A';
             document.getElementById('reviewEventDescription').textContent = event.description || 'N/A';
             document.getElementById('reviewEventLocation').textContent = event.location_name || 'N/A';
@@ -829,13 +811,8 @@
 
             document.getElementById('reviewEventCategory').textContent = event.category ? event.category.charAt(0).toUpperCase() + event.category.slice(1) : 'N/A';
             document.getElementById('reviewEventTags').textContent = (event.tags||[]).join(" "); 
-            // document.getElementById('reviewTotalTickets').textContent = document.getElementById('totalTicketsAllotted').textContent;
 
-            // Insert ticket details into the review section
-            // const ticketDetailsContainer = document.getElementById('reviewTicketType');
-            // ticketDetailsContainer.innerHTML = ticketDetails || 'No tickets added yet.';
-
-            // Insert uploaded image into the review section
+            
             const reviewImageContainer = document.getElementById('reviewEventImage');
             if (event_picture_id) {
                 reviewImageContainer.innerHTML = `<img src="/media/${event_picture_id}" alt="Event Image" style="width: 100%; height: auto;">`;
@@ -858,38 +835,29 @@
             uploadText.style.display = "none";
         }
 
-        // Function to handle file upload
         async function handleFileUpload() {
             const fileInput = document.getElementById('eventImage');
             const fileList = fileInput.files;
             const uploadText = document.getElementById('uploadText');
             const removeBtn = document.getElementById('removeImageBtn');
 
-            // Allow only 1 file
             if (fileList.length > 1) {
                 alert('You can only upload 1 image.');
-                fileInput.value = ''; // Reset input
+                fileInput.value = ''; 
                 return;
             }
 
             if (fileList.length > 0) {
                 const file = fileList[0];
 
-                // Ensure file is an image
                 if (!file.type.startsWith('image/')) {
                     alert('Please upload a valid image file.');
-                    fileInput.value = ''; // Reset input
+                    fileInput.value = ''; 
                     return;
                 }
 
                 uploadedFile = file;
                 uploadText.textContent = 'Image uploaded';
-
-                // // Read the file and display it in the uploadBox
-                // const reader = new FileReader();
-                // reader.onload = function (event) {
-                // };
-                // reader.readAsDataURL(file);
 
                 queue_of_things.push(async () => {
                     event_picture_id = await api.events.set_picture(eventId, uploadedFile);
@@ -915,8 +883,9 @@
                 while(queue_of_things.length !=0 ){
                     try{
                         await queue_of_things.shift()();
-                    }catch({error, code}){
-                        alert(error);
+                    }catch(e){
+                        console.log(e);
+                        if(e.error)alert(e.error);
                     }
                 }
                 saved();
