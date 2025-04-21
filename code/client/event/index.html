@@ -42,14 +42,25 @@
             z-index: 1;
         }
 
-        #eventImage {
+        .eventPage-1 #eventImage {
             position: relative;
             align-self: center;
-            /* min-height: 30rem; */
-            object-fit: cover;
+            max-height: 30rem;
+            object-fit: contain;
             /* border-radius: 15px; */
             width: 100%;
             display: block;
+        }
+
+
+        .eventPage-2 #eventImage {
+            position: relative;
+            align-self: center;
+            /* min-height: 30rem; */
+            object-fit: contain;
+            /* border-radius: 15px; */
+            width: 100%;
+            height: 30rem;
         }
 
         .flex-container {
@@ -61,7 +72,7 @@
         .left-column,
         .right-column {
             display: flex;
-            flex: 2;
+            flex: 0.7;
             border-radius: 10px;
             box-sizing: border-box;
             padding: 10px;
@@ -72,8 +83,15 @@
             gap: 20px;
         }
 
-        .right-column {
+        .left-column #eventDetails {
+            flex: 0.7;
+        }
+        .eventPage-2 .left-column{
             flex: 1;
+        }
+
+        .right-column {
+            flex: 0.4;
         }
 
         #eventTime,
@@ -136,19 +154,6 @@
             margin: 0;
         }
 
-        /* 
-        .eventTitle{
-            position: absolute;
-            bottom:0;
-            left: 0;
-            justify-content: center;
-            align-items: flex-end;
-            padding: 10px;
-            border-radius: 0;
-            width: 100%;
-        } */
-
-
         .eventTitle {
             position: absolute;
             bottom: 0;
@@ -176,6 +181,10 @@
             flex-direction: column;
             width: 100%;
             align-items: stretch;
+
+        }
+
+        .organizerInfo>* {
             padding: 0 20px;
         }
 
@@ -430,11 +439,11 @@
 
         @media (max-width: 480px) {
             #eventImage {
-                height: 40vh;
+                height: 15rem;
             }
 
             #map {
-                height: 10vh;
+                height: 10rem;
             }
 
             .content {
@@ -455,6 +464,26 @@
             }
 
         }
+
+        div#content {
+    position: fixed;
+    top: 80px;
+    left: 40px;
+    bottom: 25px;
+    min-width: 200px;
+    width: 40%;
+    background: black;
+}
+
+div#content iframe {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+}
     </style>
 </head>
 <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
@@ -506,7 +535,7 @@
                     </div>
 
                     <div class="right-column organizerInfo">
-                        <a href="#" id="profileLink" style="text-decoration: none; color: white;">
+                        <a href="#" id="profileLink" style="text-decoration: none; color: #eeeef0;">
                             <h2>Organizer Information:</h2>
 
                             <p><span id="owner"></span></p>
@@ -538,7 +567,7 @@
                         <div class="image-wrapper" style="display: flex;height: auto;">
                             <img id="eventImage" src="" alt="Event Picture" />
                             <div id="gameOverlay"
-                                style="display: none; position: relative; width: 100%; padding-top: 66.66%; overflow: hidden;">
+                                style="display: none; position: relative; width: 100%; padding-top: 66.66%; overflow: hidden; height: 50rem;">
                                 <iframe src="" width="100%" height="100%"
                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
                                     allowfullscreen></iframe>
