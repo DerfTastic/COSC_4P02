@@ -946,7 +946,7 @@
         document.getElementById('eventTags').addEventListener("input", e => {
             queue_of_things.push(async() => {
                 await api.events.delete_all_event_tags(eventId);
-                for(const v of e.target.value.split(" ").map(v => v.trim()).filter(v => v.length>0)){
+                for(const v of [...new Set( e.target.value.split(" ").map(v => v.trim().replace(/[^0-9a-z]/gi, '').toLowerCase()).filter(v => v.length>0))]){
                     await api.events.add_event_tag(eventId, v);
                 }
             });
