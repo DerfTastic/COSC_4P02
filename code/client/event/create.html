@@ -514,10 +514,10 @@
                                 <div class="label">Event Category:</div>
                                 <div id="reviewEventCategory"></div>
                             </div>
-                            <div class="field">
+                            <!-- <div class="field">
                                 <div class="label">Total Tickets:</div>
                                 <div id="reviewTotalTickets"></div>
-                            </div>
+                            </div> -->
                             <div class="field">
                                 <div class="label">Tickets:</div>
                                 <div id="reviewTicketType"></div>
@@ -572,14 +572,15 @@
             }
 
             var event = await api.events.get_event(eventId);
-            console.log(event);
             var tickets = await api.tickets.get_tickets(eventId);
-            console.log(tickets);
 
             function formatTime(meow) {
                 if(meow==undefined || meow==null)return "";
                 return `${meow.getHours()}:${meow.getMinutes()}`;   
             }
+
+            event_picture_id = event.picture;
+            setPiture();
 
             document.getElementById('eventTitle').value = event.name||"";
             document.getElementById('eventDescription').value = event.description||"";
@@ -765,8 +766,9 @@
         document.getElementById('ticketTypeSelect').addEventListener('change', addTicketType);
 
         const tickets = [];
-        function populateReviewSection() {
-            const { eventTitle, eventDescription, eventLocation, eventDate, eventStartTime, eventEndTime, eventCategory, eventTags, ticketReleaseDate, ticketReleaseTime } = getEventDetails();
+        async function populateReviewSection() {
+            var event = await api.events.get_event(eventId);
+            var tickets = await api.tickets.get_tickets(eventId);
 
             // Get ticket details
             let ticketDetails = '';
@@ -789,66 +791,77 @@
             });
 
             // Update review section with event details
-            document.getElementById('reviewEventTitle').textContent = eventTitle || 'N/A';
-            document.getElementById('reviewEventDescription').textContent = eventDescription || 'N/A';
-            document.getElementById('reviewEventLocation').textContent = eventLocation || 'N/A';
+            document.getElementById('reviewEventTitle').textContent = event.name || 'N/A';
+            document.getElementById('reviewEventDescription').textContent = event.description || 'N/A';
+            document.getElementById('reviewEventLocation').textContent = event.location_name || 'N/A';
             document.getElementById('reviewEventDate').textContent =
-                eventDate && eventStartTime && eventEndTime
-                    ? `${new Date(eventDate).toLocaleString(undefined, {
+            event.start&&event.duration
+                    ? `${new Date(event.start).toLocaleString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
-                    })} - ${new Date(`${eventDate}T${eventStartTime}`).toLocaleString(undefined, {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
-                    })} to ${new Date(`${eventDate}T${eventEndTime}`).toLocaleString(undefined, {
+                    })} - ${new Date(event.start+event.duration).toLocaleString(undefined, {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
                     })}`
                     : 'N/A';
             document.getElementById('reviewTicketReleaseDT').textContent =
-                ticketReleaseDate && ticketReleaseTime
-                    ? `${new Date(ticketReleaseDate).toLocaleString(undefined, {
+                event.release_time
+                    ? `${new Date(event.release_time).toLocaleString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
-                    })} at ${new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).toLocaleString(undefined, {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
                     })}`
                     : 'N/A';
 
-            // document.getElementById('reviewEventType').textContent = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1) : 'N/A';
-            document.getElementById('reviewEventCategory').textContent = eventCategory ? eventCategory.charAt(0).toUpperCase() + eventCategory.slice(1) : 'N/A';
-            document.getElementById('reviewEventTags').textContent = eventTags || 'N/A'; // Add event tags to review section
-            document.getElementById('reviewTotalTickets').textContent = document.getElementById('totalTicketsAllotted').textContent;
+            document.getElementById('reviewEventCategory').textContent = event.category ? event.category.charAt(0).toUpperCase() + event.category.slice(1) : 'N/A';
+            document.getElementById('reviewEventTags').textContent = (event.tags||[]).join(" "); 
+            // document.getElementById('reviewTotalTickets').textContent = document.getElementById('totalTicketsAllotted').textContent;
 
             // Insert ticket details into the review section
-            const ticketDetailsContainer = document.getElementById('reviewTicketType');
-            ticketDetailsContainer.innerHTML = ticketDetails || 'No tickets added yet.';
+            // const ticketDetailsContainer = document.getElementById('reviewTicketType');
+            // ticketDetailsContainer.innerHTML = ticketDetails || 'No tickets added yet.';
 
             // Insert uploaded image into the review section
             const reviewImageContainer = document.getElementById('reviewEventImage');
-            if (uploadedImageUrl) {
-                reviewImageContainer.innerHTML = `<img src="${uploadedImageUrl}" alt="Event Image" style="width: 100%; height: auto;">`;
+            if (event_picture_id) {
+                reviewImageContainer.innerHTML = `<img src="/media/${event_picture_id}" alt="Event Image" style="width: 100%; height: auto;">`;
             } else {
                 reviewImageContainer.innerHTML = 'No image uploaded';
             }
         }
 
-        let uploadedImageUrl = '';
-        let uploadedFile;
+        let event_picture_id = 0;
+
+        function setPiture(){
+            const uploadBox = document.getElementById('uploadBox');
+            const uploadText = document.getElementById('uploadText');
+            const removeBtn = document.getElementById('removeImageBtn');
+            uploadBox.style.backgroundImage = `url(/media/${event_picture_id})`;
+            uploadBox.style.backgroundSize = "cover";
+            uploadBox.style.backgroundPosition = "center";
+            uploadBox.style.borderStyle = "solid";
+            removeBtn.style.display = "block";
+            uploadText.style.display = "none";
+        }
 
         // Function to handle file upload
         async function handleFileUpload() {
             const fileInput = document.getElementById('eventImage');
             const fileList = fileInput.files;
-            const uploadBox = document.getElementById('uploadBox');
             const uploadText = document.getElementById('uploadText');
             const removeBtn = document.getElementById('removeImageBtn');
 
@@ -872,21 +885,16 @@
                 uploadedFile = file;
                 uploadText.textContent = 'Image uploaded';
 
-                // Read the file and display it in the uploadBox
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    uploadedImageUrl = event.target.result;
-                    uploadBox.style.backgroundImage = `url(${uploadedImageUrl})`;
-                    uploadBox.style.backgroundSize = "cover";
-                    uploadBox.style.backgroundPosition = "center";
-                    uploadBox.style.borderStyle = "solid";
-                    removeBtn.style.display = "block";
-                    // Hide text once image is uploaded
-                    uploadText.style.display = "none";
-                };
-                reader.readAsDataURL(file);
+                // // Read the file and display it in the uploadBox
+                // const reader = new FileReader();
+                // reader.onload = function (event) {
+                // };
+                // reader.readAsDataURL(file);
 
-                await api.events.set_picture(eventId, uploadedFile);
+                queue_of_things.push(async () => {
+                    event_picture_id = await api.events.set_picture(eventId, uploadedFile);
+                    setPiture();
+                });
             }
         }
 
