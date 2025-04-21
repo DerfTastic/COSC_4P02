@@ -641,7 +641,7 @@
                 
                 el.querySelector(".ticketTypeSelect").value = t.name;
                 el.querySelector(".ticketQuantity").value = t.total_tickets;
-                el.querySelector(".ticketPrice").value = t.price;
+                el.querySelector(".ticketPrice").value = t.price/1000000;
                 
                 el.querySelector(".ticketTypeSelect").addEventListener("input", e => {
                     tickets.find(v => v.id ==t.id).name = e.target.value;
@@ -652,7 +652,7 @@
                     updateTicket(t.id);
                 });
                 el.querySelector(".ticketPrice").addEventListener("input", e => {
-                    tickets.find(v => v.id ==t.id).price = e.target.value;
+                    tickets.find(v => v.id ==t.id).price = e.target.value*1000000;
                     updateTicket(t.id);
                 });
 
