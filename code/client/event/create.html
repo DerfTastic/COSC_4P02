@@ -523,8 +523,9 @@
                         <button class="next">
                             Next
                         </button>
-                        <button id="saveButton" onclick="handleSave()">Save</button>
-                        <button id="submitButton" onclick="handleSubmit()" style="display: none;">Submit</button></a>
+                        <div id="savingIcon">Saved</div>
+                        <!-- <button id="saveButton" onclick="handleSave()">Save</button> -->
+                        <button id="toggleDraftButton" onclick="toggleDraft()">Make Public</button></a>
                 </div>
             </div>
         </div>
@@ -535,6 +536,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         var eventId = parseInt(urlParams.get("id"), 10);
+        var isDraft;
 
         var tickets = [];
 
@@ -559,6 +561,8 @@
 
             var event = await api.events.get_event(eventId);
             tickets = await api.tickets.get_tickets(eventId);
+            isDraft = event.draft;
+            updateDraftButton();
             renderTickets();
 
             function formatTime(meow) {
@@ -868,11 +872,11 @@
 
 
         async function saved(){
-
+            document.getElementById("savingIcon").innerText = "Saved";
         }
 
         async function saving(){
-
+            document.getElementById("savingIcon").innerText = "Saving...";
         }
         
         /** @type{Promise<>[]} */
@@ -948,12 +952,27 @@
             });
         });
 
+        function updateDraftButton(){
+            document.getElementById("toggleDraftButton").innerText = isDraft?"Make Public":"Make Private";
+        }
+
+        function toggleDraft(){
+            if(isDraft)
+                setNotDraft();
+            else
+                setDraft();
+        }
+
         function setDraft() {
             queue_of_things.push(async () => api.events.set_draft(eventId, true));
+            isDraft = true;
+            updateDraftButton();
         }
 
         function setNotDraft() {
             queue_of_things.push(async () => api.events.set_draft(eventId, false));
+            isDraft = false;
+            updateDraftButton();
         }
 
         // Function to update button text and disable/enable it
