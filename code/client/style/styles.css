@@ -218,6 +218,12 @@ nav a {
     margin-left: auto;
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 nav a .fa-regular {
     font-size: 1.2rem;
     color: #eeeef0;
@@ -481,7 +487,7 @@ nav a:hover {
     transition: box-shadow 0.3s ease;
 }
 
-.form-group input::placeholder {
+.form-group input::placeholder, input::placeholder {
     color: #eeeef09a;
 }
 

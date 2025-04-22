@@ -642,10 +642,6 @@ div#content iframe {
 
                     const targetDate = get_event.release_time;
 
-                    // const targetDateObj = new Date(targetDate);
-                    // document.getElementById('target-date').textContent = "Target Date: " + targetDateObj.toLocaleDateString();
-                    // document.getElementById('target-time').textContent = "Target Time: " + targetDateObj.toLocaleTimeString();
-
                     const eventDate = new Date(get_event.release_time);
 
                     const intervalId = setInterval(() => {
@@ -669,7 +665,7 @@ div#content iframe {
                             // ✨ THEN swap eventPage-2 with eventPage-1
                             setTimeout(() => {
                                 location.reload();
-                            }, 3000); // wait 3 seconds after confetti
+                            }, 2000); // wait 2 seconds after confetti
                         }
                         else {
                             const parts = countdown(now, eventDate);
