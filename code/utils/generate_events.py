@@ -16,10 +16,8 @@ import traceback
 import random as rng
 from openai import OpenAI
 import webbrowser # just to test photos
-import os
-import sys
 
-maxEvents = 200
+maxEvents = 10000
 
 # Output file
 filename = "sample_events.json"
@@ -28,29 +26,37 @@ f = open(filename, "w")
 # Parameters for event generation
 
 # Categories sorted by how often they occur (first = most events in this category)
-categories = ['Music', 'Sports', 'Family', 'Comedy', 'STEM', 'Theater', 'Workshop', 'Community/Culture', 'Film']
+categories = ["Music",
+              "Sports",
+              "Kids'",
+              "Comedy",
+              "Science/Technology",
+              "Theater",
+              "DIY",
+              "Community/Culture",
+              "Film Screening"]
 # types of events for each category (also pictures)
 types = [["Concert", "Meet and greet"],              # Music
          ["Sports game", "Player meet and greet"],   # Sports
-         ["Sports practice", "Summer Daycamp", "School play", "Magic show", "Birthday Party"],  # Family
+         ["Sports practice", "Summer Daycamp", "School play", "Magic show", "Birthday Party"],  # Kids'
          ["Stand-up show"],                          # Comedy
-         ["Conference", "Tradeshow", "Exhibition"],  # STEM
+         ["Conference", "Tradeshow", "Exhibition"],  # Science / Technology
          ["Premiere Show", "Rehearsal", "Play"],     # Theater
-         ["Workshop", "Project fair"],               # Workshop
+         ["Workshop", "Project fair"],               # DIY
          ["Festival", "Town hall", "Support group"], # Community/Culture
-         ["Film festival"]                           # Film
+         ["Film festival"]                           # Film Screening
          ]
 # The title and name of a given event will be written in its corresponding writing tone,
 # which matches the type of event it is. (eg. Kids' event -> "Fun or Silly" tone) 
 category_writing_tones = ["artistic",                # Music
                           "informative",             # Sports
-                          "fun or silly",            # Family
+                          "fun or silly",            # Kids'
                           "punny",                   # Comedy
-                          "professional or inspiring", # STEM
+                          "professional or inspiring",# Science/Technology
                           "riveting or Vibrant",     # Theater
-                          "crafty and fun",          # Workshop
+                          "crafty and fun",          # DIY
                           "wholesome and non-chalant", # Community/Culture
-                          "elegant and captivating"  # Film
+                          "elegant and captivating"  # Film Screening
                          ]
 # Cities
 cities = [
@@ -71,7 +77,7 @@ cities = [
 ticket_type_names = ["Free", "VIP", "General Admission", "Other"]
 
 # Images
-urlJPGFolder = "/images/"
+urlJPGFolder = "http://jacobswackyworld.ca/stuff/media/4p02-images/"
 imgfileext = ".jpg"
 
 
@@ -81,7 +87,7 @@ imgfileext = ".jpg"
 # just randomize in parts, like getting a good description
 AImodel = "gpt-4o-mini"
 client = OpenAI(
-    api_key = os.environ.get("OPENAI_API_KEY")
+  api_key="" # in secrets file
 )
 
 # Function defintions
@@ -132,23 +138,20 @@ for i in types:
 
 numOfEventsToGen = 0 # Initialize
 
-if (len(sys.argv) > 0):
-    numOfEventsToGen = int(sys.argv[1])
-else:
-    # Ask user how many events to generate
-    validUserResponse = False
-    while(not validUserResponse):
-        response = input("\033[33;1mHow many events do you want to generate? (1-{0}): \033[0m".format(maxEvents))
-        try:
-            numOfEventsToGen = int(response)
-        except ValueError:
-            print("\x1b[31;1mNot an integer, try again.\x1b[0m");
+# Ask user how many events to generate
+validUserResponse = False
+while(not validUserResponse):
+    response = input("\033[33;1mHow many events do you want to generate? (1-{0}): \033[0m".format(maxEvents))
+    try:
+        numOfEventsToGen = int(response)
+    except ValueError:
+        print("\x1b[31;1mNot an integer, try again.\x1b[0m");
+    else:
+        print(numOfEventsToGen)
+        if not (1 <= numOfEventsToGen <= maxEvents):
+            print("\x1b[31;1mMust be between 1 and {0}\x1b[0m".format(maxEvents))
         else:
-            print(numOfEventsToGen)
-            if not (1 <= numOfEventsToGen <= maxEvents):
-                print("\x1b[31;1mMust be between 1 and {0}\x1b[0m".format(maxEvents))
-            else:
-                validUserResponse = True
+            validUserResponse = True
 
 """
 # Testing
@@ -237,7 +240,7 @@ for e in range(0, numOfEventsToGen):
     # Loading AI generated attributes into variables
     event_name = resp["name"]
     event_desc = resp["description"]
-    event_tags = resp["tags"].lower()
+    event_tags = resp["tags"]
     event_location_name = resp["venue"] + " in " + city["name"]
     # Ticket stuff
     event_total_tickets = resp["total_ticket_availability"]
