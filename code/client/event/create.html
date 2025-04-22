@@ -562,7 +562,7 @@
 
             var event = await api.events.get_event(eventId);
 
-            if(event.owner_id != userInfo.organizer){
+            if(event.owner_id != userInfo.id){
                 alert("Not yours to edit!");
                 window.history.back();
             }
