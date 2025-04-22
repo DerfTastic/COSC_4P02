@@ -551,6 +551,11 @@
                 if (!userInfo || !userInfo.organizer) {
                     window.location.href = "/account/login";
                 }
+
+                if(event.owner_id != userInfo.organizer){
+                    alert("Not yours to edit!");
+                    window.history.back();
+                }
             }
 
             if (!urlParams.has("id")) {
@@ -561,10 +566,7 @@
 
             var event = await api.events.get_event(eventId);
 
-            if(event.owner_id != userInfo.organizer){
-                alert("Not yours to edit!");
-                window.history.back();
-            }
+            
 
             tickets = await api.tickets.get_tickets(eventId);
             isDraft = event.draft;
