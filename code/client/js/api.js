@@ -864,7 +864,7 @@ const api = {
          * @returns {Promise<OrganizerEvent[]>}
          */
         get_drafts: async function (session = cookies.getSession()) {
-            return await api.search.search_events({draft: true}, session = cookies.getSession())
+            return await api.search.search_events_with_owner({draft: true}, session = cookies.getSession())
         },
 
         /**
@@ -872,7 +872,7 @@ const api = {
          * @returns {Promise<OrganizerEvent[]>}
          */
         get_events: async function (session = cookies.getSession()) {
-            return await api.search.search_events({draft: false, owning: true}, session = cookies.getSession())
+            return await api.search.search_events_with_owner({draft: false, owning: true}, session = cookies.getSession())
         }
     },
 

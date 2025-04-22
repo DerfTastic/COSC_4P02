@@ -430,25 +430,8 @@
             await loadDraftEvents();
         });
         async function loadHostedEvents() {
-            const params = new URLSearchParams(window.location.search);
-            let organizerId = params.get("id");
-
             try {
-                if (!organizerId) {
-                    const organizerEvents = await api.organizer.get_events();
-                    if (organizerEvents.length > 0) {
-                        organizerId = organizerEvents[0].owner_id;
-                    } else {
-                        console.error("No events found to determine organizer ID");
-                        return;
-                    }
-                }
-
-                const search = new Search();
-                search.organizer_exact = parseInt(organizerId);
-                const events = await api.search.search_events_with_owner(search);
-
-                renderEvents(events, "#hosted .event-list");
+                renderEvents(await api.organizer.get_events(), "#hosted .event-list");
             } catch (error) {
                 console.error("Failed to load hosted events:", error);
             }
@@ -513,20 +496,7 @@
         }
         async function loadDraftEvents() {
             try {
-                const organizerEvents = await api.organizer.get_events();
-                if (organizerEvents.length > 0) {
-                    let organizerId = organizerEvents[0].owner_id;
-
-                    const search = new Search();
-                    search.organizer_exact = parseInt(organizerId);
-                    search.draft = true; // Only events that are drafts
-
-                    const draftEvents = await api.search.search_events_with_owner(search);
-
-                    renderEvents(draftEvents, "#drafts .event-list");
-                } else {
-                    console.error("No events found to determine organizer ID for draft events");
-                }
+                renderEvents(await api.organizer.get_drafts(), "#drafts .event-list");
             } catch (error) {
                 console.error("Failed to load draft events:", error);
             }
