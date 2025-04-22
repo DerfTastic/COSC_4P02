@@ -5,7 +5,7 @@
         "bio": "Community-focused DIY craft event organizer specializing in workshops, maker fairs, and creative retreats.",
         "disp_email": "events@craftyconnections.com",
         "disp_phone_number": "(555) 123-4567",
-        "picture": "/images/sample_pfps/women_12.jpg",
+        "picture": "/images/sample_pfps/craftyconnections.jpg",
         "banner": "/images/sample_events_photos/workshop.jpg",
         "events": [
             {
@@ -23,7 +23,7 @@
                     "artisanal",
                     "workshops"
                 ],
-                "picture": "/images/sample_events_photos/project fair.jpg",
+                "picture": "/images/sample_events_photos/arts_and_crafts_2.jpg",
                 "location_name": "Chelsea Market in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -128,7 +128,7 @@
                     "familyfun",
                     "chicagoevents"
                 ],
-                "picture": "/images/sample_events_photos/project fair.jpg",
+                "picture": "/images/sample_events_photos/arts_and_crafts_fair_2.jpg",
                 "location_name": "The Makers Hall in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -207,7 +207,7 @@
                     "losangeles",
                     "creativity"
                 ],
-                "picture": "/images/sample_events_photos/project fair.jpg",
+                "picture": "/images/sample_events_photos/arts_and_crafts_fair_2.jpg",
                 "location_name": "The Arts District Pavilion in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -358,7 +358,7 @@
                     "handson",
                     "artsandcrafts"
                 ],
-                "picture": "/images/sample_events_photos/workshop.jpg",
+                "picture": "/images/sample_events_photos/arts_and_crafts_fair_2.jpg",
                 "location_name": "Sunny Art Studio in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -982,8 +982,8 @@
         "bio": "Independent film festival organizer showcasing emerging talent and diverse voices in cinema from around the world.",
         "disp_email": "submissions@cinematichorizons.com",
         "disp_phone_number": "(555) 789-0123",
-        "picture": "/images/sample_pfps/men_41.jpg",
-        "banner": "/images/sample_events_photos/film festival.jpg",
+        "picture": "/images/sample_pfps/cinematichorizons.jpg",
+        "banner": "/images/sample_banners/cc-banner.jpg",
         "events": [
             {
                 "name": "St. Catharines International Film Showcase",
@@ -998,7 +998,7 @@
                     "stcatharines",
                     "culturalexperience"
                 ],
-                "picture": "/images/sample_events_photos/film festival.jpg",
+                "picture": "/images/sample_events_photos/landmark.jpg",
                 "location_name": "The Merli Tour Theatre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1074,7 +1074,7 @@
                     "screeningnight",
                     "culturalexperiences"
                 ],
-                "picture": "/images/sample_events_photos/film festival.jpg",
+                "picture": "/images/sample_events_photos/chicago-film-festival.jpg",
                 "location_name": "The Grand Luxe Theatre in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -1114,7 +1114,7 @@
                     "filmmaking",
                     "artistry"
                 ],
-                "picture": "/images/sample_events_photos/film festival.jpg",
+                "picture": "/images/sample_events_photos/tiff.jpg",
                 "location_name": "Royal Cinema in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -1153,7 +1153,7 @@
                     "independentfilms",
                     "artistry"
                 ],
-                "picture": "/images/sample_events_photos/film festival.jpg",
+                "picture": "/images/sample_events_photos/meridian centre.jpg",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -1996,7 +1996,7 @@
         "bio": "Specialized children's event organizer creating magical, educational, and interactive experiences for kids of all ages.",
         "disp_email": "bookings@wondermakers.com",
         "disp_phone_number": "(555) 456-7890",
-        "picture": "/images/sample_pfps/women_37.jpg",
+        "picture": "/images/sample_pfps/wondermakers.jpg",
         "banner": "/images/sample_events_photos/magic show.jpg",
         "events": [
             {
@@ -3033,7 +3033,7 @@
                     "laughter",
                     "entertainment"
                 ],
-                "picture": "/images/sample_events_photos/stand-up show.jpg",
+                "picture": "/images/sample_events_photos/stand-up show 2.jpg",
                 "location_name": "The Laugh Factory Chicago in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -3105,7 +3105,7 @@
                     "laughter",
                     "liveperformance"
                 ],
-                "picture": "/images/sample_events_photos/stand-up show.jpg",
+                "picture": "/images/sample_events_photos/stand-up show 3.jpg",
                 "location_name": "Toronto Comedy Club in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -3143,7 +3143,7 @@
                     "liveshow",
                     "entertainment"
                 ],
-                "picture": "/images/sample_events_photos/stand-up show.jpg",
+                "picture": "/images/sample_events_photos/cowboy stand up.jpg",
                 "location_name": "Laugh Dome Theater in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -3449,7 +3449,7 @@
                     "puns",
                     "liveperformance"
                 ],
-                "picture": "/images/sample_events_photos/stand-up show.jpg",
+                "picture": "/images/sample_events_photos/cowboy stand up.jpg",
                 "location_name": "Calgary Comedy Club in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -3522,7 +3522,7 @@
                     "puns",
                     "comedyshow"
                 ],
-                "picture": "/images/sample_events_photos/stand-up show.jpg",
+                "picture": "/images/sample_events_photos/stand_up.jpg",
                 "location_name": "The Chuckle Factory in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -4068,7 +4068,7 @@
         "bio": "Need help organizing events for your community? We got your back from coast to coast... and in Europe.",
         "disp_email": "support@commorganizers.com",
         "disp_phone_number": "(783) 713-7930",
-        "picture": "/images/sample_pfps/men_91.jpg",
+        "picture": "/images/sample_pfps/community.jpg",
         "banner": "/images/sample_events_photos/festival.jpg",
         "events": [
             {
@@ -4154,7 +4154,7 @@
                     "wellness",
                     "toronto"
                 ],
-                "picture": "/images/sample_events_photos/support group.jpg",
+                "picture": "/images/sample_events_photos/toronto-together.jpg",
                 "location_name": "The Friendly Hall in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -4186,7 +4186,7 @@
                     "stcatharines",
                     "familyfriendly"
                 ],
-                "picture": "/images/sample_events_photos/town hall.jpg",
+                "picture": "/images/sample_events_photos/community-events.jpg",
                 "location_name": "St. Catharines Community Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -4294,7 +4294,7 @@
                     "familyfriendly",
                     "torontoevents"
                 ],
-                "picture": "/images/sample_events_photos/festival.jpg",
+                "picture": "/images/sample_events_photos/toronto-together.jpg",
                 "location_name": "Trinity Bellwoods Park in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -4331,7 +4331,7 @@
                     "networking",
                     "localevents"
                 ],
-                "picture": "/images/sample_events_photos/town hall.jpg",
+                "picture": "/images/sample_events_photos/community-events.jpg",
                 "location_name": "Oceanview Community Center in San Diego, California",
                 "location_lat": 32.715,
                 "location_long": -117.163,
@@ -4639,8 +4639,8 @@
         "bio": "Dynamic music event curator bringing unforgettable live performances and themed music nights to intimate venues and unique spaces.",
         "disp_email": "bookings@rhythmrepublic.com",
         "disp_phone_number": "(555) 234-5678",
-        "picture": "/images/sample_pfps/men_4.jpg",
-        "banner": "/images/sample_events_photos/meet and greet.jpg",
+        "picture": "/images/sample_pfps/rhythmrepublic.jpg",
+        "banner": "/images/sample_banners/rhythm-republic.jpg",
         "events": [
             {
                 "name": "Symphony Under the Stars",
@@ -4655,7 +4655,7 @@
                     "eveningentertainment",
                     "culturalexperience"
                 ],
-                "picture": "/images/sample_events_photos/concert.jpg",
+                "picture": "/images/sample_events_photos/symphony_under_stars.jpg",
                 "location_name": "Royal Albert Hall in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -4692,7 +4692,7 @@
                     "localartists",
                     "artisticcommunity"
                 ],
-                "picture": "/images/sample_events_photos/meet and greet.jpg",
+                "picture": "/images/sample_events_photos/meet and greet 2.jpg",
                 "location_name": "The Sound Lounge in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -4808,7 +4808,7 @@
                     "networking",
                     "intimateevents"
                 ],
-                "picture": "/images/sample_events_photos/meet and greet.jpg",
+                "picture": "/images/sample_events_photos/meet and greet 2.jpg",
                 "location_name": "The Sound Lounge in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -5000,7 +5000,7 @@
                     "ottawaevents",
                     "culturalexperience"
                 ],
-                "picture": "/images/sample_events_photos/meet and greet.jpg",
+                "picture": "/images/sample_events_photos/meet and greet 2.jpg",
                 "location_name": "Ottawa Arts Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -5255,7 +5255,7 @@
                     "artists",
                     "community"
                 ],
-                "picture": "/images/sample_events_photos/meet and greet.jpg",
+                "picture": "/images/sample_events_photos/meet and greet 2.jpg",
                 "location_name": "The Melody Lounge in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -5403,7 +5403,7 @@
                     "networking",
                     "nightlife"
                 ],
-                "picture": "/images/sample_events_photos/meet and greet.jpg",
+                "picture": "/images/sample_events_photos/meet and greet 2.jpg",
                 "location_name": "The Soundstage Lounge in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -5698,8 +5698,8 @@
         "bio": "Hosting cutting-edge technology conferences worldwide.",
         "disp_email": "events@techfuture.com",
         "disp_phone_number": "(456) 789-0123",
-        "picture": "/images/sample_pfps/women_28.jpg",
-        "banner": "/images/sample_events_photos/exhibition.jpg",
+        "picture": "/images/sample_pfps/techfuture.jpg",
+        "banner": "/images/sample_banners/tech-future.jpg",
         "events": [
             {
                 "name": "Innovate Tomorrow: Science & Technology Conference 2023",
@@ -5790,7 +5790,7 @@
                     "tradeshows",
                     "industryleaders"
                 ],
-                "picture": "/images/sample_events_photos/tradeshow.jpg",
+                "picture": "/images/sample_events_photos/logos.jpg",
                 "location_name": "The Philadelphia Convention Center in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -5868,7 +5868,7 @@
                     "calgary",
                     "industryleaders"
                 ],
-                "picture": "/images/sample_events_photos/tradeshow.jpg",
+                "picture": "/images/sample_events_photos/science_and_tech.jpg",
                 "location_name": "Calgary Convention Centre in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -5940,7 +5940,7 @@
                     "london",
                     "futuretrends"
                 ],
-                "picture": "/images/sample_events_photos/tradeshow.jpg",
+                "picture": "/images/sample_events_photos/science_and_tech.jpg",
                 "location_name": "London ExCeL Centre in London, UK",
                 "location_lat": 51.507,
                 "location_long": -0.128,
@@ -6019,7 +6019,7 @@
                     "tradeshow",
                     "future"
                 ],
-                "picture": "/images/sample_events_photos/tradeshow.jpg",
+                "picture": "/images/sample_events_photos/logos.jpg",
                 "location_name": "New York Convention Center in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -6097,7 +6097,7 @@
                     "stem",
                     "inspiration"
                 ],
-                "picture": "/images/sample_events_photos/exhibition.jpg",
+                "picture": "/images/sample_events_photos/science_and_tech.jpg",
                 "location_name": "The Franklin Institute in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -6130,8 +6130,8 @@
         "bio": "Premier sporting event organization specializing in professional games, athlete meet-and-greets, and exclusive fan experiences across multiple sports.",
         "disp_email": "events@victorycircuit.com",
         "disp_phone_number": "(555) 678-9012",
-        "picture": "/images/sample_pfps/women_75.jpg",
-        "banner": "/images/sample_events_photos/player meet and greet.jpg",
+        "picture": "/images/sample_pfps/victorycircuit.jpg",
+        "banner": "/images/sample_banners/sports-banner.jpg",
         "events": [
             {
                 "name": "Toronto Maple Leafs vs. Rival Team",
@@ -6185,7 +6185,7 @@
                     "philadelphia",
                     "athletes"
                 ],
-                "picture": "/images/sample_events_photos/player meet and greet.jpg",
+                "picture": "/images/sample_events_photos/player meet and greet 2.jpg",
                 "location_name": "Liberty Bell Center in Philadelphia, Pennsylvania",
                 "location_lat": 39.953,
                 "location_long": -75.164,
@@ -6223,7 +6223,7 @@
                     "competition",
                     "teamspirit"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 3.jpg",
                 "location_name": "Los Angeles Coliseum in Los Angeles, California",
                 "location_lat": 34.05,
                 "location_long": -118.25,
@@ -6300,7 +6300,7 @@
                     "rivalry",
                     "gameday"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 3.jpg",
                 "location_name": "Soldier Field in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -6377,7 +6377,7 @@
                     "familyfriendly",
                     "competition"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 4.jpg",
                 "location_name": "Scotiabank Saddledome in Calgary, Alberta",
                 "location_lat": 51.05,
                 "location_long": -114.067,
@@ -6416,7 +6416,7 @@
                     "localrivalry",
                     "football"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 3.jpg",
                 "location_name": "NRG Stadium in Houston, Texas",
                 "location_lat": 29.763,
                 "location_long": -95.383,
@@ -6495,7 +6495,7 @@
                     "autographs",
                     "communityevent"
                 ],
-                "picture": "/images/sample_events_photos/player meet and greet.jpg",
+                "picture": "/images/sample_events_photos/player meet and greet 2.jpg",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -6533,7 +6533,7 @@
                     "familyfriendly",
                     "competition"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 2.jpg",
                 "location_name": "Madison Square Garden in New York City, New York",
                 "location_lat": 40.712,
                 "location_long": -74.006,
@@ -6791,7 +6791,7 @@
                     "autographs",
                     "q&a"
                 ],
-                "picture": "/images/sample_events_photos/player meet and greet.jpg",
+                "picture": "/images/sample_events_photos/player meet and greet 2.jpg",
                 "location_name": "Chicago Sports Arena in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
@@ -6940,7 +6940,7 @@
                     "toronto",
                     "fanevent"
                 ],
-                "picture": "/images/sample_events_photos/player meet and greet.jpg",
+                "picture": "/images/sample_events_photos/player meet and greet 2.jpg",
                 "location_name": "Toronto Sports Complex in Toronto, Ontario",
                 "location_lat": 43.742,
                 "location_long": -76.373,
@@ -7018,7 +7018,7 @@
                     "stcatharines",
                     "familyfriendly"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 2.jpg",
                 "location_name": "Meridian Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -7057,7 +7057,7 @@
                     "familyfriendly",
                     "localteam"
                 ],
-                "picture": "/images/sample_events_photos/sports game.jpg",
+                "picture": "/images/sample_events_photos/sports game 4.jpg",
                 "location_name": "Canadian Tire Centre in Ottawa, Ontario",
                 "location_lat": 45.425,
                 "location_long": -75.695,
@@ -7129,7 +7129,7 @@
         "bio": "International theatre production company presenting acclaimed plays, musicals, and theatrical experiences across premier venues in North America and the United Kingdom.",
         "disp_email": "bookings@spotlightstages.com",
         "disp_phone_number": "(555) 345-6789",
-        "picture": "/images/sample_pfps/women_42.jpg",
+        "picture": "/images/sample_pfps/spotlightstages.jpg",
         "banner": "/images/sample_events_photos/premiere show.jpg",
         "events": [
             {
@@ -7262,7 +7262,7 @@
                     "communityevent",
                     "liveperformance"
                 ],
-                "picture": "/images/sample_events_photos/rehearsal.jpg",
+                "picture": "/images/sample_events_photos/rehearsal 2.jpg",
                 "location_name": "The St. Catharines Performing Arts Centre in St. Catharines, Ontario",
                 "location_lat": 43.1583,
                 "location_long": -79.2458,
@@ -7523,7 +7523,7 @@
                     "arts",
                     "chicagoevents"
                 ],
-                "picture": "/images/sample_events_photos/rehearsal.jpg",
+                "picture": "/images/sample_events_photos/rehearsal 2.jpg",
                 "location_name": "The Chicago Playhouse in Chicago, Illinois",
                 "location_lat": 41.882,
                 "location_long": -87.628,
