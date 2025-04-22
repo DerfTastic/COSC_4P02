@@ -190,7 +190,6 @@
         .tab-content {
             display: none;
             padding: 20px;
-            min-height: 20rem;
         }
 
         .tab-content.active {
@@ -423,6 +422,13 @@
 
     </div>
     <script>
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            await loadHostedEvents();
+            await loadPurchasedEvents();
+            await loadFutureEvents();
+            await loadDraftEvents();
+        });
         async function loadHostedEvents() {
             const params = new URLSearchParams(window.location.search);
             let organizerId = params.get("id");
@@ -484,22 +490,7 @@
             }
         }
 
-        async function loadPurchaseHistory() {
-            try {
-                const receipt = await api.payment.list_receipts();
-                receipt.forEach(e => {
-                    
-                });
-
-                // Step 3: Render events
-                renderEvents(events, "#history .event-list");
-
-            } catch (error) {
-                console.error("Failed to load purchased events:", error);
-            }
-        }
-
-        async function loadUpcomingEvents() {
+        async function loadFutureEvents() {
             try {
                 const organizerEvents = await api.organizer.get_events();
                 if (organizerEvents.length > 0) {
@@ -579,7 +570,7 @@
                 <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" fill="#eeeef0"/>
                 <foreignObject x="30" y="40" width="200" height="120">
             <div style="width:100%; height:100%; background:#ddd; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:14px; color:#555;">
-                ${event.picture ? `<img src="/media/${event.picture}" style="width:100%; height:100%; object-fit:contain;" />` : "No Image"}
+                ${event.picture ? `<img src="/media/${event.picture}" style="width:100%; height:100%; object-fit:cover;" />` : "No Image"}
             </div>
         </foreignObject>
                 <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
@@ -601,25 +592,7 @@
 
                 ticketSVG.firstElementChild.addEventListener("click", () => {
                     if (event.draft) {
-                        // Save draft data to localStorage
-                        const start = new Date(event.start);
-                        const end = event.duration ? new Date(event.start + event.duration) : null;
-                        localStorage.clear();
-                        localStorage.setItem('eventId', event.id);
-                        localStorage.setItem('eventCategory', event.category);
-                        localStorage.setItem('eventDate', start.toISOString().split('T')[0]);
-                        localStorage.setItem('eventStartTime', start.toISOString().split('T')[1].substring(0, 5));
-                        localStorage.setItem('eventEndTime', end ? end.toISOString().split('T')[1].substring(0, 5) : '');
-                        localStorage.setItem('eventLocation', event.location_name);
-                        localStorage.setItem('eventDescription', event.description);
-                        localStorage.setItem('eventTags', (event.tags || []).filter(Boolean).join(', '));
-                        localStorage.setItem('eventTitle', event.name || '');
-                        if (event.release_time) {
-                            const release = new Date(event.release_time).toISOString().split('T');
-                            localStorage.setItem('ticketReleaseDate', release[0]);
-                            localStorage.setItem('ticketReleaseTime', release[1].substring(0, 5));
-                        }
-                        window.location.href = '/event/create';
+                        window.location.href = `/event/create?id=${event.id}`;
                     } else {
                         window.location.href = `/event?id=${event.id}`;
                     }
@@ -758,10 +731,6 @@
                 document.getElementById("hostedTab").classList.add("active");
                 document.getElementById("hosted").classList.add("active");
             }
-            if(!document.getElementById("hostedTab").classList.contains("hidden"))await loadHostedEvents();
-            if(!document.getElementById("historyTab").classList.contains("hidden"))await loadPurchaseHistory();
-            if(!document.getElementById("upcomingTab").classList.contains("hidden"))await loadUpcomingEvents();
-            if(!document.getElementById("draftsTab").classList.contains("hidden"))await loadDraftEvents();
         }
         document.addEventListener("DOMContentLoaded", async () => {
             await load();
