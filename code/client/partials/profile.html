@@ -431,13 +431,13 @@
         });
         async function loadHostedEvents() {
             try {
-                const params = new URLSearchParams(window.location.search); 
-                if(params.has("id")){
+                const params = new URLSearchParams(window.location.search);
+                if (params.has("id")) {
                     let organizerId = params.get("id");
                     const search = new Search();
                     search.organizer_exact = parseInt(organizerId);
-                    renderEvents(await api.search.search_events_with_owner(search), "#hosted .event-list");  
-                }else{
+                    renderEvents(await api.search.search_events_with_owner(search), "#hosted .event-list");
+                } else {
                     renderEvents(await api.organizer.get_events(), "#hosted .event-list");
                 }
             } catch (error) {
@@ -448,30 +448,64 @@
             try {
                 const receipt = await api.payment.list_receipts();
 
-                if (!receipt || !receipt.items || receipt.items.length === 0) {
-                    console.error("No purchases found");
-                    return;
-                }
+                // if (!receipt || !receipt.items || receipt.items.length === 0) {
+                //     console.error("No purchases found");
+                //     return;
+                // }
 
-                // Step 1: Collect unique event IDs from receipt items
-                const eventIds = [...new Set(
-                    receipt.items
-                        .filter(item => item.event_id) // Only items linked to events
-                        .map(item => item.event_id)
-                )];
+                // // Step 1: Collect unique event IDs from receipt items
+                // const eventIds = [...new Set(
+                //     receipt.items
+                //         .filter(item => item.event_id) // Only items linked to events
+                //         .map(item => item.event_id)
+                // )];
 
-                if (eventIds.length === 0) {
-                    console.error("No event purchases found in receipts");
-                    return;
-                }
+                // if (eventIds.length === 0) {
+                //     console.error("No event purchases found in receipts");
+                //     return;
+                // }
 
-                console.log("Purchased event IDs:", eventIds);
+                // console.log("Purchased event IDs:", eventIds);
 
-                // Step 2: Fetch each event (assuming you have an API call for that)
-                const eventPromises = eventIds.map(id => api.event.get_event(id));
-                const events = await Promise.all(eventPromises);
+                // // Step 2: Fetch each event (assuming you have an API call for that)
+                // const eventPromises = eventIds.map(id => api.event.get_event(id));
+                // const events = await Promise.all(eventPromises);
 
-                console.log("Purchased Events:", events);
+                // console.log("Purchased Events:", events);
+
+
+                const container = document.querySelector("#history .event-list");
+
+                receipt.forEach(e => {
+                    const listItem = document.createElement("li");
+                    listItem.style.position = "relative";
+                    const ticketSVG = document.createElement("div");
+                    ticketSVG.className = "event-box";
+                    ticketSVG.innerHTML = `
+            <svg style="cursor: pointer;" width="100%" height="100%" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" fill="#eeeef0"/>
+  
+            <foreignObject x="25" y="25" width="230" height="140">
+                    <div style="height:100%; display:flex; flex-direction:column; justify-content:stretch; align-items:flex-start; padding:10px; gap:3px; overflow:hidden; box-sizing:border-box;">
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Receipt</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Date: ${new Date(e.date).toUTCString()}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Sub Total: ${format_currency(e.subtotal)}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Total: ${format_currency(e.total)}</div>
+                    </div>
+                </foreignObject>
+            </svg>
+        `;
+
+                    listItem.appendChild(ticketSVG);
+
+
+
+                    ticketSVG.firstElementChild.addEventListener("click", () => {
+                        window.location.href = `/shop/receipt?receipt_id=${e.payment_id}`;
+                    });
+
+                    container.appendChild(listItem);
+                });
 
                 // Step 3: Render events
                 renderEvents(events, "#history .event-list");
@@ -484,11 +518,11 @@
         async function loadFutureEvents() {
             try {
                 const search = new Search();
-                const params = new URLSearchParams(window.location.search); 
-                if(params.has("id")){
-                    search.organizer_exact = parseInt(params.get("id")); 
-                }else{
-                    search.owning=true;
+                const params = new URLSearchParams(window.location.search);
+                if (params.has("id")) {
+                    search.organizer_exact = parseInt(params.get("id"));
+                } else {
+                    search.owning = true;
                 }
                 search.date_start = Date.now();
 
