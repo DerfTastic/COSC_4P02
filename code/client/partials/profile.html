@@ -424,14 +424,22 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", async function () {
-            await loadHostedEvents();
-            await loadPurchasedEvents();
-            await loadFutureEvents();
-            await loadDraftEvents();
+            loadHostedEvents();
+            loadPurchasedEvents();
+            loadFutureEvents();
+            loadDraftEvents();
         });
         async function loadHostedEvents() {
             try {
-                renderEvents(await api.organizer.get_events(), "#hosted .event-list");
+                const params = new URLSearchParams(window.location.search); 
+                if(params.has("id")){
+                    let organizerId = params.get("id");
+                    const search = new Search();
+                    search.organizer_exact = parseInt(organizerId);
+                    renderEvents(await api.search.search_events_with_owner(search), "#hosted .event-list");  
+                }else{
+                    renderEvents(await api.organizer.get_events(), "#hosted .event-list");
+                }
             } catch (error) {
                 console.error("Failed to load hosted events:", error);
             }
@@ -475,21 +483,18 @@
 
         async function loadFutureEvents() {
             try {
-                const organizerEvents = await api.organizer.get_events();
-                if (organizerEvents.length > 0) {
-                    let organizerId = organizerEvents[0].owner_id;
-
-                    const now = Date.now();
-                    const search = new Search();
-                    search.organizer_exact = parseInt(organizerId);
-                    search.date_start = now; // Only events that start after now
-
-                    const futureEvents = await api.search.search_events_with_owner(search);
-
-                    renderEvents(futureEvents, "#futureEvents .event-list");
-                } else {
-                    console.error("No events found to determine organizer ID for future events");
+                const search = new Search();
+                const params = new URLSearchParams(window.location.search); 
+                if(params.has("id")){
+                    search.organizer_exact = parseInt(params.get("id")); 
+                }else{
+                    search.owning=true;
                 }
+                search.date_start = Date.now();
+
+                console.log(search);
+
+                renderEvents(await api.search.search_events_with_owner(search), "#futureEvents .event-list");
             } catch (error) {
                 console.error("Failed to load future events:", error);
             }
