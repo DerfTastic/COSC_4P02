@@ -141,8 +141,9 @@
         }
 
         .page-btn {
-            width: 35px;
-            height: 35px;
+            width: 2.5rem;
+            aspect-ratio: 1;
+            height: auto;
             border-radius: 50%;
             border: 2px solid #415a77;
             background-color: white;
@@ -155,6 +156,7 @@
             justify-content: center;
             transition: 0.3s ease-in-out;
             box-shadow: 1px 2px 8px -3px #f7f7f9;
+            font-size: 1rem;
         }
 
         .page-btn:hover {
@@ -198,7 +200,6 @@
             }
 
             .pagination-container {
-                width: 100%;
                 padding: 10px 5px;
                 gap: 5px;
             }
@@ -214,9 +215,7 @@
 
             .page-btn {
                 flex: 1;
-                font-size: clamp(10px, 2vw, 15px);
-                max-width: 60px;
-                min-width: 30px;
+                font-size: 1rem;
             }
 
         }
