@@ -9,6 +9,15 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A concrete implementation of {@link DynamicMediaHandler} that stores media files
+ * on disk under a root directory using a numeric ID system.
+ *
+ * Files are organized in a nested directory structure for performance and scalability,
+ * with the directory path derived from the media ID using bitwise segmentation.
+ *
+ * This class supports adding new media, retrieving media by ID, and deleting media files.
+ */
 public class FileDynamicMediaHandler implements DynamicMediaHandler {
 
     private long next_id;
@@ -24,6 +33,15 @@ public class FileDynamicMediaHandler implements DynamicMediaHandler {
     private final long sections;
     private final long first_section_start_bit;
 
+    /**
+     * Constructs a new file-based media handler.
+     *
+     * @param rp Root path.
+     * @param cache_size Maximum number of entries to keep in memory cache.
+     * @param section_bits ???
+     * @param bits_used ???
+     * @throws IOException If the root path cannot be initialized or accessed.
+     */
     public FileDynamicMediaHandler(String rp, long cache_size, int section_bits, int bits_used) throws IOException{
 
         this.bit_split = section_bits;
