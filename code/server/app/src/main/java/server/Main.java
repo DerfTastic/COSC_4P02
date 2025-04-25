@@ -24,7 +24,7 @@ public class Main {
         Logger.getGlobal().log(Level.INFO, "Max Heap Size: " + Runtime.getRuntime().maxMemory());
 
         try {
-            new WebServerImpl(config).start();
+            new WebServerImpl(config).start(); // Create webserver with the established config
         } catch (Exception e) {
             Logger.getGlobal().log(Level.SEVERE, "Failed to start server", e);
         }
