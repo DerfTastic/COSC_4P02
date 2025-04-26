@@ -88,7 +88,8 @@
         .left-column #eventDetails {
             flex: 0.7;
         }
-        .eventPage-2 .left-column{
+
+        .eventPage-2 .left-column {
             flex: 1;
         }
 
@@ -468,24 +469,24 @@
         }
 
         div#content {
-    position: fixed;
-    top: 80px;
-    left: 40px;
-    bottom: 25px;
-    min-width: 200px;
-    width: 40%;
-    background: black;
-}
+            position: fixed;
+            top: 80px;
+            left: 40px;
+            bottom: 25px;
+            min-width: 200px;
+            width: 40%;
+            background: black;
+        }
 
-div#content iframe {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    width: 100%;
-}
+        div#content iframe {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+        }
     </style>
 </head>
 <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
@@ -864,34 +865,20 @@ div#content iframe {
                     }
                 }
             });
-            if (items.length > 0) window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
+
+            const session = cookies.getSession();
+            if (!session || session.length === 0) {
+                // Not logged in, send to login page
+                window.location.href = "/account/login";
+                return;
+            }
+
+            if (items.length > 0) {
+                // Logged in and has items, send to checkout
+                window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
+            }
+
         }
-
-
-        // Assuming this is the URL of your game
-
-
-        // function replaceImageWithGame() {
-        //     const gameDiv = document.querySelector('.gameDiv');
-
-        //     if (!gameDiv) {
-        //         console.error('Error: gameDiv not found');
-        //         return;
-        //     }
-
-        //     // Clear the inside of gameDiv
-        //     gameDiv.innerHTML = '';
-
-        //     // Create an iframe element
-        //     const iframe = document.createElement('iframe');
-        //     iframe.src = "/games/flappy"; // Set your game URL
-        //     iframe.width = "100%"; // Adjust width as needed
-        //     iframe.height = "500px"; // Adjust height as needed
-        //     iframe.style.border = "none"; // Optional: remove border
-
-        //     // Add the iframe to gameDiv
-        //     gameDiv.appendChild(iframe);
-        // }
 
         function replaceImageWithGame() {
             const gameOverlay = document.querySelector('.eventPage-2 #gameOverlay');
@@ -915,13 +902,6 @@ div#content iframe {
                 eventImage.style.display = 'block'; // Show the event image again
             }
         }
-
-
-
-
-
-
-
 
     </script>
 
