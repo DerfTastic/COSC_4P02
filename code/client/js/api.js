@@ -1186,46 +1186,67 @@ const page = {
          * @param {string} password 
          * @returns {Promise}
          */
-        login: async function (email, password) {
+        login: async function (email, password, redirectTo = '/') {
             try {
                 cookies.deleteSessionToken();
-                cookies.setSession(await api.user.login(email, password));
 
-                // Check if user wants to go back to previous page after looging in instead of going to their account page
+                // Spinner
+                document.body.innerHTML = `
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <h2>Logging you in, please wait...</h2>
+                </div>
+            `   ;
+
+                cookies.setSession(await api.user.login(email, password));
+        
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.size > 0) {
-                    const paramValue = urlParams.get('goBack'); // Replace 'paramName' with your desired parameter name
+                    const paramValue = urlParams.get('goBack');
                     if (paramValue == 1) {
-                        window.history.back(); // Go back to user's previous page that they needed the account for
+                        window.history.back();
                         window.location.reload();
+                        return;
                     }
                 }
-                else {
-                    window.location.href = '/account';
-                }
+        
+                window.location.href = redirectTo;
             } catch ({ error, code }) {
                 alert(error);
             }
         },
+        
     },
 
     register: {
         /**
-         * @param {string} name 
-         * @param {string} email 
-         * @param {string} password 
-         * @returns {Promise}
+         * 
+         * @param {*} name 
+         * @param {*} email 
+         * @param {*} password 
          */
         register: async function (name, email, password) {
             try {
                 await api.user.register(name, email, password);
-                window.location.href = '/account/login';
+
+                // Waiting Spinner
+                document.body.innerHTML = `
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <h2>Logging you in, please wait...</h2>
+                </div>
+            `   ;
+    
+                // After successful registration, login and redirect to homepage
+                await page.login.login(email, password, '/');
+    
             } catch ({ error, code }) {
                 alert(error);
             }
         },
     },
-
+    
+    
     account: {
         /**
          * @returns {Promise<UserInfo>}
