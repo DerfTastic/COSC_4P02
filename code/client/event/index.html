@@ -188,7 +188,7 @@
         }
 
         .organizerInfo>* {
-            padding: 0 20px;
+            padding: 0 1rem;
         }
 
         .organizerInfo {
@@ -427,11 +427,30 @@
             /* Height will adjust based on the aspect ratio */
         }
 
+        .profile-picture {
+            width: 6rem;
+            border-radius: 50%;
+            background: url(/images/profile-picture-default.png) center / contain no-repeat;
+            aspect-ratio: 1;
+            align-self: flex-start;
+        }
 
+        .profile {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
 
+        p {
+            overflow-wrap: anywhere;
+        }
 
-
-
+        .profile-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-evenly;
+        }
 
 
         @media (max-width: 768px) {
@@ -538,12 +557,18 @@
                     </div>
 
                     <div class="right-column organizerInfo">
-                        <a href="#" id="profileLink" style="text-decoration: none; color: #eeeef0;">
-                            <h2>Organizer Information:</h2>
+                        <div class="profile">
+                            <a href="#" id="profileLink" style="text-decoration: none; color: #eeeef0;">
+                                <h2>Organizer Information:</h2>
 
-                            <p><span id="owner"></span></p>
-                        </a>
+                                <div class="profile-details">
+                                    <p><span id="owner"></span></p>
+                                    <div class="profile-picture" id="profilePic"></div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
+
 
                     <div class="right-column">
                         <div id="eventTags"></div>
@@ -689,6 +714,12 @@
 
                 // If release_time is 0 (normal behavior)
                 profileLink.href = `/user/profile?id=${get_event.owner.id}`;
+
+                info = await api.user.userinfo(get_event.owner.id);
+
+                // Make sure to use backticks (`) to include the dynamic `info.picture` value correctly
+                document.getElementById("profilePic").style.backgroundImage = `url('/media/${info.picture}')`;
+
 
                 const event = get_event;
                 const tags = get_event.tags;
