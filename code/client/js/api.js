@@ -939,6 +939,7 @@ const api = {
                 "An error occured while setting profile picture"
             )).json();
         },
+        
         /**
          * @param {Blob} data 
          * @param {Session} session 
@@ -1212,7 +1213,7 @@ const page = {
     
             await api.user.register(name, email, password);
     
-            await page.login.login(email, password, '/');
+            await page.login(email, password, '/');   // <-- FIXED here
         } catch ({ error, code }) {
             page.hideSpinner();
             alert(error);
