@@ -1,0 +1,585 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure.root.api</a>
+</div>
+
+<h1>Coverage Summary for Class: EventAPI (server.infrastructure.root.api)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EventAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.5%
+  </span>
+  <span class="absValue">
+    (66/104)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.9%
+  </span>
+  <span class="absValue">
+    (121/146)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EventAPI$Event</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/18)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EventAPI$UpdateEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.3%
+  </span>
+  <span class="absValue">
+    (1/43)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EventAPI$UpdateEventFromRequest</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    52.6%
+  </span>
+  <span class="absValue">
+    (10/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48.2%
+  </span>
+  <span class="absValue">
+    (68/141)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (140/210)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure.root.api;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSON;
+&nbsp;import com.alibaba.fastjson2.JSONObject;
+&nbsp;import com.alibaba.fastjson2.JSONReader;
+&nbsp;import framework.web.annotations.*;
+&nbsp;import framework.web.annotations.url.QueryFlag;
+&nbsp;import framework.web.error.BadRequest;
+&nbsp;import framework.web.request.Request;
+&nbsp;import framework.web.route.RouteParameter;
+&nbsp;import server.infrastructure.DynamicMediaHandler;
+&nbsp;import framework.db.RoTransaction;
+&nbsp;import framework.db.RwTransaction;
+&nbsp;import framework.web.annotations.url.Path;
+&nbsp;import server.infrastructure.param.NotRequired;
+&nbsp;import server.infrastructure.session.OrganizerSession;
+&nbsp;import server.infrastructure.session.UserSession;
+&nbsp;import framework.util.SqlSerde;
+&nbsp;
+&nbsp;import java.sql.ResultSet;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.*;
+&nbsp;@SuppressWarnings(&quot;unused&quot;)
+&nbsp;@Routes
+<b class="nc">&nbsp;public class EventAPI {</b>
+&nbsp;    @Route
+&nbsp;    public static long create_event(OrganizerSession session, RwTransaction trans) throws SQLException {
+&nbsp;        long result;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;insert into events values(null, :owner_id, &#39;&#39;, &#39;&#39;, null, null, null, &#39;&#39;, &#39;&#39;, null, null, true, null, null, null) returning id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:owner_id&quot;, session.user_id());</b>
+<b class="fc">&nbsp;            result = stmt.executeQuery().getLong(&quot;id&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static class Event{
+&nbsp;            public final long id;
+&nbsp;            public final long owner_id;
+&nbsp;            public final String name;
+&nbsp;            public final String description;
+&nbsp;            public final long start;
+&nbsp;            public final long duration;
+&nbsp;            public final long release_time;
+&nbsp;            public final String category;
+&nbsp;            public final String type;
+&nbsp;            public final long picture;
+&nbsp;            public final JSONObject metadata;
+&nbsp;            public final boolean draft;
+&nbsp;
+&nbsp;            public final String location_name;
+&nbsp;            public final double location_lat;
+&nbsp;            public final double location_long;
+&nbsp;
+&nbsp;            public final List&lt;String&gt; tags;
+&nbsp;            public final AccountAPI.PublicUserInfo owner;
+&nbsp;
+<b class="fc">&nbsp;            public Event(ResultSet rs, boolean read_user) throws SQLException {</b>
+<b class="fc">&nbsp;                this.id = rs.getLong(&quot;id&quot;);</b>
+<b class="fc">&nbsp;                this.owner_id = rs.getLong(&quot;owner_id&quot;);</b>
+<b class="fc">&nbsp;                this.name = rs.getString(&quot;name&quot;);</b>
+<b class="fc">&nbsp;                this.description = rs.getString(&quot;description&quot;);</b>
+<b class="fc">&nbsp;                this.start = rs.getLong(&quot;start&quot;);</b>
+<b class="fc">&nbsp;                this.duration = rs.getLong(&quot;duration&quot;);</b>
+<b class="fc">&nbsp;                this.category = rs.getString(&quot;category&quot;);</b>
+<b class="fc">&nbsp;                this.type = rs.getString(&quot;type&quot;);</b>
+<b class="fc">&nbsp;                this.picture = rs.getLong(&quot;picture&quot;);</b>
+<b class="fc">&nbsp;                this.metadata = Optional.ofNullable(rs.getString(&quot;metadata&quot;)).map(JSON::parseObject).orElse(null);</b>
+<b class="fc">&nbsp;                this.release_time = rs.getLong(&quot;release_time&quot;);</b>
+<b class="fc">&nbsp;                this.draft = rs.getBoolean(&quot;draft&quot;);</b>
+<b class="fc">&nbsp;                this.location_name = rs.getString(&quot;location_name&quot;);</b>
+<b class="fc">&nbsp;                this.location_lat = rs.getDouble(&quot;location_lat&quot;);</b>
+<b class="fc">&nbsp;                this.location_long = rs.getDouble(&quot;location_long&quot;);</b>
+<b class="fc">&nbsp;                this.tags = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;                this.owner = read_user? AccountAPI.PublicUserInfo.make(rs, this.owner_id):null;</b>
+&nbsp;            }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/get_event/&lt;event_id&gt;&quot;)
+&nbsp;    public static @Json Event get_event(@NotRequired UserSession session, RoTransaction trans, @Path long event_id, @QueryFlag boolean with_owner) throws SQLException, BadRequest {
+&nbsp;        Event event;
+<b class="fc">&nbsp;        var sql = &quot;select * from events&quot;;</b>
+<b class="fc">&nbsp;        if(with_owner) sql += &quot; inner join users on users.id=events.owner_id&quot;;</b>
+<b class="fc">&nbsp;        sql += &quot; where (events.id=:event_id AND events.draft=false) OR (events.id=:event_id AND events.owner_id=:owner_id)&quot;;</b>
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(sql)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:owner_id&quot;, session!=null? session.user_id() :0);</b>
+<b class="fc">&nbsp;            var result = SqlSerde.sqlList(stmt.executeQuery(), rs -&gt; new Event(rs, with_owner));</b>
+<b class="fc">&nbsp;            if(result.isEmpty())</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Event doesn&#39;t exist or you do not have permission to view it&quot;);</b>
+<b class="pc">&nbsp;            if(result.size()&gt;1)</b>
+<b class="nc">&nbsp;                throw new SQLException(&quot;Expected single value found multiple&quot;);</b>
+<b class="fc">&nbsp;            event = result.getFirst();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select * from event_tags where event_id=:event_id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event.id);</b>
+<b class="fc">&nbsp;            SqlSerde.sqlForEach(stmt.executeQuery(), rs -&gt; event.tags.add(rs.getString(&quot;tag&quot;)));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;
+<b class="fc">&nbsp;        return event;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;OptionalUsedAsFieldOrParameterType&quot;)
+&nbsp;    public static class UpdateEvent{
+&nbsp;        public Optional&lt;String&gt; name;
+&nbsp;        public Optional&lt;String&gt; description;
+&nbsp;        public Optional&lt;JSONObject&gt; metadata;
+&nbsp;
+&nbsp;        public Optional&lt;String&gt; type;
+&nbsp;        public Optional&lt;String&gt; category;
+&nbsp;
+&nbsp;        public Optional&lt;Long&gt; start;
+&nbsp;        public Optional&lt;Long&gt; duration;
+&nbsp;        public Optional&lt;Long&gt; release_time;
+&nbsp;
+&nbsp;        public Optional&lt;String&gt; location_name;
+&nbsp;        public Optional&lt;Double&gt; location_lat;
+&nbsp;        public Optional&lt;Double&gt; location_long;
+&nbsp;
+&nbsp;        private static Optional&lt;String&gt; optionalString(JSONReader reader){
+<b class="nc">&nbsp;            if(reader.nextIfNull())</b>
+<b class="nc">&nbsp;                return Optional.empty();</b>
+<b class="nc">&nbsp;            if(reader.isString())</b>
+<b class="nc">&nbsp;                return Optional.of(reader.readString());</b>
+&nbsp;            else
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Expected String value&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        private static Optional&lt;Long&gt; optionalLong(JSONReader reader){
+<b class="nc">&nbsp;            if(reader.nextIfNull())</b>
+<b class="nc">&nbsp;                return Optional.empty();</b>
+<b class="nc">&nbsp;            if(reader.isNumber())</b>
+<b class="nc">&nbsp;                return Optional.of(reader.readInt64());</b>
+&nbsp;            else
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Expected int64 value&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        private static Optional&lt;Double&gt; optionalDouble(JSONReader reader){
+<b class="nc">&nbsp;            if(reader.nextIfNull())</b>
+<b class="nc">&nbsp;                return Optional.empty();</b>
+<b class="nc">&nbsp;            if(reader.isNumber())</b>
+<b class="nc">&nbsp;                return Optional.of(reader.readDouble());</b>
+&nbsp;            else
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Expected double value&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        private static Optional&lt;JSONObject&gt; optionalObject(JSONReader reader){
+<b class="nc">&nbsp;            if(reader.nextIfNull())</b>
+<b class="nc">&nbsp;                return Optional.empty();</b>
+<b class="nc">&nbsp;            if(reader.isObject())</b>
+<b class="nc">&nbsp;                return Optional.of(reader.readJSONObject());</b>
+&nbsp;            else
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Expected object value&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        public UpdateEvent(){}</b>
+&nbsp;
+<b class="nc">&nbsp;        public UpdateEvent(JSONReader reader) throws BadRequest {</b>
+<b class="nc">&nbsp;            if(!reader.nextIfObjectStart())</b>
+<b class="nc">&nbsp;                throw new BadRequest(&quot;Expected an object&quot;);</b>
+<b class="nc">&nbsp;            while(!reader.nextIfObjectEnd()){</b>
+<b class="nc">&nbsp;                if(!reader.isString())</b>
+<b class="nc">&nbsp;                    throw new BadRequest(&quot;Expected field&quot;);</b>
+<b class="nc">&nbsp;                var field_name = reader.readString();</b>
+<b class="nc">&nbsp;                if(!reader.nextIfMatch(&#39;:&#39;))</b>
+<b class="nc">&nbsp;                    throw new BadRequest(&quot;Expected colon&quot;);</b>
+<b class="nc">&nbsp;                switch(field_name){</b>
+<b class="nc">&nbsp;                    case &quot;name&quot; -&gt; this.name = optionalString(reader);</b>
+<b class="nc">&nbsp;                    case &quot;description&quot; -&gt; this.description = optionalString(reader);</b>
+<b class="nc">&nbsp;                    case &quot;metadata&quot; -&gt; this.metadata = optionalObject(reader);</b>
+<b class="nc">&nbsp;                    case &quot;type&quot; -&gt; this.type = optionalString(reader);</b>
+<b class="nc">&nbsp;                    case &quot;category&quot; -&gt; this.category = optionalString(reader);</b>
+<b class="nc">&nbsp;                    case &quot;start&quot; -&gt; this.start = optionalLong(reader);</b>
+<b class="nc">&nbsp;                    case &quot;duration&quot; -&gt; this.duration = optionalLong(reader);</b>
+<b class="nc">&nbsp;                    case &quot;release_time&quot; -&gt; this.release_time = optionalLong(reader);</b>
+<b class="nc">&nbsp;                    case &quot;location_name&quot; -&gt; this.location_name = optionalString(reader);</b>
+<b class="nc">&nbsp;                    case &quot;location_lat&quot; -&gt; this.location_lat = optionalDouble(reader);</b>
+<b class="nc">&nbsp;                    case &quot;location_long&quot; -&gt; this.location_long = optionalDouble(reader);</b>
+<b class="nc">&nbsp;                    default -&gt; throw new BadRequest(&quot;Unknown field: &quot; + field_name);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public static class UpdateEventFromRequest implements RouteParameter&lt;UpdateEvent&gt;{</b>
+&nbsp;        @Override
+&nbsp;        public UpdateEvent construct(Request request) throws Exception {
+<b class="nc">&nbsp;            try(var reader = JSONReader.of(request.exchange.getRequestBody().readAllBytes())){</b>
+<b class="nc">&nbsp;                return new UpdateEvent(reader);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;OptionalAssignedToNull&quot;)
+&nbsp;    @Route(&quot;/update_event/&lt;id&gt;&quot;)
+&nbsp;    public static void update_event(OrganizerSession session, RwTransaction trans, @Path long id, @FromRequest(UpdateEventFromRequest.class) UpdateEvent update) throws SQLException, BadRequest {
+<b class="fc">&nbsp;        var str = new StringBuilder().append(&quot;update events set &quot;);</b>
+&nbsp;
+<b class="pc">&nbsp;        if(update.name!=null)</b>
+<b class="fc">&nbsp;            str.append(&quot;name=:name,&quot;);</b>
+<b class="fc">&nbsp;        if(update.description!=null)</b>
+<b class="fc">&nbsp;            str.append(&quot;description=:description,&quot;);</b>
+<b class="fc">&nbsp;        if(update.category!=null)</b>
+<b class="fc">&nbsp;            str.append(&quot;category=:category,&quot;);</b>
+<b class="fc">&nbsp;        if(update.type!=null)</b>
+<b class="fc">&nbsp;            str.append(&quot;type=:type,&quot;);</b>
+<b class="fc">&nbsp;        if(update.start!=null)</b>
+<b class="fc">&nbsp;            str.append(&quot;start=:start,&quot;);</b>
+<b class="pc">&nbsp;        if(update.duration!=null)</b>
+<b class="nc">&nbsp;            str.append(&quot;duration=:duration,&quot;);</b>
+<b class="pc">&nbsp;        if(update.metadata!=null)</b>
+<b class="nc">&nbsp;            str.append(&quot;metadata=:metadata,&quot;);</b>
+<b class="pc">&nbsp;        if(update.release_time!=null)</b>
+<b class="nc">&nbsp;            str.append(&quot;release_time=:release_time,&quot;);</b>
+<b class="pc">&nbsp;        if(update.location_name!=null)</b>
+<b class="nc">&nbsp;            str.append(&quot;location_name=:location_name,&quot;);</b>
+<b class="pc">&nbsp;        if(update.location_lat!=null)</b>
+<b class="nc">&nbsp;            str.append(&quot;location_lat=:location_lat,&quot;);</b>
+<b class="pc">&nbsp;        if(update.location_long!=null)</b>
+<b class="nc">&nbsp;            str.append(&quot;location_long=:location_long,&quot;);</b>
+&nbsp;
+<b class="pc">&nbsp;        if(str.charAt(str.length()-1)!=&#39;,&#39;) return;</b>
+<b class="fc">&nbsp;        str.deleteCharAt(str.length()-1);</b>
+<b class="fc">&nbsp;        str.append(&quot; where id=:id AND owner_id=:owner_id&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(str.toString())){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:id&quot;, id);</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:owner_id&quot;, session.user_id());</b>
+&nbsp;
+<b class="pc">&nbsp;            if(update.name!=null&amp;&amp;update.name.isPresent())</b>
+<b class="fc">&nbsp;                stmt.setString(&quot;:name&quot;, update.name.get());</b>
+<b class="pc">&nbsp;            if(update.description!=null&amp;&amp;update.description.isPresent())</b>
+<b class="fc">&nbsp;                stmt.setString(&quot;:description&quot;, update.description.get());</b>
+<b class="pc">&nbsp;            if(update.category!=null&amp;&amp;update.category.isPresent())</b>
+<b class="fc">&nbsp;                stmt.setString(&quot;:category&quot;, update.category.get());</b>
+<b class="pc">&nbsp;            if(update.type!=null&amp;&amp;update.type.isPresent())</b>
+<b class="fc">&nbsp;                stmt.setString(&quot;:type&quot;, update.type.get());</b>
+<b class="pc">&nbsp;            if(update.start!=null&amp;&amp;update.start.isPresent())</b>
+<b class="fc">&nbsp;                stmt.setLong(&quot;:start&quot;, update.start.get());</b>
+<b class="pc">&nbsp;            if(update.duration!=null&amp;&amp;update.duration.isPresent())</b>
+<b class="nc">&nbsp;                stmt.setLong(&quot;:duration&quot;, update.duration.get());</b>
+<b class="pc">&nbsp;            if(update.metadata!=null&amp;&amp;update.metadata.isPresent())</b>
+<b class="nc">&nbsp;                stmt.setString(&quot;:metadata&quot;, update.metadata.get().toJSONString());</b>
+<b class="pc">&nbsp;            if(update.release_time!=null&amp;&amp;update.release_time.isPresent())</b>
+<b class="nc">&nbsp;                stmt.setLong(&quot;:release_time&quot;, update.release_time.get());</b>
+<b class="pc">&nbsp;            if(update.location_name!=null&amp;&amp;update.location_name.isPresent())</b>
+<b class="nc">&nbsp;                stmt.setString(&quot;:location_name&quot;, update.location_name.get());</b>
+<b class="pc">&nbsp;            if(update.location_lat!=null&amp;&amp;update.location_lat.isPresent())</b>
+<b class="nc">&nbsp;                stmt.setDouble(&quot;:location_lat&quot;, update.location_lat.get());</b>
+<b class="pc">&nbsp;            if(update.location_long!=null&amp;&amp;update.location_long.isPresent())</b>
+<b class="nc">&nbsp;                stmt.setDouble(&quot;:location_long&quot;, update.location_long.get());</b>
+&nbsp;
+<b class="fc">&nbsp;            if(stmt.executeUpdate()!=1)</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Failed to update event&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/delete_event/&lt;id&gt;&quot;)
+&nbsp;    public static void delete_event(OrganizerSession session, RwTransaction trans, @Path long id, DynamicMediaHandler media) throws SQLException, BadRequest {
+&nbsp;        long picture;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;delete from events where id=:id AND owner_id=:owner_id returning picture&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:id&quot;, id);</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:owner_id&quot;, session.user_id());</b>
+<b class="fc">&nbsp;            var rs = stmt.executeQuery();</b>
+<b class="fc">&nbsp;            if(!rs.next())</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Could not delete event. Event doesn&#39;t exist or you don&#39;t own event&quot;);</b>
+<b class="fc">&nbsp;            picture = rs.getLong(&quot;picture&quot;);</b>
+<b class="pc">&nbsp;            if(rs.next())</b>
+<b class="nc">&nbsp;                throw new BadRequest(&quot;Multiple events with the same id????? uhhh&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;
+<b class="fc">&nbsp;        if(picture!=0)</b>
+<b class="fc">&nbsp;            media.delete(picture);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Route(&quot;/add_event_tag/&lt;event_id&gt;/&lt;tag&gt;&quot;)
+&nbsp;    public static void add_event_tag(OrganizerSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select owner_id from events where id=:event_id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="fc">&nbsp;            if(stmt.executeQuery().getLong(&quot;owner_id&quot;)!= session.user_id())</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Could not add tag. Tag already exists or you do now own event&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;insert into event_tags values(:tag, :event_id)&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="fc">&nbsp;            stmt.setString(&quot;:tag&quot;, tag);</b>
+&nbsp;            try{
+<b class="pc">&nbsp;                if(stmt.executeUpdate()!=1)</b>
+<b class="nc">&nbsp;                    throw new BadRequest(&quot;Could not add tag. Tag already exists or you do now own event&quot;);</b>
+&nbsp;            }catch (SQLException e){
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Could not add tag. Tag already exists or you do now own event&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/delete_event_tag/&lt;event_id&gt;/&lt;tag&gt;&quot;)
+&nbsp;    public static void delete_event_tag(OrganizerSession session, RwTransaction trans, @Path long event_id, @Path String tag) throws SQLException, BadRequest {
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select owner_id from events where id=:event_id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="fc">&nbsp;            if(stmt.executeQuery().getLong(&quot;owner_id&quot;)!= session.user_id())</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Could not add tag. Tag already exists or you do now own event&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;delete from event_tags where tag=:tag AND event_id=:event_id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="fc">&nbsp;            stmt.setString(&quot;:tag&quot;, tag);</b>
+<b class="fc">&nbsp;            if(stmt.executeUpdate()!=1)</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Could not remove tag. Tag does not exist or you do now own event&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/delete_all_event_tags/&lt;event_id&gt;&quot;)
+&nbsp;    public static void delete_all_event_tags(OrganizerSession session, RwTransaction trans, @Path long event_id) throws SQLException, BadRequest {
+<b class="nc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select owner_id from events where id=:event_id&quot;)){</b>
+<b class="nc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="nc">&nbsp;            if(stmt.executeQuery().getLong(&quot;owner_id&quot;)!= session.user_id())</b>
+<b class="nc">&nbsp;                throw new BadRequest(&quot;Could not add tag. Tag already exists or you do now own event&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;delete from event_tags where event_id=:event_id&quot;)){</b>
+<b class="nc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, event_id);</b>
+<b class="nc">&nbsp;            stmt.execute();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/set_draft/&lt;id&gt;/&lt;draft&gt;&quot;)
+&nbsp;    public static void set_draft(OrganizerSession session, RwTransaction trans, @Path long id, @Path boolean draft) throws SQLException, BadRequest {
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;update events set draft=:draft where id=:id AND owner_id=:owner_id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:id&quot;, id);</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:owner_id&quot;, session.user_id());</b>
+<b class="fc">&nbsp;            stmt.setBoolean(&quot;:draft&quot;, draft);</b>
+<b class="fc">&nbsp;            if(stmt.executeUpdate()!=1)</b>
+<b class="fc">&nbsp;                throw new BadRequest(&quot;Couldn&#39;t update the specified event. Either the event doesn&#39;t exist, or you don&#39;t control this event&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/set_event_picture/&lt;id&gt;&quot;)
+&nbsp;    public static long set_event_picture(OrganizerSession session, RwTransaction trans, DynamicMediaHandler handler, @Path long id, @Body byte[] data) throws SQLException, BadRequest {
+&nbsp;        // 10 MiB
+<b class="pc">&nbsp;        if(data.length &gt; (1&lt;&lt;20)*10){</b>
+<b class="nc">&nbsp;            throw new BadRequest(&quot;File too large, maximum file size is 10 MiB&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        var media_id = handler.add(data);</b>
+<b class="fc">&nbsp;        long old_media = 0;</b>
+&nbsp;        try{
+<b class="fc">&nbsp;            try(var stmt = trans.namedPreparedStatement(&quot;select picture from events where id=:id AND owner_id=:owner_id&quot;)){</b>
+<b class="fc">&nbsp;                stmt.setLong(&quot;:id&quot;, id);</b>
+<b class="fc">&nbsp;                stmt.setLong(&quot;:owner_id&quot;, session.user_id());</b>
+<b class="fc">&nbsp;                old_media = stmt.executeQuery().getLong(1);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            try(var stmt = trans.namedPreparedStatement(&quot;update events set picture=:picture where id=:id AND owner_id=:owner_id&quot;)){</b>
+<b class="fc">&nbsp;                stmt.setLong(&quot;:id&quot;, id);</b>
+<b class="fc">&nbsp;                stmt.setLong(&quot;:owner_id&quot;, session.user_id());</b>
+<b class="fc">&nbsp;                stmt.setLong(&quot;:picture&quot;, media_id);</b>
+<b class="fc">&nbsp;                if(stmt.executeUpdate()!=1)</b>
+<b class="fc">&nbsp;                    throw new BadRequest(&quot;Failed to add picture to event. Event doesn&#39;t exit or you don&#39;t own event&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            trans.commit();</b>
+&nbsp;        }catch (Exception e){
+<b class="fc">&nbsp;            trans.commit();</b>
+<b class="pc">&nbsp;            if(media_id!=0){</b>
+<b class="fc">&nbsp;                handler.delete(media_id);</b>
+&nbsp;            }
+&nbsp;            throw e;
+&nbsp;        }
+<b class="fc">&nbsp;        if(old_media!=0){</b>
+<b class="fc">&nbsp;            handler.delete(old_media);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return media_id;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

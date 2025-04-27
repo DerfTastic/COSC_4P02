@@ -1,0 +1,316 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RequestBuilderImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure</a>
+</div>
+
+<h1>Coverage Summary for Class: RequestBuilderImpl (server.infrastructure)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RequestBuilderImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RequestBuilderImpl$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">RequestBuilderImpl$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">RequestBuilderImpl$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">RequestBuilderImpl$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/34)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure;
+&nbsp;
+&nbsp;import framework.db.*;
+&nbsp;import framework.web.error.Unauthorized;
+&nbsp;import framework.web.request.Request;
+&nbsp;import framework.web.route.RequestsBuilder;
+&nbsp;import framework.web.route.RouteImpl;
+&nbsp;import framework.web.route.RouteParameter;
+&nbsp;import server.infrastructure.param.Config;
+&nbsp;import server.infrastructure.param.NotRequired;
+&nbsp;import server.infrastructure.session.*;
+&nbsp;
+&nbsp;import java.lang.reflect.Parameter;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.HashMap;
+&nbsp;
+&nbsp;public class RequestBuilderImpl extends RequestsBuilder {
+<b class="nc">&nbsp;    private final HashMap&lt;Class&lt;?&gt;, RouteParameter&lt;?&gt;&gt; parameterHandlerMap = new HashMap&lt;&gt;();</b>
+&nbsp;    private final server.Config config;
+&nbsp;
+<b class="nc">&nbsp;    public RequestBuilderImpl(server.Config config) {</b>
+<b class="nc">&nbsp;        initializeParameterHandlers();</b>
+<b class="nc">&nbsp;        this.config = config;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void initializeParameterHandlers() {
+<b class="nc">&nbsp;        this.addParameterHandler(RoTransaction.class, new RouteParameter&lt;&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public RoTransaction construct(Request request) throws SQLException {
+<b class="nc">&nbsp;                return request.server.getManagedState(DbManager.class).ro_transaction(request.mountedPath());</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void destructError(Request request, RoTransaction type) throws Exception {
+&nbsp;                type.close();
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void destruct(Request request, RoTransaction type) throws SQLException {
+<b class="nc">&nbsp;                type.tryCommit();</b>
+&nbsp;            }
+&nbsp;        });
+<b class="nc">&nbsp;        this.addParameterHandler(RwTransaction.class, new RouteParameter&lt;&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public RwTransaction construct(Request request) throws SQLException {
+<b class="nc">&nbsp;                return request.server.getManagedState(DbManager.class).rw_transaction(request.mountedPath());</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void destructError(Request request, RwTransaction type) throws Exception {
+&nbsp;                type.close();
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void destruct(Request request, RwTransaction type) throws SQLException {
+<b class="nc">&nbsp;                type.tryCommit();</b>
+&nbsp;            }
+&nbsp;        });
+<b class="nc">&nbsp;        addParameterHandler(RoConn.class, new RouteParameter&lt;&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public RoConn construct(Request request) throws Exception {
+<b class="nc">&nbsp;                return request.server.getManagedState(DbManager.class).ro_conn(request.mountedPath());</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void destruct(Request request, RoConn type) throws Exception {
+&nbsp;                type.close();
+&nbsp;            }
+&nbsp;        });
+<b class="nc">&nbsp;        addParameterHandler(RwConn.class, new RouteParameter&lt;&gt;() {</b>
+&nbsp;            @Override
+&nbsp;            public RwConn construct(Request request) throws Exception {
+<b class="nc">&nbsp;                return request.server.getManagedState(DbManager.class).rw_conn(request.mountedPath());</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            @Override
+&nbsp;            public void destruct(Request request, RwConn type) throws Exception {
+&nbsp;                type.close();
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    private &lt;T&gt; void addParameterHandler(Class&lt;T&gt; clazz, RouteParameter&lt;T&gt; handler){
+<b class="nc">&nbsp;        parameterHandlerMap.put(clazz, handler);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected RouteParameter&lt;?&gt; getParameterHandler(RouteImpl route, Parameter parameter) throws Throwable {
+<b class="nc">&nbsp;        if(UserSession.class.isAssignableFrom(parameter.getType())){</b>
+<b class="nc">&nbsp;            var optional = parameter.isAnnotationPresent(NotRequired.class);</b>
+<b class="nc">&nbsp;            if(AdminSession.class.isAssignableFrom(parameter.getType()))</b>
+<b class="nc">&nbsp;                return request -&gt; Session.require_admin_session(request, optional);</b>
+<b class="nc">&nbsp;            if(OrganizerSession.class.isAssignableFrom(parameter.getType()))</b>
+<b class="nc">&nbsp;                return request -&gt; Session.require_organizer_session(request, optional);</b>
+<b class="nc">&nbsp;            return request -&gt; Session.require_session(request, optional);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if(parameter.isAnnotationPresent(Config.class)){</b>
+<b class="nc">&nbsp;            var config = parameter.getAnnotation(Config.class);</b>
+<b class="nc">&nbsp;            var name = config.name().equals(&quot;!&quot;)?parameter.getName():config.name();</b>
+<b class="nc">&nbsp;            Object value = this.config.get(name, parameter.getType());</b>
+<b class="nc">&nbsp;            return request -&gt; value;</b>
+<b class="nc">&nbsp;        }else if(parameterHandlerMap.containsKey(parameter.getType())){</b>
+<b class="nc">&nbsp;            return parameterHandlerMap.get(parameter.getType());</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            return super.getParameterHandler(route, parameter);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

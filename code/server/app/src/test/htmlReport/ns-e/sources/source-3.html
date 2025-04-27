@@ -1,0 +1,81 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserSession</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure.session</a>
+</div>
+
+<h1>Coverage Summary for Class: UserSession (server.infrastructure.session)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserSession</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure.session;
+&nbsp;
+&nbsp;/**
+&nbsp; * A common interface across any class representing a session of a user. &lt;br&gt;
+&nbsp; * Used in the API classes (in server/app/arc/main/java/server/infrastructure/root/api/) and other places.
+&nbsp; */
+&nbsp;public interface UserSession {
+&nbsp;    long user_id();
+&nbsp;    long session_id();
+&nbsp;    String email();
+&nbsp;    boolean organizer();
+&nbsp;    boolean admin();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

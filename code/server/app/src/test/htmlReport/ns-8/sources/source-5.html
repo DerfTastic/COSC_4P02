@@ -1,0 +1,201 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ServerStatistics</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server</a>
+</div>
+
+<h1>Coverage Summary for Class: ServerStatistics (server)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerStatistics</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (9/18)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ServerStatistics$RouteStats</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.9%
+  </span>
+  <span class="absValue">
+    (9/21)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSON;
+&nbsp;import com.alibaba.fastjson2.JSONWriter;
+&nbsp;import framework.db.DbStatistics;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;
+&nbsp;@SuppressWarnings({&quot;unused&quot;, &quot;FieldCanBeLocal&quot;})
+&nbsp;public class ServerStatistics {
+<b class="fc">&nbsp;    private final HashMap&lt;String, RouteStats&gt; route_stats = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;    private long total_requests_handled = 0;</b>
+&nbsp;
+&nbsp;    private final DbStatistics db_stats;
+&nbsp;
+&nbsp;    private long curr_time_ms;
+&nbsp;    private long max_mem;
+&nbsp;    private long total_mem;
+&nbsp;    private long free_mem;
+&nbsp;
+<b class="fc">&nbsp;    public ServerStatistics(DbStatistics db_stats){</b>
+<b class="fc">&nbsp;        this.db_stats = db_stats;</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public final static class RouteStats {</b>
+&nbsp;        public long total_response_time_ns;
+<b class="nc">&nbsp;        public long requests_handled = 0;</b>
+<b class="nc">&nbsp;        public final HashMap&lt;Integer, Integer&gt; code_breakdown = new HashMap&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void track_route(String p, int code, long response_time_ns) {
+&nbsp;        RouteStats stat;
+<b class="nc">&nbsp;        synchronized (route_stats){</b>
+<b class="nc">&nbsp;            stat = route_stats.computeIfAbsent(p, k -&gt; new RouteStats());</b>
+<b class="nc">&nbsp;            total_requests_handled++;</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        synchronized (stat){</b>
+<b class="nc">&nbsp;            stat.requests_handled++;</b>
+<b class="nc">&nbsp;            stat.total_response_time_ns += response_time_ns;</b>
+<b class="nc">&nbsp;            stat.code_breakdown.compute(code, (unused, value) -&gt; value==null?1:value+1);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public synchronized byte[] json(){
+<b class="fc">&nbsp;        curr_time_ms = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;        max_mem = Runtime.getRuntime().maxMemory();</b>
+<b class="fc">&nbsp;        total_mem = Runtime.getRuntime().totalMemory();</b>
+<b class="fc">&nbsp;        free_mem = Runtime.getRuntime().freeMemory();</b>
+<b class="fc">&nbsp;        return JSON.toJSONString(this, JSONWriter.Feature.WriteNonStringKeyAsString, JSONWriter.Feature.FieldBased).getBytes();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

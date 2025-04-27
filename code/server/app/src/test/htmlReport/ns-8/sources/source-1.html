@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Config</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server</a>
+</div>
+
+<h1>Coverage Summary for Class: Config (server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Config</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64.3%
+  </span>
+  <span class="absValue">
+    (18/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    67.6%
+  </span>
+  <span class="absValue">
+    (46/68)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server;
+&nbsp;
+&nbsp;import java.io.FileInputStream;
+&nbsp;import java.io.FileOutputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.lang.reflect.Modifier;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.util.Properties;
+&nbsp;import java.util.logging.Level;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;public class Config {
+&nbsp;    // Default webserver configuration
+<b class="fc">&nbsp;    public final Integer web_threads = initialize(256);</b>
+<b class="fc">&nbsp;    public final Boolean wipe_db_on_start = initialize(false);</b>
+<b class="fc">&nbsp;    public final Boolean store_db_in_memory = initialize(false);</b>
+&nbsp;
+&nbsp;    // Default network configuration
+<b class="fc">&nbsp;    public final String hostname = initialize(&quot;localhost&quot;);</b>
+<b class="fc">&nbsp;    public final Integer port = initialize(80);</b>
+<b class="fc">&nbsp;    public final Integer backlog = initialize(0); // Length of queue for incoming connections</b>
+&nbsp;
+&nbsp;    // Paths and directories for Ticket Express
+<b class="fc">&nbsp;    public final String db_path = initialize(&quot;db/database.db&quot;);</b>
+<b class="fc">&nbsp;    public final String dynamic_media_path = initialize(&quot;media&quot;);</b>
+<b class="fc">&nbsp;    public final Long dynamic_media_cache_size = initialize(1L&lt;&lt;30);</b>
+<b class="fc">&nbsp;    public final String secrets_path = initialize(&quot;secrets&quot;);</b>
+<b class="fc">&nbsp;    public final String log_path = initialize(&quot;logs&quot;);</b>
+<b class="fc">&nbsp;    public final String static_content_path = initialize(&quot;site&quot;);</b>
+&nbsp;
+&nbsp;    // Ticket Express feature toggles
+<b class="fc">&nbsp;    public final Boolean cache_static_content = initialize(false);</b>
+<b class="fc">&nbsp;    public final Boolean create_paths = initialize(true);</b>
+<b class="fc">&nbsp;    public final Boolean send_mail = initialize(false);</b>
+<b class="fc">&nbsp;    public final Boolean send_mail_on_register = initialize(false);</b>
+<b class="fc">&nbsp;    public final Boolean send_mail_on_login = initialize(false);</b>
+&nbsp;
+<b class="fc">&nbsp;    public final String url_root = initialize(&quot;http://localhost:80&quot;);</b>
+<b class="fc">&nbsp;    public final String sender_filter = initialize(&quot;.*&quot;);</b>
+&nbsp;
+&nbsp;    // Convert configuration fields into a `java.util.Properties` object
+&nbsp;    private Properties to_properties() {
+<b class="nc">&nbsp;        var properties = new Properties();</b>
+<b class="nc">&nbsp;        for (var field : Config.class.getFields()) {</b>
+<b class="nc">&nbsp;            if (Modifier.isStatic(field.getModifiers())) continue; // Skip if static</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                properties.put(field.getName(), field.get(this).toString());</b>
+&nbsp;            } catch (IllegalAccessException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return properties;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Constructor for a default Config object
+<b class="nc">&nbsp;    public Config(){}</b>
+&nbsp;
+&nbsp;    // Utility method for turning command line args into Properties
+&nbsp;    public static Properties config(String... args){
+<b class="nc">&nbsp;        var properties = new Properties();</b>
+<b class="nc">&nbsp;        for(int i = 0; i &lt; args.length; i ++){</b>
+<b class="nc">&nbsp;            properties.put(args[i++], args[i]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return properties;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Create config from command-line args
+&nbsp;    public Config(String... args){
+<b class="nc">&nbsp;        this(config(args));</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    // Create config from a Properties object
+<b class="fc">&nbsp;    public Config(Properties properties){</b>
+&nbsp;        try{
+<b class="fc">&nbsp;            for (var field : Config.class.getFields()) {</b>
+<b class="pc">&nbsp;                if (Modifier.isStatic(field.getModifiers())) continue; // Skip if static</b>
+<b class="fc">&nbsp;                field.setAccessible(true);</b>
+&nbsp;
+<b class="fc">&nbsp;                if (properties.containsKey(field.getName())) {</b>
+<b class="fc">&nbsp;                    String value = properties.getProperty(field.getName()).trim();</b>
+<b class="fc">&nbsp;                    if (field.getType() == Integer.class) {</b>
+<b class="fc">&nbsp;                        field.set(this, Integer.parseInt(value));</b>
+<b class="fc">&nbsp;                    } else if (field.getType() == Long.class) {</b>
+<b class="fc">&nbsp;                        field.set(this, Long.parseLong(value));</b>
+<b class="fc">&nbsp;                    } else if (field.getType() == Boolean.class) {</b>
+<b class="fc">&nbsp;                        field.set(this, Boolean.parseBoolean(value));</b>
+&nbsp;                    } else {
+<b class="fc">&nbsp;                        field.set(this, value);</b>
+&nbsp;                    }
+<b class="pc">&nbsp;                } else if (field.get(this) == null) {</b>
+<b class="nc">&nbsp;                    throw new RuntimeException(&quot;Property not specified &quot; + field);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }catch (IllegalAccessException e){
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Load config from &#39;server.properties&#39;, or create it with defaults
+&nbsp;    public static Config init() throws IOException {
+<b class="pc">&nbsp;        if (!Files.exists(Path.of(&quot;server.properties&quot;))) {</b>
+<b class="nc">&nbsp;            var config = new Config();</b>
+<b class="nc">&nbsp;            config.to_properties().store(new FileOutputStream(&quot;server.properties&quot;), null);</b>
+<b class="nc">&nbsp;            return config;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        Config config;
+<b class="fc">&nbsp;        var properties = new Properties();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            properties.load(new FileInputStream(&quot;server.properties&quot;));</b>
+<b class="fc">&nbsp;            config = new Config(properties);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.WARNING, &quot;Error while loading properties&quot;, e);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if(config.create_paths){</b>
+<b class="fc">&nbsp;            var paths = new String[]{config.db_path, config.dynamic_media_path, config.log_path};</b>
+<b class="fc">&nbsp;            for(var path : paths){</b>
+<b class="fc">&nbsp;                var p = Path.of(path);</b>
+<b class="fc">&nbsp;                if(p.getFileName().toString().contains(&quot;.&quot;))</b>
+<b class="fc">&nbsp;                    Files.createDirectories(p.getParent());</b>
+&nbsp;                else
+<b class="fc">&nbsp;                    Files.createDirectories(p);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return config;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // This method uses Java&#39;s reflection mechanic to dynamically access a public field
+&nbsp;    // from a `Config` object. Casts to the expected type T.
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    public &lt;T&gt; T get(String name, Class&lt;T&gt; type) {
+&nbsp;        try {
+<b class="nc">&nbsp;            var val = this.getClass().getField(name).get(this);</b>
+&nbsp;//            if(!type.isInstance(val))
+&nbsp;//                throw new ClassCastException();
+<b class="nc">&nbsp;            return (T)val;</b>
+&nbsp;        } catch (IllegalAccessException | NoSuchFieldException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method exists purely so we can define default values in a semi non-annoying way without java treating our
+&nbsp;     * initializers as a constant expression and inlining their values preventing us from changing them if loaded from a file.
+&nbsp;     */
+&nbsp;    private &lt;T&gt; T initialize(T val){
+<b class="fc">&nbsp;        return val;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

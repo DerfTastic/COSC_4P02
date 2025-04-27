@@ -1,0 +1,387 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DbManager</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">framework.db</a>
+</div>
+
+<h1>Coverage Summary for Class: DbManager (framework.db)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DbManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.7%
+  </span>
+  <span class="absValue">
+    (18/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68.2%
+  </span>
+  <span class="absValue">
+    (45/66)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.5%
+  </span>
+  <span class="absValue">
+    (109/129)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package framework.db;
+&nbsp;
+&nbsp;import framework.util.Tuple;
+&nbsp;
+&nbsp;import java.sql.Connection;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.LinkedList;
+&nbsp;import java.util.concurrent.ConcurrentHashMap;
+&nbsp;import java.util.concurrent.ConcurrentLinkedQueue;
+&nbsp;import java.util.function.Consumer;
+&nbsp;import java.util.logging.Level;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;public abstract class DbManager implements AutoCloseable{
+<b class="fc">&nbsp;    private final ConcurrentHashMap&lt;Connection, ConcurrentHashMap&lt;String, ConcurrentLinkedQueue&lt;NamedPreparedStatement&gt;&gt;&gt; preparedCache = new ConcurrentHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final ConcurrentHashMap&lt;String, Tuple&lt;String, HashMap&lt;String, Integer&gt;&gt;&gt; preparedFieldMapCache = new ConcurrentHashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private final LinkedList&lt;Connection&gt; writableAvailable = new LinkedList&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final LinkedList&lt;Connection&gt; readOnlyAvailable = new LinkedList&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final HashSet&lt;Connection&gt; inUse = new HashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final HashSet&lt;Thread&gt; owning = new HashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;    private int inUseReadOnly = 0;</b>
+<b class="fc">&nbsp;    private int inUseWritable = 0;</b>
+<b class="fc">&nbsp;    private int sequenceBefore = 0;</b>
+<b class="fc">&nbsp;    private int sequenceCurr = 0;</b>
+&nbsp;
+&nbsp;    protected String url;
+&nbsp;    private final int maxReadOnly;
+&nbsp;    private final int maxWritable;
+&nbsp;    private final boolean canWriteAndReadCoexist;
+&nbsp;
+<b class="fc">&nbsp;    private final DbStatistics tracker = new DbStatistics();</b>
+&nbsp;
+<b class="fc">&nbsp;    public DbManager(boolean canWriteAndReadCoexist, int maxReadOnly, int maxWritable) throws SQLException {</b>
+<b class="fc">&nbsp;        this.canWriteAndReadCoexist = canWriteAndReadCoexist;</b>
+<b class="fc">&nbsp;        this.maxReadOnly = maxReadOnly;</b>
+<b class="fc">&nbsp;        this.maxWritable = maxWritable;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected synchronized void initialize(String url) throws SQLException{
+<b class="fc">&nbsp;        this.url = url;</b>
+<b class="fc">&nbsp;        Logger.getGlobal().log(Level.CONFIG, &quot;DB url: &quot; + url);</b>
+&nbsp;
+<b class="fc">&nbsp;        try(var conn = rw_conn(&quot;&gt;initialization&quot;)){</b>
+<b class="fc">&nbsp;            var major = conn.getConn().getMetaData().getDatabaseMajorVersion();</b>
+<b class="fc">&nbsp;            var minor = conn.getConn().getMetaData().getDatabaseMinorVersion();</b>
+<b class="fc">&nbsp;            var name = conn.getConn().getMetaData().getDatabaseProductName();</b>
+<b class="fc">&nbsp;            var v = conn.getConn().getMetaData().getDatabaseProductVersion();</b>
+<b class="fc">&nbsp;            Logger.getGlobal().log(Level.INFO, &quot;Connected to DB &quot; + major + &quot;.&quot; + minor + &quot; &quot; + name + &quot;(&quot;+v+&quot;)&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    protected abstract Connection openConnection(boolean readOnly) throws SQLException;
+&nbsp;
+&nbsp;    protected synchronized void forEachExisting(Consumer&lt;Connection&gt; consumer){
+<b class="nc">&nbsp;        writableAvailable.forEach(consumer);</b>
+<b class="nc">&nbsp;        readOnlyAvailable.forEach(consumer);</b>
+<b class="nc">&nbsp;        inUse.forEach(consumer);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public DbStatistics getTracker(){
+<b class="fc">&nbsp;        return this.tracker;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public synchronized void close() {
+<b class="fc">&nbsp;        for(var conn : readOnlyAvailable){</b>
+&nbsp;            try{
+<b class="fc">&nbsp;                closeConnection(conn);</b>
+&nbsp;            }catch (Exception ignore){}
+&nbsp;        }
+<b class="fc">&nbsp;        readOnlyAvailable.clear();</b>
+<b class="fc">&nbsp;        for(var conn : writableAvailable){</b>
+&nbsp;            try{
+<b class="fc">&nbsp;                closeConnection(conn);</b>
+&nbsp;            }catch (Exception ignore){}
+&nbsp;        }
+<b class="fc">&nbsp;        writableAvailable.clear();</b>
+<b class="pc">&nbsp;        for(var conn : inUse){</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                closeConnection(conn);</b>
+&nbsp;            }catch (Exception ignore){}
+&nbsp;        }
+<b class="fc">&nbsp;        inUse.clear();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected synchronized void rePool(RwConn conn) throws SQLException {
+<b class="fc">&nbsp;        if(conn.conn==null)return;</b>
+<b class="fc">&nbsp;        owning.remove(Thread.currentThread());</b>
+<b class="pc">&nbsp;        if(inUse.remove(conn.conn)){</b>
+<b class="pc">&nbsp;            if(conn.conn.isClosed())</b>
+<b class="nc">&nbsp;                closeConnection(conn.conn);</b>
+&nbsp;            else
+<b class="fc">&nbsp;                writableAvailable.addLast(conn.conn);</b>
+<b class="fc">&nbsp;            inUseWritable--;</b>
+<b class="fc">&nbsp;            this.notifyAll();</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.SEVERE, &quot;Tried to re pool connection that wasn&#39;t in use??&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        tracker.db_release(conn.id, true, System.nanoTime()-conn.acquired);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void closeConnection(Connection conn) {
+&nbsp;        try{
+&nbsp;            conn.close();
+&nbsp;        }catch (SQLException ignore){}
+<b class="fc">&nbsp;        for(var stmts : preparedCache.remove(conn).values()){</b>
+<b class="fc">&nbsp;            for(var stmt : stmts){</b>
+&nbsp;                try{
+<b class="fc">&nbsp;                    stmt.stmt.close();</b>
+&nbsp;                }catch (SQLException ignore){}
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected synchronized void rePool(RoConn conn) throws SQLException {
+<b class="fc">&nbsp;        if(conn.conn==null)return;</b>
+<b class="fc">&nbsp;        owning.remove(Thread.currentThread());</b>
+<b class="pc">&nbsp;        if(inUse.remove(conn.conn)){</b>
+<b class="pc">&nbsp;            if(conn.conn.isClosed())</b>
+<b class="nc">&nbsp;                closeConnection(conn.conn);</b>
+&nbsp;            else
+<b class="fc">&nbsp;                readOnlyAvailable.addLast(conn.conn);</b>
+<b class="fc">&nbsp;            inUseReadOnly--;</b>
+<b class="fc">&nbsp;            this.notifyAll();</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.SEVERE, &quot;Tried to re pool connection that wasn&#39;t in use??&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        tracker.db_release(conn.id, false, System.nanoTime()-conn.acquired);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /** Instantiates a new RwTransaction of this DbManager
+&nbsp;     * @param id
+&nbsp;     * @throws SQLException
+&nbsp;     */
+&nbsp;    public RwTransaction rw_transaction(String id) throws SQLException {
+<b class="fc">&nbsp;        return new RwTransaction(this, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public RoTransaction ro_transaction(String id) throws SQLException {
+<b class="fc">&nbsp;        return new RoTransaction(this, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public synchronized RoConn ro_conn(String id) throws SQLException {
+<b class="fc">&nbsp;        return new RoConn(this, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public synchronized RwConn rw_conn(String id) throws SQLException{
+<b class="fc">&nbsp;        return new RwConn(this, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected synchronized Connection rw_conn_p(RwConn conn) throws SQLException{
+<b class="fc">&nbsp;        var seq = sequenceBefore++;</b>
+&nbsp;
+<b class="fc">&nbsp;        tracker.db_lock_waited(conn.id, true);</b>
+<b class="pc">&nbsp;        while(</b>
+&nbsp;            seq!=sequenceCurr
+&nbsp;            ||(inUseWritable&gt;=maxWritable&amp;&amp;maxWritable&gt;0)
+&nbsp;            ||(!canWriteAndReadCoexist&amp;&amp;inUseReadOnly&gt;0)
+&nbsp;        ){
+<b class="nc">&nbsp;            var start = System.nanoTime();</b>
+<b class="nc">&nbsp;            if(owning.contains(Thread.currentThread()))</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block&quot;);</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                wait();</b>
+&nbsp;            }catch (Exception e){
+<b class="nc">&nbsp;                throw new SQLException(e);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            tracker.db_lock_waited(conn.id, true, System.nanoTime()-start);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        tracker.db_acquire(conn.id, true);</b>
+<b class="fc">&nbsp;        conn.acquired = System.nanoTime();</b>
+<b class="fc">&nbsp;        sequenceCurr++;</b>
+<b class="fc">&nbsp;        inUseWritable++;</b>
+&nbsp;        Connection con;
+<b class="fc">&nbsp;        if(writableAvailable.isEmpty()){</b>
+<b class="fc">&nbsp;            con = openConnection(false);</b>
+&nbsp;        }else{
+<b class="fc">&nbsp;            con = writableAvailable.pollFirst();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        inUse.add(con);</b>
+<b class="fc">&nbsp;        owning.add(Thread.currentThread());</b>
+<b class="fc">&nbsp;        return con;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected synchronized Connection ro_conn_p(RoConn conn) throws SQLException {
+<b class="fc">&nbsp;        var seq = sequenceBefore++;</b>
+&nbsp;
+<b class="fc">&nbsp;        tracker.db_lock_waited(conn.id, false);</b>
+<b class="pc">&nbsp;        while(</b>
+&nbsp;            seq!=sequenceCurr
+&nbsp;            ||(inUseReadOnly&gt;=maxReadOnly&amp;&amp;maxReadOnly&gt;0)
+&nbsp;            ||(!canWriteAndReadCoexist&amp;&amp;inUseWritable&gt;0)
+&nbsp;        ){
+<b class="nc">&nbsp;            var start = System.nanoTime();</b>
+<b class="nc">&nbsp;            if(owning.contains(Thread.currentThread()))</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;This is probably going to be a deadlock, This thread already owns a lock that likely would have caused this to block&quot;);</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                wait();</b>
+&nbsp;            }catch (Exception e){
+<b class="nc">&nbsp;                throw new SQLException(e);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            tracker.db_lock_waited(conn.id, false, System.nanoTime()-start);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        tracker.db_acquire(conn.id, false);</b>
+<b class="fc">&nbsp;        conn.acquired = System.nanoTime();</b>
+<b class="fc">&nbsp;        sequenceCurr++;</b>
+<b class="fc">&nbsp;        inUseReadOnly++;</b>
+&nbsp;        Connection con;
+<b class="fc">&nbsp;        if(readOnlyAvailable.isEmpty()){</b>
+<b class="fc">&nbsp;            con = openConnection(true);</b>
+&nbsp;        }else{
+<b class="fc">&nbsp;            con = readOnlyAvailable.pollFirst();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        inUse.add(con);</b>
+<b class="fc">&nbsp;        owning.add(Thread.currentThread());</b>
+&nbsp;
+<b class="fc">&nbsp;        return con;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private Tuple&lt;String, HashMap&lt;String, Integer&gt;&gt; parsePreparedFields(String sqlO){
+<b class="fc">&nbsp;        return preparedFieldMapCache.computeIfAbsent(sqlO, sql -&gt; {</b>
+&nbsp;            int pos;
+<b class="fc">&nbsp;            int index = 1;</b>
+<b class="fc">&nbsp;            final HashMap&lt;String, Integer&gt; fieldMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;            while((pos = sql.indexOf(&quot;:&quot;)) != -1) {</b>
+<b class="fc">&nbsp;                var start = pos;</b>
+<b class="fc">&nbsp;                pos++;</b>
+<b class="fc">&nbsp;                while(pos &lt; sql.length() &amp;&amp; validChar(sql.charAt(pos)))pos++;</b>
+&nbsp;
+&nbsp;                int idx;
+<b class="fc">&nbsp;                if(fieldMap.containsKey(sql.substring(start,pos))){</b>
+<b class="fc">&nbsp;                    idx = fieldMap.get(sql.substring(start,pos));</b>
+&nbsp;                }else{
+<b class="fc">&nbsp;                    fieldMap.put(sql.substring(start,pos), index);</b>
+<b class="fc">&nbsp;                    idx = index;</b>
+<b class="fc">&nbsp;                    index += 1;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                sql = sql.substring(0, start) + &quot;?&quot; + idx + sql.substring(pos);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return new Tuple&lt;&gt;(sql, fieldMap);</b>
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean validChar(char c) {
+<b class="pc">&nbsp;        return Character.isAlphabetic(c) || Character.isDigit(c) || c == &#39;_&#39;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected NamedPreparedStatement namedPreparedStatement(Conn conn, String sql) throws SQLException{
+<b class="fc">&nbsp;        var stmt = preparedCache.computeIfAbsent(conn.getConn(), connection -&gt; new ConcurrentHashMap&lt;&gt;())</b>
+<b class="fc">&nbsp;                .computeIfAbsent(sql, s -&gt; new ConcurrentLinkedQueue&lt;&gt;())</b>
+<b class="fc">&nbsp;                .poll();</b>
+<b class="fc">&nbsp;        if(stmt != null){</b>
+<b class="fc">&nbsp;            stmt.setConn(conn);</b>
+<b class="fc">&nbsp;            return stmt;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        var res = parsePreparedFields(sql);</b>
+<b class="fc">&nbsp;        stmt = new NamedPreparedStatement(conn.conn.prepareStatement(res.t1()), sql, res.t1(), res.t2());</b>
+<b class="fc">&nbsp;        stmt.setConn(conn);</b>
+<b class="fc">&nbsp;        return stmt;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void namedPreparedStatementClose(NamedPreparedStatement namedPreparedStatement) throws SQLException {
+<b class="fc">&nbsp;        preparedCache.get(namedPreparedStatement.conn.getConn())</b>
+<b class="fc">&nbsp;                .get(namedPreparedStatement.originalSql)</b>
+<b class="fc">&nbsp;                .add(namedPreparedStatement);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,343 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AdminAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure.root.api</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminAPI (server.infrastructure.root.api)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (10/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.9%
+  </span>
+  <span class="absValue">
+    (51/58)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminAPI$LogR</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AdminAPI$Mail</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    93.3%
+  </span>
+  <span class="absValue">
+    (14/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (10/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (56/63)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure.root.api;
+&nbsp;
+&nbsp;import framework.db.RwTransaction;
+&nbsp;import framework.web.annotations.*;
+&nbsp;import server.ServerLogger;
+&nbsp;import framework.db.RwConn;
+&nbsp;import framework.web.error.BadRequest;
+&nbsp;import server.infrastructure.session.AdminSession;
+&nbsp;import server.mail.MailServer;
+&nbsp;import server.ServerStatistics;
+&nbsp;import framework.web.annotations.url.Path;
+&nbsp;
+&nbsp;import javax.mail.Message;
+&nbsp;import java.io.PrintWriter;
+&nbsp;import java.io.StringWriter;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.List;
+&nbsp;import java.util.logging.Level;
+&nbsp;
+&nbsp;@SuppressWarnings(&quot;unused&quot;)
+&nbsp;@Routes
+<b class="nc">&nbsp;public class AdminAPI {</b>
+&nbsp;
+&nbsp;    public static class Mail{
+&nbsp;        String subject;
+&nbsp;        String content;
+&nbsp;        String[] to;
+&nbsp;
+<b class="fc">&nbsp;        public Mail(String subject, String content, String[] to) {</b>
+<b class="fc">&nbsp;            this.subject = subject;</b>
+<b class="fc">&nbsp;            this.content = content;</b>
+<b class="fc">&nbsp;            this.to = to;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;        /*
+&nbsp;            var content = &quot;&quot;&quot;
+&nbsp;                        &lt;html&gt;
+&nbsp;            &lt;body&gt;
+&nbsp;                &lt;p&gt;Greetings!&lt;/p&gt;
+&nbsp;                &lt;div&gt;&lt;img src=&quot;https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=http://localhost:8080&quot;&gt;&lt;/div&gt;
+&nbsp;                &lt;div&gt;&lt;img src=&quot;https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=Meow&quot;&gt;&lt;/div&gt;
+&nbsp;                &lt;div&gt;&lt;img src=&quot;https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=Nya&quot;&gt;&lt;/div&gt;
+&nbsp;                &lt;p&gt;Salutations&lt;/p&gt;
+&nbsp;            &lt;/body&gt;
+&nbsp;        &lt;/html&gt;
+&nbsp;        &quot;&quot;&quot;;
+&nbsp;     */
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static void mail(AdminSession auth, MailServer server, @Body @Json Mail mail) {
+<b class="fc">&nbsp;        server.sendMail(message -&gt; {</b>
+<b class="fc">&nbsp;            message.setRecipients(</b>
+&nbsp;                    Message.RecipientType.TO,
+<b class="fc">&nbsp;                    MailServer.fromStrings(mail.to)</b>
+&nbsp;            );
+<b class="fc">&nbsp;            message.setSubject(mail.subject);</b>
+<b class="fc">&nbsp;            message.setContent(mail.content, &quot;text/html&quot;);</b>
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static String execute_sql(AdminSession auth, RwConn connection, @Body String sql) throws SQLException {
+&nbsp;        StringBuilder list;
+<b class="fc">&nbsp;        try (var stmt = connection.createStatement()) {</b>
+<b class="fc">&nbsp;            var rows = stmt.execute(sql);</b>
+<b class="fc">&nbsp;            list = new StringBuilder();</b>
+&nbsp;
+<b class="fc">&nbsp;            var rs = stmt.getResultSet();</b>
+<b class="fc">&nbsp;            list.append(&quot;Updated &quot;).append(stmt.getUpdateCount()).append(&quot;\n&quot;);</b>
+<b class="fc">&nbsp;            if (rs == null) return list.toString();</b>
+<b class="pc">&nbsp;            if (!rows) return list.toString();</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                list.append(&quot;(&quot;);</b>
+<b class="fc">&nbsp;                for (int i = 1; ; i++) {</b>
+&nbsp;                    try {
+<b class="fc">&nbsp;                        var res = rs.getString(i);</b>
+<b class="fc">&nbsp;                        if (i != 1) list.append(&quot;, &quot;);</b>
+<b class="fc">&nbsp;                        list.append(res);</b>
+&nbsp;                    } catch (SQLException ignore) {
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+<b class="fc">&nbsp;                list.append(&quot;)\n&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        connection.commit();</b>
+<b class="fc">&nbsp;        return list.toString();</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public record LogR(</b>
+&nbsp;            String level_s,
+&nbsp;            int level_i,
+&nbsp;            String message,
+&nbsp;            long millis,
+&nbsp;            long sequenceNumber,
+&nbsp;            String sourceClassName,
+&nbsp;            String sourceMethodName,
+&nbsp;            String thrown
+&nbsp;    ){}
+&nbsp;
+&nbsp;    private static String formatException(Throwable t){
+<b class="pc">&nbsp;        if(t==null) return null;</b>
+<b class="nc">&nbsp;        StringWriter sw = new StringWriter();</b>
+<b class="nc">&nbsp;        PrintWriter pw = new PrintWriter(sw);</b>
+<b class="nc">&nbsp;        t.printStackTrace(pw);</b>
+<b class="nc">&nbsp;        return sw.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static @Json List&lt;LogR&gt; get_server_logs(AdminSession auth){
+&nbsp;
+<b class="fc">&nbsp;        return ServerLogger.streamify().map(r -&gt; new LogR(</b>
+<b class="fc">&nbsp;                r.getLevel().getName(),</b>
+<b class="fc">&nbsp;                r.getLevel().intValue(),</b>
+<b class="fc">&nbsp;                r.getMessage(),</b>
+<b class="fc">&nbsp;                r.getMillis(),</b>
+<b class="fc">&nbsp;                r.getSequenceNumber(),</b>
+<b class="fc">&nbsp;                r.getSourceClassName(),</b>
+<b class="fc">&nbsp;                r.getSourceMethodName(),</b>
+<b class="fc">&nbsp;                formatException(r.getThrown())</b>
+<b class="fc">&nbsp;        )).toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/delete_other_account/&lt;email&gt;&quot;)
+&nbsp;    public static void delete_other_account(AdminSession auth, RwTransaction trans, @Path String email) throws SQLException, BadRequest {
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;delete from users where email=:email&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setString(&quot;:email&quot;, email);</b>
+<b class="pc">&nbsp;            if(stmt.executeUpdate() != 1)</b>
+<b class="nc">&nbsp;                throw new BadRequest(&quot;Account with the specified email does not exist&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/set_account_admin/&lt;admin&gt;/&lt;email&gt;&quot;)
+&nbsp;    public static void set_account_admin(AdminSession auth, RwTransaction trans, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
+&nbsp;        long id;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;update users set admin=:admin where email=:email returning id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setString(&quot;:email&quot;, email);</b>
+<b class="fc">&nbsp;            stmt.setBoolean(&quot;:admin&quot;, admin);</b>
+<b class="fc">&nbsp;            var rs = stmt.executeQuery();</b>
+<b class="pc">&nbsp;            if(!rs.next())</b>
+<b class="nc">&nbsp;                throw new BadRequest(&quot;Account with the specified email does not exist&quot;);</b>
+<b class="fc">&nbsp;            id = rs.getLong(&quot;id&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;delete from sessions where user_id=:id&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:id&quot;, id);</b>
+<b class="fc">&nbsp;            stmt.execute();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        trans.commit();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static byte[] get_server_statistics(AdminSession auth, ServerStatistics tracker){
+<b class="fc">&nbsp;        return tracker.json();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route(&quot;/set_log_level/&lt;level&gt;&quot;)
+&nbsp;    public static void set_log_level(AdminSession auth, @Path String level){
+<b class="fc">&nbsp;        ServerLogger.setLogLevel(Level.parse(level));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static String get_log_level(AdminSession auth){
+<b class="fc">&nbsp;        return ServerLogger.getLogLevel().getName();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static @Json String[] get_log_levels(AdminSession auth){
+<b class="fc">&nbsp;        return new String[]{</b>
+<b class="fc">&nbsp;                Level.OFF.getName(), Level.SEVERE.getName(), Level.WARNING.getName(), Level.INFO.getName(), Level.CONFIG.getName(), Level.FINE.getName(), Level.FINER.getName(), Level.FINEST.getName(), Level.ALL.getName()</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

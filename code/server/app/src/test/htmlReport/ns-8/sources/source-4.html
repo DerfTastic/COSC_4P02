@@ -1,0 +1,264 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ServerLogger</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server</a>
+</div>
+
+<h1>Coverage Summary for Class: ServerLogger (server)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerLogger</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.9%
+  </span>
+  <span class="absValue">
+    (26/31)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ServerLogger$MemHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    81.8%
+  </span>
+  <span class="absValue">
+    (9/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.4%
+  </span>
+  <span class="absValue">
+    (38/44)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileOutputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.nio.file.attribute.BasicFileAttributes;
+&nbsp;import java.text.SimpleDateFormat;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.function.Supplier;
+&nbsp;import java.util.logging.*;
+&nbsp;import java.util.stream.Stream;
+&nbsp;import java.util.zip.ZipEntry;
+&nbsp;import java.util.zip.ZipOutputStream;
+&nbsp;
+<b class="nc">&nbsp;public class ServerLogger {</b>
+&nbsp;    private static FileHandler fh;
+&nbsp;    private static MemHandler mh;
+&nbsp;
+&nbsp;    public static void setLogLevel(Level level){
+<b class="fc">&nbsp;        Logger.getGlobal().setLevel(level);</b>
+<b class="fc">&nbsp;        for (Handler handler : Logger.getGlobal().getParent().getHandlers()) {</b>
+<b class="fc">&nbsp;            handler.setLevel(level);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Level getLogLevel(){
+<b class="fc">&nbsp;        return Logger.getGlobal().getLevel();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void initialize(Level level, String path){
+<b class="pc">&nbsp;        if(fh!=null||mh!=null)</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Already initialized&quot;);</b>
+&nbsp;        try {
+<b class="pc">&nbsp;            if(new File(path+&quot;/log&quot;).exists()){</b>
+<b class="fc">&nbsp;                var file = new File(path+&quot;/log&quot;);</b>
+<b class="fc">&nbsp;                var log_attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);</b>
+<b class="fc">&nbsp;                var dateFormat = new SimpleDateFormat(&quot;yyyy-MM-dd HH-mm-ss&quot;);</b>
+<b class="fc">&nbsp;                var name = dateFormat.format(new Date(log_attributes.creationTime().toMillis()));</b>
+&nbsp;
+<b class="fc">&nbsp;                var out_file = new File(path+&quot;/&quot; + name + &quot;.zip&quot;);</b>
+<b class="fc">&nbsp;                ZipOutputStream out = new ZipOutputStream(new FileOutputStream(out_file));</b>
+<b class="fc">&nbsp;                ZipEntry e = new ZipEntry(name);</b>
+<b class="fc">&nbsp;                out.putNextEntry(e);</b>
+&nbsp;
+<b class="fc">&nbsp;                byte[] data = Files.readAllBytes(file.toPath());</b>
+<b class="fc">&nbsp;                out.write(data, 0, data.length);</b>
+<b class="fc">&nbsp;                out.closeEntry();</b>
+<b class="fc">&nbsp;                out.flush();</b>
+&nbsp;                out.close();
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.SEVERE, &quot;Failed to zip older log file&quot;, e);</b>
+&nbsp;        }
+&nbsp;        try{
+<b class="fc">&nbsp;            fh = new FileHandler(path+&quot;/log&quot;);</b>
+&nbsp;        }catch (Exception e){
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        mh = new MemHandler();</b>
+&nbsp;
+<b class="fc">&nbsp;        Logger.getGlobal().addHandler(fh);</b>
+<b class="fc">&nbsp;        Logger.getGlobal().addHandler(mh);</b>
+&nbsp;
+<b class="fc">&nbsp;        setLogLevel(level);</b>
+&nbsp;
+<b class="fc">&nbsp;        Logger.getGlobal().log(level, &quot;Working Directory: &quot; + Paths.get(&quot;&quot;).toAbsolutePath());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Stream&lt;LogRecord&gt; streamify(){
+<b class="fc">&nbsp;        return mh.streamify();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void close(){
+<b class="pc">&nbsp;        for(var handler : Logger.getGlobal().getHandlers()){</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                handler.flush();</b>
+&nbsp;            } catch (Exception ignore) {}
+&nbsp;            try{
+&nbsp;                handler.close();
+&nbsp;            } catch (Exception ignore) {}
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public static class MemHandler extends Handler{</b>
+&nbsp;
+<b class="fc">&nbsp;        private final LogRecord[] records = new LogRecord[1024];</b>
+<b class="fc">&nbsp;        private int index = 0;</b>
+&nbsp;
+&nbsp;        public synchronized Stream&lt;LogRecord&gt; streamify(){
+<b class="fc">&nbsp;            Supplier&lt;Stream&lt;LogRecord&gt;&gt; provider = () -&gt; Arrays.stream(records);</b>
+<b class="fc">&nbsp;            return Stream.generate(provider)</b>
+<b class="fc">&nbsp;                    .limit(2)</b>
+<b class="fc">&nbsp;                    .flatMap(s -&gt; s)</b>
+<b class="fc">&nbsp;                    .filter(Objects::nonNull)</b>
+<b class="fc">&nbsp;                    .skip(index%records.length)</b>
+<b class="fc">&nbsp;                    .limit(Math.max(index, records.length));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public synchronized void publish(LogRecord record) {
+<b class="fc">&nbsp;            records[index++%records.length]=record;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+<b class="nc">&nbsp;        public void flush() {}</b>
+&nbsp;
+&nbsp;        @Override
+<b class="fc">&nbsp;        public void close() throws SecurityException {}</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

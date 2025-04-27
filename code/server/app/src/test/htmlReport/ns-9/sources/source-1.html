@@ -1,0 +1,190 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Hbs</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.handlebars</a>
+</div>
+
+<h1>Coverage Summary for Class: Hbs (server.handlebars)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Hbs</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.3%
+  </span>
+  <span class="absValue">
+    (7/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76.9%
+  </span>
+  <span class="absValue">
+    (20/26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.handlebars;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSON;
+&nbsp;import com.github.jknack.handlebars.Context;
+&nbsp;import com.github.jknack.handlebars.Handlebars;
+&nbsp;import com.github.jknack.handlebars.Template;
+&nbsp;import com.github.jknack.handlebars.context.FieldValueResolver;
+&nbsp;import com.github.jknack.handlebars.context.JavaBeanValueResolver;
+&nbsp;import com.github.jknack.handlebars.context.MapValueResolver;
+&nbsp;import com.github.jknack.handlebars.context.MethodValueResolver;
+&nbsp;import com.github.jknack.handlebars.helper.ConditionalHelpers;
+&nbsp;import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
+&nbsp;import com.github.jknack.handlebars.io.TemplateLoader;
+&nbsp;import server.infrastructure.root.api.PaymentAPI;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URLEncoder;
+&nbsp;import java.nio.charset.StandardCharsets;
+&nbsp;import java.text.DateFormat;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.HashMap;
+&nbsp;
+<b class="nc">&nbsp;public class Hbs {</b>
+<b class="fc">&nbsp;    private static HashMap&lt;String, Template&gt; compiled = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;    static{
+<b class="fc">&nbsp;        TemplateLoader loader = new ClassPathTemplateLoader();</b>
+<b class="fc">&nbsp;        loader.setPrefix(&quot;/handlebars&quot;);</b>
+<b class="fc">&nbsp;        loader.setSuffix(&quot;.hbs&quot;);</b>
+<b class="fc">&nbsp;        Handlebars handlebars = new Handlebars(loader);</b>
+&nbsp;
+<b class="fc">&nbsp;        for(var cnd : ConditionalHelpers.values()){</b>
+<b class="fc">&nbsp;            handlebars.registerHelper(cnd.name(), cnd);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        handlebars.registerHelper(&quot;formatPrice&quot;, (o, options) -&gt; switch(o){</b>
+<b class="nc">&nbsp;            case Integer l -&gt; PaymentAPI.formatPrice(l);</b>
+<b class="fc">&nbsp;            case Long l -&gt; PaymentAPI.formatPrice(l);</b>
+<b class="nc">&nbsp;            case null, default -&gt; &quot;ERROR&quot;;</b>
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        handlebars.registerHelper(&quot;isTicket&quot;, (o, options) -&gt; o instanceof PaymentAPI.TicketReceipt);</b>
+&nbsp;
+<b class="pc">&nbsp;        handlebars.registerHelper(&quot;formatDate&quot;, (o, options) -&gt; switch (o) {</b>
+<b class="nc">&nbsp;            case Integer l -&gt; new Date(l).toString();</b>
+<b class="fc">&nbsp;            case Long l -&gt; new Date(l).toString();</b>
+<b class="nc">&nbsp;            case null, default -&gt; &quot;ERROR&quot;;</b>
+&nbsp;        });
+&nbsp;
+<b class="pc">&nbsp;        handlebars.registerHelper(&quot;encodeURI&quot;, (o, options) -&gt; URLEncoder.encode((o==null?&quot;&quot;:o).toString(), StandardCharsets.UTF_8));</b>
+&nbsp;
+<b class="fc">&nbsp;        handlebars.registerHelper(&quot;json&quot;, (o, options) -&gt; JSON.toJSON(o));</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            for(var name: new String[]{&quot;email_receipt&quot;}){</b>
+<b class="fc">&nbsp;                compiled.put(name, handlebars.compile(name));</b>
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; String run(String name, T obj) throws IOException {
+<b class="fc">&nbsp;        return compiled.get(name).apply(Context</b>
+<b class="fc">&nbsp;                .newBuilder(obj)</b>
+<b class="fc">&nbsp;                .resolver(JavaBeanValueResolver.INSTANCE,</b>
+&nbsp;                        FieldValueResolver.INSTANCE,
+&nbsp;                        MapValueResolver.INSTANCE,
+&nbsp;                        MethodValueResolver.INSTANCE
+&nbsp;                )
+<b class="fc">&nbsp;                .build()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

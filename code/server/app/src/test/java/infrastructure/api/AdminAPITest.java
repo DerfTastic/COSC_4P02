@@ -100,11 +100,10 @@ public class AdminAPITest {
             Assertions.fail("Shouldn't be able to make an admin session out if you're someone who's not an admin");
         } catch (Exception ignore) {}
 
-//        UserSession regularSession = u1.userSession(db, null);
-//        try(var trans = db.rw_transaction(null)) {
-//            AdminAPI.set_account_admin(regularSession, trans, true, a1.email); // Set admin to true for a1 from a regular user
-//            trans.tryCommit();
-//        }
+        try(var trans = db.rw_transaction(null)) {
+            AdminAPI.set_account_admin(adminSesh, trans, true, a1.email); // Set admin to true for a1 from a regular user
+            trans.tryCommit();
+        }
         a1.login(mail, db, false);
         try {
             var evilAdmin = u1.adminSession(db, null);
@@ -139,16 +138,20 @@ public class AdminAPITest {
     @Test
     @Order(3)
     public void testExecutingSQL() throws SQLException, Unauthorized {
-        var sesh = a1.adminSession(db, null);
         RwConn rw = new RwConn(db, null);
 
         String str;
         str = AdminAPI.execute_sql(ogAdminSesh, rw, "INSERT INTO events(id, owner_id, draft, name, description, category, type) VALUES(1000, 1, 0, \"TestEvent1\", \"hi\", \"Music\", \"Concert\")");
-        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
-        str = AdminAPI.execute_sql(sesh, rw, "INSERT INTO events(id, owner_id, draft, name, description, category, type) VALUES(1001, 3, 0, \"TestEvent2\", \"yes\", \"Family\", \"School play\")");
-        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
-        str = AdminAPI.execute_sql(sesh, rw, "SELECT * FROM events;");
-        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
+        Assertions.assertEquals("Updated 1\n", str);
+//        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
+        str = AdminAPI.execute_sql(ogAdminSesh, rw, "INSERT INTO events(id, owner_id, draft, name, description, category, type) VALUES(1001, 3, 0, \"TestEvent2\", \"yes\", \"Family\", \"School play\")");
+        Assertions.assertEquals("Updated 1\n", str);
+//        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
+        str = AdminAPI.execute_sql(ogAdminSesh, rw, "SELECT * FROM events;");
+        Assertions.assertEquals("Updated -1\n" +
+                "(1000, 1, TestEvent1, hi, null, null, null, Music, Concert, null, null, 0, null, null, null)\n" +
+                "(1001, 3, TestEvent2, yes, null, null, null, Family, School play, null, null, 0, null, null, null)\n", str);
+//        System.out.println("\033[33;4mSQL:\033[0m\t" + str);
         rw.close();
     }
 
@@ -158,7 +161,7 @@ public class AdminAPITest {
         var config = Config.init();
         ServerLogger.initialize(Level.ALL, config.log_path);
         var logs = AdminAPI.get_server_logs(ogAdminSesh);
-        System.out.println(logs);
+//        System.out.println(logs);
     }
 
     @Test
@@ -182,7 +185,7 @@ public class AdminAPITest {
                 Assertions.assertEquals(receivedLogLevel, logLevel);
 
                 var logs = AdminAPI.get_server_logs(ogAdminSesh);
-                System.out.println(logs);
+//                System.out.println(logs);
             }
         }
     }

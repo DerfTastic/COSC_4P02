@@ -186,7 +186,7 @@ public class TicketAPITest {
         List<TicketsAPI.Ticket> bothLists = new ArrayList<>();
         bothLists.addAll(list1);
         bothLists.addAll(list2);
-        System.out.println(bothLists);
+//        System.out.println(bothLists);
         if (bothLists.isEmpty()) {
             throw new AssertionFailedError("No tickets were returned when trying to get_tickets(...)");
         }
