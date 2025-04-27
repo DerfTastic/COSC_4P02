@@ -38,6 +38,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A group of HTTP API endpoints that provide a suite of user-account-related management operations.
+ */
 @SuppressWarnings("unused")
 @Routes
 public class AccountAPI {
@@ -74,7 +77,8 @@ public class AccountAPI {
     }
 
 
-    /** Represents a combination of an email string and a password string.
+    /**
+     * Represents a combination of an email string and a password string.
      */
     public static class Login{
         public String email;
@@ -149,8 +153,8 @@ public class AccountAPI {
         return token;
     }
 
-    /** Represents a record in the 'sessions' DB table without the 'id' and 'token' fields.
-     * Is
+    /**
+     * Represents a record in the 'sessions' DB table without the 'id' and 'token' fields.
      */
     public static class Session{
         public long id;
@@ -176,11 +180,12 @@ public class AccountAPI {
         return result;
     }
 
-    /** Remove a user sesssion. Only works if session belongs to you and it exists.
+    /**
+     * Remove a user session. Only works if session belongs to you and it exists.
      *
      * @param auth The account that's doing this
-     * @param trans
-     * @param session_id
+     * @param trans The read/write DB transaction this is going to happening in
+     * @param session_id The id of the session to invalidate.
      * @throws BadRequest If the session does not belong to you or does not exist.
      * @throws SQLException
      */
@@ -201,11 +206,12 @@ public class AccountAPI {
         public String password;
     }
 
-    /** Deletes this user's account (auth and account must be the same account) <br>
+    /**
+     * Deletes this user's account (auth and account must be the same account) <br>
      * and removes their profile photo and banner from the media handler.
      *
      * @param auth The account that's doing this
-     * @param trans
+     * @param trans The read/write DB transaction this is going to happening in
      * @param account The account to be deleted
      * @param media The {@link DynamicMediaHandler} to delete this user's pfp and banner from
      * @throws Unauthorized If auth and account don't have the same email
@@ -243,10 +249,11 @@ public class AccountAPI {
     }
 
 
-    /** Changes this account's email and/or password.
+    /**
+     * Changes this account's email and/or password.
      *
      * @param auth The account that's doing this.
-     * @param trans
+     * @param trans The read/write DB transaction this is going to happening in
      * @param ca The username and/or password change ({@link ChangeAuth})
      * @throws SQLException
      * @throws BadRequest If new username and new password are null.
@@ -277,6 +284,12 @@ public class AccountAPI {
         trans.commit();
     }
 
+    /**
+     * Represents a change to user info such as their name, bio, phone number, and email.
+     *
+     * This class is designed to support partial updates, meaning the client can provide only the fields they want to change
+     * without needing to resend the entire user record.
+     */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class UpdateUser{
         public String name;
@@ -302,6 +315,10 @@ public class AccountAPI {
 
         public UpdateUser(){}
 
+        /**
+         * @param reader The {@link JSONReader} that gets the new user data
+         * @throws BadRequest if the input is malformed
+         */
         public UpdateUser(JSONReader reader) throws BadRequest {
             if(!reader.nextIfObjectStart())
                 throw new BadRequest("Expected an object");
@@ -322,6 +339,9 @@ public class AccountAPI {
         }
     }
 
+    /**
+     * Instantiates a RouteParameter-derived class so that it can parse a {@link UpdateUser} from an HTTP request using {@link FromRequest}
+     */
     public static class UpdateUserFromRequest implements RouteParameter<UpdateUser> {
         @Override
         public UpdateUser construct(Request request) throws Exception {
@@ -331,6 +351,15 @@ public class AccountAPI {
         }
     }
 
+    /**
+     * Updates a user's info (such as name, bio, phone number, and email) in the DB.
+     *
+     * @param auth The account that's doing this
+     * @param trans The read/write DB transaction this is going to happening in
+     * @param update An {@link UpdateUser} type that represents a user info change of any of the following fields: name, bio, disp_phone_number, disp_email
+     * @throws SQLException
+     * @throws BadRequest If SQL statement failed
+     */
     @SuppressWarnings("OptionalAssignedToNull")
     @Route
     public static void update_user(UserSession auth, RwTransaction trans, @FromRequest(UpdateUserFromRequest.class) UpdateUser update) throws SQLException, BadRequest {
@@ -367,8 +396,16 @@ public class AccountAPI {
         trans.commit();
     }
 
+    /**
+     * A marker interface to identify classes as containing user information.
+     * @see PrivateUserInfo PrivateUserInfo
+     * @see PublicUserInfo PublicUserInfo
+     */
     public sealed interface UserInfo permits PrivateUserInfo, PublicUserInfo {}
 
+    /**
+     * Represents a user's public info (including name, bio, phone number, email, pfp, and banner)
+     */
     public record PublicUserInfo(
         long id,
         String name,
@@ -401,6 +438,10 @@ public class AccountAPI {
         }
     }
 
+    /**
+     * Represents a user's private and public user info, including all attrs in {@link PublicUserInfo PublicUserInfo}
+     * but also with their user id, email, and whether they are an organizer or admin.
+     */
     public record PrivateUserInfo(
         long id,
         String name,
@@ -414,6 +455,14 @@ public class AccountAPI {
         long banner
     ) implements UserInfo {}
 
+    /**
+     * @return User information as a {@link UserInfo} that is customizably parsable and serializable.
+     * @param auth The account that's doing this
+     * @param trans The read/write DB transaction this is going to happening in
+     * @param id The id of the user to get this info from
+     * @throws SQLException
+     * @throws Unauthorized
+     */
     @Route("/userinfo/<id>")
     public static @Json UserInfo userinfo(@NotRequired UserSession auth, RoTransaction trans, @Path @Nullable Long id) throws SQLException, Unauthorized {
         UserInfo result;
@@ -447,12 +496,25 @@ public class AccountAPI {
         return result;
     }
 
+    /**
+     * Represents all the information needed to Register a user (name, email, and password)
+     */
     public static class Register{
         public String name;
         public String email;
         public String password;
     }
 
+    /**
+     * Registers a user in the DB.
+     *
+     * @param mail The {@link MailServer} used to send them mail if send_mail_on_register is specified as true
+     * @param trans The read/write DB transaction this is going to happening in
+     * @param register A {@link Register Register} type (containe name, email, and password).
+     * @param send_mail_on_register Whether to send them a confirmation email of their registration
+     * @throws SQLException
+     * @throws BadRequest
+     */
     @Route
     public static void register(MailServer mail, RwTransaction trans, @Body @Json Register register, @Config boolean send_mail_on_register) throws SQLException, BadRequest {
         register.password = Util.hashy((register.password+"\0\0\0\0"+register.email).getBytes());
@@ -479,6 +541,17 @@ public class AccountAPI {
     }
 
 
+    /**
+     * Sets a user's profile photo (called 'picture' in DB). Also adds this picture to the specified {@link DynamicMediaHandler}.
+     *
+     * @param session The session that this user is in now
+     * @param trans The transaction this is happening in.
+     * @param handler the {@link DynamicMediaHandler} that will handle this new image
+     * @param data The raw data of the image (must be <= 10 MiB)
+     * @return media_id of the newly added image in the dynamic media 'handler'
+     * @throws SQLException
+     * @throws BadRequest If file is too large (> 10 MiB) or DB update failed.
+     */
     @Route
     public static long set_user_picture(UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
@@ -514,6 +587,17 @@ public class AccountAPI {
         return media_id;
     }
 
+    /**
+     * Sets a user's profile banner (called 'banner' in DB). Also adds this picture to the specified {@link DynamicMediaHandler}.
+     *
+     * @param session The session that this user is in now
+     * @param trans The transaction this is happening in.
+     * @param handler the {@link DynamicMediaHandler} that will handle this new image
+     * @param data The raw data of the image (must be <= 10 MiB)
+     * @return media_id of the newly added image in the dynamic media 'handler'
+     * @throws SQLException
+     * @throws BadRequest If file is too large (> 10 MiB) or DB update failed.
+     */
     @Route
     public static long set_user_banner_picture(UserSession session, RwTransaction trans, DynamicMediaHandler handler, @Body byte[] data) throws SQLException, BadRequest {
         // 10 MiB
@@ -582,6 +666,21 @@ public class AccountAPI {
         timer.addAtRate(prm::tick, 15*60*1000);
     }
 
+    /**
+     * Initiates a password reset process by generating a token and sending a reset email to the user.
+     *
+     * This method checks if a user with the provided email exists in the database, and if so, generates a
+     * random token for resetting the user's password. The token is stored and associated with the user's
+     * email and ID. A reset email is then sent to the user containing a link with the token, allowing them
+     * to reset their password.
+     *
+     * @param mail The {@link MailServer} used to send the password reset email
+     * @param trans The read/write DB transaction this is going to happening in
+     * @param email The email address of the user requesting a password reset.
+     * @param prm The {@link PasswordResetManager PasswordResetManager} used to store and manage the reset token.
+     * @param url_root The root URL of the application to construct the password reset link.
+     * @throws SQLException if there is an error while querying the database or interacting with SQL.
+     */
     @Route
     public static void reset_password(MailServer mail, RoTransaction trans, @Body String email, PasswordResetManager prm, @Config String url_root) throws SQLException {
         long id;
@@ -612,6 +711,20 @@ public class AccountAPI {
 
     public record PasswordReset(String token, String email, String password){}
 
+    /**
+     * Completes the password reset process by validating the provided token and updating the user's password.
+     *
+     * This method takes the reset token and new password from the user, validates the token, ensures the
+     * email matches the one associated with the token, and if valid, updates the user's password in the
+     * database. It also clears any active sessions associated with the user to force them to log in again.
+     *
+     * @param mail The {@link MailServer} used to send the password reset email
+     * @param trans The read/write DB transaction this is going to happening in
+     * @param reset The {@link PasswordReset PasswordReset} object containing the token, email, and new password.
+     * @param prm The PasswordResetManager used to validate and remove the reset token.
+     * @throws SQLException If there is an error while interacting with the database during password update.
+     * @throws BadRequest If the reset token is invalid or the email does not match.
+     */
     @Route
     public static void do_reset_password(MailServer mail, RwTransaction trans, @Body @Json PasswordReset reset, PasswordResetManager prm) throws SQLException, BadRequest {
         var id = prm.remove(reset.token);
