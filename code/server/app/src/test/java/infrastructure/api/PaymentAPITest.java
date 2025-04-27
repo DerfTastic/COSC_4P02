@@ -128,16 +128,16 @@ public class PaymentAPITest {
                 orderListArr[i] = orderItemList.get(i);
             }
             est = PaymentAPI.create_estimate(userSesh, trans, orderListArr);
-            System.out.println("\033[4;1mEstimate:\033[0m");
-            System.out.println("Items:");
-            for (PaymentAPI.ReceiptItem ri : est.items())
-                System.out.println("\t" + ri);
+//            System.out.println("\033[4;1mEstimate:\033[0m");
+//            System.out.println("Items:");
+//            for (PaymentAPI.ReceiptItem ri : est.items())
+//                System.out.println("\t" + ri);
 
             Assertions.assertNotEquals(0, est.subtotal());
-            System.out.println("Subtotal:\t" + PaymentAPI.formatPrice(est.subtotal()));
-            System.out.println("Fees:\t\t" + PaymentAPI.formatPrice(est.fees()));
-            System.out.println("GST:\t\t" + PaymentAPI.formatPrice(est.gst()));
-            System.out.println("\033[1mTotal:\033[0m\t\t" + PaymentAPI.formatPrice(est.total()));
+//            System.out.println("Subtotal:\t" + PaymentAPI.formatPrice(est.subtotal()));
+//            System.out.println("Fees:\t\t" + PaymentAPI.formatPrice(est.fees()));
+//            System.out.println("GST:\t\t" + PaymentAPI.formatPrice(est.gst()));
+//            System.out.println("\033[1mTotal:\033[0m\t\t" + PaymentAPI.formatPrice(est.total()));
             Assertions.assertNotEquals(0, est.total());
         }
     }
@@ -157,14 +157,14 @@ public class PaymentAPITest {
         try (var trans = db.rw_transaction(null)) {
             receipt = PaymentAPI.make_purchase(userSesh, trans, order, null, mail);
             Assertions.assertNotNull(receipt);
-            System.out.println("Receipt 1 after purchase: " + receipt);
+//            System.out.println("Receipt 1 after purchase: " + receipt);
         }
         // Make a second purchase with just an account upgrade in it
         PaymentAPI.Order order2 = new PaymentAPI.Order(List.of(new PaymentAPI.AccountOrganizerUpgrade()), paymentInfo);
         try (var trans = db.rw_transaction(null)) {
             receipt = PaymentAPI.make_purchase(userSesh, trans, order2, null, mail);
             Assertions.assertNotNull(receipt);
-            System.out.println("Receipt 2 after purchase: " + receipt);
+//            System.out.println("Receipt 2 after purchase: " + receipt);
         }
 
         //TODO Check that there are less tickets left now after purchasing (need to wait until there is a way to detect this)
@@ -177,10 +177,10 @@ public class PaymentAPITest {
             ticket1 = list.get(0);
             ticket2 = list.get(1);
         }
-        System.out.println("Tickets left for ticket \"" + ticket1.name() + "\" in event " + event_id + ": " + ticket1.total_tickets());
-//        Assertions.assertNotEquals(30, ticket.total_tickets());
-        System.out.println("Tickets left for ticket \"" + ticket2.name() + "\" in event " + event_id + ": " + ticket2.total_tickets());
-//        Assertions.assertNotEquals(10, ticket.total_tickets());
+//        System.out.println("Tickets left for ticket \"" + ticket1.name() + "\" in event " + event_id + ": " + ticket1.total_tickets());
+        Assertions.assertEquals(ticket1.total_tickets(), 30);
+//        System.out.println("Tickets left for ticket \"" + ticket2.name() + "\" in event " + event_id + ": " + ticket2.total_tickets());
+        Assertions.assertEquals(ticket2.total_tickets(), 10);
     }
 
     @Test
@@ -193,9 +193,9 @@ public class PaymentAPITest {
         }
         Assertions.assertNotNull(rList);
         Assertions.assertEquals(2, rList.size()); // Make sure both orders show up
-        System.out.println("\033[4;1mReceipt List:\033[0m");
-        for (var i : rList)
-            System.out.println("\t" + i);
+//        System.out.println("\033[4;1mReceipt List:\033[0m");
+//        for (var i : rList)
+//            System.out.println("\t" + i);
     }
 
     @AfterAll

@@ -94,7 +94,7 @@ public class SearchAPITest {
             EventAPI.set_draft(auth, trans, events.getLast(), true);
             trans.tryCommit();
         }
-        System.out.println("\t\033[33;1m" + events.size() + " \033[0mfake events were made");
+//        System.out.println("\t\033[33;1m" + events.size() + " \033[0mfake events were made");
     }
 
     @Test
@@ -113,8 +113,8 @@ public class SearchAPITest {
                     null,null, null, null, SearchAPI.SortBy.Nothing
                     );
             results = SearchAPI.search_events(session, trans, s, false);
-            System.out.println("\t\033[33;1m" + results.size() + "\033[0m events found while searching for all:");
-            System.out.println("\t\t" + getColumnHeaders());
+//            System.out.println("\t\033[33;1m" + results.size() + "\033[0m events found while searching for all:");
+//            System.out.println("\t\t" + getColumnHeaders());
             printlnNicely("\t\t", results);
         }
         // Try to only get draft events
@@ -208,7 +208,7 @@ public class SearchAPITest {
                 }
             }
         }
-        System.out.println(applyESCodeToArgs(formatString, indicesToMakeYellow, "\033[33m", "\033[0m").formatted(newArgs));
+//        System.out.println(applyESCodeToArgs(formatString, indicesToMakeYellow, "\033[33m", "\033[0m").formatted(newArgs));
     }
 
     public static String applyESCodeToArgs(String input, List<Integer> argIndices, String leadingEscapeCode, String defaultCode) {

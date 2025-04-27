@@ -106,7 +106,7 @@ public class OrganzierAPITest {
         var userSesh = u1.userSession(db, null);
         try (var trans = db.rw_transaction(null)) {
             PaymentAPI.Receipt receipt = PaymentAPI.make_purchase(userSesh, trans, order, null, mail);
-            System.out.println(receipt);
+//            System.out.println(receipt);
             pid = ((PaymentAPI.TicketReceipt)receipt.items().getFirst()).id().pid(); // pid is not payment id, it's the id for the table "purchased_tickets"
         }
     }
@@ -126,7 +126,7 @@ public class OrganzierAPITest {
         OrganizerAPI.Scan scan = new OrganizerAPI.Scan(events.getFirst(), "John", ptid);
         try(var trans = db.rw_transaction(null)) {
             var receipt = OrganizerAPI.scan_ticket(auth, trans, scan);
-            System.out.println(receipt);
+//            System.out.println(receipt);
             Assertions.assertNotNull(receipt);
         }
     }
