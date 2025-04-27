@@ -74,13 +74,22 @@ public class AccountAPI {
     }
 
 
+    /** Represents a combination of an email string and a password string.
+     */
     public static class Login{
         public String email;
         public String password;
     }
 
+    /**
+     * Logs in a user (if they exist in the users DB table) by creating a session.
+     *
+     * @return Token of the user's new session.
+     */
     @Route
     public static String login(MailServer mail, @FromRequest(IpHandler.class)InetAddress ip, @FromRequest(UserAgentHandler.class)String agent, RwTransaction trans,  @Body @Json Login login, @Config boolean send_mail_on_login) throws SQLException, Unauthorized {
+
+        // Check if user exists in user table
         long user_id;
         login.password = Util.hashy((login.password+"\0\0\0\0"+login.email).getBytes());
         try(var stmt = trans.namedPreparedStatement("select id from users where email=:email AND pass=:pass")){
@@ -97,6 +106,7 @@ public class AccountAPI {
             }
         }
 
+        // Make a new session since at this point they are an existent user.
         long session_id;
         try(var stmt = trans.namedPreparedStatement("insert into sessions values(null, null, :user_id, :exp, :agent, :ip) returning id")){
             stmt.setLong(":user_id", user_id);
@@ -108,6 +118,7 @@ public class AccountAPI {
             }
         }
 
+        // Generate token for session
         var hash = Util.hashy((login.email + "\0\0\0\0" + login.password + "\0\0\0\0" + session_id + "\0\0\0\0" + System.nanoTime()).getBytes());
         var token = String.format("%s%08X", hash, session_id);
 
@@ -119,24 +130,28 @@ public class AccountAPI {
 
         trans.commit();
 
-
-        if(send_mail_on_login)
+        if (send_mail_on_login) {
             mail.sendMail(message -> {
                 Util.LocationQuery res = null;
-                try{
+                try {
                     res = Util.queryLocation(ip);
-                }catch (Exception ignore){}
+                } catch (Exception ignore) {
+                }
                 message.setRecipients(Message.RecipientType.TO, MailServer.fromStrings(login.email));
                 message.setSubject("Warning");
 
                 message.setContent("Someone logged into your account <br/>IP: " + ip + "<br/>User Agent: " + agent, "text/html");
             });
+        }
 
         Logger.getGlobal().log(Level.FINER, "User: " + login.email + " Logged in with session: " + token);
 
         return token;
     }
 
+    /** Represents a record in the 'sessions' DB table without the 'id' and 'token' fields.
+     * Is
+     */
     public static class Session{
         public long id;
         public long expiration;
@@ -144,6 +159,12 @@ public class AccountAPI {
         public String ip;
     }
 
+    /**
+     * @return A list of sessions from the 'sessions' DB table, in the form of a {@link List List} of {@link Session Sessions}.
+     * @param auth The account that's doing this
+     * @param conn Read-only connection to DB.
+     * @throws SQLException
+     */
     @Route
     public static @Json List<Session> list_sessions(UserSession auth, RoConn conn) throws SQLException {
         List<Session> result;
@@ -155,6 +176,14 @@ public class AccountAPI {
         return result;
     }
 
+    /** Remove a user sesssion. Only works if session belongs to you and it exists.
+     *
+     * @param auth The account that's doing this
+     * @param trans
+     * @param session_id
+     * @throws BadRequest If the session does not belong to you or does not exist.
+     * @throws SQLException
+     */
     @Route("/invalidate_session/<session_id>")
     @Delete
     public static void invalidate_session(UserSession auth, RwTransaction trans, @Path long session_id) throws SQLException, BadRequest {
@@ -172,6 +201,16 @@ public class AccountAPI {
         public String password;
     }
 
+    /** Deletes this user's account (auth and account must be the same account) <br>
+     * and removes their profile photo and banner from the media handler.
+     *
+     * @param auth The account that's doing this
+     * @param trans
+     * @param account The account to be deleted
+     * @param media The {@link DynamicMediaHandler} to delete this user's pfp and banner from
+     * @throws Unauthorized If auth and account don't have the same email
+     * @throws SQLException
+     */
     @Route
     public static void delete_account(UserSession auth, RwTransaction trans, @Body @Json DeleteAccount account, DynamicMediaHandler media) throws SQLException, Unauthorized {
         record DeleteResult(long picture, long banner){}
@@ -193,6 +232,9 @@ public class AccountAPI {
             media.delete(res.banner);
     }
 
+    /** Represents an email and/or password change.
+     * new_email or new_password can be null if not changing either one.
+     */
     public static class ChangeAuth {
         public String old_email;
         public String new_email;
@@ -200,6 +242,15 @@ public class AccountAPI {
         public String new_password;
     }
 
+
+    /** Changes this account's email and/or password.
+     *
+     * @param auth The account that's doing this.
+     * @param trans
+     * @param ca The username and/or password change ({@link ChangeAuth})
+     * @throws SQLException
+     * @throws BadRequest If new username and new password are null.
+     */
     @Route
     public static void change_auth(UserSession auth, RwTransaction trans, @Body @Json ChangeAuth ca) throws SQLException, BadRequest {
         if(ca.new_password==null&&ca.new_email==null)
