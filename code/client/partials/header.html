@@ -20,7 +20,23 @@
     </nav>
 </header>
 
+<style>
+    #pro-pic {
+        width: 2rem;
+        border-radius: 50%;
+        background: url(/images/profile-picture-default.png) center / contain no-repeat;
+        aspect-ratio: 1;
+        align-self: flex-start;
+    }
+</style>
+
 <script>
+
+    window.onload = async function () {
+
+    };
+
+
     async function updateAuthLinks() {
         const loginLink = document.getElementById("login-link");
         const signupLink = document.getElementById("signup-link");
@@ -34,7 +50,12 @@
             signupLink.style.display = 'none';
             logoutLink.style.display = 'inline';
 
-            signupLink.insertAdjacentHTML('afterend', '<a href="/account"><i class="fa-regular fa-circle-user"></i></a>');
+            signupLink.insertAdjacentHTML('afterend', '<a href="/account"><div id="pro-pic"></div></a>');
+
+            const info = await page.account.userinfo();
+
+            console.log(info); // Log info to check structure
+            document.getElementById("pro-pic").style.backgroundImage = `url('/media/${info.picture}')`;
 
             logoutLink.onclick = function () {
                 utility.logout();
