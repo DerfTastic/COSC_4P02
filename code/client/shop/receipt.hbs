@@ -98,7 +98,13 @@
             </tr>
             <tr>
                 <td bgcolor="#2a3e59">
+
+                    {{#hasTickets items}}
                     <h2 style="color: #eeeef0;" align="center">Your Tickets</h2>
+                    {{else}}
+                    <h2 style="color: #eeeef0;" align="center">Account Upgrade Summary</h2>
+                    {{/hasTickets}}
+
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="10" bgcolor="#eeeef0">
                         <tbody >
                             {{#each items}}
@@ -106,39 +112,36 @@
                             <tr>
                                 <td align="center" bgcolor="#2a3e59">
                                     <h3 style="color: #eeeef0;"><strong>Type:</strong> {{name}}</h3>
-                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> {{formatPrice purchase_price}}
-                                    </h3>
-                                    <table role="presentation" bgcolor="#eeeef0" cellspacing="0"
-                                        cellpadding="30" style="border-radius: 10px;">
+                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> {{formatPrice purchase_price}}</h3>
+                                    <table role="presentation" bgcolor="#eeeef0" cellspacing="0" cellpadding="30" style="border-radius: 10px;">
                                         <tr>
-                                            <!-- QR Code Column -->
                                             <td align="center">
-                                                <img 
-                                                    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={{encodeURI (json id)}}"
-                                                    alt="QR Code">
+                                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={{encodeURI (json id)}}" alt="QR Code">
                                             </td>
-
-                                            <!-- Event Info Column -->
                                             <td style="color: #2a3e59;">
                                                 <h2 align="left" style="margin: 0;">{{event_name}}</h2>
-                                                <p align="left">
-                                                    <font size="4">Date: {{formatDate event_date}}</font>
-                                                </p>
-                                                <p align="left">
-                                                    <font size="4">Location: {{location_name}}</font>
-                                                </p>
-                                                <p align="left">
-                                                    <font size="4">Organizer: {{organizer_name}}</font>
-                                                </p>
+                                                <p align="left"><font size="4">Date: {{formatDate event_date}}</font></p>
+                                                <p align="left"><font size="4">Location: {{location_name}}</font></p>
+                                                <p align="left"><font size="4">Organizer: {{organizer_name}}</font></p>
                                             </td>
                                         </tr>
                                     </table>
-
                                 </td>
                             </tr>
                             {{else}}
                             <tr>
-                                Account Organizer Upgrade
+                                <td align="center" bgcolor="#2a3e59">
+                                    <h3 style="color: #eeeef0;"><strong>Purchase:</strong> Account Organizer Upgrade</h3>
+                                    <h3 style="color: #eeeef0;"><strong>Price:</strong> {{formatPrice purchase_price}}</h3>
+                                    <table role="presentation" bgcolor="#eeeef0" cellspacing="0" cellpadding="30" style="border-radius: 10px;">
+                                        <tr>
+                                            <td style="color: #2a3e59;" align="center">
+                                                <h2>Account Upgraded to Organizer</h2>
+                                                <p>No QR code required for this purchase.</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
                             </tr>
                             {{/if}}
                             {{/each}}

@@ -11,27 +11,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Config {
+    // Default webserver configuration
     public final Integer web_threads = initialize(256);
     public final Boolean wipe_db_on_start = initialize(false);
     public final Boolean store_db_in_memory = initialize(false);
+
+    // Default network configuration
     public final String hostname = initialize("localhost");
     public final Integer port = initialize(80);
+    public final Integer backlog = initialize(0); // Length of queue for incoming connections
 
-    public final Integer backlog = initialize(0);
-
+    // Paths and directories for Ticket Express
     public final String db_path = initialize("db/database.db");
     public final String dynamic_media_path = initialize("media");
     public final Long dynamic_media_cache_size = initialize(1L<<30);
     public final String secrets_path = initialize("secrets");
-
     public final String log_path = initialize("logs");
-
     public final String static_content_path = initialize("site");
 
+    // Ticket Express feature toggles
     public final Boolean cache_static_content = initialize(false);
-
     public final Boolean create_paths = initialize(true);
-
     public final Boolean send_mail = initialize(false);
     public final Boolean send_mail_on_register = initialize(false);
     public final Boolean send_mail_on_login = initialize(false);
@@ -39,6 +39,7 @@ public class Config {
     public final String url_root = initialize("http://localhost:80");
     public final String sender_filter = initialize(".*");
 
+    // Convert configuration fields into a `java.util.Properties` object
     private Properties to_properties() {
         var properties = new Properties();
         for (var field : Config.class.getFields()) {
@@ -52,8 +53,10 @@ public class Config {
         return properties;
     }
 
+    // Constructor for a default Config object
     public Config(){}
 
+    // Utility method for turning command line args into Properties
     public static Properties config(String... args){
         var properties = new Properties();
         for(int i = 0; i < args.length; i ++){
@@ -62,10 +65,13 @@ public class Config {
         return properties;
     }
 
+    // Create config from command-line args
     public Config(String... args){
         this(config(args));
 
     }
+
+    // Create config from a Properties object
     public Config(Properties properties){
         try{
             for (var field : Config.class.getFields()) {
@@ -92,6 +98,7 @@ public class Config {
         }
     }
 
+    // Load config from 'server.properties', or create it with defaults
     public static Config init() throws IOException {
         if (!Files.exists(Path.of("server.properties"))) {
             var config = new Config();
@@ -122,6 +129,8 @@ public class Config {
         return config;
     }
 
+    // This method uses Java's reflection mechanic to dynamically access a public field
+    // from a `Config` object. Casts to the expected type T.
     @SuppressWarnings("unchecked")
     public <T> T get(String name, Class<T> type) {
         try {
