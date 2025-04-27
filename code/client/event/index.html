@@ -8,6 +8,7 @@
     <script src="/js/api.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/countdown@2.6.0/countdown.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="icon" href="/images/logo.png" sizes="64x64" type="image/x-icon">
     <!-- optional -->
 
     <link rel="stylesheet" href="/style/styles.css">
@@ -88,7 +89,8 @@
         .left-column #eventDetails {
             flex: 0.7;
         }
-        .eventPage-2 .left-column{
+
+        .eventPage-2 .left-column {
             flex: 1;
         }
 
@@ -187,7 +189,7 @@
         }
 
         .organizerInfo>* {
-            padding: 0 20px;
+            padding: 0 1rem;
         }
 
         .organizerInfo {
@@ -426,11 +428,30 @@
             /* Height will adjust based on the aspect ratio */
         }
 
+        .profile-picture {
+            width: 6rem;
+            border-radius: 50%;
+            background: url(/images/profile-picture-default.png) center / contain no-repeat;
+            aspect-ratio: 1;
+            align-self: flex-start;
+        }
 
+        .profile {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
 
+        p {
+            overflow-wrap: anywhere;
+        }
 
-
-
+        .profile-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+        }
 
 
         @media (max-width: 768px) {
@@ -468,24 +489,24 @@
         }
 
         div#content {
-    position: fixed;
-    top: 80px;
-    left: 40px;
-    bottom: 25px;
-    min-width: 200px;
-    width: 40%;
-    background: black;
-}
+            position: fixed;
+            top: 80px;
+            left: 40px;
+            bottom: 25px;
+            min-width: 200px;
+            width: 40%;
+            background: black;
+        }
 
-div#content iframe {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    width: 100%;
-}
+        div#content iframe {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+        }
     </style>
 </head>
 <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
@@ -537,12 +558,18 @@ div#content iframe {
                     </div>
 
                     <div class="right-column organizerInfo">
-                        <a href="#" id="profileLink" style="text-decoration: none; color: #eeeef0;">
-                            <h2>Organizer Information:</h2>
+                        <div class="profile">
+                            <a href="#" id="profileLink" style="text-decoration: none; color: #eeeef0;">
+                                <h2>Organizer Information:</h2>
 
-                            <p><span id="owner"></span></p>
-                        </a>
+                                <div class="profile-details">
+                                    <p><span id="owner"></span></p>
+                                    <div class="profile-picture" id="profilePic"></div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
+
 
                     <div class="right-column">
                         <div id="eventTags"></div>
@@ -688,6 +715,12 @@ div#content iframe {
 
                 // If release_time is 0 (normal behavior)
                 profileLink.href = `/user/profile?id=${get_event.owner.id}`;
+
+                info = await api.user.userinfo(get_event.owner.id);
+
+                // Make sure to use backticks (`) to include the dynamic `info.picture` value correctly
+                document.getElementById("profilePic").style.backgroundImage = `url('/media/${info.picture}')`;
+
 
                 const event = get_event;
                 const tags = get_event.tags;
@@ -864,34 +897,20 @@ div#content iframe {
                     }
                 }
             });
-            if (items.length > 0) window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
+
+            const session = cookies.getSession();
+            if (!session || session.length === 0) {
+                // Not logged in, send to login page
+                window.location.href = "/account/login";
+                return;
+            }
+
+            if (items.length > 0) {
+                // Logged in and has items, send to checkout
+                window.location.href = `/shop/checkout?items=${encodeURIComponent(JSON.stringify(items))}`;
+            }
+
         }
-
-
-        // Assuming this is the URL of your game
-
-
-        // function replaceImageWithGame() {
-        //     const gameDiv = document.querySelector('.gameDiv');
-
-        //     if (!gameDiv) {
-        //         console.error('Error: gameDiv not found');
-        //         return;
-        //     }
-
-        //     // Clear the inside of gameDiv
-        //     gameDiv.innerHTML = '';
-
-        //     // Create an iframe element
-        //     const iframe = document.createElement('iframe');
-        //     iframe.src = "/games/flappy"; // Set your game URL
-        //     iframe.width = "100%"; // Adjust width as needed
-        //     iframe.height = "500px"; // Adjust height as needed
-        //     iframe.style.border = "none"; // Optional: remove border
-
-        //     // Add the iframe to gameDiv
-        //     gameDiv.appendChild(iframe);
-        // }
 
         function replaceImageWithGame() {
             const gameOverlay = document.querySelector('.eventPage-2 #gameOverlay');
@@ -915,13 +934,6 @@ div#content iframe {
                 eventImage.style.display = 'block'; // Show the event image again
             }
         }
-
-
-
-
-
-
-
 
     </script>
 
