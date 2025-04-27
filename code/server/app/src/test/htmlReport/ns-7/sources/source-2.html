@@ -1,0 +1,874 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RouteImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">framework.web.route</a>
+</div>
+
+<h1>Coverage Summary for Class: RouteImpl (framework.web.route)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RouteImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/178)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/425)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RouteImpl$RouteRequest</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/43)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/182)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/432)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package framework.web.route;
+&nbsp;
+&nbsp;import com.sun.net.httpserver.HttpExchange;
+&nbsp;import com.sun.net.httpserver.HttpHandler;
+&nbsp;import framework.util.func.*;
+&nbsp;import framework.web.request.Request;
+&nbsp;import framework.web.request.RequestHandler;
+&nbsp;import framework.web.WebServer;
+&nbsp;import framework.web.annotations.Route;
+&nbsp;import framework.web.annotations.http.Delete;
+&nbsp;import framework.web.annotations.http.Get;
+&nbsp;import framework.web.annotations.http.Post;
+&nbsp;import framework.web.annotations.http.Put;
+&nbsp;import framework.web.error.ClientError;
+&nbsp;import framework.web.error.MethodNotAllowed;
+&nbsp;import framework.util.TypeReflect;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.PrintWriter;
+&nbsp;import java.io.StringWriter;
+&nbsp;import java.lang.invoke.LambdaMetafactory;
+&nbsp;import java.lang.invoke.MethodHandles;
+&nbsp;import java.lang.invoke.MethodType;
+&nbsp;import java.lang.reflect.Method;
+&nbsp;import java.lang.reflect.Modifier;
+&nbsp;import java.util.*;
+&nbsp;import java.util.logging.Level;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;public class RouteImpl {
+<b class="nc">&nbsp;    private final static Class&lt;?&gt;[] consumers = new Class[]{Consume0.class, Consume1.class, Consume2.class, Consume3.class, Consume4.class, Consume5.class, Consume6.class};</b>
+<b class="nc">&nbsp;    private final static Class&lt;?&gt;[] functions = new Class[]{Function0.class, Function1.class, Function2.class, Function3.class, Function4.class, Function5.class, Function6.class};</b>
+&nbsp;
+&nbsp;    public final Method sourceMethod;
+&nbsp;    public final String path;
+&nbsp;    private final String[] pathParts;
+&nbsp;    private final RouteParameter&lt;?&gt;[] phs;
+&nbsp;    private final RouteReturn&lt;?&gt; ret;
+&nbsp;    public final RequestHandler handler;
+&nbsp;    public final int code;
+&nbsp;    public final String method;
+&nbsp;
+<b class="nc">&nbsp;    public RouteImpl(Method sourceMethod, String parentPath, RequestsBuilder builder) {</b>
+<b class="nc">&nbsp;        this.sourceMethod = sourceMethod;</b>
+&nbsp;
+<b class="nc">&nbsp;        var route = sourceMethod.getAnnotation(Route.class);</b>
+<b class="nc">&nbsp;        this.code = route.code();</b>
+<b class="nc">&nbsp;        var p = route.value().isEmpty()?sourceMethod.getName():route.value().substring(1);</b>
+<b class="nc">&nbsp;        this.pathParts = (parentPath+p).split(&quot;/&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        StringBuilder path = new StringBuilder();</b>
+<b class="nc">&nbsp;        for (String pathPart : this.pathParts) {</b>
+<b class="nc">&nbsp;            if (pathPart.contains(&quot;&lt;&quot;)) break;</b>
+<b class="nc">&nbsp;            if (pathPart.isEmpty()) continue;</b>
+<b class="nc">&nbsp;            path.append(&quot;/&quot;).append(pathPart);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        path = new StringBuilder((path.isEmpty()) ? &quot;/&quot; : path.toString());</b>
+<b class="nc">&nbsp;        this.path = path.toString();</b>
+&nbsp;
+<b class="nc">&nbsp;        if(sourceMethod.getAnnotation(Get.class) != null){</b>
+<b class="nc">&nbsp;            this.method = &quot;GET&quot;;</b>
+<b class="nc">&nbsp;        }else if(sourceMethod.getAnnotation(Post.class) != null){</b>
+<b class="nc">&nbsp;            this.method = &quot;POST&quot;;</b>
+<b class="nc">&nbsp;        }else if(sourceMethod.getAnnotation(Delete.class) != null){</b>
+<b class="nc">&nbsp;            this.method = &quot;DELETE&quot;;</b>
+<b class="nc">&nbsp;        }else if(sourceMethod.getAnnotation(Put.class) != null){</b>
+<b class="nc">&nbsp;            this.method = &quot;PUT&quot;;</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            this.method = null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if(!Modifier.isStatic(sourceMethod.getModifiers()))</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Route method &#39;&quot; + sourceMethod.getName() + &quot;&#39; needs to be static!&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        var params = sourceMethod.getParameters();</b>
+<b class="nc">&nbsp;        phs = new RouteParameter[params.length];</b>
+&nbsp;
+&nbsp;        try{
+<b class="nc">&nbsp;            ret = builder.getReturnHandler(this, sourceMethod);</b>
+&nbsp;
+<b class="nc">&nbsp;            for(int i = 0; i &lt; phs.length; i ++) {</b>
+<b class="nc">&nbsp;                phs[i] = builder.getParameterHandler(this, params[i]);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            this.handler = makeHandler();</b>
+&nbsp;        }catch (Throwable e){
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.SEVERE, &quot;Failed to construct API route&quot;, e);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;PointlessArithmeticExpression&quot;)
+&nbsp;    private RequestHandler makeHandler() throws Throwable {
+<b class="nc">&nbsp;        var params = sourceMethod.getParameters();</b>
+&nbsp;
+&nbsp;        // fallback(slower)
+<b class="nc">&nbsp;        if(sourceMethod.getParameters().length &gt; 6){</b>
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.WARNING, &quot;Route method uses more than 6 parameters, A slower handler will be used&quot;);</b>
+<b class="nc">&nbsp;            return createRoute();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        var caller = MethodHandles.lookup();</b>
+<b class="nc">&nbsp;        var implementation = caller.findStatic(sourceMethod.getDeclaringClass(), sourceMethod.getName(), MethodType.methodType(sourceMethod.getReturnType(), sourceMethod.getParameterTypes()));</b>
+&nbsp;
+<b class="nc">&nbsp;        boolean isVoid = sourceMethod.getReturnType().equals(void.class);</b>
+<b class="nc">&nbsp;        var factoryType = MethodType.methodType(isVoid?consumers[params.length]:functions[params.length]);</b>
+<b class="nc">&nbsp;        var interfaceMethodName = &quot;call&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;        Class&lt;?&gt;[] args = new Class&lt;?&gt;[params.length];</b>
+<b class="nc">&nbsp;        Arrays.fill(args, Object.class);</b>
+<b class="nc">&nbsp;        var interfaceMethodType = MethodType.methodType(isVoid?void.class:Object.class, args);</b>
+<b class="nc">&nbsp;        var types = sourceMethod.getParameterTypes();</b>
+<b class="nc">&nbsp;        for(int i = 0; i &lt; types.length; i ++){</b>
+<b class="nc">&nbsp;            if(types[i].isPrimitive()) types[i] = TypeReflect.wrapPrimitives(types[i]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        var dynamicMethodType = MethodType.methodType(isVoid?void.class:Object.class, types);</b>
+&nbsp;
+<b class="nc">&nbsp;        var factory = LambdaMetafactory.metafactory(</b>
+&nbsp;                caller,
+&nbsp;                interfaceMethodName,
+&nbsp;                factoryType,
+&nbsp;                interfaceMethodType,
+&nbsp;                implementation,
+&nbsp;                dynamicMethodType
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        var lambda = factory.getTarget().invoke();</b>
+<b class="nc">&nbsp;        return switch((isVoid?0:1)+params.length*2){</b>
+<b class="nc">&nbsp;            case 0 *2 -&gt; createRoute((Consume0)lambda);</b>
+<b class="nc">&nbsp;            case 1 *2 -&gt; createRoute((Consume1&lt;?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 2 *2 -&gt; createRoute((Consume2&lt;?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 3 *2 -&gt; createRoute((Consume3&lt;?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 4 *2 -&gt; createRoute((Consume4&lt;?, ?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 5 *2 -&gt; createRoute((Consume5&lt;?, ?, ?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 6 *2 -&gt; createRoute((Consume6&lt;?, ?, ?, ?, ?, ?&gt;)lambda);</b>
+&nbsp;
+<b class="nc">&nbsp;            case 0 *2+1 -&gt; createRoute((Function0&lt;?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 1 *2+1 -&gt; createRoute((Function1&lt;?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 2 *2+1 -&gt; createRoute((Function2&lt;?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 3 *2+1 -&gt; createRoute((Function3&lt;?, ?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 4 *2+1 -&gt; createRoute((Function4&lt;?, ?, ?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 5 *2+1 -&gt; createRoute((Function5&lt;?, ?, ?, ?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            case 6 *2+1 -&gt; createRoute((Function6&lt;?, ?, ?, ?, ?, ?, ?&gt;)lambda);</b>
+<b class="nc">&nbsp;            default -&gt; throw new RuntimeException(&quot;Invalid State&quot;);</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    public int findPathPartIndex(String value) {
+<b class="nc">&nbsp;        for(int i = 0; i &lt; pathParts.length; i ++){</b>
+<b class="nc">&nbsp;            if(pathParts[i].equals(&quot;&lt;&quot;+value+&quot;&gt;&quot;)){</b>
+<b class="nc">&nbsp;                return i;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;Cannot find path part &#39;&quot; + value + &quot;&#39; for &quot; + sourceMethod);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void parameterDestructError(int param, Throwable e){
+<b class="nc">&nbsp;        Logger.getGlobal().logp(Level.SEVERE,</b>
+<b class="nc">&nbsp;                sourceMethod.getDeclaringClass().getName(),</b>
+<b class="nc">&nbsp;                sourceMethod.getName(),</b>
+<b class="nc">&nbsp;                &quot;Exception destructing parameter(&quot;+param+&quot;) &quot;+ sourceMethod.getParameters()[param]+&quot; for route&#39;&quot; + path + &quot;&#39;&quot; + param,</b>
+&nbsp;                e
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    private void parameterDestructOnErrorError(int param, Throwable e){
+<b class="nc">&nbsp;        parameterDestructError(param, e);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void routeError(Request request, Throwable e){
+<b class="nc">&nbsp;        Logger.getGlobal().logp(Level.SEVERE,</b>
+<b class="nc">&nbsp;                sourceMethod.getDeclaringClass().getName(),</b>
+<b class="nc">&nbsp;                sourceMethod.getName(),</b>
+&nbsp;                &quot;Error while servicing route &#39;&quot; + path + &quot;&#39;&quot;,
+&nbsp;                e
+&nbsp;        );
+&nbsp;        try{
+<b class="nc">&nbsp;            sendServerError(request, &quot;Server failed to complete request&quot;, e);</b>
+&nbsp;        }catch (Exception ignore){}
+&nbsp;    }
+&nbsp;
+&nbsp;    public void sendServerError(Request request, String message, Throwable exception) {
+&nbsp;        try{
+<b class="nc">&nbsp;            var ps = new StringWriter();</b>
+<b class="nc">&nbsp;            exception.printStackTrace(new PrintWriter(ps));</b>
+<b class="nc">&nbsp;            request.sendResponse(500, message + &quot;\n&quot; + ps);</b>
+&nbsp;        }catch (IOException e){
+<b class="nc">&nbsp;            Logger.getGlobal().log(Level.SEVERE, &quot;Failed to send server error message&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public HttpHandler handler(WebServer server){
+<b class="nc">&nbsp;        return exchange -&gt; this.handler.handle(new RouteRequest(server, exchange,path));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private class RouteRequest extends Request{
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public void begin() throws MethodNotAllowed {
+<b class="nc">&nbsp;            if (method != null &amp;&amp; !method.equalsIgnoreCase(exchange.getRequestMethod()))</b>
+<b class="nc">&nbsp;                throw new MethodNotAllowed();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        public RouteRequest(WebServer server, HttpExchange exchange, String mountedPath) {</b>
+<b class="nc">&nbsp;            super(server, exchange, mountedPath);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        protected void logResponse(String path, int code, int len) {
+<b class="nc">&nbsp;            Logger.getGlobal().logp(</b>
+<b class="nc">&nbsp;                    Level.FINE, sourceMethod.getDeclaringClass().getName(), sourceMethod.getName(),</b>
+&nbsp;                    &quot;Requested: &#39;&quot;+ path +&quot;&#39;&quot; + &quot; Response Code: &quot;+code+&quot; Content Length: &quot;+len
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public int code() {
+<b class="nc">&nbsp;            return RouteImpl.this.code;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected RequestHandler createRoute(){
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            Object[] r = new Object[phs.length];</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                for(int i = 0; i &lt; phs.length; i ++)</b>
+<b class="nc">&nbsp;                    r[i] = phs[i].construct(request);</b>
+<b class="nc">&nbsp;                var response = sourceMethod.invoke(null, r);</b>
+<b class="nc">&nbsp;                ((RouteReturn&lt;Object&gt;)ret).send(request, response);</b>
+&nbsp;            }catch (Throwable re){
+<b class="nc">&nbsp;                for(int i = 0; i &lt; phs.length; i ++)</b>
+&nbsp;                    try{
+<b class="nc">&nbsp;                        if(r[i]!=null)</b>
+<b class="nc">&nbsp;                            ((RouteParameter&lt;Object&gt;)phs[i]).destructError(request, r[i]);</b>
+&nbsp;                    }catch (Exception e){
+<b class="nc">&nbsp;                        parameterDestructOnErrorError(i, e);</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            for(int i = 0; i &lt; phs.length; i ++)</b>
+&nbsp;                try{
+<b class="nc">&nbsp;                    if(r[i]!=null)((RouteParameter&lt;Object&gt;)phs[i]).destruct(request, r[i]);</b>
+&nbsp;                }catch (Exception e){
+<b class="nc">&nbsp;                    parameterDestructOnErrorError(i, e);</b>
+&nbsp;                }
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings({&quot;unchecked&quot;, &quot;UnnecessaryReturnStatement&quot;})
+&nbsp;    protected RequestHandler createRoute(Consume0 route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                route.call();</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;T1&gt; RequestHandler createRoute(Consume1&lt;T1&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                route.call(r1);</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;T1, T2&gt; RequestHandler createRoute(Consume2&lt;T1, T2&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                route.call(r1, r2);</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;T1, T2, T3&gt; RequestHandler createRoute(Consume3&lt;T1, T2, T3&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                route.call(r1, r2, r3);</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;T1, T2, T3, T4&gt; RequestHandler createRoute(Consume4&lt;T1, T2, T3, T4&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        final var r4_ph = (RouteParameter&lt;T4&gt;)phs[3];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+<b class="nc">&nbsp;            T4 r4 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                r4 = r4_ph.construct(request);</b>
+<b class="nc">&nbsp;                route.call(r1, r2, r3, r4);</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                try{if(r4!=null)r4_ph.destructError(request, r4);}catch (Exception e){parameterDestructOnErrorError(4, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+<b class="nc">&nbsp;            try{r4_ph.destruct(request, r4);}catch (Exception e){parameterDestructError(4, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;T1, T2, T3, T4, T5&gt; RequestHandler createRoute(Consume5&lt;T1, T2, T3, T4, T5&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        final var r4_ph = (RouteParameter&lt;T4&gt;)phs[3];</b>
+<b class="nc">&nbsp;        final var r5_ph = (RouteParameter&lt;T5&gt;)phs[4];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+<b class="nc">&nbsp;            T4 r4 = null;</b>
+<b class="nc">&nbsp;            T5 r5 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                r4 = r4_ph.construct(request);</b>
+<b class="nc">&nbsp;                r5 = r5_ph.construct(request);</b>
+<b class="nc">&nbsp;                route.call(r1, r2, r3, r4, r5);</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                try{if(r4!=null)r4_ph.destructError(request, r4);}catch (Exception e){parameterDestructOnErrorError(4, e);}</b>
+<b class="nc">&nbsp;                try{if(r5!=null)r5_ph.destructError(request, r5);}catch (Exception e){parameterDestructOnErrorError(5, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+<b class="nc">&nbsp;            try{r4_ph.destruct(request, r4);}catch (Exception e){parameterDestructError(4, e);}</b>
+<b class="nc">&nbsp;            try{r5_ph.destruct(request, r5);}catch (Exception e){parameterDestructError(5, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;T1, T2, T3, T4, T5, T6&gt; RequestHandler createRoute(Consume6&lt;T1, T2, T3, T4, T5, T6&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;Void&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        final var r4_ph = (RouteParameter&lt;T4&gt;)phs[3];</b>
+<b class="nc">&nbsp;        final var r5_ph = (RouteParameter&lt;T5&gt;)phs[4];</b>
+<b class="nc">&nbsp;        final var r6_ph = (RouteParameter&lt;T6&gt;)phs[5];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+<b class="nc">&nbsp;            T4 r4 = null;</b>
+<b class="nc">&nbsp;            T5 r5 = null;</b>
+<b class="nc">&nbsp;            T6 r6 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                r4 = r4_ph.construct(request);</b>
+<b class="nc">&nbsp;                r5 = r5_ph.construct(request);</b>
+<b class="nc">&nbsp;                r6 = r6_ph.construct(request);</b>
+<b class="nc">&nbsp;                route.call(r1, r2, r3, r4, r5, r6);</b>
+<b class="nc">&nbsp;                rh.send(request, null);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                try{if(r4!=null)r4_ph.destructError(request, r4);}catch (Exception e){parameterDestructOnErrorError(4, e);}</b>
+<b class="nc">&nbsp;                try{if(r5!=null)r5_ph.destructError(request, r5);}catch (Exception e){parameterDestructOnErrorError(5, e);}</b>
+<b class="nc">&nbsp;                try{if(r6!=null)r6_ph.destructError(request, r6);}catch (Exception e){parameterDestructOnErrorError(6, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+<b class="nc">&nbsp;            try{r4_ph.destruct(request, r4);}catch (Exception e){parameterDestructError(4, e);}</b>
+<b class="nc">&nbsp;            try{r5_ph.destruct(request, r5);}catch (Exception e){parameterDestructError(5, e);}</b>
+<b class="nc">&nbsp;            try{r6_ph.destruct(request, r6);}catch (Exception e){parameterDestructError(6, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings({&quot;unchecked&quot;, &quot;UnnecessaryReturnStatement&quot;})
+&nbsp;    protected &lt;R&gt; RequestHandler createRoute(Function0&lt;R&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                var result = route.call();</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;R, T1&gt; RequestHandler createRoute(Function1&lt;R, T1&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                var result = route.call(r1);</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;R, T1, T2&gt; RequestHandler createRoute(Function2&lt;R, T1, T2&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                var result = route.call(r1, r2);</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;R, T1, T2, T3&gt; RequestHandler createRoute(Function3&lt;R, T1, T2, T3&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                var result = route.call(r1, r2, r3);</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;R, T1, T2, T3, T4&gt; RequestHandler createRoute(Function4&lt;R, T1, T2, T3, T4&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        final var r4_ph = (RouteParameter&lt;T4&gt;)phs[3];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+<b class="nc">&nbsp;            T4 r4 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                r4 = r4_ph.construct(request);</b>
+<b class="nc">&nbsp;                var result = route.call(r1, r2, r3, r4);</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                try{if(r4!=null)r4_ph.destructError(request, r4);}catch (Exception e){parameterDestructOnErrorError(4, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+<b class="nc">&nbsp;            try{r4_ph.destruct(request, r4);}catch (Exception e){parameterDestructError(4, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;R, T1, T2, T3, T4, T5&gt; RequestHandler createRoute(Function5&lt;R, T1, T2, T3, T4, T5&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        final var r4_ph = (RouteParameter&lt;T4&gt;)phs[3];</b>
+<b class="nc">&nbsp;        final var r5_ph = (RouteParameter&lt;T5&gt;)phs[4];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+<b class="nc">&nbsp;            T4 r4 = null;</b>
+<b class="nc">&nbsp;            T5 r5 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                r4 = r4_ph.construct(request);</b>
+<b class="nc">&nbsp;                r5 = r5_ph.construct(request);</b>
+<b class="nc">&nbsp;                var result = route.call(r1, r2, r3, r4, r5);</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                try{if(r4!=null)r4_ph.destructError(request, r4);}catch (Exception e){parameterDestructOnErrorError(4, e);}</b>
+<b class="nc">&nbsp;                try{if(r5!=null)r5_ph.destructError(request, r5);}catch (Exception e){parameterDestructOnErrorError(5, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+<b class="nc">&nbsp;            try{r4_ph.destruct(request, r4);}catch (Exception e){parameterDestructError(4, e);}</b>
+<b class="nc">&nbsp;            try{r5_ph.destruct(request, r5);}catch (Exception e){parameterDestructError(5, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    protected &lt;R, T1, T2, T3, T4, T5, T6&gt; RequestHandler createRoute(Function6&lt;R, T1, T2, T3, T4, T5, T6&gt; route){
+<b class="nc">&nbsp;        final var rh = (RouteReturn&lt;R&gt;)ret;</b>
+<b class="nc">&nbsp;        final var r1_ph = (RouteParameter&lt;T1&gt;)phs[0];</b>
+<b class="nc">&nbsp;        final var r2_ph = (RouteParameter&lt;T2&gt;)phs[1];</b>
+<b class="nc">&nbsp;        final var r3_ph = (RouteParameter&lt;T3&gt;)phs[2];</b>
+<b class="nc">&nbsp;        final var r4_ph = (RouteParameter&lt;T4&gt;)phs[3];</b>
+<b class="nc">&nbsp;        final var r5_ph = (RouteParameter&lt;T5&gt;)phs[4];</b>
+<b class="nc">&nbsp;        final var r6_ph = (RouteParameter&lt;T6&gt;)phs[5];</b>
+<b class="nc">&nbsp;        return request -&gt; {</b>
+<b class="nc">&nbsp;            T1 r1 = null;</b>
+<b class="nc">&nbsp;            T2 r2 = null;</b>
+<b class="nc">&nbsp;            T3 r3 = null;</b>
+<b class="nc">&nbsp;            T4 r4 = null;</b>
+<b class="nc">&nbsp;            T5 r5 = null;</b>
+<b class="nc">&nbsp;            T6 r6 = null;</b>
+&nbsp;            try{
+<b class="nc">&nbsp;                request.begin();</b>
+<b class="nc">&nbsp;                r1 = r1_ph.construct(request);</b>
+<b class="nc">&nbsp;                r2 = r2_ph.construct(request);</b>
+<b class="nc">&nbsp;                r3 = r3_ph.construct(request);</b>
+<b class="nc">&nbsp;                r4 = r4_ph.construct(request);</b>
+<b class="nc">&nbsp;                r5 = r5_ph.construct(request);</b>
+<b class="nc">&nbsp;                r6 = r6_ph.construct(request);</b>
+<b class="nc">&nbsp;                var result = route.call(r1, r2, r3, r4, r5, r6);</b>
+<b class="nc">&nbsp;                rh.send(request, result);</b>
+&nbsp;            }catch (Exception re){
+<b class="nc">&nbsp;                try{if(r1!=null)r1_ph.destructError(request, r1);}catch (Exception e){parameterDestructOnErrorError(1, e);}</b>
+<b class="nc">&nbsp;                try{if(r2!=null)r2_ph.destructError(request, r2);}catch (Exception e){parameterDestructOnErrorError(2, e);}</b>
+<b class="nc">&nbsp;                try{if(r3!=null)r3_ph.destructError(request, r3);}catch (Exception e){parameterDestructOnErrorError(3, e);}</b>
+<b class="nc">&nbsp;                try{if(r4!=null)r4_ph.destructError(request, r4);}catch (Exception e){parameterDestructOnErrorError(4, e);}</b>
+<b class="nc">&nbsp;                try{if(r5!=null)r5_ph.destructError(request, r5);}catch (Exception e){parameterDestructOnErrorError(5, e);}</b>
+<b class="nc">&nbsp;                try{if(r6!=null)r6_ph.destructError(request, r6);}catch (Exception e){parameterDestructOnErrorError(6, e);}</b>
+<b class="nc">&nbsp;                if(re instanceof ClientError e)</b>
+<b class="nc">&nbsp;                    e.respond(request);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    routeError(request, re);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            try{r1_ph.destruct(request, r1);}catch (Exception e){parameterDestructError(1, e);}</b>
+<b class="nc">&nbsp;            try{r2_ph.destruct(request, r2);}catch (Exception e){parameterDestructError(2, e);}</b>
+<b class="nc">&nbsp;            try{r3_ph.destruct(request, r3);}catch (Exception e){parameterDestructError(3, e);}</b>
+<b class="nc">&nbsp;            try{r4_ph.destruct(request, r4);}catch (Exception e){parameterDestructError(4, e);}</b>
+<b class="nc">&nbsp;            try{r5_ph.destruct(request, r5);}catch (Exception e){parameterDestructError(5, e);}</b>
+<b class="nc">&nbsp;            try{r6_ph.destruct(request, r6);}catch (Exception e){parameterDestructError(6, e);}</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

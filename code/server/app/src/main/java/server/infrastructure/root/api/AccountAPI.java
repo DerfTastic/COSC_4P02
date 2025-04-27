@@ -721,7 +721,7 @@ public class AccountAPI {
      * @param mail The {@link MailServer} used to send the password reset email
      * @param trans The read/write DB transaction this is going to happening in
      * @param reset The {@link PasswordReset PasswordReset} object containing the token, email, and new password.
-     * @param prm The PasswordResetManager used to validate and remove the reset token.
+     * @param prm The {@link PasswordResetManager PasswordResetManager} used to validate and remove the reset token.
      * @throws SQLException If there is an error while interacting with the database during password update.
      * @throws BadRequest If the reset token is invalid or the email does not match.
      */

@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SqlSerde</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">framework.util</a>
+</div>
+
+<h1>Coverage Summary for Class: SqlSerde (framework.util)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SqlSerde</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (5/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.9%
+  </span>
+  <span class="absValue">
+    (43/73)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.7%
+  </span>
+  <span class="absValue">
+    (37/62)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SqlSerde$Consume</td>
+  </tr>
+  <tr>
+    <td class="name">SqlSerde$Map</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (5/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.9%
+  </span>
+  <span class="absValue">
+    (43/73)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.7%
+  </span>
+  <span class="absValue">
+    (37/62)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package framework.util;
+&nbsp;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSON;
+&nbsp;import com.alibaba.fastjson2.JSONArray;
+&nbsp;import com.alibaba.fastjson2.JSONObject;
+&nbsp;import java.lang.reflect.Field;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.lang.reflect.Modifier;
+&nbsp;import java.sql.ResultSet;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+<b class="nc">&nbsp;public class SqlSerde {</b>
+&nbsp;
+&nbsp;    private static &lt;T&gt; Stream&lt;Field&gt; memberFields(T obj){
+<b class="nc">&nbsp;        return Arrays.stream(obj.getClass().getFields())</b>
+<b class="nc">&nbsp;                .filter(f -&gt; !Modifier.isTransient(f.getModifiers()))</b>
+<b class="nc">&nbsp;                .filter(f -&gt; !Modifier.isStatic(f.getModifiers()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; Stream&lt;Tuple&lt;String, Object&gt;&gt; sqlParameterize(T obj){
+<b class="nc">&nbsp;        return memberFields(obj).map(f -&gt; {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                return new Tuple&lt;&gt;(&quot;:&quot;+f.getName(), f.get(obj));</b>
+&nbsp;            } catch (IllegalAccessException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Long nullableLong(ResultSet rs, String totalTickets) throws SQLException {
+<b class="fc">&nbsp;        long l = rs.getLong(totalTickets);</b>
+<b class="fc">&nbsp;        return rs.wasNull()?null:l;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public interface Map&lt;T&gt;{
+&nbsp;        T call(ResultSet rs) throws SQLException;
+&nbsp;    }
+&nbsp;
+&nbsp;    public interface Consume{
+&nbsp;        void call(ResultSet rs) throws SQLException;
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; T sqlSingle(ResultSet rs, Map&lt;T&gt; func) throws SQLException {
+<b class="fc">&nbsp;        var res = sqlList(rs, func);</b>
+<b class="pc">&nbsp;        if(res.isEmpty())</b>
+<b class="nc">&nbsp;            throw new SQLException(&quot;Expected a single result got none&quot;);</b>
+<b class="pc">&nbsp;        if(res.size() &gt; 1)</b>
+<b class="nc">&nbsp;            throw new SQLException(&quot;Expected single result got more&quot;);</b>
+<b class="fc">&nbsp;        return res.getFirst();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; T sqlSingle(ResultSet rs, Class&lt;T&gt; clazz) throws SQLException{
+<b class="nc">&nbsp;        var res = sqlList(rs, clazz);</b>
+<b class="nc">&nbsp;        if(res.isEmpty())</b>
+<b class="nc">&nbsp;            throw new SQLException(&quot;Expected a single result got none&quot;);</b>
+<b class="nc">&nbsp;        if(res.size() &gt; 1)</b>
+<b class="nc">&nbsp;            throw new SQLException(&quot;Expected single result got more&quot;);</b>
+<b class="nc">&nbsp;        return res.getFirst();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void sqlForEach(ResultSet rs, Consume func) throws SQLException {
+<b class="fc">&nbsp;        while(rs.next()){</b>
+<b class="fc">&nbsp;            func.call(rs);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; ArrayList&lt;T&gt; sqlList(ResultSet rs, Map&lt;T&gt; func) throws SQLException {
+<b class="fc">&nbsp;        var list = new ArrayList&lt;T&gt;();</b>
+<b class="fc">&nbsp;        while(rs.next()){</b>
+<b class="fc">&nbsp;            list.add(func.call(rs));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /** Feeds the result of an SQL statement ({@link ResultSet}) into a list of new instances
+&nbsp;     * of the class represented by the given class handle (clazz).&lt;br&gt;
+&nbsp;     * Uses Java reflection to map the column names of rs to the public fields of clazz.&lt;br&gt;&lt;br&gt;
+&nbsp;     * Used to easily format the result of a DB query into Java types.
+&nbsp;     *
+&nbsp;     * @param rs The result/output of an SQL statement
+&nbsp;     * @param clazz The class handle used to get
+&nbsp;     * @param &lt;T&gt;
+&nbsp;     * @return New {@link ArrayList ArrayList} of
+&nbsp;     * @throws SQLException
+&nbsp;     */
+&nbsp;    public static &lt;T&gt; ArrayList&lt;T&gt; sqlList(ResultSet rs, Class&lt;T&gt; clazz) throws SQLException {
+<b class="fc">&nbsp;        var list = new ArrayList&lt;T&gt;();</b>
+&nbsp;        try{
+<b class="fc">&nbsp;            var constructor = clazz.getDeclaredConstructor(); // Allows us to know class type ahead of time</b>
+<b class="fc">&nbsp;            var fields = clazz.getFields(); // Maps public fields only</b>
+<b class="fc">&nbsp;            while(rs.next()){</b>
+<b class="fc">&nbsp;                var instance = constructor.newInstance();</b>
+<b class="fc">&nbsp;                for(var field : fields) {</b>
+<b class="fc">&nbsp;                    var name = field.getName();</b>
+<b class="pc">&nbsp;                    switch (field.getType()) {</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == byte.class -&gt; field.setByte(instance, rs.getByte(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == short.class -&gt; field.setShort(instance, rs.getShort(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == int.class -&gt; field.setInt(instance, rs.getInt(name));</b>
+<b class="fc">&nbsp;                        case Class&lt;?&gt; cl when cl == long.class -&gt; field.setLong(instance, rs.getLong(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == float.class -&gt; field.setFloat(instance, rs.getFloat(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == double.class -&gt; field.setDouble(instance, rs.getDouble(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == boolean.class -&gt; field.setBoolean(instance, rs.getBoolean(name));</b>
+&nbsp;
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Byte.class -&gt; field.set(instance, rs.getByte(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Short.class -&gt; field.set(instance, rs.getShort(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Integer.class -&gt; field.set(instance, rs.getInt(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Long.class -&gt; field.set(instance, rs.getLong(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Float.class -&gt; field.set(instance, rs.getFloat(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Double.class -&gt; field.set(instance, rs.getDouble(name));</b>
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == Boolean.class -&gt; field.set(instance, rs.getBoolean(name));</b>
+&nbsp;
+<b class="pc">&nbsp;                        case Class&lt;?&gt; cl when cl == String.class -&gt; field.set(instance, rs.getString(name));</b>
+&nbsp;
+<b class="nc">&nbsp;                        case Class&lt;?&gt; cl when cl == JSONObject.class -&gt; {</b>
+<b class="nc">&nbsp;                            var t = rs.getString(name);</b>
+<b class="nc">&nbsp;                            var o = JSON.parseObject(t == null ? &quot;{}&quot; : t);</b>
+<b class="nc">&nbsp;                            field.set(instance, o);</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                        case Class&lt;?&gt; cl when cl == JSONArray.class -&gt; {</b>
+<b class="nc">&nbsp;                            var t = rs.getString(name);</b>
+<b class="nc">&nbsp;                            var o = JSON.parseArray(t == null ? &quot;[]&quot; : t);</b>
+<b class="nc">&nbsp;                            field.set(instance, o);</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                        default -&gt; throw new RuntimeException(&quot;Invalid field type: &quot; + field);</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="fc">&nbsp;                list.add(instance);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return list;</b>
+&nbsp;        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

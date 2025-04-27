@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OrganizerAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure.root.api</a>
+</div>
+
+<h1>Coverage Summary for Class: OrganizerAPI (server.infrastructure.root.api)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrganizerAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69.7%
+  </span>
+  <span class="absValue">
+    (23/33)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">OrganizerAPI$PreviousScan</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">OrganizerAPI$Scan</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">OrganizerAPI$ScanResult</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69.4%
+  </span>
+  <span class="absValue">
+    (25/36)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure.root.api;
+&nbsp;
+&nbsp;import framework.db.RwTransaction;
+&nbsp;import framework.util.SqlSerde;
+&nbsp;import framework.web.annotations.*;
+&nbsp;import framework.web.error.BadRequest;
+&nbsp;import server.infrastructure.session.OrganizerSession;
+&nbsp;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@SuppressWarnings(&quot;unused&quot;)
+&nbsp;@Routes
+<b class="nc">&nbsp;public class OrganizerAPI {</b>
+&nbsp;
+<b class="nc">&nbsp;    public record PreviousScan(long date){}</b>
+&nbsp;
+<b class="fc">&nbsp;    public record Scan(</b>
+&nbsp;            long event,
+&nbsp;            String name,
+&nbsp;            PaymentAPI.PurchasedTicketId id
+&nbsp;    ){}
+&nbsp;
+<b class="fc">&nbsp;    public record ScanResult(</b>
+&nbsp;            AccountAPI.PublicUserInfo userinfo,
+&nbsp;            EventAPI.Event event,
+&nbsp;            TicketsAPI.Ticket ticket,
+&nbsp;            boolean purchase_matches,
+&nbsp;            List&lt;PreviousScan&gt; scans
+&nbsp;    ){}
+&nbsp;
+&nbsp;    @Route
+&nbsp;    public static @Json ScanResult scan_ticket(OrganizerSession auth, RwTransaction trans, @Body@Json Scan scan) throws SQLException {
+&nbsp;        AccountAPI.PublicUserInfo info;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select * from users where id=(select user_id from purchased_tickets where id=:pid)&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:pid&quot;, scan.id.pid());</b>
+<b class="fc">&nbsp;            info = SqlSerde.sqlSingle(stmt.executeQuery(), AccountAPI.PublicUserInfo::make);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        TicketsAPI.Ticket ticket;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select * from tickets where id=(select ticket_id from purchased_tickets where id=:pid)&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:pid&quot;, scan.id.pid());</b>
+<b class="fc">&nbsp;            ticket = SqlSerde.sqlSingle(stmt.executeQuery(), rs -&gt; new TicketsAPI.Ticket(</b>
+<b class="fc">&nbsp;                    rs.getLong(&quot;id&quot;),</b>
+<b class="fc">&nbsp;                    rs.getString(&quot;name&quot;),</b>
+<b class="fc">&nbsp;                    rs.getLong(&quot;price&quot;),</b>
+<b class="fc">&nbsp;                    SqlSerde.nullableLong(rs, &quot;total_tickets&quot;)</b>
+&nbsp;            ));
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            if (e.getMessage().equals(&quot;Expected a single result got none&quot;)) {</b>
+<b class="nc">&nbsp;                return new ScanResult(null, null, null, false, List.of());</b>
+&nbsp;            }
+&nbsp;            else {
+&nbsp;                throw e;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        EventAPI.Event event;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(&quot;select * from events where id=(select event_id from tickets where id=:ticket_id)&quot;)){</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:ticket_id&quot;, ticket.id());</b>
+<b class="fc">&nbsp;            event = SqlSerde.sqlSingle(stmt.executeQuery(), rs -&gt; new EventAPI.Event(rs, false));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        boolean matches;
+<b class="fc">&nbsp;        try(var stmt = trans.namedPreparedStatement(</b>
+&nbsp;                &quot;&quot;&quot;
+&nbsp;                        select coalesce(
+&nbsp;                            (select ticket_id from purchased_tickets where id=:pid AND salt=:salt)
+&nbsp;                            IN
+&nbsp;                            (
+&nbsp;                                select id from tickets where
+&nbsp;                                    event_id=:event_id
+&nbsp;                                    AND :user_id IN (select owner_id from events where events.id=:event_id)
+&nbsp;                            ),
+&nbsp;                            false
+&nbsp;                        )&quot;&quot;&quot;)){
+<b class="fc">&nbsp;            stmt.setLong(&quot;:pid&quot;, scan.id.pid());</b>
+<b class="fc">&nbsp;            stmt.setString(&quot;:salt&quot;, scan.id.salt());</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:event_id&quot;, scan.event);</b>
+<b class="fc">&nbsp;            stmt.setLong(&quot;:user_id&quot;, auth.user_id());</b>
+<b class="fc">&nbsp;            matches = SqlSerde.sqlSingle(stmt.executeQuery(), rs -&gt; rs.getBoolean(1));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;PreviousScan&gt; scans = null;</b>
+<b class="pc">&nbsp;        if(matches){</b>
+<b class="nc">&nbsp;            try(var stmt = trans.namedPreparedStatement(&quot;insert into scanned_tickets values(:id, :time_scanned)&quot;)){</b>
+<b class="nc">&nbsp;                stmt.setLong(&quot;:id&quot;, scan.id.pid());</b>
+<b class="nc">&nbsp;                stmt.setLong(&quot;:time_scanned&quot;, System.currentTimeMillis());</b>
+<b class="nc">&nbsp;                stmt.execute();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            try(var stmt = trans.namedPreparedStatement(&quot;select time_scanned from scanned_tickets where purchased_ticket_id=:pid&quot;)){</b>
+<b class="nc">&nbsp;                stmt.setLong(&quot;:pid&quot;, scan.id.pid());</b>
+<b class="nc">&nbsp;                scans = SqlSerde.sqlList(stmt.executeQuery(), rs -&gt; new PreviousScan(rs.getLong(1)));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        trans.commit();</b>
+<b class="fc">&nbsp;        return new ScanResult(</b>
+&nbsp;                info,
+&nbsp;                event,
+&nbsp;                ticket,
+&nbsp;                matches,
+&nbsp;                scans
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

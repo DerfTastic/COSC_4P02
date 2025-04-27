@@ -53,8 +53,10 @@ public class WebServerImpl extends WebServer {
 
         //
         MailServer mail;
-        if(config.send_mail)
+        if(config.send_mail) {
             mail = new SmtpMailServer(secrets.get("email_account"), secrets.get("email_password"), config.sender_filter);
+            System.out.println(secrets.get("email_account"));
+        }
         else
             mail = configurator -> {};
         addManagedState(mail, MailServer.class);

@@ -1,0 +1,267 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaticContentHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure.root</a>
+</div>
+
+<h1>Coverage Summary for Class: StaticContentHandler (server.infrastructure.root)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StaticContentHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/44)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/58)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StaticContentHandler$CachedItem</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/44)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/59)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure.root;
+&nbsp;
+&nbsp;import framework.web.error.ClientError;
+&nbsp;import framework.web.request.RequestHandler;
+&nbsp;import framework.web.annotations.Handler;
+&nbsp;import framework.web.request.Request;
+&nbsp;import server.infrastructure.param.Config;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.util.HashMap;
+&nbsp;
+&nbsp;@Handler
+&nbsp;@SuppressWarnings(&quot;unused&quot;)
+&nbsp;public class StaticContentHandler implements RequestHandler {
+&nbsp;
+<b class="nc">&nbsp;    public final boolean checkCachedSources = true;</b>
+&nbsp;
+<b class="nc">&nbsp;    public final static class CachedItem{</b>
+&nbsp;        Path resolved;
+&nbsp;        long last_modified;
+&nbsp;        byte[] content;
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private final HashMap&lt;String, String&gt; urlMap = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;    private final HashMap&lt;String, CachedItem&gt; cache = new HashMap&lt;&gt;();</b>
+&nbsp;    private final String rootPath;
+&nbsp;    private final boolean doCache;
+&nbsp;
+<b class="nc">&nbsp;    public StaticContentHandler(@Config String static_content_path, @Config boolean cache_static_content){</b>
+<b class="nc">&nbsp;        this.rootPath = static_content_path;</b>
+<b class="nc">&nbsp;        this.doCache = cache_static_content;</b>
+<b class="nc">&nbsp;        urlMap.put(&quot;/account&quot;, &quot;/partials/profile&quot;);</b>
+<b class="nc">&nbsp;        urlMap.put(&quot;/user/profile&quot;, &quot;/partials/profile&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void handle(Request request) throws IOException {
+<b class="nc">&nbsp;        String reqPath = request.exchange.getRequestURI().getPath();</b>
+<b class="nc">&nbsp;        if(!request.exchange.getRequestMethod().equalsIgnoreCase(&quot;GET&quot;)){</b>
+<b class="nc">&nbsp;            request.sendResponse(405, &quot;Invalid Method Specified&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        if(urlMap.containsKey(reqPath))</b>
+<b class="nc">&nbsp;            reqPath = urlMap.get(reqPath);</b>
+&nbsp;
+&nbsp;        CachedItem cached;
+&nbsp;        try{
+<b class="nc">&nbsp;            cached = get(reqPath);</b>
+&nbsp;        }catch (ClientError e){
+<b class="nc">&nbsp;            request.sendResponse(e.code, e.getMessage());</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        request.exchange.getResponseHeaders().add(&quot;Content-Type&quot;, getContentType(cached.resolved.getFileName().toString()));</b>
+<b class="nc">&nbsp;        if(doCache)</b>
+<b class="nc">&nbsp;            request.exchange.getResponseHeaders().add(&quot;Cache-Control&quot;, &quot;max-age=604800&quot;);</b>
+<b class="nc">&nbsp;        request.sendResponse(200, cached.content);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CachedItem get(String reqPath) throws ClientError, IOException {
+<b class="nc">&nbsp;        var cached = cache.get(reqPath);</b>
+&nbsp;        cached:
+<b class="nc">&nbsp;        if(cached != null){</b>
+&nbsp;            if(checkCachedSources){
+<b class="nc">&nbsp;                if(!Files.exists(cached.resolved)){</b>
+<b class="nc">&nbsp;                    cache.remove(reqPath);</b>
+&nbsp;                    break cached;
+&nbsp;                }
+<b class="nc">&nbsp;                var time = Files.getLastModifiedTime(cached.resolved).toMillis();</b>
+<b class="nc">&nbsp;                if(time&gt;cached.last_modified){</b>
+<b class="nc">&nbsp;                    cached.content = Files.readAllBytes(cached.resolved);</b>
+<b class="nc">&nbsp;                    cached.last_modified = time;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if(cached==null){</b>
+<b class="nc">&nbsp;            StringBuilder builder = new StringBuilder(reqPath);</b>
+<b class="nc">&nbsp;            if(builder.toString().endsWith(&quot;/&quot;))</b>
+<b class="nc">&nbsp;                builder.append(&quot;index&quot;);</b>
+<b class="nc">&nbsp;            else if(Files.isDirectory(Path.of(rootPath +builder)))</b>
+<b class="nc">&nbsp;                builder.append(&quot;/index&quot;);</b>
+<b class="nc">&nbsp;            if(!builder.toString().contains(&quot;.&quot;))</b>
+<b class="nc">&nbsp;                if(Files.exists(Path.of(rootPath + builder + &quot;.html&quot;)))</b>
+<b class="nc">&nbsp;                    builder.append(&quot;.html&quot;);</b>
+<b class="nc">&nbsp;                else if(Files.exists(Path.of(rootPath + builder +&quot;.hbs&quot;)))</b>
+<b class="nc">&nbsp;                    builder.append(&quot;.hbs&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            var path = Path.of(rootPath + builder);</b>
+&nbsp;
+<b class="nc">&nbsp;            if(reqPath.contains(&quot;..&quot;))</b>
+<b class="nc">&nbsp;                throw new ClientError(400, &quot;Not a File&quot;);</b>
+<b class="nc">&nbsp;            if(Files.isDirectory(path))</b>
+<b class="nc">&nbsp;                throw new ClientError(400, &quot;Not a File&quot;);</b>
+<b class="nc">&nbsp;            if (!Files.exists(path))</b>
+<b class="nc">&nbsp;                throw new ClientError(404, &quot;Not Found&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            cached = new CachedItem();</b>
+<b class="nc">&nbsp;            cached.resolved = path;</b>
+<b class="nc">&nbsp;            cached.last_modified = Files.getLastModifiedTime(cached.resolved).toMillis();</b>
+<b class="nc">&nbsp;            cached.content = Files.readAllBytes(cached.resolved);</b>
+<b class="nc">&nbsp;            cache.put(reqPath, cached);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return cached;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static String getContentType(String fileName) {
+<b class="nc">&nbsp;        if (fileName.endsWith(&quot;.html&quot;)) return &quot;text/html&quot;;</b>
+<b class="nc">&nbsp;        if (fileName.endsWith(&quot;.hbs&quot;)) return &quot;text/html&quot;;</b>
+<b class="nc">&nbsp;        if (fileName.endsWith(&quot;.css&quot;)) return &quot;text/css&quot;;</b>
+<b class="nc">&nbsp;        if (fileName.endsWith(&quot;.js&quot;)) return &quot;application/javascript&quot;;</b>
+<b class="nc">&nbsp;        if (fileName.endsWith(&quot;.png&quot;)) return &quot;image/png&quot;;</b>
+<b class="nc">&nbsp;        if (fileName.endsWith(&quot;.jpg&quot;) || fileName.endsWith(&quot;.jpeg&quot;)) return &quot;image/jpeg&quot;;</b>
+<b class="nc">&nbsp;        return &quot;application/octet-stream&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

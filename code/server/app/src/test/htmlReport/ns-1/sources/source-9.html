@@ -1,0 +1,1818 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StatementM</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">framework.db</a>
+</div>
+
+<h1>Coverage Summary for Class: StatementM (framework.db)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StatementM</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.8%
+  </span>
+  <span class="absValue">
+    (5/57)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3.3%
+  </span>
+  <span class="absValue">
+    (1/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12%
+  </span>
+  <span class="absValue">
+    (9/75)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package framework.db;
+&nbsp;
+&nbsp;
+&nbsp;import java.sql.*;
+&nbsp;
+&nbsp;public class StatementM implements Statement {
+&nbsp;    private final Conn conn;
+&nbsp;    private final Statement stmt;
+&nbsp;    private final DbStatistics stats;
+&nbsp;    
+<b class="fc">&nbsp;    public StatementM(Conn conn) throws SQLException {</b>
+<b class="fc">&nbsp;        this.conn = conn;</b>
+<b class="fc">&nbsp;        this.stmt = conn.getConn().createStatement();</b>
+<b class="fc">&nbsp;        this.stats = conn.db.getTracker();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which returns a single
+&nbsp;     * {@code ResultSet} object.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql an SQL statement to be sent to the database, typically a
+&nbsp;     *            static SQL {@code SELECT} statement
+&nbsp;     * @return a {@code ResultSet} object that contains the data produced
+&nbsp;     * by the given query; never {@code null}
+&nbsp;     * @throws SQLException        if a database access error occurs,
+&nbsp;     *                             this method is called on a closed {@code Statement}, the given
+&nbsp;     *                             SQL statement produces anything other than a single
+&nbsp;     *                             {@code ResultSet} object, the method is called on a
+&nbsp;     *                             {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLTimeoutException when the driver has determined that the
+&nbsp;     *                             timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                             method has been exceeded and has at least attempted to cancel
+&nbsp;     *                             the currently running {@code Statement}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResultSet executeQuery(String sql) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeQuery(sql);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which may be an {@code INSERT},
+&nbsp;     * {@code UPDATE}, or {@code DELETE} statement or an
+&nbsp;     * SQL statement that returns nothing, such as an SQL DDL statement.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql an SQL Data Manipulation Language (DML) statement, such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *            {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *            such as a DDL statement.
+&nbsp;     * @return either (1) the row count for SQL Data Manipulation Language (DML) statements
+&nbsp;     * or (2) 0 for SQL statements that return nothing
+&nbsp;     * @throws SQLException        if a database access error occurs,
+&nbsp;     *                             this method is called on a closed {@code Statement}, the given
+&nbsp;     *                             SQL statement produces a {@code ResultSet} object, the method is called on a
+&nbsp;     *                             {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLTimeoutException when the driver has determined that the
+&nbsp;     *                             timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                             method has been exceeded and has at least attempted to cancel
+&nbsp;     *                             the currently running {@code Statement}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int executeUpdate(String sql) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeUpdate(sql);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Releases this {@code Statement} object&#39;s database
+&nbsp;     * and JDBC resources immediately instead of waiting for
+&nbsp;     * this to happen when it is automatically closed.
+&nbsp;     * It is generally good practice to release resources as soon as
+&nbsp;     * you are finished with them to avoid tying up database
+&nbsp;     * resources.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Calling the method {@code close} on a {@code Statement}
+&nbsp;     * object that is already closed has no effect.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;B&gt;Note:&lt;/B&gt;When a {@code Statement} object is
+&nbsp;     * closed, its current {@code ResultSet} object, if one exists, is
+&nbsp;     * also closed.
+&nbsp;     *
+&nbsp;     * @throws SQLException if a database access error occurs
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void close() throws SQLException {
+<b class="fc">&nbsp;        stmt.close();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the maximum number of bytes that can be
+&nbsp;     * returned for character and binary column values in a {@code ResultSet}
+&nbsp;     * object produced by this {@code Statement} object.
+&nbsp;     * This limit applies only to  {@code BINARY}, {@code VARBINARY},
+&nbsp;     * {@code LONGVARBINARY}, {@code CHAR}, {@code VARCHAR},
+&nbsp;     * {@code NCHAR}, {@code NVARCHAR}, {@code LONGNVARCHAR}
+&nbsp;     * and {@code LONGVARCHAR} columns.  If the limit is exceeded, the
+&nbsp;     * excess data is silently discarded.
+&nbsp;     *
+&nbsp;     * @return the current column size limit for columns storing character and
+&nbsp;     * binary values; zero means there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #setMaxFieldSize
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getMaxFieldSize() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getMaxFieldSize();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the limit for the maximum number of bytes that can be returned for
+&nbsp;     * character and binary column values in a {@code ResultSet}
+&nbsp;     * object produced by this {@code Statement} object.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This limit applies
+&nbsp;     * only to {@code BINARY}, {@code VARBINARY},
+&nbsp;     * {@code LONGVARBINARY}, {@code CHAR}, {@code VARCHAR},
+&nbsp;     * {@code NCHAR}, {@code NVARCHAR}, {@code LONGNVARCHAR} and
+&nbsp;     * {@code LONGVARCHAR} fields.  If the limit is exceeded, the excess data
+&nbsp;     * is silently discarded. For maximum portability, use values
+&nbsp;     * greater than 256.
+&nbsp;     *
+&nbsp;     * @param max the new column size limit in bytes; zero means there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     *                      or the condition {@code max &gt;= 0} is not satisfied
+&nbsp;     * @see #getMaxFieldSize
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setMaxFieldSize(int max) throws SQLException {
+<b class="nc">&nbsp;        stmt.setMaxFieldSize(max);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the maximum number of rows that a
+&nbsp;     * {@code ResultSet} object produced by this
+&nbsp;     * {@code Statement} object can contain.  If this limit is exceeded,
+&nbsp;     * the excess rows are silently dropped.
+&nbsp;     *
+&nbsp;     * @return the current maximum number of rows for a {@code ResultSet}
+&nbsp;     * object produced by this {@code Statement} object;
+&nbsp;     * zero means there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #setMaxRows
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getMaxRows() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getMaxRows();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the limit for the maximum number of rows that any
+&nbsp;     * {@code ResultSet} object  generated by this {@code Statement}
+&nbsp;     * object can contain to the given number.
+&nbsp;     * If the limit is exceeded, the excess
+&nbsp;     * rows are silently dropped.
+&nbsp;     *
+&nbsp;     * @param max the new max rows limit; zero means there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     *                      or the condition {@code max &gt;= 0} is not satisfied
+&nbsp;     * @see #getMaxRows
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setMaxRows(int max) throws SQLException {
+<b class="nc">&nbsp;        stmt.setMaxRows(max);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets escape processing on or off.
+&nbsp;     * If escape scanning is on (the default), the driver will do
+&nbsp;     * escape substitution before sending the SQL statement to the database.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The {@code Connection} and {@code DataSource} property
+&nbsp;     * {@code escapeProcessing} may be used to change the default escape processing
+&nbsp;     * behavior.  A value of true (the default) enables escape Processing for
+&nbsp;     * all {@code Statement} objects. A value of false disables escape processing
+&nbsp;     * for all {@code Statement} objects.  The {@code setEscapeProcessing}
+&nbsp;     * method may be used to specify the escape processing behavior for an
+&nbsp;     * individual {@code Statement} object.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Note: Since prepared statements have usually been parsed prior
+&nbsp;     * to making this call, disabling escape processing for
+&nbsp;     * {@code PreparedStatements} objects will have no effect.
+&nbsp;     *
+&nbsp;     * @param enable {@code true} to enable escape processing;
+&nbsp;     *               {@code false} to disable it
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setEscapeProcessing(boolean enable) throws SQLException {
+<b class="nc">&nbsp;        stmt.setEscapeProcessing(enable);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the number of seconds the driver will
+&nbsp;     * wait for a {@code Statement} object to execute.
+&nbsp;     * If the limit is exceeded, a
+&nbsp;     * {@code SQLException} is thrown.
+&nbsp;     *
+&nbsp;     * @return the current query timeout limit in seconds; zero means there is
+&nbsp;     * no limit
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #setQueryTimeout
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getQueryTimeout() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getQueryTimeout();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the number of seconds the driver will wait for a
+&nbsp;     * {@code Statement} object to execute to the given number of seconds.
+&nbsp;     * By default there is no limit on the amount of time allowed for a running
+&nbsp;     * statement to complete. If the limit is exceeded, an
+&nbsp;     * {@code SQLTimeoutException} is thrown.
+&nbsp;     * A JDBC driver must apply this limit to the {@code execute},
+&nbsp;     * {@code executeQuery} and {@code executeUpdate} methods.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt; JDBC driver implementations may also apply this
+&nbsp;     * limit to {@code ResultSet} methods
+&nbsp;     * (consult your driver vendor documentation for details).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt; In the case of {@code Statement} batching, it is
+&nbsp;     * implementation defined as to whether the time-out is applied to
+&nbsp;     * individual SQL commands added via the {@code addBatch} method or to
+&nbsp;     * the entire batch of SQL commands invoked by the {@code executeBatch}
+&nbsp;     * method (consult your driver vendor documentation for details).
+&nbsp;     *
+&nbsp;     * @param seconds the new query timeout limit in seconds; zero means
+&nbsp;     *                there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     *                      or the condition {@code seconds &gt;= 0} is not satisfied
+&nbsp;     * @see #getQueryTimeout
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setQueryTimeout(int seconds) throws SQLException {
+<b class="nc">&nbsp;        stmt.setQueryTimeout(seconds);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Cancels this {@code Statement} object if both the DBMS and
+&nbsp;     * driver support aborting an SQL statement.
+&nbsp;     * This method can be used by one thread to cancel a statement that
+&nbsp;     * is being executed by another thread.
+&nbsp;     *
+&nbsp;     * @throws SQLException                    if a database access error occurs or
+&nbsp;     *                                         this method is called on a closed {@code Statement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support
+&nbsp;     *                                         this method
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void cancel() throws SQLException {
+<b class="nc">&nbsp;        stmt.cancel();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the first warning reported by calls on this {@code Statement} object.
+&nbsp;     * Subsequent {@code Statement} object warnings will be chained to this
+&nbsp;     * {@code SQLWarning} object.
+&nbsp;     *
+&nbsp;     * &lt;p&gt;The warning chain is automatically cleared each time
+&nbsp;     * a statement is (re)executed. This method may not be called on a closed
+&nbsp;     * {@code Statement} object; doing so will cause an {@code SQLException}
+&nbsp;     * to be thrown.
+&nbsp;     *
+&nbsp;     * &lt;P&gt;&lt;B&gt;Note:&lt;/B&gt; If you are processing a {@code ResultSet} object, any
+&nbsp;     * warnings associated with reads on that {@code ResultSet} object
+&nbsp;     * will be chained on it rather than on the {@code Statement}
+&nbsp;     * object that produced it.
+&nbsp;     *
+&nbsp;     * @return the first {@code SQLWarning} object or {@code null}
+&nbsp;     * if there are no warnings
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public SQLWarning getWarnings() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getWarnings();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears all the warnings reported on this {@code Statement}
+&nbsp;     * object. After a call to this method,
+&nbsp;     * the method {@code getWarnings} will return
+&nbsp;     * {@code null} until a new warning is reported for this
+&nbsp;     * {@code Statement} object.
+&nbsp;     *
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void clearWarnings() throws SQLException {
+<b class="nc">&nbsp;        stmt.clearWarnings();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the SQL cursor name to the given {@code String}, which
+&nbsp;     * will be used by subsequent {@code Statement} object
+&nbsp;     * {@code execute} methods. This name can then be
+&nbsp;     * used in SQL positioned update or delete statements to identify the
+&nbsp;     * current row in the {@code ResultSet} object generated by this
+&nbsp;     * statement.  If the database does not support positioned update/delete,
+&nbsp;     * this method is a noop.  To insure that a cursor has the proper isolation
+&nbsp;     * level to support updates, the cursor&#39;s {@code SELECT} statement
+&nbsp;     * should have the form {@code SELECT FOR UPDATE}.  If
+&nbsp;     * {@code FOR UPDATE} is not present, positioned updates may fail.
+&nbsp;     *
+&nbsp;     * &lt;P&gt;&lt;B&gt;Note:&lt;/B&gt; By definition, the execution of positioned updates and
+&nbsp;     * deletes must be done by a different {@code Statement} object than
+&nbsp;     * the one that generated the {@code ResultSet} object being used for
+&nbsp;     * positioning. Also, cursor names must be unique within a connection.
+&nbsp;     *
+&nbsp;     * @param name the new cursor name, which must be unique within
+&nbsp;     *             a connection
+&nbsp;     * @throws SQLException                    if a database access error occurs or
+&nbsp;     *                                         this method is called on a closed {@code Statement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setCursorName(String name) throws SQLException {
+<b class="nc">&nbsp;        stmt.setCursorName(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which may return multiple results.
+&nbsp;     * In some (uncommon) situations, a single SQL statement may return
+&nbsp;     * multiple result sets and/or update counts.  Normally you can ignore
+&nbsp;     * this unless you are (1) executing a stored procedure that you know may
+&nbsp;     * return multiple results or (2) you are dynamically executing an
+&nbsp;     * unknown SQL string.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The {@code execute} method executes an SQL statement and indicates the
+&nbsp;     * form of the first result.  You must then use the methods
+&nbsp;     * {@code getResultSet} or {@code getUpdateCount}
+&nbsp;     * to retrieve the result, and {@code getMoreResults} to
+&nbsp;     * move to any subsequent result(s).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql any SQL statement
+&nbsp;     * @return {@code true} if the first result is a {@code ResultSet}
+&nbsp;     * object; {@code false} if it is an update count or there are
+&nbsp;     * no results
+&nbsp;     * @throws SQLException        if a database access error occurs,
+&nbsp;     *                             this method is called on a closed {@code Statement},
+&nbsp;     *                             the method is called on a
+&nbsp;     *                             {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLTimeoutException when the driver has determined that the
+&nbsp;     *                             timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                             method has been exceeded and has at least attempted to cancel
+&nbsp;     *                             the currently running {@code Statement}
+&nbsp;     * @see #getResultSet
+&nbsp;     * @see #getUpdateCount
+&nbsp;     * @see #getMoreResults
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean execute(String sql) throws SQLException {
+<b class="pc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="fc">&nbsp;        return stmt.execute(sql);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current result as a {@code ResultSet} object.
+&nbsp;     * This method should be called only once per result.
+&nbsp;     *
+&nbsp;     * @return the current result as a {@code ResultSet} object or
+&nbsp;     * {@code null} if the result is an update count or there are no more results
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #execute
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResultSet getResultSet() throws SQLException {
+<b class="fc">&nbsp;        return stmt.getResultSet();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current result as an update count;
+&nbsp;     * if the result is a {@code ResultSet} object or there are no more results, -1
+&nbsp;     * is returned. This method should be called only once per result.
+&nbsp;     *
+&nbsp;     * @return the current result as an update count; -1 if the current result is a
+&nbsp;     * {@code ResultSet} object or there are no more results
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #execute
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getUpdateCount() throws SQLException {
+<b class="fc">&nbsp;        return stmt.getUpdateCount();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Moves to this {@code Statement} object&#39;s next result, returns
+&nbsp;     * {@code true} if it is a {@code ResultSet} object, and
+&nbsp;     * implicitly closes any current {@code ResultSet}
+&nbsp;     * object(s) obtained with the method {@code getResultSet}.
+&nbsp;     *
+&nbsp;     * &lt;P&gt;There are no more results when the following is true:
+&nbsp;     * &lt;PRE&gt;{@code
+&nbsp;     * // stmt is a Statement object
+&nbsp;     * ((stmt.getMoreResults() == false) &amp;&amp; (stmt.getUpdateCount() == -1))
+&nbsp;     * }&lt;/PRE&gt;
+&nbsp;     *
+&nbsp;     * @return {@code true} if the next result is a {@code ResultSet}
+&nbsp;     * object; {@code false} if it is an update count or there are
+&nbsp;     * no more results
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #execute
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean getMoreResults() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getMoreResults();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gives the driver a hint as to the direction in which
+&nbsp;     * rows will be processed in {@code ResultSet}
+&nbsp;     * objects created using this {@code Statement} object.  The
+&nbsp;     * default value is {@code ResultSet.FETCH_FORWARD}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Note that this method sets the default fetch direction for
+&nbsp;     * result sets generated by this {@code Statement} object.
+&nbsp;     * Each result set has its own methods for getting and setting
+&nbsp;     * its own fetch direction.
+&nbsp;     *
+&nbsp;     * @param direction the initial direction for processing rows
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     *                      or the given direction
+&nbsp;     *                      is not one of {@code ResultSet.FETCH_FORWARD},
+&nbsp;     *                      {@code ResultSet.FETCH_REVERSE}, or {@code ResultSet.FETCH_UNKNOWN}
+&nbsp;     * @see #getFetchDirection
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setFetchDirection(int direction) throws SQLException {
+<b class="nc">&nbsp;        stmt.setFetchDirection(direction);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the direction for fetching rows from
+&nbsp;     * database tables that is the default for result sets
+&nbsp;     * generated from this {@code Statement} object.
+&nbsp;     * If this {@code Statement} object has not set
+&nbsp;     * a fetch direction by calling the method {@code setFetchDirection},
+&nbsp;     * the return value is implementation-specific.
+&nbsp;     *
+&nbsp;     * @return the default fetch direction for result sets generated
+&nbsp;     * from this {@code Statement} object
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #setFetchDirection
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getFetchDirection() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getFetchDirection();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gives the JDBC driver a hint as to the number of rows that should
+&nbsp;     * be fetched from the database when more rows are needed for
+&nbsp;     * {@code ResultSet} objects generated by this {@code Statement}.
+&nbsp;     * If the value specified is zero, then the hint is ignored.
+&nbsp;     * The default value is zero.
+&nbsp;     *
+&nbsp;     * @param rows the number of rows to fetch
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement} or the
+&nbsp;     *                      condition {@code rows &gt;= 0} is not satisfied.
+&nbsp;     * @see #getFetchSize
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setFetchSize(int rows) throws SQLException {
+<b class="nc">&nbsp;        stmt.setFetchSize(rows);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the number of result set rows that is the default
+&nbsp;     * fetch size for {@code ResultSet} objects
+&nbsp;     * generated from this {@code Statement} object.
+&nbsp;     * If this {@code Statement} object has not set
+&nbsp;     * a fetch size by calling the method {@code setFetchSize},
+&nbsp;     * the return value is implementation-specific.
+&nbsp;     *
+&nbsp;     * @return the default fetch size for result sets generated
+&nbsp;     * from this {@code Statement} object
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #setFetchSize
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getFetchSize() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getFetchSize();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the result set concurrency for {@code ResultSet} objects
+&nbsp;     * generated by this {@code Statement} object.
+&nbsp;     *
+&nbsp;     * @return either {@code ResultSet.CONCUR_READ_ONLY} or
+&nbsp;     * {@code ResultSet.CONCUR_UPDATABLE}
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getResultSetConcurrency() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getResultSetConcurrency();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the result set type for {@code ResultSet} objects
+&nbsp;     * generated by this {@code Statement} object.
+&nbsp;     *
+&nbsp;     * @return one of {@code ResultSet.TYPE_FORWARD_ONLY},
+&nbsp;     * {@code ResultSet.TYPE_SCROLL_INSENSITIVE}, or
+&nbsp;     * {@code ResultSet.TYPE_SCROLL_SENSITIVE}
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getResultSetType() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getResultSetType();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds the given SQL command to the current list of commands for this
+&nbsp;     * {@code Statement} object. The commands in this list can be
+&nbsp;     * executed as a batch by calling the method {@code executeBatch}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql typically this is a SQL {@code INSERT} or
+&nbsp;     *            {@code UPDATE} statement
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement}, the
+&nbsp;     *                      driver does not support batch updates, the method is called on a
+&nbsp;     *                      {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @see #executeBatch
+&nbsp;     * @see DatabaseMetaData#supportsBatchUpdates
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void addBatch(String sql) throws SQLException {
+<b class="nc">&nbsp;        stmt.addBatch(sql);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Empties this {@code Statement} object&#39;s current list of
+&nbsp;     * SQL commands.
+&nbsp;     *
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement} or the
+&nbsp;     *                      driver does not support batch updates
+&nbsp;     * @see #addBatch
+&nbsp;     * @see DatabaseMetaData#supportsBatchUpdates
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void clearBatch() throws SQLException {
+<b class="nc">&nbsp;        stmt.clearBatch();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Submits a batch of commands to the database for execution and
+&nbsp;     * if all commands execute successfully, returns an array of update counts.
+&nbsp;     * The {@code int} elements of the array that is returned are ordered
+&nbsp;     * to correspond to the commands in the batch, which are ordered
+&nbsp;     * according to the order in which they were added to the batch.
+&nbsp;     * The elements in the array returned by the method {@code executeBatch}
+&nbsp;     * may be one of the following:
+&nbsp;     * &lt;OL&gt;
+&nbsp;     * &lt;LI&gt;A number greater than or equal to zero -- indicates that the
+&nbsp;     * command was processed successfully and is an update count giving the
+&nbsp;     * number of rows in the database that were affected by the command&#39;s
+&nbsp;     * execution
+&nbsp;     * &lt;LI&gt;A value of {@code SUCCESS_NO_INFO} -- indicates that the command was
+&nbsp;     * processed successfully but that the number of rows affected is
+&nbsp;     * unknown
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If one of the commands in a batch update fails to execute properly,
+&nbsp;     * this method throws a {@code BatchUpdateException}, and a JDBC
+&nbsp;     * driver may or may not continue to process the remaining commands in
+&nbsp;     * the batch.  However, the driver&#39;s behavior must be consistent with a
+&nbsp;     * particular DBMS, either always continuing to process commands or never
+&nbsp;     * continuing to process commands.  If the driver continues processing
+&nbsp;     * after a failure, the array returned by the method
+&nbsp;     * {@code BatchUpdateException.getUpdateCounts}
+&nbsp;     * will contain as many elements as there are commands in the batch, and
+&nbsp;     * at least one of the elements will be the following:
+&nbsp;     *
+&nbsp;     * &lt;LI&gt;A value of {@code EXECUTE_FAILED} -- indicates that the command failed
+&nbsp;     * to execute successfully and occurs only if a driver continues to
+&nbsp;     * process commands after a command fails
+&nbsp;     * &lt;/OL&gt;
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The possible implementations and return values have been modified in
+&nbsp;     * the Java 2 SDK, Standard Edition, version 1.3 to
+&nbsp;     * accommodate the option of continuing to process commands in a batch
+&nbsp;     * update after a {@code BatchUpdateException} object has been thrown.
+&nbsp;     *
+&nbsp;     * @return an array of update counts containing one element for each
+&nbsp;     * command in the batch.  The elements of the array are ordered according
+&nbsp;     * to the order in which commands were added to the batch.
+&nbsp;     * @throws SQLException        if a database access error occurs,
+&nbsp;     *                             this method is called on a closed {@code Statement} or the
+&nbsp;     *                             driver does not support batch statements. Throws {@link BatchUpdateException}
+&nbsp;     *                             (a subclass of {@code SQLException}) if one of the commands sent to the
+&nbsp;     *                             database fails to execute properly or attempts to return a result set.
+&nbsp;     * @throws SQLTimeoutException when the driver has determined that the
+&nbsp;     *                             timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                             method has been exceeded and has at least attempted to cancel
+&nbsp;     *                             the currently running {@code Statement}
+&nbsp;     * @see #addBatch
+&nbsp;     * @see DatabaseMetaData#supportsBatchUpdates
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int[] executeBatch() throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeBatch();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the {@code Connection} object
+&nbsp;     * that produced this {@code Statement} object.
+&nbsp;     *
+&nbsp;     * @return the connection that produced this statement
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @since 1.2
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Connection getConnection() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getConnection();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Moves to this {@code Statement} object&#39;s next result, deals with
+&nbsp;     * any current {@code ResultSet} object(s) according  to the instructions
+&nbsp;     * specified by the given flag, and returns
+&nbsp;     * {@code true} if the next result is a {@code ResultSet} object.
+&nbsp;     *
+&nbsp;     * &lt;P&gt;There are no more results when the following is true:
+&nbsp;     * &lt;PRE&gt;{@code
+&nbsp;     * // stmt is a Statement object
+&nbsp;     * ((stmt.getMoreResults(current) == false) &amp;&amp; (stmt.getUpdateCount() == -1))
+&nbsp;     * }&lt;/PRE&gt;
+&nbsp;     *
+&nbsp;     * @param current one of the following {@code Statement}
+&nbsp;     *                constants indicating what should happen to current
+&nbsp;     *                {@code ResultSet} objects obtained using the method
+&nbsp;     *                {@code getResultSet}:
+&nbsp;     *                {@code Statement.CLOSE_CURRENT_RESULT},
+&nbsp;     *                {@code Statement.KEEP_CURRENT_RESULT}, or
+&nbsp;     *                {@code Statement.CLOSE_ALL_RESULTS}
+&nbsp;     * @return {@code true} if the next result is a {@code ResultSet}
+&nbsp;     * object; {@code false} if it is an update count or there are no
+&nbsp;     * more results
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement} or the argument
+&nbsp;     *                                         supplied is not one of the following:
+&nbsp;     *                                         {@code Statement.CLOSE_CURRENT_RESULT},
+&nbsp;     *                                         {@code Statement.KEEP_CURRENT_RESULT} or
+&nbsp;     *                                         {@code Statement.CLOSE_ALL_RESULTS}
+&nbsp;     * @throws SQLFeatureNotSupportedException if
+&nbsp;     *                                         {@code DatabaseMetaData.supportsMultipleOpenResults} returns
+&nbsp;     *                                         {@code false} and either
+&nbsp;     *                                         {@code Statement.KEEP_CURRENT_RESULT} or
+&nbsp;     *                                         {@code Statement.CLOSE_ALL_RESULTS} are supplied as
+&nbsp;     *                                         the argument.
+&nbsp;     * @see #execute
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean getMoreResults(int current) throws SQLException {
+<b class="nc">&nbsp;        return stmt.getMoreResults(current);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves any auto-generated keys created as a result of executing this
+&nbsp;     * {@code Statement} object. If this {@code Statement} object did
+&nbsp;     * not generate any keys, an empty {@code ResultSet}
+&nbsp;     * object is returned.
+&nbsp;     *
+&nbsp;     * &lt;p&gt;&lt;B&gt;Note:&lt;/B&gt;If the columns which represent the auto-generated keys were not specified,
+&nbsp;     * the JDBC driver implementation will determine the columns which best represent the auto-generated keys.
+&nbsp;     *
+&nbsp;     * @return a {@code ResultSet} object containing the auto-generated key(s)
+&nbsp;     * generated by the execution of this {@code Statement} object
+&nbsp;     * @throws SQLException                    if a database access error occurs or
+&nbsp;     *                                         this method is called on a closed {@code Statement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public ResultSet getGeneratedKeys() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getGeneratedKeys();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement and signals the driver with the
+&nbsp;     * given flag about whether the
+&nbsp;     * auto-generated keys produced by this {@code Statement} object
+&nbsp;     * should be made available for retrieval.  The driver will ignore the
+&nbsp;     * flag if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql               an SQL Data Manipulation Language (DML) statement, such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *                          {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *                          such as a DDL statement.
+&nbsp;     * @param autoGeneratedKeys a flag indicating whether auto-generated keys
+&nbsp;     *                          should be made available for retrieval;
+&nbsp;     *                          one of the following constants:
+&nbsp;     *                          {@code Statement.RETURN_GENERATED_KEYS}
+&nbsp;     *                          {@code Statement.NO_GENERATED_KEYS}
+&nbsp;     * @return either (1) the row count for SQL Data Manipulation Language (DML) statements
+&nbsp;     * or (2) 0 for SQL statements that return nothing
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the given
+&nbsp;     *                                         SQL statement returns a {@code ResultSet} object,
+&nbsp;     *                                         the given constant is not one of those allowed, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support
+&nbsp;     *                                         this method with a constant of Statement.RETURN_GENERATED_KEYS
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeUpdate(sql, autoGeneratedKeys);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement and signals the driver that the
+&nbsp;     * auto-generated keys indicated in the given array should be made available
+&nbsp;     * for retrieval.   This array contains the indexes of the columns in the
+&nbsp;     * target table that contain the auto-generated keys that should be made
+&nbsp;     * available. The driver will ignore the array if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql           an SQL Data Manipulation Language (DML) statement, such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *                      {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *                      such as a DDL statement.
+&nbsp;     * @param columnIndexes an array of column indexes indicating the columns
+&nbsp;     *                      that should be returned from the inserted row
+&nbsp;     * @return either (1) the row count for SQL Data Manipulation Language (DML) statements
+&nbsp;     * or (2) 0 for SQL statements that return nothing
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the SQL
+&nbsp;     *                                         statement returns a {@code ResultSet} object,the second argument
+&nbsp;     *                                         supplied to this method is not an
+&nbsp;     *                                         {@code int} array whose elements are valid column indexes, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeUpdate(sql, columnIndexes);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement and signals the driver that the
+&nbsp;     * auto-generated keys indicated in the given array should be made available
+&nbsp;     * for retrieval.   This array contains the names of the columns in the
+&nbsp;     * target table that contain the auto-generated keys that should be made
+&nbsp;     * available. The driver will ignore the array if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql         an SQL Data Manipulation Language (DML) statement, such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *                    {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *                    such as a DDL statement.
+&nbsp;     * @param columnNames an array of the names of the columns that should be
+&nbsp;     *                    returned from the inserted row
+&nbsp;     * @return either the row count for {@code INSERT}, {@code UPDATE},
+&nbsp;     * or {@code DELETE} statements, or 0 for SQL statements
+&nbsp;     * that return nothing
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the SQL
+&nbsp;     *                                         statement returns a {@code ResultSet} object, the
+&nbsp;     *                                         second argument supplied to this method is not a {@code String} array
+&nbsp;     *                                         whose elements are valid column names, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int executeUpdate(String sql, String[] columnNames) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeUpdate(sql, columnNames);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which may return multiple results,
+&nbsp;     * and signals the driver that any
+&nbsp;     * auto-generated keys should be made available
+&nbsp;     * for retrieval.  The driver will ignore this signal if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * In some (uncommon) situations, a single SQL statement may return
+&nbsp;     * multiple result sets and/or update counts.  Normally you can ignore
+&nbsp;     * this unless you are (1) executing a stored procedure that you know may
+&nbsp;     * return multiple results or (2) you are dynamically executing an
+&nbsp;     * unknown SQL string.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The {@code execute} method executes an SQL statement and indicates the
+&nbsp;     * form of the first result.  You must then use the methods
+&nbsp;     * {@code getResultSet} or {@code getUpdateCount}
+&nbsp;     * to retrieve the result, and {@code getMoreResults} to
+&nbsp;     * move to any subsequent result(s).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql               any SQL statement
+&nbsp;     * @param autoGeneratedKeys a constant indicating whether auto-generated
+&nbsp;     *                          keys should be made available for retrieval using the method
+&nbsp;     *                          {@code getGeneratedKeys}; one of the following constants:
+&nbsp;     *                          {@code Statement.RETURN_GENERATED_KEYS} or
+&nbsp;     *                          {@code Statement.NO_GENERATED_KEYS}
+&nbsp;     * @return {@code true} if the first result is a {@code ResultSet}
+&nbsp;     * object; {@code false} if it is an update count or there are
+&nbsp;     * no results
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the second
+&nbsp;     *                                         parameter supplied to this method is not
+&nbsp;     *                                         {@code Statement.RETURN_GENERATED_KEYS} or
+&nbsp;     *                                         {@code Statement.NO_GENERATED_KEYS},
+&nbsp;     *                                         the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support
+&nbsp;     *                                         this method with a constant of Statement.RETURN_GENERATED_KEYS
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @see #getResultSet
+&nbsp;     * @see #getUpdateCount
+&nbsp;     * @see #getMoreResults
+&nbsp;     * @see #getGeneratedKeys
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.execute(sql, autoGeneratedKeys);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which may return multiple results,
+&nbsp;     * and signals the driver that the
+&nbsp;     * auto-generated keys indicated in the given array should be made available
+&nbsp;     * for retrieval.  This array contains the indexes of the columns in the
+&nbsp;     * target table that contain the auto-generated keys that should be made
+&nbsp;     * available.  The driver will ignore the array if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Under some (uncommon) situations, a single SQL statement may return
+&nbsp;     * multiple result sets and/or update counts.  Normally you can ignore
+&nbsp;     * this unless you are (1) executing a stored procedure that you know may
+&nbsp;     * return multiple results or (2) you are dynamically executing an
+&nbsp;     * unknown SQL string.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The {@code execute} method executes an SQL statement and indicates the
+&nbsp;     * form of the first result.  You must then use the methods
+&nbsp;     * {@code getResultSet} or {@code getUpdateCount}
+&nbsp;     * to retrieve the result, and {@code getMoreResults} to
+&nbsp;     * move to any subsequent result(s).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql           any SQL statement
+&nbsp;     * @param columnIndexes an array of the indexes of the columns in the
+&nbsp;     *                      inserted row that should be  made available for retrieval by a
+&nbsp;     *                      call to the method {@code getGeneratedKeys}
+&nbsp;     * @return {@code true} if the first result is a {@code ResultSet}
+&nbsp;     * object; {@code false} if it is an update count or there
+&nbsp;     * are no results
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the
+&nbsp;     *                                         elements in the {@code int} array passed to this method
+&nbsp;     *                                         are not valid column indexes, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @see #getResultSet
+&nbsp;     * @see #getUpdateCount
+&nbsp;     * @see #getMoreResults
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean execute(String sql, int[] columnIndexes) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.execute(sql, columnIndexes);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which may return multiple results,
+&nbsp;     * and signals the driver that the
+&nbsp;     * auto-generated keys indicated in the given array should be made available
+&nbsp;     * for retrieval. This array contains the names of the columns in the
+&nbsp;     * target table that contain the auto-generated keys that should be made
+&nbsp;     * available.  The driver will ignore the array if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * In some (uncommon) situations, a single SQL statement may return
+&nbsp;     * multiple result sets and/or update counts.  Normally you can ignore
+&nbsp;     * this unless you are (1) executing a stored procedure that you know may
+&nbsp;     * return multiple results or (2) you are dynamically executing an
+&nbsp;     * unknown SQL string.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The {@code execute} method executes an SQL statement and indicates the
+&nbsp;     * form of the first result.  You must then use the methods
+&nbsp;     * {@code getResultSet} or {@code getUpdateCount}
+&nbsp;     * to retrieve the result, and {@code getMoreResults} to
+&nbsp;     * move to any subsequent result(s).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     *
+&nbsp;     * @param sql         any SQL statement
+&nbsp;     * @param columnNames an array of the names of the columns in the inserted
+&nbsp;     *                    row that should be made available for retrieval by a call to the
+&nbsp;     *                    method {@code getGeneratedKeys}
+&nbsp;     * @return {@code true} if the next result is a {@code ResultSet}
+&nbsp;     * object; {@code false} if it is an update count or there
+&nbsp;     * are no more results
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement},the
+&nbsp;     *                                         elements of the {@code String} array passed to this
+&nbsp;     *                                         method are not valid column names, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @see #getResultSet
+&nbsp;     * @see #getUpdateCount
+&nbsp;     * @see #getMoreResults
+&nbsp;     * @see #getGeneratedKeys
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean execute(String sql, String[] columnNames) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.execute(sql, columnNames);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the result set holdability for {@code ResultSet} objects
+&nbsp;     * generated by this {@code Statement} object.
+&nbsp;     *
+&nbsp;     * @return either {@code ResultSet.HOLD_CURSORS_OVER_COMMIT} or
+&nbsp;     * {@code ResultSet.CLOSE_CURSORS_AT_COMMIT}
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @since 1.4
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getResultSetHoldability() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getResultSetHoldability();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves whether this {@code Statement} object has been closed. A {@code Statement} is closed if the
+&nbsp;     * method close has been called on it, or if it is automatically closed.
+&nbsp;     *
+&nbsp;     * @return true if this {@code Statement} object is closed; false if it is still open
+&nbsp;     * @throws SQLException if a database access error occurs
+&nbsp;     * @since 1.6
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isClosed() throws SQLException {
+<b class="nc">&nbsp;        return stmt.isClosed();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Requests that a {@code Statement} be pooled or not pooled.  The value
+&nbsp;     * specified is a hint to the statement pool implementation indicating
+&nbsp;     * whether the application wants the statement to be pooled.  It is up to
+&nbsp;     * the statement pool manager as to whether the hint is used.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The poolable value of a statement is applicable to both internal
+&nbsp;     * statement caches implemented by the driver and external statement caches
+&nbsp;     * implemented by application servers and other applications.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * By default, a {@code Statement} is not poolable when created, and
+&nbsp;     * a {@code PreparedStatement} and {@code CallableStatement}
+&nbsp;     * are poolable when created.
+&nbsp;     *
+&nbsp;     * @param poolable requests that the statement be pooled if true and
+&nbsp;     *                 that the statement not be pooled if false
+&nbsp;     * @throws SQLException if this method is called on a closed
+&nbsp;     *                      {@code Statement}
+&nbsp;     * @since 1.6
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setPoolable(boolean poolable) throws SQLException {
+<b class="nc">&nbsp;        stmt.setPoolable(poolable);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a  value indicating whether the {@code Statement}
+&nbsp;     * is poolable or not.
+&nbsp;     *
+&nbsp;     * @return {@code true} if the {@code Statement}
+&nbsp;     * is poolable; {@code false} otherwise
+&nbsp;     * @throws SQLException if this method is called on a closed
+&nbsp;     *                      {@code Statement}
+&nbsp;     * @see Statement#setPoolable(boolean) setPoolable(boolean)
+&nbsp;     * @since 1.6
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isPoolable() throws SQLException {
+<b class="nc">&nbsp;        return stmt.isPoolable();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Specifies that this {@code Statement} will be closed when all its
+&nbsp;     * dependent result sets are closed. If execution of the {@code Statement}
+&nbsp;     * does not produce any result sets, this method has no effect.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt; Multiple calls to {@code closeOnCompletion} do
+&nbsp;     * not toggle the effect on this {@code Statement}. However, a call to
+&nbsp;     * {@code closeOnCompletion} does effect both the subsequent execution of
+&nbsp;     * statements, and statements that currently have open, dependent,
+&nbsp;     * result sets.
+&nbsp;     *
+&nbsp;     * @throws SQLException if this method is called on a closed
+&nbsp;     *                      {@code Statement}
+&nbsp;     * @since 1.7
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void closeOnCompletion() throws SQLException {
+<b class="nc">&nbsp;        stmt.closeOnCompletion();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a value indicating whether this {@code Statement} will be
+&nbsp;     * closed when all its dependent result sets are closed.
+&nbsp;     *
+&nbsp;     * @return {@code true} if the {@code Statement} will be closed when all
+&nbsp;     * of its dependent result sets are closed; {@code false} otherwise
+&nbsp;     * @throws SQLException if this method is called on a closed
+&nbsp;     *                      {@code Statement}
+&nbsp;     * @since 1.7
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isCloseOnCompletion() throws SQLException {
+<b class="nc">&nbsp;        return stmt.isCloseOnCompletion();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an object that implements the given interface to allow access to
+&nbsp;     * non-standard methods, or standard methods not exposed by the proxy.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the receiver implements the interface then the result is the receiver
+&nbsp;     * or a proxy for the receiver. If the receiver is a wrapper
+&nbsp;     * and the wrapped object implements the interface then the result is the
+&nbsp;     * wrapped object or a proxy for the wrapped object. Otherwise return the
+&nbsp;     * the result of calling {@code unwrap} recursively on the wrapped object
+&nbsp;     * or a proxy for that result. If the receiver is not a
+&nbsp;     * wrapper and does not implement the interface, then an {@code SQLException} is thrown.
+&nbsp;     *
+&nbsp;     * @param iface A Class defining an interface that the result must implement.
+&nbsp;     * @return an object that implements the interface. May be a proxy for the actual implementing object.
+&nbsp;     * @throws SQLException If no object found that implements the interface
+&nbsp;     * @since 1.6
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public &lt;T&gt; T unwrap(Class&lt;T&gt; iface) throws SQLException {
+<b class="nc">&nbsp;        return stmt.unwrap(iface);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns true if this either implements the interface argument or is directly or indirectly a wrapper
+&nbsp;     * for an object that does. Returns false otherwise. If this implements the interface then return true,
+&nbsp;     * else if this is a wrapper then return the result of recursively calling {@code isWrapperFor} on the wrapped
+&nbsp;     * object. If this does not implement the interface and is not a wrapper, return false.
+&nbsp;     * This method should be implemented as a low-cost operation compared to {@code unwrap} so that
+&nbsp;     * callers can use this method to avoid expensive {@code unwrap} calls that may fail. If this method
+&nbsp;     * returns true then calling {@code unwrap} with the same argument should succeed.
+&nbsp;     *
+&nbsp;     * @param iface a Class defining an interface.
+&nbsp;     * @return true if this implements the interface or directly or indirectly wraps an object that does.
+&nbsp;     * @throws SQLException if an error occurs while determining whether this is a wrapper
+&nbsp;     *                      for an object with the given interface.
+&nbsp;     * @since 1.6
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isWrapperFor(Class&lt;?&gt; iface) throws SQLException {
+<b class="nc">&nbsp;        return stmt.isWrapperFor(iface);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current result as an update count; if the result
+&nbsp;     * is a {@code ResultSet} object or there are no more results, -1
+&nbsp;     * is returned. This method should be called only once per result.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row count may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code UnsupportedOperationException}
+&nbsp;     *
+&nbsp;     * @return the current result as an update count; -1 if the current result
+&nbsp;     * is a {@code ResultSet} object or there are no more results
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #execute
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getLargeUpdateCount() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getLargeUpdateCount();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the limit for the maximum number of rows that any
+&nbsp;     * {@code ResultSet} object  generated by this {@code Statement}
+&nbsp;     * object can contain to the given number.
+&nbsp;     * If the limit is exceeded, the excess
+&nbsp;     * rows are silently dropped.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the row limit may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code UnsupportedOperationException}
+&nbsp;     *
+&nbsp;     * @param max the new max rows limit; zero means there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs,
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     *                      or the condition {@code max &gt;= 0} is not satisfied
+&nbsp;     * @see #getMaxRows
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setLargeMaxRows(long max) throws SQLException {
+<b class="nc">&nbsp;        stmt.setLargeMaxRows(max);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the maximum number of rows that a
+&nbsp;     * {@code ResultSet} object produced by this
+&nbsp;     * {@code Statement} object can contain.  If this limit is exceeded,
+&nbsp;     * the excess rows are silently dropped.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row limit may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will return {@code 0}
+&nbsp;     *
+&nbsp;     * @return the current maximum number of rows for a {@code ResultSet}
+&nbsp;     * object produced by this {@code Statement} object;
+&nbsp;     * zero means there is no limit
+&nbsp;     * @throws SQLException if a database access error occurs or
+&nbsp;     *                      this method is called on a closed {@code Statement}
+&nbsp;     * @see #setMaxRows
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getLargeMaxRows() throws SQLException {
+<b class="nc">&nbsp;        return stmt.getLargeMaxRows();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Submits a batch of commands to the database for execution and
+&nbsp;     * if all commands execute successfully, returns an array of update counts.
+&nbsp;     * The {@code long} elements of the array that is returned are ordered
+&nbsp;     * to correspond to the commands in the batch, which are ordered
+&nbsp;     * according to the order in which they were added to the batch.
+&nbsp;     * The elements in the array returned by the method {@code executeLargeBatch}
+&nbsp;     * may be one of the following:
+&nbsp;     * &lt;OL&gt;
+&nbsp;     * &lt;LI&gt;A number greater than or equal to zero -- indicates that the
+&nbsp;     * command was processed successfully and is an update count giving the
+&nbsp;     * number of rows in the database that were affected by the command&#39;s
+&nbsp;     * execution
+&nbsp;     * &lt;LI&gt;A value of {@code SUCCESS_NO_INFO} -- indicates that the command was
+&nbsp;     * processed successfully but that the number of rows affected is
+&nbsp;     * unknown
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If one of the commands in a batch update fails to execute properly,
+&nbsp;     * this method throws a {@code BatchUpdateException}, and a JDBC
+&nbsp;     * driver may or may not continue to process the remaining commands in
+&nbsp;     * the batch.  However, the driver&#39;s behavior must be consistent with a
+&nbsp;     * particular DBMS, either always continuing to process commands or never
+&nbsp;     * continuing to process commands.  If the driver continues processing
+&nbsp;     * after a failure, the array returned by the method
+&nbsp;     * {@code BatchUpdateException.getLargeUpdateCounts}
+&nbsp;     * will contain as many elements as there are commands in the batch, and
+&nbsp;     * at least one of the elements will be the following:
+&nbsp;     *
+&nbsp;     * &lt;LI&gt;A value of {@code EXECUTE_FAILED} -- indicates that the command failed
+&nbsp;     * to execute successfully and occurs only if a driver continues to
+&nbsp;     * process commands after a command fails
+&nbsp;     * &lt;/OL&gt;
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row count may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code UnsupportedOperationException}
+&nbsp;     *
+&nbsp;     * @return an array of update counts containing one element for each
+&nbsp;     * command in the batch.  The elements of the array are ordered according
+&nbsp;     * to the order in which commands were added to the batch.
+&nbsp;     * @throws SQLException        if a database access error occurs,
+&nbsp;     *                             this method is called on a closed {@code Statement} or the
+&nbsp;     *                             driver does not support batch statements. Throws {@link BatchUpdateException}
+&nbsp;     *                             (a subclass of {@code SQLException}) if one of the commands sent to the
+&nbsp;     *                             database fails to execute properly or attempts to return a result set.
+&nbsp;     * @throws SQLTimeoutException when the driver has determined that the
+&nbsp;     *                             timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                             method has been exceeded and has at least attempted to cancel
+&nbsp;     *                             the currently running {@code Statement}
+&nbsp;     * @see #addBatch
+&nbsp;     * @see DatabaseMetaData#supportsBatchUpdates
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long[] executeLargeBatch() throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeLargeBatch();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement, which may be an {@code INSERT},
+&nbsp;     * {@code UPDATE}, or {@code DELETE} statement or an
+&nbsp;     * SQL statement that returns nothing, such as an SQL DDL statement.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row count may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code UnsupportedOperationException}
+&nbsp;     *
+&nbsp;     * @param sql an SQL Data Manipulation Language (DML) statement,
+&nbsp;     *            such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *            {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *            such as a DDL statement.
+&nbsp;     * @return either (1) the row count for SQL Data Manipulation Language
+&nbsp;     * (DML) statements or (2) 0 for SQL statements that return nothing
+&nbsp;     * @throws SQLException        if a database access error occurs,
+&nbsp;     *                             this method is called on a closed {@code Statement}, the given
+&nbsp;     *                             SQL statement produces a {@code ResultSet} object, the method is called on a
+&nbsp;     *                             {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLTimeoutException when the driver has determined that the
+&nbsp;     *                             timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                             method has been exceeded and has at least attempted to cancel
+&nbsp;     *                             the currently running {@code Statement}
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long executeLargeUpdate(String sql) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeLargeUpdate(sql);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement and signals the driver with the
+&nbsp;     * given flag about whether the
+&nbsp;     * auto-generated keys produced by this {@code Statement} object
+&nbsp;     * should be made available for retrieval.  The driver will ignore the
+&nbsp;     * flag if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row count may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code SQLFeatureNotSupportedException}
+&nbsp;     *
+&nbsp;     * @param sql               an SQL Data Manipulation Language (DML) statement,
+&nbsp;     *                          such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *                          {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *                          such as a DDL statement.
+&nbsp;     * @param autoGeneratedKeys a flag indicating whether auto-generated keys
+&nbsp;     *                          should be made available for retrieval;
+&nbsp;     *                          one of the following constants:
+&nbsp;     *                          {@code Statement.RETURN_GENERATED_KEYS}
+&nbsp;     *                          {@code Statement.NO_GENERATED_KEYS}
+&nbsp;     * @return either (1) the row count for SQL Data Manipulation Language (DML) statements
+&nbsp;     * or (2) 0 for SQL statements that return nothing
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the given
+&nbsp;     *                                         SQL statement returns a {@code ResultSet} object,
+&nbsp;     *                                         the given constant is not one of those allowed, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support
+&nbsp;     *                                         this method with a constant of Statement.RETURN_GENERATED_KEYS
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long executeLargeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeLargeUpdate(sql, autoGeneratedKeys);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement and signals the driver that the
+&nbsp;     * auto-generated keys indicated in the given array should be made available
+&nbsp;     * for retrieval.   This array contains the indexes of the columns in the
+&nbsp;     * target table that contain the auto-generated keys that should be made
+&nbsp;     * available. The driver will ignore the array if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row count may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code SQLFeatureNotSupportedException}
+&nbsp;     *
+&nbsp;     * @param sql           an SQL Data Manipulation Language (DML) statement,
+&nbsp;     *                      such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *                      {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *                      such as a DDL statement.
+&nbsp;     * @param columnIndexes an array of column indexes indicating the columns
+&nbsp;     *                      that should be returned from the inserted row
+&nbsp;     * @return either (1) the row count for SQL Data Manipulation Language (DML) statements
+&nbsp;     * or (2) 0 for SQL statements that return nothing
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the SQL
+&nbsp;     *                                         statement returns a {@code ResultSet} object,the second argument
+&nbsp;     *                                         supplied to this method is not an
+&nbsp;     *                                         {@code int} array whose elements are valid column indexes, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long executeLargeUpdate(String sql, int[] columnIndexes) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeLargeUpdate(sql, columnIndexes);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the given SQL statement and signals the driver that the
+&nbsp;     * auto-generated keys indicated in the given array should be made available
+&nbsp;     * for retrieval.   This array contains the names of the columns in the
+&nbsp;     * target table that contain the auto-generated keys that should be made
+&nbsp;     * available. The driver will ignore the array if the SQL statement
+&nbsp;     * is not an {@code INSERT} statement, or an SQL statement able to return
+&nbsp;     * auto-generated keys (the list of such statements is vendor-specific).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method should be used when the returned row count may exceed
+&nbsp;     * {@link Integer#MAX_VALUE}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * &lt;strong&gt;Note:&lt;/strong&gt;This method cannot be called on a
+&nbsp;     * {@code PreparedStatement} or {@code CallableStatement}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw {@code SQLFeatureNotSupportedException}
+&nbsp;     *
+&nbsp;     * @param sql         an SQL Data Manipulation Language (DML) statement,
+&nbsp;     *                    such as {@code INSERT}, {@code UPDATE} or
+&nbsp;     *                    {@code DELETE}; or an SQL statement that returns nothing,
+&nbsp;     *                    such as a DDL statement.
+&nbsp;     * @param columnNames an array of the names of the columns that should be
+&nbsp;     *                    returned from the inserted row
+&nbsp;     * @return either the row count for {@code INSERT}, {@code UPDATE},
+&nbsp;     * or {@code DELETE} statements, or 0 for SQL statements
+&nbsp;     * that return nothing
+&nbsp;     * @throws SQLException                    if a database access error occurs,
+&nbsp;     *                                         this method is called on a closed {@code Statement}, the SQL
+&nbsp;     *                                         statement returns a {@code ResultSet} object, the
+&nbsp;     *                                         second argument supplied to this method is not a {@code String} array
+&nbsp;     *                                         whose elements are valid column names, the method is called on a
+&nbsp;     *                                         {@code PreparedStatement} or {@code CallableStatement}
+&nbsp;     * @throws SQLFeatureNotSupportedException if the JDBC driver does not support this method
+&nbsp;     * @throws SQLTimeoutException             when the driver has determined that the
+&nbsp;     *                                         timeout value that was specified by the {@code setQueryTimeout}
+&nbsp;     *                                         method has been exceeded and has at least attempted to cancel
+&nbsp;     *                                         the currently running {@code Statement}
+&nbsp;     * @since 1.8
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long executeLargeUpdate(String sql, String[] columnNames) throws SQLException {
+<b class="nc">&nbsp;        if(stats!=null)stats.statement_executed(conn.id, conn.rw);</b>
+<b class="nc">&nbsp;        return stmt.executeLargeUpdate(sql, columnNames);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a {@code String} enclosed in single quotes. Any occurrence of a
+&nbsp;     * single quote within the string will be replaced by two single quotes.
+&nbsp;     *
+&nbsp;     * &lt;blockquote&gt;
+&nbsp;     * &lt;table class=&quot;striped&quot;&gt;
+&nbsp;     * &lt;caption&gt;Examples of the conversion:&lt;/caption&gt;
+&nbsp;     * &lt;thead&gt;
+&nbsp;     * &lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Value&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Result&lt;/th&gt;&lt;/tr&gt;
+&nbsp;     * &lt;/thead&gt;
+&nbsp;     * &lt;tbody style=&quot;text-align:center&quot;&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;Hello&lt;/th&gt; &lt;td&gt;&#39;Hello&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;G&#39;Day&lt;/th&gt; &lt;td&gt;&#39;G&#39;&#39;Day&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;&#39;G&#39;&#39;Day&#39;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;&#39;&#39;&#39;G&#39;&#39;&#39;&#39;Day&#39;&#39;&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;I&#39;&#39;&#39;M&lt;/th&gt; &lt;td&gt;&#39;I&#39;&#39;&#39;&#39;&#39;&#39;M&#39;&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     *
+&nbsp;     * &lt;/tbody&gt;
+&nbsp;     * &lt;/table&gt;
+&nbsp;     * &lt;/blockquote&gt;
+&nbsp;     *
+&nbsp;     * @param val a character string
+&nbsp;     * @return A string enclosed by single quotes with every single quote
+&nbsp;     * converted to two single quotes
+&nbsp;     * @throws NullPointerException if val is {@code null}
+&nbsp;     * @throws SQLException         if a database access error occurs
+&nbsp;     * @implNote JDBC driver implementations may need to provide their own implementation
+&nbsp;     * of this method in order to meet the requirements of the underlying
+&nbsp;     * datasource.
+&nbsp;     * @since 9
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String enquoteLiteral(String val) throws SQLException {
+<b class="nc">&nbsp;        return stmt.enquoteLiteral(val);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a SQL identifier. If {@code identifier} is a simple SQL identifier:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;Return the original value if {@code alwaysQuote} is
+&nbsp;     * {@code false}&lt;/li&gt;
+&nbsp;     * &lt;li&gt;Return a delimited identifier if {@code alwaysQuote} is
+&nbsp;     * {@code true}&lt;/li&gt;
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If {@code identifier} is not a simple SQL identifier, {@code identifier} will be
+&nbsp;     * enclosed in double quotes if not already present. If the datasource does
+&nbsp;     * not support double quotes for delimited identifiers, the
+&nbsp;     * identifier should be enclosed by the string returned from
+&nbsp;     * {@link DatabaseMetaData#getIdentifierQuoteString}.  If the datasource
+&nbsp;     * does not support delimited identifiers, a
+&nbsp;     * {@code SQLFeatureNotSupportedException} should be thrown.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * A {@code SQLException} will be thrown if {@code identifier} contains any
+&nbsp;     * characters invalid in a delimited identifier or the identifier length is
+&nbsp;     * invalid for the datasource.
+&nbsp;     *
+&nbsp;     * @param identifier  a SQL identifier
+&nbsp;     * @param alwaysQuote indicates if a simple SQL identifier should be
+&nbsp;     *                    returned as a quoted identifier
+&nbsp;     * @return A simple SQL identifier or a delimited identifier
+&nbsp;     * @throws SQLException                    if identifier is not a valid identifier
+&nbsp;     * @throws SQLFeatureNotSupportedException if the datasource does not support
+&nbsp;     *                                         delimited identifiers
+&nbsp;     * @throws NullPointerException            if identifier is {@code null}
+&nbsp;     * @implSpec The default implementation uses the following criteria to
+&nbsp;     * determine a valid simple SQL identifier:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;The string is not enclosed in double quotes&lt;/li&gt;
+&nbsp;     * &lt;li&gt;The first character is an alphabetic character from a through z, or
+&nbsp;     * from A through Z&lt;/li&gt;
+&nbsp;     * &lt;li&gt;The name only contains alphanumeric characters or the character &quot;_&quot;&lt;/li&gt;
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation will throw a {@code SQLException} if:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;{@code identifier} contains a {@code null} character or double quote and is not
+&nbsp;     * a simple SQL identifier.&lt;/li&gt;
+&nbsp;     * &lt;li&gt;The length of {@code identifier} is less than 1 or greater than 128 characters
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     * &lt;blockquote&gt;
+&nbsp;     * &lt;table class=&quot;striped&quot; &gt;
+&nbsp;     * &lt;caption&gt;Examples of the conversion:&lt;/caption&gt;
+&nbsp;     * &lt;thead&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;identifier&lt;/th&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;alwaysQuote&lt;/th&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;Result&lt;/th&gt;&lt;/tr&gt;
+&nbsp;     * &lt;/thead&gt;
+&nbsp;     * &lt;tbody&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;Hello&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;td&gt;Hello&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;Hello&lt;/th&gt;
+&nbsp;     * &lt;td&gt;true&lt;/td&gt;
+&nbsp;     * &lt;td&gt;&quot;Hello&quot;&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;G&#39;Day&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;td&gt;&quot;G&#39;Day&quot;&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;&quot;Bruce Wayne&quot;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;td&gt;&quot;Bruce Wayne&quot;&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;&quot;Bruce Wayne&quot;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;true&lt;/td&gt;
+&nbsp;     * &lt;td&gt;&quot;Bruce Wayne&quot;&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;GoodDay$&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;td&gt;&quot;GoodDay$&quot;&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;Hello&quot;World&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;td&gt;SQLException&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;&quot;Hello&quot;World&quot;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;td&gt;SQLException&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;/tbody&gt;
+&nbsp;     * &lt;/table&gt;
+&nbsp;     * &lt;/blockquote&gt;
+&nbsp;     * @implNote JDBC driver implementations may need to provide their own implementation
+&nbsp;     * of this method in order to meet the requirements of the underlying
+&nbsp;     * datasource.
+&nbsp;     * @since 9
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String enquoteIdentifier(String identifier, boolean alwaysQuote) throws SQLException {
+<b class="nc">&nbsp;        return stmt.enquoteIdentifier(identifier, alwaysQuote);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves whether {@code identifier} is a simple SQL identifier.
+&nbsp;     *
+&nbsp;     * @param identifier a SQL identifier
+&nbsp;     * @return true if  a simple SQL identifier, false otherwise
+&nbsp;     * @throws NullPointerException if identifier is {@code null}
+&nbsp;     * @throws SQLException         if a database access error occurs
+&nbsp;     * @implSpec The default implementation uses the following criteria to
+&nbsp;     * determine a valid simple SQL identifier:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;The string is not enclosed in double quotes&lt;/li&gt;
+&nbsp;     * &lt;li&gt;The first character is an alphabetic character from a through z, or
+&nbsp;     * from A through Z&lt;/li&gt;
+&nbsp;     * &lt;li&gt;The string only contains alphanumeric characters or the character
+&nbsp;     * &quot;_&quot;&lt;/li&gt;
+&nbsp;     * &lt;li&gt;The string is between 1 and 128 characters in length inclusive&lt;/li&gt;
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     *
+&nbsp;     * &lt;blockquote&gt;
+&nbsp;     * &lt;table class=&quot;striped&quot; &gt;
+&nbsp;     * &lt;caption&gt;Examples of the conversion:&lt;/caption&gt;
+&nbsp;     * &lt;thead&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;identifier&lt;/th&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;Simple Identifier&lt;/th&gt;
+&nbsp;     * &lt;/thead&gt;
+&nbsp;     *
+&nbsp;     * &lt;tbody&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;Hello&lt;/th&gt;
+&nbsp;     * &lt;td&gt;true&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;G&#39;Day&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;&quot;Bruce Wayne&quot;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;GoodDay$&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;Hello&quot;World&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;row&quot;&gt;&quot;Hello&quot;World&quot;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;false&lt;/td&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;/tbody&gt;
+&nbsp;     * &lt;/table&gt;
+&nbsp;     * &lt;/blockquote&gt;
+&nbsp;     * @implNote JDBC driver implementations may need to provide their own
+&nbsp;     * implementation of this method in order to meet the requirements of the
+&nbsp;     * underlying datasource.
+&nbsp;     * @since 9
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isSimpleIdentifier(String identifier) throws SQLException {
+<b class="nc">&nbsp;        return stmt.isSimpleIdentifier(identifier);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a {@code String} representing a National Character Set Literal
+&nbsp;     * enclosed in single quotes and prefixed with a upper case letter N.
+&nbsp;     * Any occurrence of a single quote within the string will be replaced
+&nbsp;     * by two single quotes.
+&nbsp;     *
+&nbsp;     * &lt;blockquote&gt;
+&nbsp;     * &lt;table class=&quot;striped&quot;&gt;
+&nbsp;     * &lt;caption&gt;Examples of the conversion:&lt;/caption&gt;
+&nbsp;     * &lt;thead&gt;
+&nbsp;     * &lt;tr&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;Value&lt;/th&gt;
+&nbsp;     * &lt;th scope=&quot;col&quot;&gt;Result&lt;/th&gt;
+&nbsp;     * &lt;/tr&gt;
+&nbsp;     * &lt;/thead&gt;
+&nbsp;     * &lt;tbody&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;Hello&lt;/th&gt; &lt;td&gt;N&#39;Hello&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;G&#39;Day&lt;/th&gt; &lt;td&gt;N&#39;G&#39;&#39;Day&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;&#39;G&#39;&#39;Day&#39;&lt;/th&gt;
+&nbsp;     * &lt;td&gt;N&#39;&#39;&#39;G&#39;&#39;&#39;&#39;Day&#39;&#39;&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;I&#39;&#39;&#39;M&lt;/th&gt; &lt;td&gt;N&#39;I&#39;&#39;&#39;&#39;&#39;&#39;M&#39;&lt;/td&gt;
+&nbsp;     * &lt;tr&gt; &lt;th scope=&quot;row&quot;&gt;N&#39;Hello&#39;&lt;/th&gt; &lt;td&gt;N&#39;N&#39;&#39;Hello&#39;&#39;&#39;&lt;/td&gt; &lt;/tr&gt;
+&nbsp;     *
+&nbsp;     * &lt;/tbody&gt;
+&nbsp;     * &lt;/table&gt;
+&nbsp;     * &lt;/blockquote&gt;
+&nbsp;     *
+&nbsp;     * @param val a character string
+&nbsp;     * @return the result of replacing every single quote character in the
+&nbsp;     * argument by two single quote characters where this entire result is
+&nbsp;     * then prefixed with &#39;N&#39;.
+&nbsp;     * @throws NullPointerException if val is {@code null}
+&nbsp;     * @throws SQLException         if a database access error occurs
+&nbsp;     * @implNote JDBC driver implementations may need to provide their own implementation
+&nbsp;     * of this method in order to meet the requirements of the underlying
+&nbsp;     * datasource. An implementation of enquoteNCharLiteral may accept a different
+&nbsp;     * set of characters than that accepted by the same drivers implementation of
+&nbsp;     * enquoteLiteral.
+&nbsp;     * @since 9
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String enquoteNCharLiteral(String val) throws SQLException {
+<b class="nc">&nbsp;        return stmt.enquoteNCharLiteral(val);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

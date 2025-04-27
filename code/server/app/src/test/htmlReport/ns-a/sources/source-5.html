@@ -1,0 +1,105 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DynamicMediaHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">server.infrastructure</a>
+</div>
+
+<h1>Coverage Summary for Class: DynamicMediaHandler (server.infrastructure)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">DynamicMediaHandler</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package server.infrastructure;
+&nbsp;
+&nbsp;/**
+&nbsp; * Interface for serving dynamic media content (e.g., images).
+&nbsp; *
+&nbsp; * Implementations of this interface define how media resources are stored,
+&nbsp; * retrieved, and served to clients using an ID-based lookup.
+&nbsp; *
+&nbsp; * E.g. {@link FileDynamicMediaHandler} maps long IDs to media files
+&nbsp; * stored in a nested folder structure under a root path.
+&nbsp; */
+&nbsp;public interface DynamicMediaHandler {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the byte content of a media file associated with a given ID.
+&nbsp;     *
+&nbsp;     * @param id The unique identifier for the media file.
+&nbsp;     * @return A byte array representing the media content (e.g., image data).
+&nbsp;     * @throws Exception if the media cannot be found, read, or accessed.
+&nbsp;     */
+&nbsp;    byte[] get(long id);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes the media file associated with the given ID.
+&nbsp;     *
+&nbsp;     * @param id
+&nbsp;     */
+&nbsp;    void delete(long id);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a new media file to the system.
+&nbsp;     *
+&nbsp;     * @param data Byte array of the file to add.
+&nbsp;     * @return Unique ID assigned to the stored media file.
+&nbsp;     */
+&nbsp;    long add(byte[] data);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>

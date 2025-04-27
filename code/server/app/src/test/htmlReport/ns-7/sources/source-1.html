@@ -1,0 +1,307 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RequestsBuilder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">framework.web.route</a>
+</div>
+
+<h1>Coverage Summary for Class: RequestsBuilder (framework.web.route)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RequestsBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/115)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/106)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package framework.web.route;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSON;
+&nbsp;import com.sun.net.httpserver.HttpExchange;
+&nbsp;import framework.util.func.Function1;
+&nbsp;import framework.web.annotations.Body;
+&nbsp;import framework.web.annotations.FromRequest;
+&nbsp;import framework.web.annotations.Json;
+&nbsp;import framework.web.request.Request;
+&nbsp;import framework.web.annotations.url.Nullable;
+&nbsp;import framework.web.annotations.url.Path;
+&nbsp;import framework.web.annotations.url.QueryFlag;
+&nbsp;import framework.web.annotations.url.QueryValue;
+&nbsp;import framework.web.error.BadRequest;
+&nbsp;import framework.util.TypeReflect;
+&nbsp;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.lang.reflect.Method;
+&nbsp;import java.lang.reflect.Parameter;
+&nbsp;import java.util.Map;
+&nbsp;
+<b class="nc">&nbsp;public class RequestsBuilder {</b>
+&nbsp;
+&nbsp;    protected RouteParameter&lt;?&gt; getParameterHandler(RouteImpl route, Parameter param) throws Throwable{
+&nbsp;
+<b class="nc">&nbsp;        for(var ann : param.getAnnotations()){</b>
+<b class="nc">&nbsp;            switch(ann){</b>
+<b class="nc">&nbsp;                case FromRequest fr -&gt; {return fr.value().getConstructor().newInstance();}</b>
+<b class="nc">&nbsp;                case Body ignore -&gt; {</b>
+<b class="nc">&nbsp;                    if(param.getType().equals(InputStream.class))</b>
+<b class="nc">&nbsp;                        return request -&gt; request.exchange.getRequestBody();</b>
+&nbsp;
+<b class="nc">&nbsp;                    if(param.getType().equals(byte[].class))</b>
+<b class="nc">&nbsp;                        return request -&gt; request.exchange.getRequestBody().readAllBytes();</b>
+&nbsp;
+<b class="nc">&nbsp;                    StringsAdapter&lt;?&gt; stringsAdapter = getParameterStringAdapter(param);</b>
+<b class="nc">&nbsp;                    return request -&gt; {</b>
+&nbsp;                        try {
+<b class="nc">&nbsp;                            return stringsAdapter.parseSingular(new String(request.exchange.getRequestBody().readAllBytes()));</b>
+&nbsp;                        } catch (Throwable e) {
+<b class="nc">&nbsp;                            throw new BadRequest(&quot;Failed to construct parameter &quot; + param + &quot; for method &quot; + route.sourceMethod, e);</b>
+&nbsp;                        }
+&nbsp;                    };
+&nbsp;                }
+<b class="nc">&nbsp;                case Path path -&gt; {</b>
+<b class="nc">&nbsp;                    StringsAdapter&lt;?&gt; stringsAdapter = getParameterStringAdapter(param);</b>
+<b class="nc">&nbsp;                    var value = path.value().isEmpty()?param.getName():path.value();</b>
+<b class="nc">&nbsp;                    var index = route.findPathPartIndex(value);</b>
+<b class="nc">&nbsp;                    return request -&gt; {</b>
+&nbsp;                        try {
+<b class="nc">&nbsp;                            return stringsAdapter.parseSingular(request.getPathPart(index));</b>
+&nbsp;                        } catch (Throwable e) {
+<b class="nc">&nbsp;                            throw new BadRequest(&quot;Failed to construct parameter &quot; + param + &quot; for method &quot; + route.sourceMethod, e);</b>
+&nbsp;                        }
+&nbsp;                    };
+&nbsp;                }
+<b class="nc">&nbsp;                case QueryValue qv -&gt; {</b>
+<b class="nc">&nbsp;                    StringsAdapter&lt;?&gt; stringsAdapter = getParameterStringAdapter(param);</b>
+<b class="nc">&nbsp;                    var value = qv.value().isEmpty()?param.getName():qv.value();</b>
+<b class="nc">&nbsp;                    return request -&gt; {</b>
+&nbsp;                        try {
+<b class="nc">&nbsp;                            return stringsAdapter.parseMultiple(request.getQueryParam(value));</b>
+&nbsp;                        } catch (Throwable e) {
+<b class="nc">&nbsp;                            throw new BadRequest(&quot;Failed to construct parameter &quot; + param + &quot; for method &quot; + route.sourceMethod, e);</b>
+&nbsp;                        }
+&nbsp;                    };
+&nbsp;                }
+<b class="nc">&nbsp;                case QueryFlag qf -&gt; {</b>
+<b class="nc">&nbsp;                    String name = qf.value().isBlank()?param.getName():qf.value();</b>
+<b class="nc">&nbsp;                    if(param.getType().equals(int.class)||param.getType().equals(Integer.class)){</b>
+<b class="nc">&nbsp;                        return request -&gt; request.countQueryParam(name);</b>
+<b class="nc">&nbsp;                    }else if(param.getType().equals(boolean.class)||param.getType().equals(Boolean.class)){</b>
+<b class="nc">&nbsp;                        return request -&gt; request.hasQueryParam(name);</b>
+&nbsp;                    }else
+<b class="nc">&nbsp;                        throw new RuntimeException(&quot;Unsupported type for @QueryValue on parameter &quot; + param + &quot; on method &quot; + route.sourceMethod);</b>
+&nbsp;                }
+&nbsp;                default -&gt; {}
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if(param.getType().equals(HttpExchange.class)) return request -&gt; request.exchange;</b>
+<b class="nc">&nbsp;        if(param.getType().equals(Request.class)) return request -&gt; request;</b>
+<b class="nc">&nbsp;        return request -&gt; request.getServer().getManagedState(param.getType());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private StringsAdapter&lt;?&gt; getParameterStringAdapter(Class&lt;?&gt; type, boolean nullable) {
+<b class="nc">&nbsp;        if(type.isPrimitive()&amp;&amp;nullable) throw new RuntimeException(&quot;Cannot be nullable primitive&quot;);</b>
+<b class="nc">&nbsp;        if(type.isPrimitive()) return getParameterStringAdapter(TypeReflect.wrapPrimitives(type), nullable);</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;Class&lt;?&gt;, Function1&lt;Object, String&gt;&gt; map = Map.of(</b>
+&nbsp;                Byte.class, Byte::parseByte,
+&nbsp;                Short.class, Short::parseShort,
+&nbsp;                Integer.class, Integer::parseInt,
+&nbsp;                Long.class, Long::parseLong,
+&nbsp;                Boolean.class, Boolean::parseBoolean,
+&nbsp;                Float.class, Float::parseFloat,
+&nbsp;                Double.class, Double::parseDouble,
+<b class="nc">&nbsp;                String.class, s -&gt; s</b>
+&nbsp;        );
+<b class="nc">&nbsp;        if(map.containsKey(type)){</b>
+<b class="nc">&nbsp;            if (nullable)</b>
+<b class="nc">&nbsp;                return (StringSingleNullableAdapter&lt;?&gt;)map.get(type)::call;</b>
+&nbsp;            else
+<b class="nc">&nbsp;                return (StringSingleAdapter&lt;?&gt;)map.get(type)::call;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (type.isArray()) {</b>
+<b class="nc">&nbsp;            var innerType = type.getComponentType();</b>
+<b class="nc">&nbsp;            boolean innerNullable = innerType.isPrimitive()?false:nullable;</b>
+<b class="nc">&nbsp;            var sa = getParameterStringAdapter(innerType, innerNullable);</b>
+&nbsp;
+<b class="nc">&nbsp;            return switch(innerType){</b>
+<b class="nc">&nbsp;                case Class&lt;?&gt; cl when cl == byte.class -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new short[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = (short) sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+<b class="nc">&nbsp;                case Class&lt;?&gt; cl when cl == short.class -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new short[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = (short) sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+<b class="nc">&nbsp;                case Class&lt;?&gt; cl when cl == int.class -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new int[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = (int) sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+<b class="nc">&nbsp;                case Class&lt;?&gt; cl when cl == long.class -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new long[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = (long) sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+<b class="nc">&nbsp;                case Class&lt;?&gt; cl when cl == float.class -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new float[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = (float) sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+<b class="nc">&nbsp;                case Class&lt;?&gt; cl when cl == double.class -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new float[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = (float) sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+<b class="nc">&nbsp;                default -&gt; (StringListAdapter&lt;?&gt;) list -&gt; {</b>
+<b class="nc">&nbsp;                    if(nullable&amp;&amp;list==null)return null;</b>
+<b class="nc">&nbsp;                    var l = new Object[list.size()];</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; l.length; i ++)</b>
+<b class="nc">&nbsp;                        l[i] = sa.parseSingular(list.get(i));</b>
+<b class="nc">&nbsp;                    return l;</b>
+&nbsp;                };
+&nbsp;            };
+&nbsp;        }
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;Cannot get String handler for &quot; + type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private StringsAdapter&lt;?&gt; getParameterStringAdapter(Parameter param) {
+<b class="nc">&nbsp;        if(param.isAnnotationPresent(Json.class)){</b>
+<b class="nc">&nbsp;            Json json = param.getAnnotation(Json.class);</b>
+<b class="nc">&nbsp;            return (StringSingleNullableAdapter&lt;?&gt;) str -&gt; JSON.parseObject(str, param.getType(), json.read());</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            return getParameterStringAdapter(param.getType(), param.getAnnotation(Nullable.class)!=null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected RouteReturn&lt;?&gt; getReturnHandler(RouteImpl route, Method method) throws Throwable{
+<b class="nc">&nbsp;        if(method.isAnnotationPresent(Json.class)){</b>
+<b class="nc">&nbsp;            Json json = method.getAnnotation(Json.class);</b>
+<b class="nc">&nbsp;            return (request, data) -&gt; request.sendResponse(JSON.toJSONBytes(data, json.write()));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if(method.getReturnType().equals(void.class))</b>
+<b class="nc">&nbsp;            return (request, data) -&gt; request.sendResponse(&quot;&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        if(method.getReturnType().equals(byte[].class))</b>
+<b class="nc">&nbsp;            return (request, data) -&gt; request.sendResponse((byte[])data);</b>
+&nbsp;
+<b class="nc">&nbsp;        if(method.getReturnType().equals(String.class))</b>
+<b class="nc">&nbsp;            return (request, data) -&gt; request.sendResponse((String)data);</b>
+&nbsp;
+<b class="nc">&nbsp;        return (request, data) -&gt; request.sendResponse(data.toString());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-27 17:51</div>
+</div>
+</body>
+</html>
