@@ -444,35 +444,10 @@
                 console.error("Failed to load hosted events:", error);
             }
         }
+
         async function loadPurchasedEvents() {
             try {
                 const receipt = await api.payment.list_receipts();
-
-                // if (!receipt || !receipt.items || receipt.items.length === 0) {
-                //     console.error("No purchases found");
-                //     return;
-                // }
-
-                // // Step 1: Collect unique event IDs from receipt items
-                // const eventIds = [...new Set(
-                //     receipt.items
-                //         .filter(item => item.event_id) // Only items linked to events
-                //         .map(item => item.event_id)
-                // )];
-
-                // if (eventIds.length === 0) {
-                //     console.error("No event purchases found in receipts");
-                //     return;
-                // }
-
-                // console.log("Purchased event IDs:", eventIds);
-
-                // // Step 2: Fetch each event (assuming you have an API call for that)
-                // const eventPromises = eventIds.map(id => api.event.get_event(id));
-                // const events = await Promise.all(eventPromises);
-
-                // console.log("Purchased Events:", events);
-
 
                 const container = document.querySelector("#history .event-list");
 
@@ -495,10 +470,7 @@
                 </foreignObject>
             </svg>
         `;
-
                     listItem.appendChild(ticketSVG);
-
-
 
                     ticketSVG.firstElementChild.addEventListener("click", () => {
                         window.location.href = `/shop/receipt?receipt_id=${e.payment_id}`;

@@ -36,57 +36,55 @@
 
     };
 
-
     async function updateAuthLinks() {
-        const loginLink = document.getElementById("login-link");
-        const signupLink = document.getElementById("signup-link");
-        const logoutLink = document.getElementById("logout-link");
-        const searchLink = document.getElementById("search-event-link");
-        const createLink = document.getElementById("create-event-link");
-        const session = cookies.getSession();
-
-        if (session && session.length > 0) {
-            loginLink.style.display = 'none';
-            signupLink.style.display = 'none';
-            logoutLink.style.display = 'inline';
-
-            signupLink.insertAdjacentHTML('afterend', '<a href="/account"><div id="pro-pic"></div></a>');
-
+         const loginLink = document.getElementById("login-link");
+         const signupLink = document.getElementById("signup-link");
+         const logoutLink = document.getElementById("logout-link");
+         const searchLink = document.getElementById("search-event-link");
+         const createLink = document.getElementById("create-event-link");
+         const session = cookies.getSession();
+ 
+         if (session && session.length > 0) {
+             loginLink.style.display = 'none';
+             signupLink.style.display = 'none';
+             logoutLink.style.display = 'inline';
+             
+             signupLink.insertAdjacentHTML('afterend', '<a href="/account"><div id="pro-pic"></div></a>');
+ 
             const info = await page.account.userinfo();
 
             console.log(info); // Log info to check structure
             document.getElementById("pro-pic").style.backgroundImage = `url('/media/${info.picture}')`;
 
             logoutLink.onclick = function () {
-                utility.logout();
-                setTimeout(function () {
-                    updateAuthLinks();
-                }, 2000);
-            };
-            try {
-                const userInfo = await page.account.userinfo();
-                if (userInfo && userInfo.admin) {
-                    searchLink.style.display = 'none';
-                    const adminLinksHTML = `
-                        <a href="/admin/logs">Logs</a>
-                        <a href="/admin/console">Console</a>
-                        <a href="/admin/perf">Stats</a>
-                    `;
-                    loginLink.insertAdjacentHTML('afterend', adminLinksHTML);
-                }
-                else if (userInfo && userInfo.organizer) {
-                    createLink.style.display = "inline"
-                }
-            } catch (error) {
-                console.error('Error fetching user info:', error);
-            }
-        } else {
-            searchLink.style.display = 'inline';
-            createLink.style.display = 'none';
-            loginLink.style.display = 'inline';
-            signupLink.style.display = 'inline';
-            logoutLink.style.display = 'none';
-        }
-    }
-    updateAuthLinks();
-</script>
+                 utility.logout();
+                 setTimeout(function () {
+                     updateAuthLinks();
+                 }, 2000);
+             };
+             try {
+                 const userInfo = await page.account.userinfo();
+                 if (userInfo && userInfo.admin) {
+                     searchLink.style.display = 'none';
+                     const adminLinksHTML = `
+                         <a href="/admin/logs">Logs</a>
+                         <a href="/admin/console">Console</a>
+                         <a href="/admin/perf">Stats</a>
+                     `;
+                     loginLink.insertAdjacentHTML('afterend', adminLinksHTML);
+                 }
+                 else if (userInfo && userInfo.organizer) {
+                     createLink.style.display = "inline"
+                 }
+             } catch (error) {
+                 console.error('Error fetching user info:', error);
+             }
+            } else {
+             searchLink.style.display = 'inline';
+             createLink.style.display = 'none';
+             loginLink.style.display = 'inline';
+             signupLink.style.display = 'inline';
+             logoutLink.style.display = 'none';
+         }
+     }
+     updateAuthLinks();

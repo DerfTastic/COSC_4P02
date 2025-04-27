@@ -104,13 +104,6 @@
             margin: 0;
         }
 
-        /* .eventDetails {
-            font-family: "Klee One", cursive;
-            font-weight: 400;
-            font-style: normal;
-        } */
-
-
         h1 {
             position: relative;
             text-align: center;
@@ -320,7 +313,6 @@
         #countdown-timer {
             display: flex;
             justify-content: space-between;
-            /* Space out countdown blocks */
         }
 
         #countdown-timer div {
@@ -509,9 +501,9 @@
         }
     </style>
 </head>
-<div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
 
 <body>
+    <div class="sticky" src="/partials/header.html" type="text/x-html-template"></div>
     <div class="content">
         <div class="eventPage-1">
             <div class="flex-container">
@@ -580,9 +572,6 @@
             </div>
 
         </div>
-
-
-
 
         <div class="eventPage-2">
             <div class="flex-container">
@@ -774,15 +763,12 @@
   <p><i class="fa-solid fa-phone"></i> ${owner.disp_phone_number}</p>
   <p><i class="fa-solid fa-envelope"></i> ${owner.disp_email}</p>
 `;
-
-
             } catch (error) {
                 console.error("Error fetching event:", error);
             }
 
             fetchAndRenderTickets(id);
         };
-
 
         let tickets = [];  // Declare tickets globally to store the fetched tickets
 
@@ -795,6 +781,17 @@
             } catch (error) {
                 console.error("Error fetching tickets:", error);
             }
+        }
+
+        const TicketTypeDisplayNames = {
+            free: "Free",
+            vip: "VIP",
+            general: "General Admission",
+            other: "Other"
+        };
+
+        function getNiceTicketTypeName(ticketType) {
+            return TicketTypeDisplayNames[ticketType] || (ticketType ? ticketType.charAt(0).toUpperCase() + ticketType.slice(1) : "Unknown");
         }
 
         // Function to render tickets dynamically based on the fetched data
@@ -814,7 +811,7 @@
                 const maxQuantity = Math.min(10, ticket.availableQuantity);
 
                 ticketContainer.innerHTML = `
-                    <span class="ticket-name">${ticket.name} - ${format_currency(ticket.price)}</span>
+                    <span class="ticket-name">${getNiceTicketTypeName(ticket.name)} - ${format_currency(ticket.price)}</span>
                     <div class="ticket-buttons">
                         <button class="decrease" onclick="updateTicketQuantity(${ticket.id}, -1)">-</button>
                         <input 

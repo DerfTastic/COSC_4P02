@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 public class AccountAPITest {
 
     private DbManager db;
+    //private MailServerSkeleton mail;
+    //private AccountAPI.PasswordResetManager prm;
     private final MailServerSkeleton mail = new MailServerSkeleton();
     private final AccountAPI.PasswordResetManager prm = new AccountAPI.PasswordResetManager();
     private final DynamicMediaHandlerSkeleton media = new DynamicMediaHandlerSkeleton();
@@ -36,11 +38,19 @@ public class AccountAPITest {
     private final TestingUser o1 = new TestingUser("Gui", "gui@gmail.com", "saap");
     private final TestingUser o2 = new TestingUser("Pui", "pui@gmail.com", "pssa");
 
+
     @BeforeAll
     public void setup() throws SQLException {
         db = new DbManagerImpl("account_api_test", true, true, true);
+        //mail = new MailServerSkeleton();
+        //prm = new AccountAPI.PasswordResetManager(); // <-- INITIALIZE ONCE
     }
 
+    /**
+     * This test checks successful registration and duplicate email rejection
+     * @throws BadRequest
+     * @throws SQLException
+     */
     @Test
     @Order(1)
     public void testAccountRegistration() throws BadRequest, SQLException {
@@ -69,7 +79,68 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(3)
+    @Order(3) // Make sure the Order is unique and after previous tests
+    public void testBadLoginAttempts() throws SQLException, UnknownHostException {
+        // 1. Wrong password
+        try {
+            var badUser = new TestingUser(u1.name, u1.email, "wrongpassword");
+            badUser.login(mail, db, true); // Attempt login with wrong password
+            Assertions.fail("Login should fail with wrong password");
+        } catch (Unauthorized e) {
+            Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+        }
+
+        // 2. Non-existent email
+        try {
+            var fakeUser = new TestingUser("Fake", "fakeuser@example.com", "somepass");
+            fakeUser.login(mail, db, true); // Attempt login with non-existing user
+            Assertions.fail("Login should fail for non-existent user");
+        } catch (Unauthorized e) {
+            Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(4)
+    public void testPasswordResetFlow() throws Exception {
+
+        // Step 1: Request password reset for existing user (u1)
+        AccountAPI.reset_password(mail, db.ro_transaction(null), u1.email, prm, "http://localhost");
+
+        // Step 2: Retrieve the last sent email
+        var lastMail = mail.mail.get(mail.mail.size() - 1);
+        var resetLinkHtml = lastMail.message;
+        Assertions.assertNotNull(resetLinkHtml, "Reset email content should not be null");
+
+        // Step 3: Extract the token correctly
+        var pattern = Pattern.compile(".*\\?token=([a-zA-Z0-9_\\-]+).*");
+        var matcher = pattern.matcher(resetLinkHtml);
+        Assertions.assertTrue(matcher.find(), "Reset link format invalid in email HTML");
+        var token = matcher.group(1);
+
+        // Step 4: Build PasswordReset record
+        var newPassword = "newpassword123";
+        var resetRequest = new AccountAPI.PasswordReset(token, u1.email, newPassword);
+
+        // Step 5: Apply the password reset
+        AccountAPI.do_reset_password(mail, db.rw_transaction(null), resetRequest, prm);
+
+        // Step 6: Attempt login with old password (should fail)
+        try {
+            var badUser = new TestingUser(u1.name, u1.email, u1.password);
+            badUser.login(mail, db, true);
+            Assertions.fail("Login with old password should fail after reset");
+        } catch (Unauthorized e) {
+            Assertions.assertEquals("An account with the specified email does not exist, or the specified password is incorrect", e.getMessage());
+        }
+
+        // Step 7: Attempt login with new password (should succeed)
+        var updatedUser = new TestingUser(u1.name, u1.email, newPassword);
+        updatedUser.login(mail, db, true); // Should succeed without exception
+    }
+
+    @Test
+    @Order(4)
     public void testListSessions() throws SQLException, Unauthorized {
         for(var user : new TestingUser[]{u1, u2, o1, o2}) {
             var auth = user.userSession(db, null);
@@ -84,7 +155,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void testInvalidateSession() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
 
         for(var user : new TestingUser[]{u1, u2, o1, o2}) {
@@ -104,7 +175,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void testChangeAuthPassword() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
         var auth = u1.userSession(db, null);
         try(var conn = db.rw_transaction(null)){
@@ -125,7 +196,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void testChangeAuthEmail() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
         var auth = u1.userSession(db, null);
         try(var conn = db.rw_transaction(null)){
@@ -146,7 +217,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     public void testResetPassword() throws SQLException, Unauthorized, BadRequest, UnknownHostException {
         {//reset password
             try (var conn = db.ro_transaction(null)) {
@@ -211,7 +282,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     public void testUpdateInfo() throws SQLException, Unauthorized, BadRequest {
         {
             var auth = u1.userSession(db, null);
@@ -248,7 +319,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     public void testUserInfo() throws SQLException, Unauthorized {
         var auth = u1.userSession(db, null);
         try(var conn = db.ro_transaction(null)){
@@ -329,7 +400,7 @@ public class AccountAPITest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     public void testSetPictureBanner() throws SQLException, Unauthorized, BadRequest {
         for(var user : new TestingUser[]{u1, o1}){
             var auth = user.userSession(db, null);

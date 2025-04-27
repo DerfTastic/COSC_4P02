@@ -939,6 +939,7 @@ const api = {
                 "An error occured while setting profile picture"
             )).json();
         },
+        
         /**
          * @param {Blob} data 
          * @param {Session} session 
@@ -1180,72 +1181,44 @@ const utility = {
 
 const page = {
 
-    login: {
-        /**
-         * @param {string} email 
-         * @param {string} password 
-         * @returns {Promise}
-         */
-        login: async function (email, password, redirectTo = '/') {
-            try {
-                cookies.deleteSessionToken();
-
-                // Spinner
-                document.body.innerHTML = `
-                <div class="spinner-container">
-                    <div class="spinner"></div>
-                    <h2>Logging you in, please wait...</h2>
-                </div>
-            `   ;
-
-                cookies.setSession(await api.user.login(email, password));
-        
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.size > 0) {
-                    const paramValue = urlParams.get('goBack');
-                    if (paramValue == 1) {
-                        window.history.back();
-                        window.location.reload();
-                        return;
-                    }
+    login: async function (email, password, redirectTo = '/') {
+        try {
+            cookies.deleteSessionToken();
+    
+            page.showSpinner("Logging you in, please wait...");
+    
+            cookies.setSession(await api.user.login(email, password));
+    
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.size > 0) {
+                const paramValue = urlParams.get('goBack');
+                if (paramValue == 1) {
+                    window.history.back();
+                    window.location.reload();
+                    return;
                 }
-        
-                window.location.href = redirectTo;
-            } catch ({ error, code }) {
-                alert(error);
             }
-        },
-        
-    },
-
-    register: {
-        /**
-         * 
-         * @param {*} name 
-         * @param {*} email 
-         * @param {*} password 
-         */
-        register: async function (name, email, password) {
-            try {
-                await api.user.register(name, email, password);
-
-                // Waiting Spinner
-                document.body.innerHTML = `
-                <div class="spinner-container">
-                    <div class="spinner"></div>
-                    <h2>Logging you in, please wait...</h2>
-                </div>
-            `   ;
     
-                // After successful registration, login and redirect to homepage
-                await page.login.login(email, password, '/');
-    
-            } catch ({ error, code }) {
-                alert(error);
-            }
-        },
+            window.location.href = redirectTo;
+        } catch ({ error, code }) {
+            page.hideSpinner();
+            alert(error);
+        }
     },
     
+
+    register: async function (name, email, password) {
+        try {
+            page.showSpinner("Registering account, please wait...");
+    
+            await api.user.register(name, email, password);
+    
+            await page.login(email, password, '/');   // <-- FIXED here
+        } catch ({ error, code }) {
+            page.hideSpinner();
+            alert(error);
+        }
+    },
     
     account: {
         /**
@@ -1380,6 +1353,20 @@ const page = {
         }
         await Promise.all(promises)
     },
+
+    showSpinner: function (message = "Please wait...") {
+        document.body.innerHTML = `
+            <div class="spinner-container">
+                <div class="spinner"></div>
+                <h2>${message}</h2>
+            </div>
+        `;
+    },
+    
+    hideSpinner: function () {
+        window.location.reload();
+    },
+    
 };
 
 function nodeScriptReplace(node) {
