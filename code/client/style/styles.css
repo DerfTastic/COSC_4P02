@@ -286,11 +286,6 @@ nav a:hover {
     padding: 15px 15px 5px;
     box-sizing: border-box;
 }
-/* .product-box img {
-    width: 100%;
-    padding: 15px 15px 5px;
-    flex: 0 0 60%;
-} */
 
 .img-wrapper img {
     max-width: 100%;
@@ -396,7 +391,6 @@ nav a:hover {
     color: #eeeef0;
     text-decoration: none;
     font-size: 2rem;
-    /* font-family: "Marhey", sans-serif; */
     font-optical-sizing: auto;
     font-weight: 600;
     font-style: normal;
@@ -406,8 +400,6 @@ nav a:hover {
 
 .container {
     display: flex;
-    /* margin: 0;*/
-    /* padding: 25% 0px;  */
     justify-content: center;
     align-items: center;
     background-color: transparent;
@@ -487,7 +479,8 @@ nav a:hover {
     transition: box-shadow 0.3s ease;
 }
 
-.form-group input::placeholder, input::placeholder {
+.form-group input::placeholder,
+input::placeholder {
     color: #eeeef09a;
 }
 
@@ -546,8 +539,10 @@ nav a:hover {
 }
 
 .spinner {
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #1b263b; /* Ticket Express dark blue */
+    border: 8px solid #f3f3f3;
+    /* Light grey */
+    border-top: 8px solid #1b263b;
+    /* Ticket Express dark blue */
     border-radius: 50%;
     width: 80px;
     height: 80px;
@@ -556,8 +551,13 @@ nav a:hover {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes fadeIn {
