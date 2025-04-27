@@ -1468,6 +1468,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         Handlebars.registerHelper('encodeURI', function(context) {
             return encodeURI(context);
         });
+
+        Handlebars.registerHelper('hasTickets', function(items, options) {
+            if (Array.isArray(items) && items.some(item => item.type === "Ticket")) {
+                return options.fn(this); // Render the block
+            } else {
+                return options.inverse(this); // Render the {{else}} block
+            }
+        });
     }
 
     await page.load_dynamic_content(document);
