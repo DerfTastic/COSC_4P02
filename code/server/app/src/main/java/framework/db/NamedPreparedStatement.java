@@ -73,6 +73,10 @@ public class NamedPreparedStatement implements AutoCloseable {
         conn.db.namedPreparedStatementClose(this);
     }
 
+    /** Executes this SQL statement/command/query and returns the result.
+     * @return The returned result/output of the SQL statement execution.
+     * @throws SQLException
+     */
     public ResultSet executeQuery() throws SQLException {
         if(stats!=null)stats.prepared_statement_executed(conn.id, conn.rw);
         var rs = stmt.executeQuery();

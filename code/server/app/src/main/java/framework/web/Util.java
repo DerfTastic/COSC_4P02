@@ -18,6 +18,11 @@ public class Util {
                 "&#" + c + ";" : String.valueOf((char) c)).collect(Collectors.joining());
     }
 
+    /** Performs the SHA-256 message digest algorithm on the input
+     *
+     * @param input
+     * @return Hex string of hashed result.
+     */
     public static String hashy(byte[] input){
         try{
             final MessageDigest digest = MessageDigest.getInstance("SHA-256");

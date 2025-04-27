@@ -76,11 +76,22 @@ public class SqlSerde {
         return list;
     }
 
+    /** Feeds the result of an SQL statement ({@link ResultSet}) into a list of new instances
+     * of the class represented by the given class handle (clazz).<br>
+     * Uses Java reflection to map the column names of rs to the public fields of clazz.<br><br>
+     * Used to easily format the result of a DB query into Java types.
+     *
+     * @param rs The result/output of an SQL statement
+     * @param clazz The class handle used to get
+     * @param <T>
+     * @return New {@link ArrayList ArrayList} of
+     * @throws SQLException
+     */
     public static <T> ArrayList<T> sqlList(ResultSet rs, Class<T> clazz) throws SQLException {
         var list = new ArrayList<T>();
         try{
-            var constructor = clazz.getDeclaredConstructor();
-            var fields = clazz.getFields();
+            var constructor = clazz.getDeclaredConstructor(); // Allows us to know class type ahead of time
+            var fields = clazz.getFields(); // Maps public fields only
             while(rs.next()){
                 var instance = constructor.newInstance();
                 for(var field : fields) {

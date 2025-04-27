@@ -24,6 +24,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+/**
+ * Represents a User, Organizer, or Admin. <br>
+ * Used in testing environments to easily perform account-related tasks with users.
+ * <br><br>
+ * Example of usage from {@link infrastructure.api.OrganzierAPITest}:
+ * <pre>
+ * {@code
+ *     // This is a basic user account (attendee)
+ *     private final static TestingUser u1 = new TestingUser("Yui", "yui@gmail.com", "saas");
+ *     // This is an organizer account
+ *     private final static TestingUser o1 = new TestingUser("Organizer", "organizer@gmail.com", "password");
+ *
+ *     ...
+ *     @Test
+ *     (in the setup test) {
+ *         ...
+ *         u1.register(mail, db, false);     // Register the user
+ *         u1.login(mail, db, false);        // Log in the user
+ *         o1.register(mail, db, false);
+ *         o1.login(mail, db, false);
+ *         o1.makeOrganizer(db, null, mail); // Need to manually make o1 an organizer
+ *         ...
+ *     }
+ *     ...
+ *     (in any other test) {
+ *         ...
+ *         var userSession = u1.userSession(db, null); // Gets session of user
+ *         var organizerSession = o1.organizerSession(db, null); // Gets session of organizer
+ *         ... // Do stuff with those sessions
+ *     }
+ * }
+ * </pre>
+ */
 public class TestingUser {
     public String name;
     public String email;
@@ -45,6 +78,9 @@ public class TestingUser {
 
     /**
      * Registers this TestingUser using {@link AccountAPI#register}
+     * @param mail
+     * @param db
+     * @param send_mail_on_register
      */
     public void register(MailServer mail, DbManager db, boolean send_mail_on_register) throws BadRequest, SQLException {
         try(var conn = db.rw_transaction(null)){
@@ -58,6 +94,16 @@ public class TestingUser {
     }
 
 
+    /**
+     * Turns a regular user into an organizer by purchasing an {@link PaymentAPI.AccountOrganizerUpgrade AccountOrganizerUpgrade()}.
+     * You need to call this after registering and logging-in in order to test Organizer-only features.
+     *
+     * @param db
+     * @param cache
+     * @param mail
+     * @throws SQLException
+     * @throws ClientError
+     */
     public void makeOrganizer(DbManager db, SessionCache cache, MailServer mail) throws SQLException, ClientError {
         var auth = this.userSession(db, cache);
         try(var conn = db.rw_transaction(null)){
