@@ -540,6 +540,13 @@
 
         var tickets = [];
 
+        const TicketTypeDisplayNames = {
+            free: "Free",
+            vip: "VIP",
+            general: "General Admission",
+            other: "Other"
+        };
+
         document.addEventListener('DOMContentLoaded', async () => {
             const session = cookies.getSession();
 
@@ -617,55 +624,96 @@
             });
         }
 
-        function renderTickets(){
-            document.getElementById("ticketTypesContainer").innerHTML = "";
-            for(const t of tickets){
-                const el = document.createElement("div");
-                el.innerHTML = `<div class="field">
-                    <div class="label">Ticket Type</div>
-                    <select class="ticketTypeSelect" class="select-field">
-                        <option ${t.name=="free"?'selected':''} value="free">Free</option>
-                        <option ${t.name=="vip"?'selected':''} value="vip">VIP</option>
-                        <option ${t.name=="general"?'selected':''} value="general">General Admission</option>
-                        <option ${t.name=="other"?'selected':''} value="other">Other</option>
-                    </select>
-                </div>
-                <div class="field">
-                <div class="label">Ticket Type: ${t.name.charAt(0).toUpperCase() + t.name.slice(1)}</div>
-                    <input type="number" class="ticketQuantity" value="0" min="0" placeholder="Quantity" onchange="updateTotalTickets()">
-                </div>
-                <div class="field">
-                    <div class="label">Price</div>
-                    <input type="number" class="ticketPrice" value="0" min="0" placeholder="Price" onchange="updateTotalTickets()" ${t.name=='free' ? 'disabled' : ''} required>
-                </div>
-
-                <div class="field">
-                    <div class="btn-container">
-                        <button type="button" class="removeTicketType" onclick="removeTicket(${t.id})">Delete</button>
-                    </div>
-                </div>
-                `;
-                
-                el.querySelector(".ticketTypeSelect").value = t.name;
-                el.querySelector(".ticketQuantity").value = t.total_tickets;
-                el.querySelector(".ticketPrice").value = t.price/1000000;
-                
-                el.querySelector(".ticketTypeSelect").addEventListener("input", e => {
-                    tickets.find(v => v.id ==t.id).name = e.target.value;
-                    updateTicket(t.id);
-                });
-                el.querySelector(".ticketQuantity").addEventListener("input", e => {
-                    tickets.find(v => v.id ==t.id).total_tickets = e.target.value||null;
-                    updateTicket(t.id);
-                });
-                el.querySelector(".ticketPrice").addEventListener("input", e => {
-                    tickets.find(v => v.id ==t.id).price = e.target.value*1000000;
-                    updateTicket(t.id);
-                });
-
-                document.getElementById("ticketTypesContainer").append(el);
-            }
+        function generateTicketTypeOptions(selectedType) {
+            const options = [
+                { value: "free", text: "Free" },
+                { value: "vip", text: "VIP" },
+                { value: "general", text: "General Admission" },
+                { value: "other", text: "Other" }
+            ];
+            return options.map(opt => 
+                `<option value="${opt.value}" ${selectedType === opt.value ? "selected" : ""}>${opt.text}</option>`
+            ).join("");
         }
+
+        function getNiceTicketTypeName(ticketType) {
+    const TicketTypeDisplayNames = {
+        free: "Free",
+        vip: "VIP",
+        general: "General Admission",
+        other: "Other"
+    };
+    return TicketTypeDisplayNames[ticketType] || (ticketType ? ticketType.charAt(0).toUpperCase() + ticketType.slice(1) : "Unknown");
+}
+
+function generateTicketTypeOptions(selectedType) {
+    const options = [
+        { value: "free", text: "Free" },
+        { value: "vip", text: "VIP" },
+        { value: "general", text: "General Admission" },
+        { value: "other", text: "Other" }
+    ];
+    return options.map(opt => 
+        `<option value="${opt.value}" ${selectedType === opt.value ? "selected" : ""}>${opt.text}</option>`
+    ).join("");
+}
+
+function renderTickets() {
+    document.getElementById("ticketTypesContainer").innerHTML = "";
+    for (const t of tickets) {
+        const el = document.createElement("div");
+
+        const niceName = getNiceTicketTypeName(t.name);
+
+        el.innerHTML = `
+            <div class="field">
+                <div class="label">Ticket Type: ${niceName}</div>
+                <select class="ticketTypeSelect select-field">
+                    ${generateTicketTypeOptions(t.name)}
+                </select>
+            </div>
+            <div class="field">
+                <div class="label">Ticket Quantity</div>
+                <input type="number" class="ticketQuantity" value="${t.total_tickets || 0}" min="0" placeholder="Quantity" onchange="updateTotalTickets()">
+            </div>
+            <div class="field">
+                <div class="label">Price</div>
+                <input type="number" class="ticketPrice" value="${(t.price || 0) / 1000000}" min="0" placeholder="Price" onchange="updateTotalTickets()" ${t.name === "free" ? "disabled" : ""} required>
+            </div>
+            <div class="field">
+                <div class="btn-container">
+                    <button type="button" class="removeTicketType" onclick="removeTicket(${t.id})">Delete</button>
+                </div>
+            </div>
+        `;
+
+        const ticketTypeSelect = el.querySelector(".ticketTypeSelect");
+        const ticketQuantityInput = el.querySelector(".ticketQuantity");
+        const ticketPriceInput = el.querySelector(".ticketPrice");
+
+        ticketTypeSelect.value = t.name;
+        ticketQuantityInput.value = t.total_tickets;
+        ticketPriceInput.value = t.price / 1000000;
+
+        ticketTypeSelect.addEventListener("input", e => {
+            tickets.find(v => v.id == t.id).name = e.target.value;
+            updateTicket(t.id);
+            renderTickets(); // Optional: rerender to update the label dynamically
+        });
+
+        ticketQuantityInput.addEventListener("input", e => {
+            tickets.find(v => v.id == t.id).total_tickets = e.target.value || null;
+            updateTicket(t.id);
+        });
+
+        ticketPriceInput.addEventListener("input", e => {
+            tickets.find(v => v.id == t.id).price = e.target.value * 1000000;
+            updateTicket(t.id);
+        });
+
+        document.getElementById("ticketTypesContainer").append(el);
+    }
+}
 
         function removeTicket(id){
             queue_of_things.push(async () => {
@@ -829,6 +877,23 @@
                 reviewImageContainer.innerHTML = `<img src="/media/${event_picture_id}" alt="Event Image" style="width: 100%; height: auto;">`;
             } else {
                 reviewImageContainer.innerHTML = 'No image uploaded';
+            }
+            
+            const reviewTicketTypeContainer = document.getElementById('reviewTicketType');
+            if (tickets.length > 0) {
+                reviewTicketTypeContainer.innerHTML = tickets.map(t => {
+                    const typeName = getNiceTicketTypeName(t.name); //t.name.charAt(0).toUpperCase() + t.name.slice(1);
+                    const quantity = t.total_tickets ?? 0;
+                    const price = (t.price || 0) / 1000000;
+
+                    if (t.name === "free" || price === 0) {
+                        return `<div>${typeName} - ${quantity} tickets</div>`;
+                    } else {
+                        return `<div>${typeName} - ${quantity} Tickets - $${price.toFixed(2)}</div>`;
+                    }
+                }).join("");
+            } else {
+                reviewTicketTypeContainer.innerHTML = 'No tickets available';
             }
         }
 

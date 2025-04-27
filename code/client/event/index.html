@@ -797,6 +797,17 @@
             }
         }
 
+        const TicketTypeDisplayNames = {
+            free: "Free",
+            vip: "VIP",
+            general: "General Admission",
+            other: "Other"
+        };
+
+        function getNiceTicketTypeName(ticketType) {
+            return TicketTypeDisplayNames[ticketType] || (ticketType ? ticketType.charAt(0).toUpperCase() + ticketType.slice(1) : "Unknown");
+        }
+
         // Function to render tickets dynamically based on the fetched data
         function renderTickets() {
             const eventTicketsDisplay = document.getElementById('eventTicketsDisplay');  // Get the element to display the tickets
@@ -814,7 +825,7 @@
                 const maxQuantity = Math.min(10, ticket.availableQuantity);
 
                 ticketContainer.innerHTML = `
-                    <span class="ticket-name">${ticket.name} - ${format_currency(ticket.price)}</span>
+                    <span class="ticket-name">${getNiceTicketTypeName(ticket.name)} - ${format_currency(ticket.price)}</span>
                     <div class="ticket-buttons">
                         <button class="decrease" onclick="updateTicketQuantity(${ticket.id}, -1)">-</button>
                         <input 
