@@ -43,6 +43,10 @@ application {
 
 distZip.shouldRunAfter(build)
 
+tasks.withType(JavaCompile) {
+    options.release = 21
+}
+
 jar {
     // Keep jar clean:
     exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
