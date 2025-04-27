@@ -293,20 +293,6 @@
             cursor: pointer;
         }
 
-        #removeImageBtn {
-            display: none;
-            cursor: pointer;
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: transparent;
-            color: yellow;
-            font-weight: 900;
-            border: none;
-            padding: 0 5px;
-            font-size: 1.5rem;
-        }
-
         @media (max-width: 768px) {
 
             .container {
@@ -431,7 +417,6 @@
                                 <div class="label">Upload Image</div>
                                 <div class="upload-create-container" id="uploadBox">
                                     <span id="uploadText">Click to upload an image</span>
-                                    <button id="removeImageBtn" onclick="removeImage()">X</button>
                                     <input type="file" id="eventImage" accept="image/*" onchange="handleFileUpload()"
                                         class="input-field">
                                 </div>
@@ -439,7 +424,7 @@
                             </div>
                             <div class="field">
                                 <div class="label">Event Tags</div>
-                                <input type="text" id="eventTags" placeholder="Enter tags (comma separated)"
+                                <input type="text" id="eventTags" placeholder="Enter tags (space-separated)"
                                     class="input-field">
                             </div>
                         </div>
@@ -448,7 +433,7 @@
                         <div class="title">Tickets & Pricing:</div>
                         <div class="fields-wrapper">
                             <div class="field-gap">
-    
+
                                 <div class="field">
                                     <div class="label">Ticket Release Date</div>
                                     <input type="date" id="ticketReleaseDate" class="input-field" required>
@@ -465,7 +450,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                
+
                             </div>
 
                             <!-- Container for dynamically added ticket types -->
@@ -525,7 +510,8 @@
                         </button>
                         <div id="savingIcon">Saved</div>
                         <!-- <button id="saveButton" onclick="handleSave()">Save</button> -->
-                        <button id="toggleDraftButton" onclick="toggleDraft()">Make Public</button></a>
+                        <button id="toggleDraftButton" onclick="toggleDraft()">Make Public</button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -553,7 +539,7 @@
             if (!session || session.length === 0) {
                 window.location.href = "/account/login";
                 return;
-            } 
+            }
 
             const userInfo = await page.account.userinfo();
 
@@ -569,7 +555,7 @@
 
             var event = await api.events.get_event(eventId);
 
-            if(event.owner_id != userInfo.id){
+            if (event.owner_id != userInfo.id) {
                 alert("Not yours to edit!");
                 window.history.back();
             }
@@ -580,35 +566,35 @@
             renderTickets();
 
             function formatTime(meow) {
-                if(meow==undefined || meow==null)return "";
-                return `${meow.getHours()}:${meow.getMinutes()}`;   
+                if (meow == undefined || meow == null) return "";
+                return `${meow.getHours()}:${meow.getMinutes()}`;
             }
 
             event_picture_id = event.picture;
             setPiture();
 
-            document.getElementById('eventTitle').value = event.name||"";
-            document.getElementById('eventDescription').value = event.description||"";
-            document.getElementById('eventLocation').value = event.location_name||"";
+            document.getElementById('eventTitle').value = event.name || "";
+            document.getElementById('eventDescription').value = event.description || "";
+            document.getElementById('eventLocation').value = event.location_name || "";
 
-            document.getElementById('eventCategory').value = event.category||"";
+            document.getElementById('eventCategory').value = event.category || "";
 
-            if(event.start&&event.duration)document.getElementById('eventDate').valueAsDate = new Date(event.start);
-            if(event.start&&event.duration)document.getElementById('eventStartTime').valueAsDate = new Date(event.start);
-            if(event.start&&event.duration)document.getElementById('eventEndTime').valueAsDate = new Date(event.start+event.duration);
-            if(event.start&&event.duration)document.getElementById('eventDate').valueAsDate = new Date(event.start+event.duration);
+            if (event.start && event.duration) document.getElementById('eventDate').valueAsDate = new Date(event.start);
+            if (event.start && event.duration) document.getElementById('eventStartTime').valueAsDate = new Date(event.start);
+            if (event.start && event.duration) document.getElementById('eventEndTime').valueAsDate = new Date(event.start + event.duration);
+            if (event.start && event.duration) document.getElementById('eventDate').valueAsDate = new Date(event.start + event.duration);
 
-            document.getElementById('eventTags').value = (event.tags||[]).join(" ");
+            document.getElementById('eventTags').value = (event.tags || []).join(" ");
 
-            if(event.release_time)document.getElementById('ticketReleaseDate').valueAsDate = new Date(event.release_time);
-            if(event.release_time)document.getElementById('ticketReleaseTime').valueAsDate = new Date(event.release_time);
+            if (event.release_time) document.getElementById('ticketReleaseDate').valueAsDate = new Date(event.release_time);
+            if (event.release_time) document.getElementById('ticketReleaseTime').valueAsDate = new Date(event.release_time);
 
         });
 
-        function addTicket(){
+        function addTicket() {
             queue_of_things.push(async () => {
                 const id = await api.tickets.create_ticket(eventId);
-                await api.tickets.update_ticket(id, {name: "general"});
+                await api.tickets.update_ticket(id, { name: "general" });
                 tickets.push({
                     id,
                     name: "general",
@@ -617,8 +603,8 @@
             });
         }
 
-        function updateTicket(id){
-            const ticket = tickets.find(v => v.id ==id);
+        function updateTicket(id) {
+            const ticket = tickets.find(v => v.id == id);
             queue_of_things.push(async () => {
                 await api.tickets.update_ticket(ticket.id, ticket);
             });
@@ -631,41 +617,41 @@
                 { value: "general", text: "General Admission" },
                 { value: "other", text: "Other" }
             ];
-            return options.map(opt => 
+            return options.map(opt =>
                 `<option value="${opt.value}" ${selectedType === opt.value ? "selected" : ""}>${opt.text}</option>`
             ).join("");
         }
 
         function getNiceTicketTypeName(ticketType) {
-    const TicketTypeDisplayNames = {
-        free: "Free",
-        vip: "VIP",
-        general: "General Admission",
-        other: "Other"
-    };
-    return TicketTypeDisplayNames[ticketType] || (ticketType ? ticketType.charAt(0).toUpperCase() + ticketType.slice(1) : "Unknown");
-}
+            const TicketTypeDisplayNames = {
+                free: "Free",
+                vip: "VIP",
+                general: "General Admission",
+                other: "Other"
+            };
+            return TicketTypeDisplayNames[ticketType] || (ticketType ? ticketType.charAt(0).toUpperCase() + ticketType.slice(1) : "Unknown");
+        }
 
-function generateTicketTypeOptions(selectedType) {
-    const options = [
-        { value: "free", text: "Free" },
-        { value: "vip", text: "VIP" },
-        { value: "general", text: "General Admission" },
-        { value: "other", text: "Other" }
-    ];
-    return options.map(opt => 
-        `<option value="${opt.value}" ${selectedType === opt.value ? "selected" : ""}>${opt.text}</option>`
-    ).join("");
-}
+        function generateTicketTypeOptions(selectedType) {
+            const options = [
+                { value: "free", text: "Free" },
+                { value: "vip", text: "VIP" },
+                { value: "general", text: "General Admission" },
+                { value: "other", text: "Other" }
+            ];
+            return options.map(opt =>
+                `<option value="${opt.value}" ${selectedType === opt.value ? "selected" : ""}>${opt.text}</option>`
+            ).join("");
+        }
 
-function renderTickets() {
-    document.getElementById("ticketTypesContainer").innerHTML = "";
-    for (const t of tickets) {
-        const el = document.createElement("div");
+        function renderTickets() {
+            document.getElementById("ticketTypesContainer").innerHTML = "";
+            for (const t of tickets) {
+                const el = document.createElement("div");
 
-        const niceName = getNiceTicketTypeName(t.name);
+                const niceName = getNiceTicketTypeName(t.name);
 
-        el.innerHTML = `
+                el.innerHTML = `
             <div class="field">
                 <div class="label">Ticket Type: ${niceName}</div>
                 <select class="ticketTypeSelect select-field">
@@ -687,38 +673,38 @@ function renderTickets() {
             </div>
         `;
 
-        const ticketTypeSelect = el.querySelector(".ticketTypeSelect");
-        const ticketQuantityInput = el.querySelector(".ticketQuantity");
-        const ticketPriceInput = el.querySelector(".ticketPrice");
+                const ticketTypeSelect = el.querySelector(".ticketTypeSelect");
+                const ticketQuantityInput = el.querySelector(".ticketQuantity");
+                const ticketPriceInput = el.querySelector(".ticketPrice");
 
-        ticketTypeSelect.value = t.name;
-        ticketQuantityInput.value = t.total_tickets;
-        ticketPriceInput.value = t.price / 1000000;
+                ticketTypeSelect.value = t.name;
+                ticketQuantityInput.value = t.total_tickets;
+                ticketPriceInput.value = t.price / 1000000;
 
-        ticketTypeSelect.addEventListener("input", e => {
-            tickets.find(v => v.id == t.id).name = e.target.value;
-            updateTicket(t.id);
-            renderTickets(); // Optional: rerender to update the label dynamically
-        });
+                ticketTypeSelect.addEventListener("input", e => {
+                    tickets.find(v => v.id == t.id).name = e.target.value;
+                    updateTicket(t.id);
+                    renderTickets(); // Optional: rerender to update the label dynamically
+                });
 
-        ticketQuantityInput.addEventListener("input", e => {
-            tickets.find(v => v.id == t.id).total_tickets = e.target.value || null;
-            updateTicket(t.id);
-        });
+                ticketQuantityInput.addEventListener("input", e => {
+                    tickets.find(v => v.id == t.id).total_tickets = e.target.value || null;
+                    updateTicket(t.id);
+                });
 
-        ticketPriceInput.addEventListener("input", e => {
-            tickets.find(v => v.id == t.id).price = e.target.value * 1000000;
-            updateTicket(t.id);
-        });
+                ticketPriceInput.addEventListener("input", e => {
+                    tickets.find(v => v.id == t.id).price = e.target.value * 1000000;
+                    updateTicket(t.id);
+                });
 
-        document.getElementById("ticketTypesContainer").append(el);
-    }
-}
+                document.getElementById("ticketTypesContainer").append(el);
+            }
+        }
 
-        function removeTicket(id){
+        function removeTicket(id) {
             queue_of_things.push(async () => {
                 await api.tickets.delete_ticket(id);
-                tickets = tickets.filter(t => t.id!=id);
+                tickets = tickets.filter(t => t.id != id);
                 renderTickets();
             });
         }
@@ -745,7 +731,6 @@ function renderTickets() {
         const formPages = document.querySelectorAll(".form-page");
         const nbtn = document.querySelector(".next"); // Next button
         const pbtn = document.querySelector(".previous"); // Previous button
-        const sbtn = document.getElementById('submitButton');
         const bullets = document.querySelectorAll(".progress-bar .bullet");
         const checks = document.querySelectorAll(".progress-bar .check");
 
@@ -781,16 +766,13 @@ function renderTickets() {
             if (shiftValue === 0) {
                 pbtn.style.display = 'none'; // Hide previous button at the start
                 nbtn.style.display = 'inline-block';
-                sbtn.style.display = 'none';
             } else if (shiftValue === 300) {
                 pbtn.style.display = 'inline-block';
                 nbtn.style.display = 'none';
                 populateReviewSection();
-                sbtn.style.display = 'inline-block';
             } else {
                 pbtn.style.display = 'inline-block';
                 nbtn.style.display = 'inline-block';
-                sbtn.style.display = 'none';
             }
         }
 
@@ -836,7 +818,7 @@ function renderTickets() {
             document.getElementById('reviewEventDescription').textContent = event.description || 'N/A';
             document.getElementById('reviewEventLocation').textContent = event.location_name || 'N/A';
             document.getElementById('reviewEventDate').textContent =
-            event.start&&event.duration
+                event.start && event.duration
                     ? `${new Date(event.start).toLocaleString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
@@ -845,7 +827,7 @@ function renderTickets() {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true
-                    })} - ${new Date(event.start+event.duration).toLocaleString(undefined, {
+                    })} - ${new Date(event.start + event.duration).toLocaleString(undefined, {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
@@ -869,16 +851,16 @@ function renderTickets() {
                     : 'N/A';
 
             document.getElementById('reviewEventCategory').textContent = event.category ? event.category.charAt(0).toUpperCase() + event.category.slice(1) : 'N/A';
-            document.getElementById('reviewEventTags').textContent = (event.tags||[]).join(" "); 
+            document.getElementById('reviewEventTags').textContent = (event.tags || []).join(" ");
 
-            
+
             const reviewImageContainer = document.getElementById('reviewEventImage');
             if (event_picture_id) {
                 reviewImageContainer.innerHTML = `<img src="/media/${event_picture_id}" alt="Event Image" style="width: 100%; height: auto;">`;
             } else {
                 reviewImageContainer.innerHTML = 'No image uploaded';
             }
-            
+
             const reviewTicketTypeContainer = document.getElementById('reviewTicketType');
             if (tickets.length > 0) {
                 reviewTicketTypeContainer.innerHTML = tickets.map(t => {
@@ -899,15 +881,13 @@ function renderTickets() {
 
         let event_picture_id = 0;
 
-        function setPiture(){
+        function setPiture() {
             const uploadBox = document.getElementById('uploadBox');
             const uploadText = document.getElementById('uploadText');
-            const removeBtn = document.getElementById('removeImageBtn');
             uploadBox.style.backgroundImage = `url(/media/${event_picture_id})`;
             uploadBox.style.backgroundSize = "cover";
             uploadBox.style.backgroundPosition = "center";
             uploadBox.style.borderStyle = "solid";
-            removeBtn.style.display = "block";
             uploadText.style.display = "none";
         }
 
@@ -915,11 +895,10 @@ function renderTickets() {
             const fileInput = document.getElementById('eventImage');
             const fileList = fileInput.files;
             const uploadText = document.getElementById('uploadText');
-            const removeBtn = document.getElementById('removeImageBtn');
 
             if (fileList.length > 1) {
                 alert('You can only upload 1 image.');
-                fileInput.value = ''; 
+                fileInput.value = '';
                 return;
             }
 
@@ -928,7 +907,7 @@ function renderTickets() {
 
                 if (!file.type.startsWith('image/')) {
                     alert('Please upload a valid image file.');
-                    fileInput.value = ''; 
+                    fileInput.value = '';
                     return;
                 }
 
@@ -943,25 +922,25 @@ function renderTickets() {
         }
 
 
-        async function saved(){
+        async function saved() {
             document.getElementById("savingIcon").innerText = "Saved";
         }
 
-        async function saving(){
+        async function saving() {
             document.getElementById("savingIcon").innerText = "Saving...";
         }
-        
+
         /** @type{Promise<>[]} */
         queue_of_things = [];
-        async function loopie(){
-            while(true){
+        async function loopie() {
+            while (true) {
                 saving();
-                while(queue_of_things.length !=0 ){
-                    try{
+                while (queue_of_things.length != 0) {
+                    try {
                         await queue_of_things.shift()();
-                    }catch(e){
+                    } catch (e) {
                         console.log(e);
-                        if(e.error)alert(e.error);
+                        if (e.error) alert(e.error);
                     }
                 }
                 saved();
@@ -970,21 +949,21 @@ function renderTickets() {
         }
         loopie();
 
-        function update_event(meow){
+        function update_event(meow) {
             queue_of_things.push(async () => api.events.update_event(eventId, meow));
         }
 
         document.getElementById('eventTitle').addEventListener("input", e => {
-            update_event({name: e.target.value});
+            update_event({ name: e.target.value });
         });
         document.getElementById('eventDescription').addEventListener("input", e => {
-            update_event({description: e.target.value});
+            update_event({ description: e.target.value });
         });
         document.getElementById('eventLocation').addEventListener("input", e => {
-            update_event({location_name: e.target.value});
+            update_event({ location_name: e.target.value });
         });
         document.getElementById('eventCategory').addEventListener("input", e => {
-            update_event({category: e.target.value});
+            update_event({ category: e.target.value });
         });
 
         document.getElementById('eventDate').addEventListener("input", change_start_dur);
@@ -992,44 +971,44 @@ function renderTickets() {
         document.getElementById('eventEndTime').addEventListener("input", change_start_dur);
         document.getElementById('eventDate').addEventListener("input", change_start_dur);
 
-        function change_start_dur(){
+        function change_start_dur() {
             console.log("here");
             const eventDate = document.getElementById('eventDate').value || undefined;
             const eventStartTime = document.getElementById('eventStartTime').value || undefined;
             const eventEndTime = document.getElementById('eventEndTime').value || undefined;
 
-            const start = new Date(`${eventDate}T${eventStartTime}`).getTime()||undefined;
-            const duration = (new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime())||undefined;
-            
+            const start = new Date(`${eventDate}T${eventStartTime}`).getTime() || undefined;
+            const duration = (new Date(`${eventDate}T${eventEndTime}`).getTime() - new Date(`${eventDate}T${eventStartTime}`).getTime()) || undefined;
+
             console.log("here2");
-            update_event({start, duration});
+            update_event({ start, duration });
         }
 
         document.getElementById('ticketReleaseDate').addEventListener("input", change_release_date);
         document.getElementById('ticketReleaseTime').addEventListener("input", change_release_date);
 
-        function change_release_date(){
+        function change_release_date() {
             const ticketReleaseDate = document.getElementById('ticketReleaseDate').value || undefined;
             const ticketReleaseTime = document.getElementById('ticketReleaseTime').value || undefined;
-            const release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime()||undefined;
-            update_event({release_time});
+            const release_time = new Date(`${ticketReleaseDate}T${ticketReleaseTime}`).getTime() || undefined;
+            update_event({ release_time });
         }
 
         document.getElementById('eventTags').addEventListener("input", e => {
-            queue_of_things.push(async() => {
+            queue_of_things.push(async () => {
                 await api.events.delete_all_event_tags(eventId);
-                for(const v of [...new Set( e.target.value.split(" ").map(v => v.trim().replace(/[^0-9a-z]/gi, '').toLowerCase()).filter(v => v.length>0))]){
+                for (const v of [...new Set(e.target.value.split(" ").map(v => v.trim().replace(/[^0-9a-z]/gi, '').toLowerCase()).filter(v => v.length > 0))]) {
                     await api.events.add_event_tag(eventId, v);
                 }
             });
         });
 
-        function updateDraftButton(){
-            document.getElementById("toggleDraftButton").innerText = isDraft?"Make Public":"Make Private";
+        function updateDraftButton() {
+            document.getElementById("toggleDraftButton").innerText = isDraft ? "Make Public" : "Make Private";
         }
 
-        function toggleDraft(){
-            if(isDraft)
+        function toggleDraft() {
+            if (isDraft)
                 setNotDraft();
             else
                 setDraft();
