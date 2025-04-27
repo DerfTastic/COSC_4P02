@@ -54,7 +54,8 @@
             const info = await page.account.userinfo();
 
             console.log(info); // Log info to check structure
-            document.getElementById("pro-pic").style.backgroundImage = `url('/media/${info.picture}')`;
+            if(info.picture)
+                document.getElementById("pro-pic").style.backgroundImage = `url('/media/${info.picture}')`;
 
             logoutLink.onclick = function () {
                  utility.logout();
