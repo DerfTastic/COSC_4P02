@@ -87,7 +87,7 @@
 
         .event-box {
             width: 90%;
-            height: 300px;
+            height: auto;
             text-align: center;
             display: flex;
             align-items: center;
@@ -188,13 +188,9 @@
                 display: block;
             }
 
-            .events-container {
-                gap: 10px;
-            }
-
             svg,
             .event-box {
-                height: auto;
+                width: 100%;
             }
 
             .pagination-container {
@@ -215,6 +211,13 @@
         .page-btn {
             flex: 1;
             font-size: 1rem;
+        }
+
+        @media (min-width:1025px){
+            .event-box{
+                width: 75%;
+            }
+
         }
     </style>
 </head>
