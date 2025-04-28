@@ -131,6 +131,9 @@ public class AdminAPI {
         return sw.toString();
     }
 
+    /** Gets server logs from {@link ServerLogger}
+     * @param auth The {@link AdminSession} that's getting the logs
+     */
     @Route
     public static @Json List<LogR> get_server_logs(AdminSession auth){
 
@@ -156,6 +159,15 @@ public class AdminAPI {
         trans.commit();
     }
 
+    /**
+     * Sets the admin flag for a given user.
+     * @param auth The AdminSession that's doing this
+     * @param trans The transaction this is happening in
+     * @param admin Whether the user in question is going to be admin or not (admin flag)
+     * @param email The email of user who we are desiring to set the admin flag for
+     * @throws SQLException If SQL throws an exception
+     * @throws BadRequest If an account with the specified email does not exist
+     */
     @Route("/set_account_admin/<admin>/<email>")
     public static void set_account_admin(AdminSession auth, RwTransaction trans, @Path boolean admin, @Path String email) throws SQLException, BadRequest {
         long id;
@@ -174,21 +186,39 @@ public class AdminAPI {
         trans.commit();
     }
 
+    /**
+     * @return the server statistics (used memory and system time) as a JSON string, as an array of bytes
+     * @param auth The {@link AdminSession} that's doing this
+     * @param tracker
+     */
     @Route
     public static byte[] get_server_statistics(AdminSession auth, ServerStatistics tracker){
         return tracker.json();
     }
 
+    /**
+     * Sets the current log level of {@link ServerLogger}
+     * @param auth The {@link AdminSession} that's doing this
+     * @param level The Log level to set {@link ServerLogger} to
+     */
     @Route("/set_log_level/<level>")
     public static void set_log_level(AdminSession auth, @Path String level){
         ServerLogger.setLogLevel(Level.parse(level));
     }
 
+    /**
+     * @return The current log level from {@link ServerLogger}
+     * @param auth The {@link AdminSession} that's doing this
+     */
     @Route
     public static String get_log_level(AdminSession auth){
         return ServerLogger.getLogLevel().getName();
     }
 
+    /**
+     * @return The various log levels in {@link java.util.logging.Level}
+     * @param auth The {@link AdminSession} that's doing this
+     */
     @Route
     public static @Json String[] get_log_levels(AdminSession auth){
         return new String[]{
