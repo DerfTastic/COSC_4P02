@@ -15,45 +15,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const ticketSVG = document.createElement("div");
             ticketSVG.classList.add("event-box");
             ticketSVG.innerHTML = `
-                <svg id="ticket-svg" style="cursor: pointer;" width="900" height="400" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                    <!-- Ticket Shape -->
-                    <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" 
-                            fill="#eeeef0"/>
-                    <!-- Placeholder Image -->
-                    <image href="/media/${event.picture}" preserveAspectRatio="none" x="30" y="40" width="200" height="120" fill="#ddd" stroke="#aaa" stroke-width="2"/>
-                    <!-- <text x="130" y="110" font-size="14" fill="#666" text-anchor="middle">Image</text> -->
-
-                        <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
-
-                    <foreignObject x="250" y="25" width="230" height="140">
-                    <div style="height:100%; display: flex; flex-direction: column; justify-content: stretch; align-items:flex-start; padding: 10px;gap:3px; overflow: hidden;box-sizing: border-box;">
-                    <!-- Event Name -->
-                    <div style="text-align:left; font-size: 16px; font-weight: bold; color: #1b263b; margin-bottom:5px;">
-                        ${event.name}
-                        </div>
-
-                    <!-- Event Date -->
-                    <div style="text-align:left; font-size: 13px; color: #1b263b;">
-                        Date: ${new Date(event.start).toUTCString()}
-                        </div>
-
-                    <!-- Event Location -->
-                    <div style="text-align:left; font-size: 13px; color: #1b263b;">
-                        Location: ${event.location_name}
+                <svg id= "ticket-svg" style="cursor: pointer;" width="95%" height="100%" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <path d="M0,40 Q20,40 20,20 H480 Q480,40 500,40 V80 Q480,80 480,100 Q480,120 500,120 V160 Q480,160 480,180 H20 Q20,160 0,160 V120 Q20,120 20,100 Q20,80 0,80 Z" fill="#eeeef0"/>
+                <foreignObject x="30" y="40" width="200" height="120">
+            <div style="width:100%; height:100%; background:none; border:1px solid #1b263b; display:flex; align-items:center; justify-content:center; font-size:14px; color:#555;">
+                ${event.picture ? `<img src="/media/${event.picture}" style="width:100%; height:100%; object-fit:cover;" />` : "No Image"}
+            </div>
+        </foreignObject>
+                <line x1="240" y1="23" x2="240" y2="180" stroke="#415a77" stroke-width="2.5" stroke-dasharray="5,5"/>
+                <foreignObject x="250" y="25" width="230" height="140">
+                    <div style="height:100%; display:flex; flex-direction:column; justify-content:stretch; align-items:flex-start; padding:10px; gap:3px; overflow:hidden; box-sizing:border-box;">
+                        <div style="text-align:left; font-size:16px; font-weight:bold; color:#1b263b; margin-bottom:5px;">${event.name}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Date: ${new Date(event.start).toUTCString()}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Location: ${event.location_name}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Category: ${event.category}</div>
+                        <div style="text-align:left; font-size:13px; color:#1b263b;">Organizer: ${event.owner.name}</div>
                     </div>
-
-                    <!-- Event Category -->
-                    <div style="text-align:left; font-size: 13px; color: #1b263b;">
-                        Category: ${event.category}
-                    </div>
-
-                    <!-- Event Organizer -->
-                        <div style="text-align:left; font-size: 13px; color: #1b263b;">
-                    Organizer: ${event.owner.name}
-                    </div>
-                </div>
                 </foreignObject>
-                </svg>
+            </svg>
             `;
             ticketSVG.firstElementChild.addEventListener("click", e => {
                 window.location.href = `/event?id=${event.id}`
