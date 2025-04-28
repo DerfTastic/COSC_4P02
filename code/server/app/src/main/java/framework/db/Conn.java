@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Represents a connection to the database. It establishes and manages a live connection to the backend SQL database (code/server/db/database.db)
+ */
 public abstract class Conn implements AutoCloseable {
     private boolean first = true;
     protected Connection conn;

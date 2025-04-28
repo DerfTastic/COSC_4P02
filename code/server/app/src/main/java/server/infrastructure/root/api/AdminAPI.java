@@ -17,10 +17,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 
+/**
+ * A group of HTTP API endpoints that provides important admin functions such as sending out emails to users, managing logs, getting server statistics, and more.
+ */
 @SuppressWarnings("unused")
 @Routes
 public class AdminAPI {
 
+    /**
+     * Represents all necessary parts of an email communication,
+     * including its {@link Mail#to recipients}, the {@link Mail#subject subject},
+     * and the actual {@link Mail#content content} of the email itself
+     */
     public static class Mail{
         String subject;
         String content;
@@ -47,6 +55,13 @@ public class AdminAPI {
         """;
      */
 
+    /**
+     * Sends an email.
+     *
+     * @param auth An {@link AdminSession} to do this with
+     * @param server The {@link MailServer} used to send them mail
+     * @param mail The actual email content, subject, and recipients (see {@link Mail})
+     */
     @Route
     public static void mail(AdminSession auth, MailServer server, @Body @Json Mail mail) {
         server.sendMail(message -> {
@@ -59,6 +74,14 @@ public class AdminAPI {
         });
     }
 
+    /**
+     * Executes SQL statements
+     * @param auth An {@link AdminSession} to do this with
+     * @param connection A Read/write connection
+     * @param sql The SQL code string
+     * @return The output/result of the executed sql. Will say how many rows were updated with "Updated <i>X</i>" at the beginning of the string.
+     * @throws SQLException
+     */
     @Route
     public static String execute_sql(AdminSession auth, RwConn connection, @Body String sql) throws SQLException {
         StringBuilder list;
@@ -88,6 +111,7 @@ public class AdminAPI {
         return list.toString();
     }
 
+    /** Represents a log record */
     public record LogR(
             String level_s,
             int level_i,
